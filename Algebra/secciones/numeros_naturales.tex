@@ -1,0 +1,139 @@
+\section{Números naturales e inducción}
+\subsection{Operaciones y propiedades básicas}
+
+Sean $m$, $n$ y $k$ tres números naturales, entonces valen:
+\begin{itemize}
+    \item $m+n\in\nat$ y $m-n\in\nat$
+    \item \textbf{Conmutatividad: } $m+n=n+m$ y $m\times n = n\times m$
+    \item \textbf{Asociatividad:} $m+(n+k) = (m+n)+k$ y $m\times(n\times k) = (m\times n)\times k$
+    \item $\sum_{i=1}^{n}a_i + \sum_{i=1}^{n}b_i = \sum_{i=1}^{n}(a_i+b_i)$
+    \item $\prod_{i=1}^{n}a_i * \prod_{i=1}^{n}b_i = \prod_{i=1}^{n}(a_i*b_i)$
+    \end{itemize}
+    \subsection{Sumatorias y sucesiones conocidas}
+    \paragraph{Suma de Gauss}
+    $$\sum_{i=0}^{n} i = \frac{n(n+1)}{2}$$ 
+    \paragraph{Serie geométrica}
+    $$\sum_{i=0}^{n} q^n = \frac{q^{n+1} - 1}{q}$$
+    \paragraph{Sucesión de Fibonacci}
+    \begin{equation*}
+    \begin{array}{c}
+        F_0 = 0 \\
+        F_1 = 1 \\
+        F_n = F_{n-2} + F_{n-1} \\
+    \end{array}
+    \end{equation*}
+    \paragraph{Sucesión de Lucas}
+    \begin{equation*}
+        \begin{array}{c}
+        a_1 = 5 \\
+        a_2 = 13 \\
+        a_n = 5a_{n-1} - 6a_{n-2}
+        \end{array}
+    \end{equation*}
+
+\subsection{Conjunto inductivo y principio de inducción}
+
+El \textbf{principio de inducción} funciona en dos pasos. El primero, conocido como \textbf{caso base}, es probar que la afirmación en cuestión es verdadera para el primer número natural. El segundo paso, conocido como \textbf{paso inductivo}, es probar que la afirmación para un número natural cualquiera implica la afirmación para el número natural siguiente.
+
+Sea $H\subseteq\reales$ un conjunto, se dice que $H$ es un conjunto inductivo si se cumplen las siguientes condiciones:
+
+\begin{itemize}
+    \item $1\in H$
+    \item $(\forall~x\in\reales)~(x\in H\to x+1 \in H)$
+\end{itemize}
+
+Si $H\subseteq\nat$ es un conjunto inductivo, entonces $H = \nat$.
+
+Todos los conjuntos inductivos cumplen el \textbf{principio de buena ordenación}, o sea que contienen un elemento que es menor o igual que todos los demás elementos del conjunto.
+
+\subsubsection{Principio inductivo:} Sea $n\in\nat$ y $p(n)$ una afirmación sobre los números naturales, si $p$ satisface:
+
+\begin{itemize}
+    \item \textbf{Caso base}: $p(1)$ es verdadera y
+    \item \textbf{Paso inductivo}: $(\forall~n\in\nat)~(p(n) \text{ es verdadera}\to p(n+1) \text{ es verdadera})$
+\end{itemize}
+entonces $p$ es verdadera para todo $n\in\nat$.
+
+La hipótesis ''$p(n)$ es verdadera'' se denomina \textbf{hipótesis inductiva}.
+
+\subsubsection{Principio de inducción corrido}
+Sea $n_0\in\ent$ y sea $p(n)$ tal que $n\geq n_0$ una afirmación sobre $\ent_{\geq n_0}$. Si $p$ satisface:
+
+\begin{itemize}
+    \item \textbf{Caso base}: $p(n_0)$ es verdadera y
+    \item \textbf{Paso inductivo}: $(\forall~n\in\nat, n\geq n_0)~(p(n) \text{ es verdadera}\to p(n+1) \text{ es veradera})$
+\end{itemize}
+entonces $p$ es verdadera para todo $n\in\nat$ que sea mayor o igual a $n_0$.
+
+\subsubsection{Principio de inducción global}
+Sea $n_0\in\ent$ y sea $p(n)$ una afirmación sobre $\nat$. Si $p$ satisface:
+
+\begin{itemize}
+    \item \textbf{Caso base}: $p(n_0)$ es verdadera y
+    \item \textbf{Paso inductivo}: $((\forall~n\in\nat, n\leq n_0)~p(n) \text{ es verdadera})\to p(n+1) \text{ es verdadera})$
+\end{itemize}
+entonces $p$ es veradera para todo $n\in\nat$.
+
+
+\subsection{Propiedades y otras definiciones}
+\begin{itemize}
+    \item Todo subconjunto $A\subseteq\nat$ tal que $A\neq\phi$ tiene un primer elemento.
+    \item Las sucesiones que dependen de valores ya conocidos se llaman \textbf{sucesiones recursivas} o sucesiones por recurrencia.
+    \item Una \textbf{fórmula cerrada} es una formula en la que el elemento $a_n$ de una sucesión no depende de los anteriores, sino solo de $n$.
+    \item \textbf{Función cerrada}: Dado un conjunto $A$ cualquiera, una \textit{r-upla} $(a_1,\dots,a_r)$ de elementos de $A$ y una función $\func{G}{\nat\times A\times\dots\times A}{A}$ es una función $\func{f}{\nat}{A}$ tal que:
+    \begin{itemize}
+        \item $f(i) = a_i$ para $1\leq i\leq r$ y
+        \item $f(n) = G(n, f(n-1), f(n-2),\dots,f(n-r))$
+    \end{itemize}
+    \item \textbf{Identidad de Casini:} $F_{n+1}\cdot F_{n-1} - F_n^2 = (-1)^n$
+    \item \textbf{Término general de la sucesión de Fibonacci:}
+    \begin{equation*}
+        \Phi = \frac{1+\sqrt{5}}{2} \text{ y } F_n = \frac{1}{\sqrt{5}}\left(\Phi^n - \overline{\Phi}^n\right)
+    \end{equation*}
+        \item \textbf{Término general de la sucesión de Lucas:}
+    \begin{equation*}
+        a_n = 2^n + 3^n
+    \end{equation*}
+\end{itemize}
+
+\subsection{Los números naturales}
+\subsubsection{Axiomas de Peano}
+El conjunto de números naturales es un conjunto que cumple los siguientes axiomas:
+\begin{enumerate}
+    \item 1 es un número natural
+    \item Existe una función \textit{sucesor} $S$ definida sobre los números naturales que satisface:
+    \begin{itemize}
+        \item $\forall~n\in\nat$, $S(n)$ es un número natural.
+        \item $\forall~n\in\nat$, $S(n) = 1$ es falso. Es decir, $1$ no es sucesor de ningún $n\in\nat$
+        \item $\forall~n,m\in\nat$, si $S(n) = S(m)$, entonces $n=m$. ($S$ es inyectiva)
+    \end{itemize}
+    \item Si $K$ es un conjunto cualquiera que satisface $1\in K$ y $\forall n\in\nat, n\in K\to S(n)\in K$, entonces $K =\nat$
+\end{enumerate}
+\subsection{El número combinatorio}
+El número combinatorio es la cantidad de subconjuntos distintos de $k$ elementos que contiene un conjunto $A$ de $n$ elementos y se define de la siguiente manera:
+
+$$\binom{n}{k} = \frac{n!}{k!(n-k)!}$$
+
+\subsubsection{Propiedades}
+
+\begin{itemize}
+    \begin{multicols}{2}
+    \item $\binom{0}{0} = 1$
+    \item $\binom{n}{0} = \binom{n}{n} = 1$
+    \item $\binom{n}{1} = \binom{n}{n-1} = n$
+    \item $\binom{n}{k} = \binom{n}{n-k}$
+    \item $\sum_{i=0}^{n}\binom{n}{i} = 2^n$
+    \item $\binom{n+1}{k} = \binom{n}{k-1} + \binom{n}{k}$
+    \item \textbf{Binomio de Newton} $$(x+y)^n = \sum_{k=0}^{n}\binom{n}{k}x^{n-k}y^{k}$$
+    \item $\binom{2n}{n}\leq(n+1)!$
+    \item $\sum_{k=0}^{2n}\binom{2n}{k} = 4^n$
+    \end{multicols}
+\end{itemize}
+
+\subsubsection{Ejemplo de ejercicio}
+\textbf{Enunciado:} Si tenemos $n$ bolitas indistinguibles y las queremos repartir en $k$ cajas, ¿Cuantas formas posibles hay de hacerlo?
+
+\textbf{Solución:}
+\begin{equation*}
+    \binom{n+k-1}{n}
+\end{equation*}

@@ -1,0 +1,741 @@
+\input{../document.setup}
+
+\title{Análisis Matemático II}
+
+\author{Zamboni, Gianfranco}
+
+\input{../page.setup}
+
+\input{macros}
+\begin{document}
+
+
+\maketitle
+
+Este apunte no tiene demostraciones
+\tableofcontents
+
+\newpage
+\setcounter{page}{1}
+
+\section{Repaso}
+\subsection{Intervalos}
+Sea $A$ un intervalo en los $\reales$,
+ 
+\paragraph{Cota superior:} Es un número  $M\in\reales$ tal que para todo $a\in A$, $a\leq M$.
+
+\paragraph{Cota inferior:} Es un número real $m$ tal que para todo $a\in A$, $a\geq m$.
+
+\paragraph{Supremo:} Es un $s\in\reales$ tal que es cota superior de $A$ y además si $s'$ es otra cota superior de $A$, entonces vale que $s\leq s'$. Notamos $\texttt{sup}{A} = s$.
+
+\paragraph{Ínfimo:} Es un $i\in\reales$ tal que $i$ es cota inferior de $A$ y además si $i'$ es otra cota inferior, entonces $i' \leq i$. Notamos $\texttt{inf}{A} = i$
+
+\paragraph{Conjunto acotado superiormente: } Es un conjunto que tiene cota superior.
+
+\paragraph{Conjunto acotado inferiormente: } Es un conjunto que tiene cota inferior.
+
+\paragraph{Conjunto acotado:} Es un conjunto que está acotado tanto superiormente como inferiormente.
+
+\paragraph{Propiedades:}
+\begin{itemize}
+\item Si $A\neq\phi\in\reales$ está acotado superiormente, entonces $A$ tiene supremo en $\reales$
+\item El supremo de un conjunto es único
+\item Si $A\neq\phi\in\reales$ está acotado inferiormente, entonces $A$ tiene ínfimo en $\reales$
+\item El ínfimo de un conjunto es único
+\end{itemize}
+
+\subsection{Sucesiones}
+\paragraph{Suceción: } Es una función $\func{f}{\nat}{\reales}$, $f(k) = x_k$. Para indicar que $f$ describe una sucesión la notamos como $(x_k)_{\leq 1}$
+ 
+\paragraph{Sucesión convergente: } $X_k$ es una sucesión convergente si existe un $l\in\reales$ tal que, dado un $\epsilon > 0$, existe un $k_0\in\nat$ tal que $\forall~k\geq k_0$, vale que $|x_k - l| < \epsilon$.
+
+\begin{center}
+\begin{minipage}{0.9\textwidth}
+En castellano: ''Una sucesión es convergente a un número $l$, si a partir de cierto elemento $x_k$, los valores de la sucesión se acercan cada vez más a $x$".
+\end{minipage}
+\end{center}
+
+\paragraph{Subsucesión: } $S'_n$ es una subsucesión de $S_n$ si se puede construir a partir de una función $\func{f}{\nat}{\nat}$ estrictamente creciente tal que $S'_n = S_{f(n)}$
+
+\paragraph{Sucesión creciente:} $S$ es \textbf{creciente} si $\forall~k\in\nat$, $x_k\leq x_{k+1}$.
+
+\paragraph{Propiedades:}
+\begin{itemize}
+\item Si $S$ converge a un número $l$, entonces $S$ está acotada y notamos: 
+\begin{align*}
+\lim_{k\to\infty} x_k = l
+\end{align*}
+
+\item Si $(X_n)$ es monótona creciente y está acotada superiormente, entonces $$\lim_{n\rightarrow\infty} x_n = \texttt{sup}{X_n}$$
+\item Si $(X_n)$ es monótona decreciente y está acotada inferiormente, entonces $$\lim_{n\rightarrow\infty} x_n = \texttt{inf}{X_n}$$
+\item La subsucesión de una sucesión convergente, si converge, converge al mismo punto.
+\item Si $S$ está acotada superiormente, entonces existe una subsucesión creciente de elementos de $S$ que converge hacia $\texttt{sup}{S} = s$.
+\item Toda sucesión $S = \{x_k\}_{k\geq1}$ creciente y acotada es convergentes hacia $\texttt{sup}{S}$
+\item Toda sucesión $S = \{x_k\}_{k\geq1}$ decreciente y acotada es convergentes hacia $\texttt{inf}{S}$
+\item Sean $A$ y $B$ dos sucesiones no vacias y acodtadas:
+\begin{itemize}
+\item Si $A\subset B$ entonces, $\texttt{sup}{A}\leq\texttt{sup}{B}$ y $\texttt{inf}{A}\geq\texttt{inf}{B}$
+\item $\texttt{sup}{A+B} \leq \texttt{sup}{A}+ \texttt{sup}{B}$
+\end{itemize} 
+\end{itemize}
+
+\subsubsection{Binomio de Newton}
+\begin{equation*}
+(a+b)^n = \sum_{k = 0}^n\binom{m}{k}a^{m-k}b^k \text{ donde } \binom{m}{k} = \frac{m!}{k!(m-k)!}
+\end{equation*}
+
+\subsubsection{Propiedad}
+\begin{equation*}
+\left( 1 + \frac{1}{m}\right)^m < \left(1 - \frac{1}{m+1}\right)^{m+1} \text{ y } \lim_{m\to\infty} \left( 1 + \frac{1}{m}\right)^m = e 
+\end{equation*}
+
+\subsubsection{Propiedades del límite}
+Sean $X_n$ y $Y_n$ sucesiones tales que $\lim_{n\to\infty} X_n = x$ y $\lim_{n\to\infty} Y_n = y$ existen, entonces vale:
+
+\begin{itemize}
+\item $\lim_{n\to\infty}\limits(X_n + Y_n) = x + y$
+\item $\lim_{n\to\infty}\limits(X_nY_n) = xy$
+\item Si $y\neq0$, entonces, existe $n_0$ tal que  $y_{n}\neq 0$ para todo $n\geq n_0$ y la sucesión $\left(\frac{X_n}{Y_n}\right)$ está definida y vale que
+\begin{equation*}
+\lim_{n\to\infty} \frac{X_n}{Y_n} = \frac{x}{y}
+\end{equation*}
+\item $\lim_{n\to\infty}\limits X_n = x \iff \lim_{n\to\infty}\limits (X_n - x) = 0 $
+\end{itemize}
+
+\subsection{Métricas y topologías \texorpdfstring{$\reales^n$}{en el plano}}
+Dados $\vec{x} = (x_1,\dots,x_n)$ e $\vec{y}=(y_1,\dots,y_n)$ dos puntos de $	\reales^n$, 
+\begin{itemize}
+\begin{multicols}{2}
+\item $\vec{x} + \vec{y} = (x_1 + y_1,\dots, x_n + y_n)$
+\item Sea $\lambda\in\reales$, entonces $\lambda\vec{x} = (\lambda x_1,\dots, \lambda x_n
+)$
+\item \textbf{Norma euclídea:} $\|\vec{x}\|^2 = x_1^2 + \dots + x_2^2$
+\item \textbf{Distancia:} $\vec{x}$ e $\vec{y}$ es $d(x,y) = \|\vec{x}-\vec{y}\|$
+\item \textbf{Producto interno:} $v\cdot w = \sum_{i=0}\limits^n\limits v_iw_i$
+\end{multicols}
+\item \textbf{Base canónica:} La base canónica de $\reales^n$ son los vectores $(1,0,\dots,0),\dots,(0,\dots,0,1)$
+\item \textbf{Norma infinito:} $\|x\|_{\infty} = max\{|x_i| : 1\leq i \leq n\}$
+\end{itemize}
+
+\paragraph{Propiedades}
+\begin{itemize}
+\begin{multicols}{2}
+\item $\|\lambda\vec{x}\| = |\lambda|\|\vec{x}\|$
+\item $\|\vec{x}\| = 0 \iff \vec{x} = (0,\dots,0)$
+\item $\|\vec{x}\|^2 = \vec{x}\vec{x}$
+\item $d(x,y)=0\iff \|x-y\| = 0  \iff x = y$
+\end{multicols}
+\item \textbf{Desigualdad de Cauchy-Schwarz: }$\|\vec{x} + \vec{y}\| \leq \|\vec{x}\| + \|\vec{y}\|$
+\begin{multicols}{2}
+\item $d(x,z)\leq d(x,y) + d(y,z)$
+\item $\|xy\|\leq \|x\| + \|y\|$
+\item Si $x = (x_1,\dots,x_n)$, entonces $|x_i|\leq \|x\|$
+\item $v\cdot w = \|v\|\|w\|\cos\alpha$ con $\alpha$ el grado entre $w$ y $v$.
+\item $v\cdot w = 0 \iff v\bot w$ ($v$ y $w$ son perpendiculares)
+\end{multicols}
+\end{itemize}
+
+%\subsubsection{Nociones geométricas}
+Sea $p\in\reales^n$ y $r\in\reales_{>0}$, definimos:
+
+\paragraph{Bola abierta:} $B(p,r) = B_r(p) = \{ x\in\reales^n~/~\|x-p\| < r\}$ es el conjunto de puntos en $\reales^n$ que esta \\ a distancia menor a $r$ de $p$.
+
+\paragraph{Conjunto abierto:} Es un conjunto de puntos $U\subset\reales^n$ tal que $\forall~x\in U$, $\exists~B(x,r_x)\subset U$.
+
+Sea $A\in\reales^n$ un conjunto abierto, entonces $a$ es:
+\begin{itemize}
+\item un \textbf{punto interior} de $A$ si $\exists~\epsilon>0$ tal que $B_\epsilon(a)\subset A$.
+\item un \textbf{punto exterior} de $A$ si a no es un punto interior.
+\item un \textbf{punto frontera} si $\forall~\epsilon>0$, $B_\epsilon(a)\cap A\neq\phi$ y $B_\epsilon(a)\cap A^c \neq\phi$.
+\end{itemize}
+
+\paragraph{Borde:} $\partial A = \{ x\in\reales^n~/~x\text{ es frontera de } A\}$
+
+\paragraph{Clausura:} $\overline{A} = A \cup\partial A $.
+
+\paragraph{Conjunto cerrado: } Es un conjunto de puntos tal que su complemento es abierto.
+
+\paragraph{Conjunto acotado:} Un conjunto $A$ es acotado si existe $r>0$ tal que $A\subset B_r(0)$
+
+\paragraph{Conjunto compacto: } Es un conjunto cerrado y acotado.
+
+%\subsubsection{Casos particulares y propiedades}
+Sea $p\in\reales^2$, $q\in\reales^3$ y $r\in\reales_{>0}$,
+\begin{itemize}
+\item $\partial B_r(p)$ es un círculo de radio $r$ centrado en el punto $p$. Si $r=1$, entonces se llama \textbf{círculo unidad}.
+\item $\partial B_r(q)$ es el conjunto de puntos que forman una esfera de radio $r$ centrada en el punto $q$. Si $r=1$, entonces se llama \textbf{esfera unidad}.
+\item $B_r(p)\subset\reales^2$ es un \textbf{disco} en $\reales^2$
+\item $B_r(p)\subset\reales^2$, es un conjunto abierto de $\reales^2$.
+\item $A$ es cerrado $\iff$ $A^c$ es abierto.
+\item Para todo $A\in\reales^n$, $A\cup\partial A$ es cerrado.
+\item $\{x\in\reales^n~/~x_n > 0\}$ es un conjunto abierto de los $\reales^n$.
+\item $\{ U_j : j\in J\}$ un familia de conjunto abiertos, entonces $U = \bigcup_{j\in J}\limits$ es también un conjunto abierto.
+\item Si $\{U_1,\dots,U_k\}$ es un conjunto finito de conjuntos abiertos, entonces $\bigcap_{j=1}\limits^k\limits U_j$ es un conjunto abierto.
+\item Sea $x\in\partial A$, entonces, para todo $\epsilon>0$, $B_\epsilon(x)$ contiene al menos un punto de $A$ y al menos un punto $z\notin A$.
+\end{itemize}
+
+%\subsubsection{Sucesiones convergentes en \texorpdfstring{$\reales^n$}{el espacio}}
+$X_k\subset\reales^n$ es convergente si existe $x\in\reales^n$ tal para todo $\epsilon >0$, existe $k_0\in\nat$ tal que $\forall~ k\geq k_0$, $\|x_k - x\| < \epsilon$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Si existe $\lim_{k\rightarrow 0}\limits X_k = x\in\reales^n$, entonces $x$ es único.
+\item Una subsucesión de una sucesión convergente en $\reales^n$, si converge, es convergente hacia el mismo límite.
+\item Toda sucesión convergente en $\reales^n$ es acotada.
+\item Toda sucesión acotada en $\reales^n$ tiene una subsucesión convergente.
+\item $F$ es un conjunto cerrado si para toda sucesión $(X_k)_{k\geq 1}$ contenida en $F$ con $\lim_{k\rightarrow\infty}\limits X_k = x$, vale que $x\in F$.
+\end{itemize}
+\paragraph{Teorema de compacidad:} Sea $C$ subconjunto ordenado y acotado en $\reales^n$, entonces vale que toda sucesión $(X_k)_{k\geq 1}\in C$, tiene una subsucesión $X_{k'}$ convergente hacia un $x\in C$.
+\newpage
+\section{\texorpdfstring{Funciones de $\reales^n$ en $\reales^k$}{Funciones de varias variables}}
+Sea $\func{f}{\reales^n}{\reales^m}$, definimos:
+\paragraph{Dominio:} Conjunto de puntos de $\reales^n$ para los cuales la función $f$ está definida. Lo notamos $Dom(f)$
+\paragraph{Imagen:} Conjunto de puntos $Im(f)=\{y\in\reales^m : \exists~x\in Dom(f) \text{ tal que } f(x) = y\}$
+\paragraph{Composición de funciones: } Si $\func{g}{\reales^k}{\reales^n}$, entonces se puede definir $\func{f\circ g}{\reales^k}{\reales^m}$ tal que $(f\circ g)(x) = f(g(x))$.
+\paragraph{Curva:} Función $\func{\alpha}{I}{\reales^n}$, donde $I$ es algún subconjunto (en general un intervalo) de $\reales$.
+\paragraph{Gráfico: } Subconjunto de $\reales^{n+1}$ formado por los pares ordenados $(X; f(X))$ donde $X\in Dom(f)$. Lo denotamos $Gr(f)\subset\reales^{n+1}$.
+\paragraph{Superficie de nivel:} Dada $\func{f}{R^n}{\reales}$ y un número real $c$, es el subconjunto del dominio dado por $S_c(f) = \{x\in Dom(f) : f(x) = c\}$
+\paragraph{Límite:} Sea $\func{f}{\reales^n}{\reales}$ y $P\in\reales^n$. $l\in\reales$ es el límite de $f$ cuando $X$ tiende a $P$ ( y lo notamos $\lim_{X\rightarrow P} f(X) = l$) si para todo $\epsilon > 0$ existe $\delta > 0$ tal que $0 < \|X-P\| < \delta$ entonces $|f(X) - l| < \epsilon$.
+
+\paragraph{Converge a}: Se dice que $f$ converge $L$ cuando $X\to P$, si $\lim_{X\to P}\limits f(X) = L$
+
+\paragraph{Diverge:} Se dice que $f$ diverge en $P$ cuando $\lim_{X\to P}\limits f(X) = \infty$ 
+
+\paragraph{Propiedades}:
+Sea $\func{f}{A\in\reales^n}{\reales^m}$ una función, $\func{\alpha}{I\in\reales}{A}$ y $
+\func{\beta}{J\in\reales}{A}$ dos curvas en $R^n$:
+\begin{itemize}
+\item Sea $\func{g}{\reales^k}{\reales^n}$ tal que $\lim_{X\to P}\limits g(X) = L_1\in\reales^n$, Si vale que $\lim_{Y\to L_1}\limits f(Y) = L_2$, entonces\\ $\lim_{X\to P}\limits (f\circ g)(X) = L_2$, siempre y cuando $F(X)\neq L_1$ para $X\neq P$.
+\item Si $A$ y $B$ son tales que 
+$\lim_{t\to t_0}\limits \alpha(t) = P$ y $\lim_{t\to t_1}\limits \beta(t) = P$ y $\alpha(t) \neq P$ para $t\neq t_0$ y $\beta(t)\neq P$ para $t\neq t_1$. Si pasa que $\lim_{t\to t_0}\limits  F(\alpha(t)) \neq \lim_{t\to t_1}\limits  f(\beta(t))$, entonces no existe el límite $\lim_{X\to P}\limits f(X)$
+\begin{center}
+\begin{minipage}{0.9\textwidth}
+En castellano: ''Dadas dos curvas $\alpha$ y $\beta$ que convergen a $P$ tales que valen $P$ en único punto, si  $f\circ \alpha$ y $f\circ \beta$ tienen distintos limites, entonces no existe el límite de $f$ en el punto $P$".
+\end{minipage}
+\end{center}
+\item Sean $P\in\overline{A}$, y $L\in\reales^m$, las siguientes afirmaciones son equivalentes:
+\begin{itemize}
+\item $\lim_{X\to P}f(X) = L$
+\item Para toda sucesión de puntos $P_k\in A$ tal que $P_k\neq P$ y $P_k\to P$, se tiene que $\lim_{k\to\infty}P_k = L$
+\end{itemize}
+
+
+\item Sean $(P_k)$ y $P'_k$ dos sucesiones de puntos de $A$ tales que tienden a $P$,sucesiones de puntos de A, tales que ambas tienden a P, y las
+sucesiones $(Q_k) = f(P_k)$ y $(Q'_k) = f(P'k)$ tienen límites distintos, entonces no existe el límite $\lim_{X\to P} f(X)$.
+
+\item $f$ tiende a $L$ cuando $X\to P$ si y solo si cada coordenada de $f$ converge a la coordenada correspondiente de $L$
+\end{itemize}
+
+\subsection{Continuidad}
+Sean $\func{f}{A\subset\reales^n}{\reales^m}$:
+
+\paragraph{Continuidad en un punto:} $f$ es continua en $P\in A$ si $\lim_{X\to P} f(X) = f(P)$.
+
+\paragraph{Continuidad en el dominio:} $f$ es continua, si $f$ es continua en $P$ para todo $P\in A$.
+
+\paragraph{Conjunto conexo por arcos: } Conjunto $C$ que verifica que para cualquier punto $p,q\in C$ hay una curva $\alpha:[a,b]\to C$ continua tal que $\alpha(a)=p$ y $\alpha(b) = q$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Si $f(x_1,\dots,x_n) = (f_1(x_1,\dots,x_n),\dots, f_m(x_1,\dots,x_n))$, entonce $f$ es continua en $P$ si y solo si $f_i$ es continua en $P$ para $1\leq i\leq n$.
+\item Sea $\func{g}{B\subset\reales^k}{\reales^n}$, si $g$ y $f$ son continuas, entonces $f\circ g$ es continua en $Dom(f\circ g)$.
+\item La suma, producto y cociente de funciones continuas en $P$, resultan ser funciones continuas en $P$.
+
+
+
+\item Sean $\func{f}{A\subset\reales^n}{\reales^m}$, $f$ es continua en $P$ si y solo sí para toda sucesión $\{X_k\}$ en $\reales^n$, tal que $\lim_{k\to\infty} X_k = P$, se verifica que $\lim_{k\to\infty} f(X_k) = f(P)$.
+
+
+\item Sea $\func{f}{A\subset\reales^n}{\reales}$, una función continua en $P\in\reales^n$ y $X_k$ una sucesión en los reales, entonces:
+\begin{itemize}
+\item Si $X_k\to p$ con $X_k$ una sucesión en $A$ tal que $f(X_k) < 0$, entonces $f(P)\leq 0$.
+\item Si $X_k\to p$ con $X_k$ una sucesión en $A$ tal que $f(X_k) > 0$, entonces $f(P)\geq 0$.
+\item Si $f(p) > 0$, entonces existe una bola $B(x_0, r)$ con $r>0$ tal que si $x\in B(x_0,r)\cap A$, $f(x) \geq 0$
+\item Si $f(p) <  0$, entonces existe una bola $B(x_0, r)$ con $r>0$ tal que si $x\in B(x_0,r)\cap A$, $f(x) \leq 0$
+\end{itemize}
+\item \textbf{Teorema de Bolzano:} Dada $f:[a,b]\to\reales$ continua con $f(a)f(b) < 0$ ($f(a)$ y $f(b)$ de signos distintos), entonces
+existe $c\in(a,b)$ tal que $f(c) = 0$.
+
+\item \textbf{Teorema de Bolzano en $\reales^n$:} Sea $f:A\subseteq\reales^n\to\reales$, $A$ arcoconexo y $f$ continua en $A$, si existen $P,Q\in A$ tal que $f(P)f(Q) < 0$, entonces existe $R\in A$ tal que $f(R) = 0$
+
+\item \textbf{Teorema de valores intermedios: } Sea $A\subset\reales^2$ arco-conexo y $f:A\to\reales$ continua. Si $f(P) < d < f(Q)$ con $P,Q\in A$ y $d\in\reales$, entonces existe $R\in A$ tal que $f(R) = d$
+\end{itemize}
+
+
+\newpage
+\section{Calculo diferencial en varias variables}
+\subsection{Repaso Álgebra}
+\paragraph{Recta:} $L(x) = \lambda x + p$
+
+\paragraph{Plano:} $\Pi: \alpha v + \beta w + p$ donde $v$ y $w$ son linealmente independientes.
+
+\paragraph{Transformación lineal:} Sea $T:\reales^n\to\reales^m$ es una transformación lineal si:
+\begin{itemize}
+\item $T(v+w) = T(v) + T(w)$
+\item $T(\lambda v) = \lambda T(w)$
+\end{itemize}
+
+\subsubsection{Propiedades}
+\begin{itemize}[resume]
+\item Sean $L_1(x) = \lambda v + p$ y $L_2(x) = \lambda'w + q$ son paralelas $\iff v=kw$ 
+\item Sean $L_1(x) = \lambda v + p$ y $L_2(x) = \lambda'w + q$ son perpendiculares $\iff v\bot w$
+\item Sea $\Pi: \alpha v + \beta w + p$ un plano, entonces $v\times w$ es ortogonal a $v$ y a $w$.
+\item Sea $\Pi: \alpha v + \beta w + p$ un plano, entonces $x\in\Pi\iff(x-p)\bot N\iff N(x-p)=0 \iff Nx = Np$ con $N$ la normal del plano.
+\item Para describir una recta en $\reales^3$ se necesitan dos ecuaciones.
+\item Dada $T:\reales^n\to\reales^m$ una transformación lineal, $\exists!~M\in\reales^{m\times n}~/~T(v) = Mv$
+\end{itemize}
+
+\subsection{En los reales}
+Una función $\func{f}{\reales}{\reales}$ es derivable en $a$ si existe el siguiente límite:
+
+$$\lim_{h\to 0} \frac{f(a+h) - a}{h} = l$$.
+
+En dicho caso $l$ es la derivada de $f$ en $a$ y notamos $f'(a) = l$
+
+\paragraph{Teorema de Fermat: } Si $f$ es derivable en $c\in(a,b)$ y $c$ es un extremo local de $f$, entonces $f'(c) = 0$.
+
+\paragraph{Teorema de Rolle:} Sea $\func{f}{[a,b]}{\reales}$ continua y derivable en $(a,b)$ tal que $f(a) = f(b)$, entonces existe $c\in(a,b)~/~f'(c) = 0$
+
+\paragraph{Teorema de Lagrange:} Si $f$ es continua en $[a,b]$ y derivable en $(a, b)$ entonces existe $c\in(a, b)$ tal que
+$$f'(c) = \frac{f(b)-f(a)}{b-a}$$
+
+\paragraph{Teorema de Cauchy:} Sean $f,g:[a,b]\to\reales$ continuas y derivables en $(a,b)$ entonces existe $c$ tal que $g'(c)(f(b)-f(a)) = f'(c)(g(a)-g(b))$
+
+\subsubsection{Polinomio de Taylor}
+Sea $F:I\subset\reales\to\reales$, $a\in I$, $I$ intervalo abierto y $f$ $n$-veces derivable en $I$, entonces, llamamos \textbf{polinomio de Taylor} de $f$ de orden $n$ en $a$ al siguiente polinomio:
+
+$$P_n(x) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2}(x-a)^2 + \dots + \frac{f^{(k)}(a)}{k!}(x-a)^k + \dots + \frac{f^{(n)}(a)}{n!}(x-a)^n$$
+
+\paragraph{Propieades}
+\begin{itemize}
+\item $P_n$ es el único polinomio de grado $n$ que verifica: $P_n(a) = f(A)$, $P'_n(a) = f'(a),\dots,P^{(n)}_n=f^{(n)}(a)$
+\item Es el único polinomio que cumple que, dado $R_n(x)  = f(x) - P_n(x)$ se verifica:
+$$\lim_{x\to a}\frac{R_n(x)}{(x-a)^n} = 0$$
+\end{itemize}
+\subsubsection{Otras propiedades}
+\begin{itemize}
+\item Si $f:\reales\to\reales$ es derivable en $a$, entonces $f$ es continua en $a$.
+\end{itemize}
+
+\subsection{\texorpdfstring{En $R^n$}{En el espacio}}
+\paragraph{Derivada de una curva: } Sea $\alpha:(a,b)\to\reales^n$ una curva en el intervalo $(a,b)$ entonces la derivada de $\alpha$ en $t_0$ es el vector que se obtiene derivando cada coordenada de $\alpha(t)$ en $t_0$.
+
+\paragraph{Curva regular}: Sea $\alpha:\reales\to\reales^n$ una curva en $\reales^n$, $\alpha$ es regular si cada una de sus coordenadas es una función derivable y ademas, para todo $t\in\reales$, ninguna derivada es cero.
+
+\paragraph{Dirección:} Un vector $v\in\reales^n$ es considerado una dirección si $\|v\| = 1$.
+
+\paragraph{Derivadas direccionales: } Sea $V\in\reales^2$, $\|v\| = 1$, sea $f:A\subset\reales^n\to\reales$ y $P\in A^0$, entonces el limite:
+$$\lim_{t\to 0}\frac{f(P + tV) - f(P)}{t}$$
+(si existe) es la derivada direccional de $f$ en $P$ en la dirección $V$ y lo notamos:
+$$\frac{\partial f}{\partial v} \text{ ó } f_V(P)$$
+
+\paragraph{Derivadas parciales: } Sean $E_1,\dots,E_n$ los vectores de la base canónica, la i-ésima derivada parcial de $f$ en $P$ es la derivada direccional de $f$ en la dirección $E_i$. Y la notamos como $\frac{\partial f}{\partial x_i}$
+
+\paragraph{Hiperplano tangente: } El hiperplano tangente en $P$ de una función $f$ es el plano generado por todas las derivadas parciales de $f$ en $P$. En otras palabras es un plano que pasa por $(P, f(p))$ y está generado por $\{(E_0, f_{x_0}(P)),\dots,(E_n, f_{x_n}(P))\}$. La fórmula de este plano es de la forma $\Pi_P: <N, Y-Q> = 0$ donde $N = (f_{x_0}(P),\dots,f_{x_n}(P),-1)$ es la normal del plano y $Q = (X, x_{n+1}) - (P,f(P))$
+
+\paragraph{Deferenciabilidad:} Sea $f:A\subset\reales^n\to\reales$ y $P\in A^0$, si existen las derivadas parciales de $f$ en $P$, decimos que $f$ es diferenciable en $P$ si existe
+\begin{equation*}
+    \lim_{X\to P} \frac{|f(X)-f(P) - f_{x_1}(P)(x_1-p_1) - \dots - f_{x_n}(P)(x_n-p_n)|}{
+    \|X - P\|}
+\end{equation*}
+En este caso a la función $(x_1,\dots,x_n)\to f_{x_1}(P)(x_1-p_1) +\dots+ f_{x_n}(P)(x_n-p_n) $ la denominamos \textbf{diferencial de} $f$ en $P$ y la notamos $Df_p$
+
+Si $A$ es abierto y $f$ es diferenciable en en todos los puntos de $A$, entonces $f$ es diferenciable en $A$.
+
+\paragraph{Gradiente:} Vector formado por todas las derivadas parciales de $f$ en un punto $P$, lo notamos $\triangledown f(P)$
+\paragraph{Propiedades}
+\begin{itemize}[resume]
+    \item $Df_P(X) = <\triangledown f(P), X>$
+    \item La ecuación del plano tangente a $P$ es $\Pi_P: f(P) + <\triangledown f(P), X-P>$
+    \item \textbf{Cauchy-Schwartz:} $|Df_p(X)| = |<\triangledown f(P),X>|\leq \|\triangledown f(P)\|\|X\|$
+    \item Si $f:\reales^2\to\reales$ es diferenciable $p = (x_0,y_0)$, entonces la dirección de máximo crecimiento es $\triangledown f(p)$ y la dirección de mínimo crecimiento es $-\triangledown f(p)$
+
+ \item Que $f$ sea diferenciable en $P$ es un requisito necesario para que existan las derivadas parciales de $f$ en $P$.
+    \item Si $n=1$, entonces vale que $f$ es diferenciable en $a\in A^0 \iff$ existe $f'(a)$
+    
+    \item Si $f:\reales\to\reales$ es derivable en $x_0$, entonces el gráfico de $f$ admite una recta tangente en $(x_0, f(x_0))$
+    
+    \item Sea $f:\reales^2\to\reales$ diferenciable en $(x_0,y_0)$, entonces el gráfico de $f$ admite un plano tangente en el punto $(x_0,y_0, f(x_0,y_0))$
+
+
+    \item Sea $f:A\subseteq\reales^n\to\reales$ diferenciable en $P\in A^{\circ}$, entonces $f$ es continua en $P$.
+    
+    \item Sea $f:A\subset\reales^n\to\reales$, $P\in A^0$, si existe una única transformación lineal $T:\reales^n\to\reales$ tal que $f$ es aproximable al punto $p$ por $T$ ($\lim_{x\to p}\frac{f(x)-f(p)-T(x-p)}{\|x-p\|} = 0$) entonces $T = Df_p$ y existen todas las derivadas parciales de $f$ en $P$.
+       \item Si $f$ es diferenciable en $p$, $v\in\reales^n$, $\|v\|=1$, entonces $\exists~\frac{\partial f}{\partial v}(p) = Df_p(v) = <\triangledown f(P), v>$
+    
+    \item Sean $f,g:A\subset\reales\to\reales^n$, $p\in A^0$ diferenciables en $p$:
+    \begin{itemize}
+        \item $f+g$ es diferenciable en $p$
+        \item $f\cdot g$ es diferenciable en $p$
+        \item Si $g(p)\neq 0\Rightarrow \frac{f}{g}$ es diferenciable en $p$ 
+    \end{itemize}
+    
+    \item Si $T:\reales^n\to\reales$ es una transformación lineal, entonces $T$ es diferenciable en $p~\forall~p\in\reales^n$ y $DT_p = T$
+    
+    \item Sea $f:A\subset\reales^n\to\reales$, $A$ abierto tal que en cada $q\in A$, existen $f_{x_1}(q),f_{x_2}(q),\dots,f_{x_n}(q)$. Sea $p\in A$, si $f_{x_1},f_{x_2},\dots,f_{x_n}$ son continuas en $p$, entonces $f$ es diferenciable en $p$.
+	
+	\item Si $f:A\subset\reales^n\to\reales^m$, el $Df_p\in\reales^{m\times n}$ y $$Df_p =\left(
+	\begin{array}{c}
+	    \triangledown f_1(p) \\
+	    \triangledown f_2(p) \\
+	    \vdots \\
+	    \triangledown f_m(p) \\
+	\end{array}
+	\right)
+	$$
+	\end{itemize}
+	
+\subsection{Regla de la cadena}
+\subsubsection{Lemas Previos}
+\begin{itemize}
+\item Sea $T:\reales^n\to\reales^m$ una transformación lineal, entonces existe $c\geq 0~/~x\in\reales^n$ y $\|T\| \leq c\|x\|$
+
+\item $f:A\subset\reales^n\to\reales^m$ es diferenciable en $p$ entonces existen una $B_r(p)$ y una constante $c_p\geq 0$ tal que $\|F(X)-F(P)\| \leq c\|x\|$ para todo $x\in B_r(p)$
+\end{itemize}
+\subsubsection{Regla de la cadena}
+Sean $F: A\subset\reales^n\to\reales^m$ difereniable en $p\in A^0$ y $G: B\subset\reales^m\to\reales^k$ diferenciable en $q=F(p)\in B$. Entonces $G\circ F$ es diferenciable en $p$ y vale: $$D(G\circ F)(p) = DG(q) \circ DF(p)$$
+Esta composición, se puede ver como la multiplicación de las matrices que representan a dichos diferenciales.
+
+\subsection{Polinomio de Taylor}
+
+\paragraph{Definición:}Decimos que $f:A\subset\reales^n\to\reales$ es $C^2$ en $p$ si $f$ tiene derivadas primeras (todas) y segundas (todas) y todas son continuas en $p$. Y decimos que $f$ es $C^3$ en $p$ si existen sus derivadas terceras y estas son continuas en $p$.
+
+\paragraph{Matriz Hessiana:} Si $f$ tiene derivadas segundas en $p$, llamaremos matriz de derivadas segundas de $f$ en $p$ ó matriz Hessiana de $f(p)$ a:
+
+\begin{equation}
+    Hf(p) = \left(
+    \begin{array}{c c c}
+        f_{x_1x_2(p)} & \dots & f_{x_1x_n(p)}  \\
+         \vdots& \ddots & \vdots \\
+        f_{x_1x_2(p)} & \dots & f_{x_1x_n(p)}
+    \end{array}
+    \right)
+\end{equation}
+
+\paragraph{Polinomio de Taylor de grado 2:}  $$P_2(x) = f(p) + \triangledown f(p)(x-p) + \frac{1}{2}(x-p)^tf(p)(x-p)$$
+\
+\subsubsection{Propiedades}
+
+\begin{itemize}
+\item Si $f$ es $C^2$ en p, entonces $f_{x_ix_j}(p) = f_{x_jx_i}(p)$
+\item $f$ es $C^3$ en $p\iff f_{x_1},f_{x_2},\dots,f_{x_n}$ son $C^2$.
+\item \textbf{Teorema de Lagrange:} Sea $f:A\subset\reales^n\to\reales^m$, $A$ convexo y abierto y $f$ diferenciable en $A$. Si $p,q\in A$ entonces hay un punto $c$ en el segmento que une a $p$ con $q$ ($c\neq p,q$) tal que $f(q)-f(p) = Df(c)(q-p)$
+
+\item Sea $f:B\subset\reales^n\to\reales$, si $f$ es $C^3$ en $B$, entonces el error $R_2(x) = f(x) - P_2(x)$ verifica que $$\lim_{x\to p} \frac{R_2(x)}{\|x-p\|^2} = 0$$ y además $$R_2(x) = \frac{1}{3!}\sum_{i,j,k=1}^n f_{x_ix_jx_k}(c)(x_i - p_i)(x_j-p_j)(x_k-p_k)$$
+siendo $c$ algún punto del segmento que une a $x$ con $p$.
+
+\item $\int_a^b h(t)g(t)dt = h(c)\int_a^b g(t)dt$ para algún $c$ en el intervalo $[a,b]$
+\end{itemize}
+\newpage
+
+\section{Extremos de funciones de varias variables}
+Sea $f:A\subset\reales^n\to\reales$, decimos que en $p\in A$ hay un \textbf{máximo} para $f$ si $f(p)\geq f(x)$ para todo $x\in A$. Y es \textbf{máximo estricto}, global o absoluto si $f(p) > f(x)~\forall~x\in A$.
+
+\paragraph{Máximo local:} En $g\in A$ hay un máximo local (o relativo) de $f$ si hay $r>0$ tal que $f$ restringida a $B_r(g)\cap A$, tiene un máximo en $g$.
+
+\paragraph{Mínimos:} Analogamente se definen los mínimos globales, locales y estrictos.
+
+\paragraph{Puntos críticos:} $p\in A$ es un punto crítico en $f$ si $f$ es diferenciable en $p$ y $\triangledown f(p) = (0,\dots,0)$
+
+\paragraph{Matriz definida positiva:} Sea $A\in\reales^{n\times m}$, $A$ es definida positiva si para todo $X\in\reales^n$ vale que $X^tAX>0$ si $X\neq 0$
+
+\paragraph{Matriz semidefinida positiva:} Sea $A\in\reales^{n\times m}$, $A$ es definida positiva si para todo $X\in\reales^n$ vale que $X^tAX\geq 0$ si $X\neq 0$
+
+\paragraph{Matriz semidefinida/definida negativa:} Definiciónes análogas a las anteriores.
+
+\paragraph{Matriz indefinida: } Sea $A\in\reales^{n\times m}$, $A$ es indefinida si existen $X, X_1\neq 0\in\reales^n$ tales que $X^tAX>0$ y $X_1^tAX<0$
+
+\paragraph{Punto Silla:} $p$ es un punto silla si existen dos trayectorias $\alpha,\beta$ que tienden a $p$ (o sea son continuas y $\alpha(0)=\beta(0) = p$), y tales que $f\circ\alpha(t)$ tiene un máximo en $t=0$ y $f\circ\beta$ tiene un mínimo en $t=0$. Es decir, si hay dos trayectorias continuas de manera que $f$ tiene máximo y mínimo a lo largo de ellas en $p$. En este caso $p$ no es ni máximo ni mínimo de $f$.
+
+\paragraph{Difeomorfismo:} Sea $A$ y $B$ conjuntos abiertos y $\varphi: A\to B$ una función biyectiva, entonces $\varphi$ es un difeomorfismo si $\varphi$ es diferenciable en $A$ y $\varphi^{-1}: B\to A$ es diferenciable en $B$.
+
+\paragraph{Teorema de Weierstrass:} Sea $f:A\subseteq\reales^n\to\reales$, con $A$ compacto y $f$ continua en $A$. Entonces existen $m,M\in\reales$ tales que $m \leq f(x) \leq M~\forall~x\in A$. Además existen $P_m,P_M\in A$ tales que $f$ alcanza su mínimo y máximo respectivos en $A$ en dichos puntos.
+
+\paragraph{Propiedades}
+\begin{itemize}
+
+\item Sea $A\in\reales^{m\times m}$, $A$ es definida negativa si y solo si existe $c>0$ tal que $X^tAX\geq -d\|X\|$
+\item $A$ es definida negativa si y solo si $-A$ es definida positiva.
+\item Sea $\varphi:A\to B$ un difeomorfismo y $p\in A$ tal que $\varphi(p) = q$, entonces $D\varphi(p)$ es una matriz inversible y $(D\varphi(p))^{-1} = D\varphi^{-1}(q)$
+\item Si $\varphi:A\to B$ es un difeomorfismo entonces $A$ y $B$ pertenecen al mismo espacio dimensional.
+
+\end{itemize}
+
+\subsection{Criterio del Hessiano}
+Sea $B\in\reales^{m\times m}$ una matriz simétrica, entonces:
+\begin{itemize}
+\item $B$ es definida positiva si y solo si todos sus autovalores son positivos. Y esto sucede si y solo si las determinantes de sus submatrices son todas positivas.
+\item $B$ es definida negativa si y solo si todos sus autovalores son negativos. Y esto sucede si y solo si las determinantes de sus submatrices van intercalando signos (la pimera es negativa, la segunda es positiva, la tercera es negativa, etc).
+\item $B$ es indefinida si y solo si hay dos autovalores $\lambda_i$ y $\lambda_j$ tal que $\lambda_i > 0$ y $\lambda_j < 0$. Y esto sucede si los signos de las determinantes de sus submatrices no cumplen con los patrones mencionados en los casos anteriores.
+\end{itemize}
+
+Sea $f:A\subset\reales\to\reales$, con $A$ abierto, $f$ $C^3$ en $A$ y sea $p\in A$, un punto crítico de $f$, entonces:
+\begin{itemize}
+\item Si $Hf(p)$ es definida positiva entonces, en $p$, $f$ tiene un mínimo local y estricto.
+\item Si $Hf(p)$ es definida negativa entones, en $p$, $f$ tiene un máximo local y estricto
+\item Si $Hf(p)$ es indefinida, entonces $p$ es un punto silla (no es máximo ni mínimo)
+\end{itemize}
+
+
+\subsection{Teorema de la función inversa}
+Sea $\varphi:A\in\reales^n\to\reales^n$ con $A$ abierto y $\varphi$ diferenciable en $A$. Si existe $p\in A$ tal que $D\varphi(p)$ es inversible, entonces hay dos conjuntos $U\subset A$ y $V\subset\reales^n$ tal que:
+\begin{itemize}
+\item $p\in U$ y $\varphi(p)\in V$
+\item $\varphi\big|_U:U\to V$ es un difeormofismo diferenciable.
+\end{itemize}
+
+\subsection{Teorema de la función implicita}
+Dada $f:A\subset\reales^n\to\reales$ una función $C^{(k)}$ y $S=\{X\in\reales^n : f(X)=0\}$ una curva de nivel de $f$. Si existe $P\in S$ tal que $\frac{\partial f}{\partial x_i}(P) \neq 0$. Entonces existen $U\subset\reales^{n-1}$, un entorno de $X_i = (x_0,x_{i-1},x_{i+1},x_n)$, y $V\in\reales$, un entorno de $x_i$, y una función $\varphi:U\to V$ tal que:
+
+\begin{itemize}
+    \item $\varphi(X_i) = x_i$
+    \item $\varphi\in C^{(k)}$ en $U$
+    \item $$\varphi_{x_j}\Big|_{X_i} = \frac{-f_{x_j}(X)}{f_{x_i}(X)}$$
+\end{itemize}
+
+\subsection{Multiplicadores de Lagrange}
+Sean $f:A\subset\reales^n\to\reales$ y $f:D\subset\reales^n\to\reales$, $S=\left\{(x_1,\dots,x_n)\in D : g(x_1,\dots,x_n) = 0\right\}$ una superficie de nivel y $P\in S$ tal que $f$ y $g$ son diferenciables en $P$.
+Si $\triangledown g(p) \neq (0,\dots,0)$ y $f\big|_S$ tiene un extremo global o local en $P$, entonces $\triangledown f(p) = \lambda\triangledown g(p)$ para algún $\lambda\in\reales$
+
+\subsubsection{Caso general}
+Si $S$ es un sistema de ecuaciones y restringimos $f$ a $S$ entonces:
+$$
+S = \left\{
+\begin{tabular}{c}
+    $g_1(x_1,\dots\,x_n) = 0$ \\
+    $\vdots$ \\
+    $g_n(x_1,\dots\,x_n) = 0$ \\
+\end{tabular}  
+\right.
+$$
+
+Si $p\in S$ es un extremo de $f\big|_S$, $f,g_1,\dots,g_n$ son diferenciables en $p$, $\triangledown g_i(p) \neq 0$ para algún $1\leq i \leq n$ y $\triangledown f(p) \neq 0$, vale que:
+$$\triangledown f(p) = \lambda_1g_1(x_1,\dots,x_n) + \dots + \lambda_ng_n(x_1,\dots,x_n)$$
+
+Cada $\lambda_i$ es llamado \textit{multiplicador de Lagrange}
+
+\newpage
+\section{Integrales dobles y triples}
+\subsection{Repaso}
+Sea $f:[a,b]\to\reales$ una función acotada, si $f$ es positiva, la integral de la misma mide el área comprendida entre $[a,b]$ y la gráfica de $f$. Si $f$ es arbitraria, la integral sirve para calcular el promedio de $f$.
+\subsubsection{Integral de Rienman}
+\paragraph{Partición de un intervalo}: Conjunto $\Pi = \{a, t_1, \dots, t_n, b\}$ tal que $a < t_1 < \dots < t_n < b$
+
+\paragraph{Aproximación del área por defecto}: $s_\Pi(f) = \sum_{i=1}^{n} (t_i-t_{i-1})m_i$ donde $m_i$ es el mínimo valor de $f$ en el intervalo $[t_{i-1},t_i]$. $s_\Pi(f)$ se denomina \textit{suma inferior de $f$ en $\Pi$}
+
+\paragraph{Aproximación del área por exceso}: $S_\Pi(f) = \sum_{i=1}^{n} (t_i-t_{i-1})M_i$ con $M_i$ el maximo valor de $f$ en el intervalo $[t_{i-1},t_i]$. $S_\Pi(f)$ se denomina \textit{suma superior de $f$ en $\Pi$}
+
+\paragraph{Refinamiento}: Sean $\Pi$ y $\Pi'$ dos particiones de $[a,b]$, entonces, $\Pi'$ es más fina que $\Pi$ si $S_{\Pi'}(f) \leq S_{\Pi}(f)$ y $s_\Pi'(f) \geq s_\Pi(f)$
+
+\paragraph{Partición regular}: Sea $\Pi = \{a, t_1, \dots, t_n, b\}$ una partición de $[a,b]$, entonces $\Pi$ es regular si $t_{i-1} - t_{i} = k$ para todo $i$
+
+\paragraph{Integral inferior}: $I_{*}(f) = sup\{s_\Pi(f): \Pi \text{ partición de } [a,b]\}$
+
+\paragraph{Integral superior}: $I^{*}(f) = inf\{S_\Pi(f): \Pi \text{ partición de } [a,b]\}$
+
+\paragraph{Integrabilidad}: $f$ es integrable en $[a,b]$ si $I_{*}(f) = I^{*}(f)$. Si esto sucede, entonces llamamos a este número $\int_a^b f(x)dx$
+\paragraph{Propiedades}:
+\begin{itemize}
+    \item $S_\Pi(f) \geq s_\Pi(f)$ para todo $\Pi$ partición de un intervalo.
+    \item Sean $\Pi_1$ y $\Pi_2$ dos particiones cualesquiera, entonces:
+    $$ m(a,b) \leq s_{\Pi_1}(f) \leq s_{\Pi_2}(f) \leq M(b-a)$$ con $m$ y $M$ el mínimo y máximo de $f$, respectivamente.
+    \item $f:[a,b]\to\reales$ es integrable si y solo si para cada $\epsilon > 0$ hay una partición $\Pi_\epsilon$ de $[a,b]$ tal que $S_{\Pi_\epsilon}(f) - s_{\Pi_\epsilon}(f) < \epsilon$
+    
+    \item Si $f:[a,b]\to\reales$ es monótona creciente (decreciente), entonces $f$ es integrable en $[a,b]$
+    
+    \item Sean $f,g:[a,b]\to\reales$ integrables y $\alpha,\beta\in\reales$, entonces $\alpha f + \beta g$ es integrable en $[a,b]$ y
+    
+    $$\int_a^b (\alpha f(x) + \beta g(x))dx = \alpha\int_a^b f(x)dx + \beta\int_a^b g(x)dx$$
+    
+    \item Si $f$ es integrable en $[a,b]$ y $c\in (a,b)$, entonces $f$ es integrable en $[a,c]$ y en $[c,b]$ y vale que:
+    $$\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx$$
+    
+    \item Sean $f,g:[a,b]\to\reales$ integrables tales que $f(x) \leq g(x)$ para todo $x\in[a,b]$, entonces
+    $$\int_a^b f(x)dx \leq \int_a^b g(x)dx$$
+    
+    \item Si $f$ es integrale en $[a,b]$, entonces $|f|$ es integrable y
+    $$\left|\int_a^b f(x)dx\right| \leq \int_a^b\left|f(x)\right|dx$$
+    
+    \item Si $f$ es continua en $[a,b]$ entonces es integrable en ese intervalo
+\end{itemize}
+
+\subsubsection{Teorema fundamental del cálculo integral}
+Sea $f:[a,b]\to\reales$ continua y $F(x) = \int_a^x f(t)dt$, entonces $F$ es continua en $[a,b]$, derivable en $(a,b)$ y $F'(x) = f(x)$
+
+\subsubsection{Regla de Barrow}
+Si $f:[a,b]\to\reales$ es integrable y existe $F(x) = \int_a^x f(t)dt$ tal que $F'(x) = f(x)$, entonces $$\int_a^b f(x) = F(b) - F(a)$$
+
+\subsubsection{Integración por partes}
+$$\int_a^b f(x)g(x)dx = f(x)g'(x)\Big|_a^b - \int_a^b f'(x)g(x)dx$$
+
+\subsubsection{Sustitución}
+Sea $f:[a,b]\to\reales$ integrable y $U:[a,b]\to\reales$ es derivable, entonces:
+$$\int_{U(a)}^{U(b)} f(U(x))U'(x)dx = \int_a^b f(x)dx$$
+
+\subsubsection{Integrales impropias}
+Sea $f:(a,b)\to\reales$ integrable con $a\to\infty$ ó $b\to\infty$, entonces:
+$$\int_a^b f(x)dx = \lim_{r\to b^{-}}\int_a^r f(x)dx \text{ si $b$ tiende a infinito}$$
+
+$$\int_a^b f(x)dx = \lim_{r\to a^{+}}\int_r^a f(x)dx \text{ si $a$ tiende a infinito}$$
+
+En el caso que tanto $a$ como $b$ tiendan a infinito, separamos el intervalo en $(a,c]$ y $[c,b)$ para algún $c\in(a,b)$ finito y calculamos las integrales de cada intervalo por separado.
+
+\paragraph{Convergencia absoluta: } La integral impropia de $f$ en $[a,b)$ converge absolutamente si la integral respectiva de $|f|$ converge.
+\paragraph{Propiedades:}
+\begin{itemize}
+    \item Si la integral impropia de $|f|$ en un intervalo converge entonces la integral de $f$ converge en ese intervalo.
+\end{itemize}
+
+\subsubsection{Criterios de comparación de integrales impropias}
+Sean $f,g:[a,b)\to\reales$ continuas tal que $f\geq g\geq 0$
+\begin{itemize}
+    \item Si $\int_a^b f(x)dx$ converge, entonces $\int_a^b g(x)dx$ converge.
+    \item Si $\int_a^b g(x)dx$ diverge, entonces $\int_a^b f(x)dx$ diverge.
+\end{itemize}
+
+En, general, si $f,g:[a,b]\to\reales$:
+\begin{itemize}
+    \item $$\lim_{x\to\infty}\frac{f(x)}{g(x)} = l\neq 0 \Rightarrow \left( \int_a^{\infty} f(x)dx < \infty \iff \int_a^{\infty} g(x)dx < \infty\right)$$
+    
+    \item $$\lim_{x\to\infty}\frac{f(x)}{g(x)} = 0 \Rightarrow \left( \int_a^{\infty} g(x)dx < \infty \Rightarrow \int_a^{\infty} f(x)dx < \infty\right)$$
+    
+    \item $$\lim_{x\to\infty}\frac{f(x)}{g(x)} = \infty \Rightarrow \left( \int_a^{\infty} g(x)dx = \infty \Rightarrow \int_a^{\infty} f(x)dx = \infty\right)$$
+\end{itemize}
+
+\subsubsection{Integrales con las que comparar:}
+
+$$
+\int_1^\infty \frac{1}{x^p}dx = \left\{
+\begin{tabular}{r l}
+    converge & si $p > 1$ \\
+    diverge  & si $p \leq 1$ \\
+\end{tabular}
+\right.$$
+
+$$
+\int_0^1 \frac{1}{x^p}dx = \left\{
+\begin{tabular}{r l}
+    converge & si $p \leq 1$ \\
+    diverge  & si $p > 1$ \\
+\end{tabular}\right.
+$$
+
+\subsection{Integral doble}
+\subsubsection{Teorema de fubbini}
+Sea $f:A\subset\reales^2\to\reales$, $B_x = \{y\in\reales : (x,y)\in A\}$ y $C_y = \{x\in\reales : (x,y)\in A\}$.
+Si $f_{y_0}: C_{y_0}\to\reales$, $f_{y_0}(x) = f(x,y_0)$ es inyectiva para todo $y_0$ y $f_{x_0}:B_{x_0}$, $f_{x_0}(y) = f(x_0,y)$ es integrable para todo $x_0$, entonces:
+
+$$ \int\int_A f(x,y)dx = \int_{B_x}\left(\int_{C_y} f(x,y)dy\right)dx = \int_{C_y}\left(\int_{B_x} f(x,y)dx\right)dy$$
+
+\paragraph{Observación}:
+$$\int_c^d\int_a^b f(x)g(y)dxdy = \left(\int_a^b f(x)dx\right)\left(\int_c^d g(y)dy\right)$$
+
+\subsection{Principio de Cavalieri}
+Sean dos regiones en un espacio tridimensional incluidas entre dos planos paralelos. Si cada plano paralelo a estos dos planot interseca ambas regiones en secciones de igual area, entonces las dos regiones tienen el mismo volumen.
+
+\subsection{Integrales en \texorpdfstring{$\reales^n$}{en el espacio}}
+
+Sea $f:D\subset\reales^n\to\reales$ acotada. Sea $Q$ un (hiper) cubo en $\reales^n$ tal que $D\subset Q$, se define $\bar{f}:Q\to\reales$ acotada de la siguiente forma:
+
+$$
+\bar{f}(x) = \left\{\begin{tabular}{l l}
+    $f(x)$ & si $x\in D$ \\
+    0 & si $x\in Q - D$ \\
+\end{tabular}\right.
+$$
+
+y $f$ es integrable en $D$ si y solo si $\bar{f}$ es integrable en $Q$. En tal caso vale que:
+
+$$\int\dots\int_D f(x_1,\dots,x_n)dx_1\dots dx_n = \int\dots\int_Q \bar{f}(x_1,\dots,x_n)dx_1\dots dx_n$$
+
+\paragraph{Propiedad}:
+$\bar{f}$ es integrable en $Q$ si para cada $\epsilon > 0$ hay una partición $P$ tal que $S_P(f) - s_P(f) < \epsilon$
+
+\subsubsection{Dominios elementales en \texorpdfstring{\reales}{los reales}}
+\paragraph{Tipo 1:} $D = \{(x,y) : a\leq x\leq b ~\land~ \varphi(x)\leq y \leq \psi(x)\}$
+$$\int\int_D f(x,y)dxdy = \int_a^b\int_{\varphi(x)}^{\psi(x)}f(x,y)dydx $$
+
+\paragraph{Tipo 2:} $D = \{(x,y) : a\leq y\leq b ~\land~ \varphi(y)\leq x \leq \psi(y)\}$
+
+$$\int\int_D f(x,y)dxdy = \int_a^b\int_{\varphi(y)}^{\psi(y)}f(x,y)dxdy $$
+
+\paragraph{Tipo 3:} Regiones que son del tipo \textbf{1} y \textbf{2} simultaneamente.
+
+\subsubsection{Teorema del valor medio para integrales}
+Sea $f:D\subset\reales^n\to\reales$ continua, $D$ compacto, arcoconexo. Entonces hay $x_0\in D$ tal que $$\int\int_D f(x_1,\dots,x_n)dx_1\dots dx_n = f(x_0)\mu(D)$$ donde $\mu(D)$ es el área de $D$.
+
+\subsection{Cambio de variables}
+\paragraph{Jacobiano de una transformación lineal: }Sea $T:\reales^2\to\reales^2$ (o $\reales^3\to\reales^3$ derivable, llamamos \textit{jacobiano} $JT$ de $T$ en $(x_0, y_0)$
+
+\paragraph{Cambio de variable: }
+Sea $D, D*\subset\reales^2$ y sea $T:D*\to D$ derivable y biyectiva, entonces dado $f:D\to\reales$ integrable se tiene que
+$$\int\int_D f(x,y)dxdy = \int\int_{D*} f\circ T(u,v)|JT(u,v)|dudv$$
+
+\subsubsection{Coordenadas polares}
+Dado un vector $(x_0,y_0)$ en el plano, el cambio de variables a coordenadas polares está dado por:
+\begin{align*}
+\left\{
+\begin{tabular}{c}
+    $u = r\times\texttt{cos}~\theta$ \\
+    $v = r\times\texttt{sen}~\theta$ \\
+\end{tabular}
+\right.
+\end{align*}
+donde $\theta$ es el ángulo entre el eje $x$ y $(x_0,y_0)$ y $r$ es el módulo del vector $(x_0,y_0)$. En este caso queda que 
+\begin{align*}
+JT(r,\theta) = \left|\texttt{det}\left(
+\begin{tabular}{c c}
+$\texttt{cos}~\theta$ & $-r\texttt{sen}~\theta$ \\
+$\texttt{sen}~\theta$ & $r\texttt{cos}~\theta$ \\
+\end{tabular}
+\right)\right| = r
+\end{align*}
+
+\subsubsection{Transformaciones lineales}
+Las transformaciones lineales $T:\reales^2\to\reales$ (inversibles) buscan transformar rectángulos en paralelogramos.
+
+\subsubsection{Coordenadas cilíndricas}
+Dado un vector $(x,y,z)$ en el espacio, el cambio de variables a coordenadas cilíndricas está dado por:
+\begin{align*}
+\left\{
+\begin{tabular}{l}
+    $u = r\times\texttt{cos}~\theta$ \\
+    $v = r\times\texttt{sen}~\theta$ \\
+    $w = z$
+\end{tabular}
+\right.
+\end{align*}
+donde $\theta$ es el ángulo entre el eje $x$ y la proyección del vector $(x_0,y_0,z_0)$ en el plano $xy$ y $r$ es el módulo del vector $(x_0,y_0, z_0)$. En este caso queda que:
+\begin{align*}
+JT(r,\theta) = \left|\texttt{det}\left(
+\begin{tabular}{c c c}
+$\texttt{cos}~\theta$ & $-r\texttt{sen}~\theta$ & 0\\
+$\texttt{sen}~\theta$ & $r\texttt{cos}~\theta$ & 0\\0 & 0 & 0 \\
+\end{tabular}
+\right)\right| = r
+\end{align*}
+
+
+\subsubsection{Coordenadas esféricas}
+Dado un vector $(x_0,y_0,z_0)$ en el espacio, el cambio de variables a coordenadas esféricas está dado por:
+\begin{align*}
+\left\{
+\begin{tabular}{l}
+    $x = r\texttt{sen}~\phi~\texttt{cos}~\theta$ \\
+    $y = r\texttt{sen}~\phi~\texttt{sen}~\theta$ \\
+    $z = r\texttt{cos}~\phi$
+\end{tabular}
+\right.
+\end{align*}
+donde $\theta$ es el ángulo entre el eje $x$ y la proyección en el plano $xy$ del vector $(x_0,y_0,z_0)$, $\phi$ es el angulo entre el eje $z$ y la proyección en $xz$ del vector $(x_0,y_0,z_0)$ y $r$ es el módulo del vector $(x_0,y_0,z_0)$. En este caso queda que:
+
+\begin{align*}
+JT(r,\theta) = \left|\texttt{det}\left(
+\begin{tabular}{c c c}
+$(\texttt{cos}~\theta)(\texttt{sen}~\phi)$ & $-r(\texttt{sen}~\theta)(\texttt{sen}~\phi)$ & $r(\texttt{sen}~\theta)(\texttt{cos}~\phi)$\\
+$(\texttt{sen}~\theta)(\texttt{cos}~\phi)$ & $r(\texttt{cos}~\theta)(\texttt{sen}~\phi)$ & $r(\texttt{sen}~\theta)(\texttt{cos}~\phi)$\\$\texttt{cos}~\phi$ & 0 & $-r\texttt{sen}~\theta$ \\
+\end{tabular}
+\right)\right| = r^2sen~\phi
+\end{align*}
+
+\end{document}

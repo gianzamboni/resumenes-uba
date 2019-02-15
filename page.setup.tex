@@ -1,0 +1,33 @@
+%%%% CONFIGURACIONES %%%%
+
+%% La coma de los reales es un punto
+\decimalpoint
+
+%%% Tamaño de pagina
+\geometry{
+	includeheadfoot,
+	margin=2.54cm
+}
+
+%\stul{0.1cm}{0.2ex}
+
+%% HEADER Y FOOTER
+\pagestyle{fancy}
+
+\fancyhf{}
+
+\fancyhead[LO]{Sección \rightmark} % \thesection\ 
+\fancyhead[RO]{\small{\thetitle}}
+\fancyfoot[CO]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\headsep}{1cm}
+\setlength{\headheight}{13.07225pt}
+
+\renewcommand{\baselinestretch}{1.2}  % line spacing
+
+%% Links en indice 
+\hypersetup{
+	linktoc=all,     %set to all if you want both sections and subsections linked
+	linkcolor=blue,  %choose some color if you want links to stand out
+}

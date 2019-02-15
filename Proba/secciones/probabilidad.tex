@@ -1,0 +1,893 @@
+\part{Probabilidad}
+\section{Probabilidad}
+
+\paragraph{Experimento:} Es cualquier proceso o acción que genera observaciones y que puede ser repetible.
+
+\paragraph{Espacio muestral asociado a un experimento:} Es el conjunto de todos los resultados posibles del experimento. Lo notaremos $S$. Un espacio muestral puede ser \textit{finito}, \textit{infinito numerable} o \textit{infinito no numerable}.
+
+\paragraph{Eventos o sucesos:} Se denomina suceso o evento a cualquier subconjunto del espacio muestral. Hay dos clases de eventos:
+\begin{itemize}
+\item \textbf{Evento simple o elemental:} Consiste de un único resultado individual.
+\item \textbf{Evento compuesto:} Consiste de más de un evento elemental.
+\end{itemize}
+\subsection{Relación con Teoría de conjunto} Como un evento o suceso es un conjunto valen las siguientes propiedades:
+\begin{itemize}
+\item $S$ es un subconjunto de $S$ denominado \textit{suceso cierto o seguro}.
+\item $\emptyset$ es un subconjunto de $S$ denominado \textit{suceso imposible}.
+\item $A\cup B$ es el suceso \textit{unión}.
+\item $A\cap B$ es el suceso \textit{intersección}.
+\item $A^c$ ó $\overline{A}$ es el \textit{opuesto} o \textit{complemento} de $A$.
+\item $A-B = A\cap B^c$ es el suceso \textit{diferencia}. Ocurre cuando ocurre $A$ y no ocurre $B$.
+\end{itemize}
+
+\paragraph{Asociatividad:}
+\begin{align*}
+A\cup B\cup C &= (A\cup B)\cup C = A\cup (B\cup C) \\
+A\cap B\cap C &= (A\cap B)\cap C = A\cap (B\cap C)
+\end{align*}
+
+\paragraph{Conmutatividad}
+\begin{align*}
+A\cup B &= B\cup A \\
+A\cap B &= B\cap A
+\end{align*}
+
+\paragraph{Distributividad:}
+\begin{align*}
+\left(\bigcup_{i=1}^{\infty} A_i\right)^c = \bigcap_{i=1}^{\infty} A_i^c\\
+\left(\bigcap_{i=1}^{\infty} A_i\right)^c = \bigcup_{i=1}^{\infty} A_i^c\\
+\end{align*}
+
+\subsection{Definición de probabilidad}
+
+\subsubsection{Interpretación intuitiva} 
+Supongamos que se repite $n$ veces un mismo experimento aleatorio en forma independiente y bajo las mismas condiciones. Sea $n_A$ el número de veces que ocurre el suceso $A$ en las $n$ repeticiones. Se denomina \textit{frecuencia relativa} de$A$ en la secuencia de $n$ repeticiones a
+$$fr(A) = \frac{n_A}{n}$$
+
+y cumple que:
+\begin{enumerate}
+\item $fr(A) = \frac{n_A}{n} \geq 0$
+\item $fr(S) = \frac{n_S}{n} = \frac{n}{n} = 1$
+\item Si $A\cap B = \emptyset \Rightarrow fr(A\cup B) = \frac{n_{A\cup B}}{n} = \frac{n_A + n_B}{n} = \frac{n_A}{n} + \frac{n_B}{n} = fr(A) + fr(B)$
+\end{enumerate}
+
+\subsection{Axiomas y propiedades de la probabilidad}
+Dado un experimento aleatorio y un espacio muestral asociado $S$, a cada evento $A$ se le asociará un número que notaremos $P(A)$ y que llamaremos probabilidad del evento $A$. Esta asignación debe satisfacer los siguientes axiomas:
+
+\paragraph{A1.} $P(A)\geq 0$ para todo evento $A$.
+\paragraph{A2.} $P(S) = 1$
+\paragraph{A3a.} Si $A_1,\dots,A_n$ es una colección finita de sucesos mutuamente excluyentes, es decir que $A_i\cap A_j = \emptyset~\forall i\neq j$, entonces
+$$P\left(\bigcup_{i=1}^n A_i\right) = \sum_{i=1}^n P(A_i)$$
+\paragraph{A3b.} Si $A_1,\dots,A_n$ es una colección infinita numerable de sucesos mutuamente excluyentes, es decir que $A_i\cap A_j = \emptyset~\forall i\neq j$, entonces
+$$P\left(\bigcup_{i=1}^\infty A_i\right) = \sum_{i=1}^\infty P(A_i)$$
+
+Algunas de las propiedades de $P$ son:
+\begin{enumerate}
+\item $P(A^c) = 1 - P(A)$ para todo suceso $A$.
+
+\item $P(\emptyset) = 0$
+
+\item Si $A\subseteq B\Rightarrow P(A)\leq P(B)$ y $P(B-A) = P(B)-P(A)$
+
+\item Dados sucesos cualesquieras $A$ y $B$, $P(A\cup B) = P(A)+P(B)-P(A\cap B)$
+
+\item Dados sucesos cualesquieras $A$ y $B$,  $P(A\cup B) \leq P(A) + P(B)$
+
+\item Sean $A_1,..,A_n$ eventos disjuntos, entonces:
+\begin{align*}
+P(\bigcup_{i=1}^{n}A_i) = \sum_{i=1}^{n}P(A_i)
+\end{align*}
+
+\item Sean $A$ y $B$ dos eventos de un espacio muestral $S$, la probabilidad de que ocurra solo uno de los eventos es $P(A \texttt{ xor } B) = P(A\cup B) - P(A\cap B)$
+\item Sean $\{A_i\}$ una sucesión creciente de eventos ($A_1\subseteq A_2 \subseteq ...)$ tal que $\bigcup_{i=1}^{n} A_i = A_n$ entonces \begin{align*}
+&P(\bigcup_{i=1}^{n} A_i) = P(A_n) \\
+&\text{y} \\
+&P(\bigcup_{i=1}^{\infty} A_i) = \lim_{n\rightarrow \infty}P(A_n)
+\end{align*}
+\item Sea $\{B_i\}_{i\leq 1}$ una sucesión decreciente de eventos ($B_{i+1}\subseteq{B_i}$) entonces 
+$$P(\bigcap_{i=1}^{\infty}B_i) = \lim_{n\rightarrow\infty}P(B_n)$$
+\item Sea $(A_i)_{i\leq1}$ un conjunto de eventos entonces 
+\begin{align*}
+P(\bigcup_{i=1}^{\infty}A_i)\leq \sum_{i=1}^{\infty}P(A_i)
+\end{align*}
+\end{enumerate}
+\subsection{Espacios muestrales}
+Supongamos que el espacio muestral $S$ asociado con cierto experimento es finito o infinito numerable. En este caso, una manera simple de trabajar es asignar probabilidades a los suceso elementares, ya que cualquier suceso $A$ será unón de sucesos elementales y estos son obviamente mutuamente excluyentes.
+
+
+\paragraph{Espacios finitos o numerables}
+Sea $S = \{ a_i : i\geq 1\} = \bigcup_{i\geq 1}\{a_i\}$ un espacio muestral, $p_i = P(\{a_i\})$ se dice función de probabilidad puntual y cumple con las siguientes características:
+\begin{enumerate}
+\item $P(S) = \sum_{i\geq1}P(\{a_i\}) = \sum_{i\geq1}p_i$
+\item Sea $A$ un evento tal que $A = \bigcup_{a_i \in A}\{a_i\}$ entonces $P(A) = \sum_{a_i\in A}p_i$
+\end{enumerate}
+
+\paragraph{Espacios equiprobables}
+Sea $S$ un espacio muestral finito tal que $\# S=N$ y $p_i = c$ ($c$ un valor constante) entonces $S$ es un espacio equiprobable que cumple las siguientes propiedades:
+\begin{enumerate}
+\item $p_i = 1/N$, es decir los $N$ sucesos elementales tienen la misma probabilidad.
+\item $P(A) = \#A/\#S$
+\end{enumerate}
+
+\paragraph{Partición de un espacio muestral:} Una colección de eventos $A_1,\dots,A_k$ constituye una partición del espacio muestral $S$ si:
+\begin{enumerate}
+\item $A_i\cap A_j = \emptyset$ $\forall i\neq j$
+\item $P(A_i) > 0$ $\forall i$ 
+\item $\bigcup_{i=1}^k A_i = S$
+\end{enumerate}
+\subsection{Probabilidad condicional}
+Sean $A$ y $B$ dos eventos tales que $P(B)>0$, la probabilidad del evento $A$ dado que ocurrió $B$ es
+\begin{align*}
+	P_B(A)=\frac{P(A\cap B)}{P(B)} = P(A|B)
+\end{align*} 
+
+\subsubsection{Propiedades}
+
+\begin{enumerate}
+\item Dado un suceso $B$ fijo tal que $P(B) > 0$, $P(\bullet | B)$ es una probabilidad, en el sentido que satisface los axioma de probabilidad y, por lo tanto, todas las propiedades que se deducen a partir de ello.
+\item \textbf{Regla del producto:} Dados dos sucesos $A$ y $B$ tales que $P(B)>0$, $P(A\cap B) = P(B)P(A|B)$ y, además, si $P(A) > 0$, $P(A\cap B) = P(B|A)P(A)$
+\item \textbf{Regla multiplicativa:} $P(A_1\cap ...\cap A_n) = P(A_1)P(A_2 | A_1)P(A_3 | A_2\cap A_1)...P(A_n | A_1\cap...\cap A_{n-1})$
+\end{enumerate}
+
+\subsubsection{Teorema de la probabilidad total}
+\textbf{Teorema:} Dada una partición $(A_i)_{i\geq1}$ de $S$, $P(A_i) > 0~\forall i$ y un evento $B$ de $S$, $$P(B) = \sum P(B|A_i)P(A_i)$$
+
+\subsubsection{Teorema de Bayes}
+Sea $(A_i)_{i\geq1}$ una partición de $S$ y $B$ un evento con $P(B) > 0$, entonces $$P(A_j | B) = \frac{P(B | A_j)P(A_j)}{\sum_{i=1}^{k} P(B|A_i)P(A_i)}$$
+
+El Teorema de Bayes describe cómo es posible ``revisar'' la probabilidad inicial de un evento o \textit{probabilidad a priori} para reflejar la información adicional que nos provee la ocurrencia de un evento relacionado. La probabilidad revisada se denomina \textit{probabilidad a posteriori}
+
+\subsection{Independencia}
+Dos eventos $A$ y $B$ son independientes si $P(A\cap B) = P(A)P(B)$ si y solo si $P(A|B) = P(A)$.
+Si la igualdad no se cumple, decimos que $A$ y $B$ son dependientes.
+
+\subsubsection{Propiedades}
+\begin{enumerate}
+\item Sean dos $A$ y $B$ dos sucesos, si $P(B) > 0$, $A$ y $B$ son independientes si y solo si $P(A|B) = P(A)$.
+
+\item Si $A\cap B = \phi$ tal que $P(A) > 0$ y $P(B) > 0$, entonces, $A$ y $B$ no son independientes.
+
+\item Si $P(B) = 0$ entonces $B$ es independiente de cualquier suceso $A$ tal que $P(A) > 0$
+
+\item Si $A\subseteq B$, $P(A) > 0$ y $P(B) < 1$, $A$ y $B$ no son independientes.
+
+\item Si $A$ y $B$ son independientes, entonces $A$ y $B^c$ tambien lo son.
+
+\end{enumerate}
+
+\subsubsection{Independencia entre mas de dos elementos:}
+$A_1,\dots,A_n$ son eventos independientes si y solo si $\forall~k = 2\dots n$ $\forall~i_1 < ... < i_k$ tales que $1 \leq i_1 < \dots < i_k \leq n$, se verifica $$P(A_{i_1}\cap ...\cap A_{i_k}) = P(A_{i_1})...P(A_{i_k})$$
+
+Es decir que es necesario verificar $\binom{n}{2} + \binom{n}{3} + \dots + \binom{n}{n} = 2^n -n -1$ condiciones.
+
+\paragraph{Observación:} Si los sucesos $A_i,\dots,A_n$ son independientes, entonces son independientes de a pares pero la recíproca no es cierta.
+
+
+\section{Variables aleatorias discretas}
+
+Una \textbf{variable aleatoria} es una función $X : S\rightarrow\mathbb{R}$ que asocia a cada elemento de $S$ un número real $x$.
+
+$R_x$ será el rango de la variable aleatoria $X$, es decir el conjuntos de valores posibles	de la variable aleatoria $X$.
+
+\paragraph{Variable aleatoria discreta:} Un variable aleatoria es discreta 	si toma un número finito o infinito numerable de valores.
+
+\paragraph{Propiedad:} Si $X$ es una variable aleatoria discreta y toma valores $x_1,x_2,...$, entonces $g(X)$ es discreta con valores $y_1,y_2,...$, siendo $y_j = g(x_i)$ para, al menos, un valor de $i$.
+
+\subsection{Función de probabilidad puntual y distribución acumulada}
+\subsubsection{Función de probabilidad puntual}
+La \textbf{función de probablidad puntual o de masa} de una variable aleatoria discreta $X$ esta definida para todo $x$ como:
+\begin{align*}
+p_X(x)=P(X=x)=P(\{w\in S / X(w)=x\})
+\end{align*}
+y sastiface las siguientes propiedades:
+\begin{enumerate}
+\item $0 \leq p_X(x) \leq 1 ~ \forall x$
+\item $\sum_{x\in R_X} p_X(x)=1$
+\end{enumerate}
+
+\subsubsection{Función de distribución acumulada}
+La	\textbf{función de distribución acumulada} de una variable aleatoria $X$ con función de probabilidad puntual $p_X$ se define para todo $x\in\reales$, como:
+	\begin{align*}
+		F_X(x) = P(X\leq x) = \sum_{y\leq x, y\in R_X} p_X(y) \hspace{5mm} F_X : \reales \rightarrow [0,1]
+	\end{align*}
+	
+Es decir que $F_X(x)$ es la probabilidad de que la variable aleatoria $X$ tome valores menores o iguales que $x$.
+
+Para v.a. discretas, se tiene que $F_X$ es una función escalera no decreciente que toma valores entre cero y uno:
+	\begin{align*}
+		F_X(x) = P(X\leq x) = \sum_{y\leq x\in\reales} p_X(y)
+	\end{align*}
+	
+	\subsubsection{Propiedades}
+	\begin{enumerate}
+	\item $0 \leq F_X(x) \leq 1 ~\forall x\in\reales$
+	\item Si $x_1 \leq x_2 \Rightarrow F_X(x_1) \leq F_X(x_2)$ ($F_X$ es monotona no decreciente)
+	\item $\lim_{h\rightarrow 0^+} F_X(x+h) = F_X(x)$ ($F_X$ es continua por derecha)
+	\item En cada punto $x$, el valor del salto es la probabilidad puntual, es decir:
+	$$p_X(x) = F_X(x) - F_X(x^-)$$
+	donde $x^- = \lim_{h\to 0^+} (x-h)$
+	\end{enumerate}
+
+Conociendo $F_X$ se puede obtener cualquier probabilidad que involucre a $X$. Sean $a$ y  $b$ tales que $a\leq b$, entonces:
+	
+\begin{align*}
+P(a < X \leq b) &= F_X(b) - F_X(a) \\
+P(a \leq X \leq b) &= F_X(b) - F_X(a^-) \\
+P(a < X < b) &= F_X(b^-) - F_X(a) \\
+P(a \leq X < b) &= F_X(b^-) - F_X(a^-) \\
+\end{align*}
+
+\subsection{Esperanza de una variable aleatoria}
+	
+	Sea $X$ una variable aleatoria discreta que toma valores en $R_X$ con función de probabilidad puntual $p_X(x)$, la\textbf{ esperanza o valor esperado} de $X$ se define como:
+	
+	\begin{align*}
+	E(X) = \mu_X = \sum_{x\in R_X} x_ip(x_i)
+	\end{align*}
+	siempre que $E(X) = \sum_{x\in R_X} |x_i|p(x_i) < \infty$. Si la serie de los valores absolutos diverge, la esperanza no puede definirse y decimos que no existe.
+	
+	\paragraph{Ensayo Bernoulli:} Sea $X$ una variable aleatoria que toma solo dos valores, que designaremos $1$ y $0$ con la siguiente función de probabilidad puntual:
+	\begin{align*}
+        p_X(x) = \left\{
+        \begin{array}{cc}
+            \alpha & \text{ si } x = 1 \\
+            1-\alpha & \text{ sino}
+        \end{array}
+        \right.
+	\end{align*}
+	siendo $0 <\alpha < 1$, entonces su esperanza es $E(X) = 1\cdot\alpha + 0\cdot(1-\alpha) = \alpha$
+	
+	\paragraph{Interpretación:} $E(X)$ es el centro de gravedad de la función de probabilidad puntual. Se ha demostrado que el promedio de los resultados obtenidos tiende a estabilizarse en un número que es $E(X)$, si es que ésta existe.
+	\subsubsection{Propiedades}
+	\begin{enumerate}
+	\item Si la variable aleatoria $X$ tiene función de probabilidad puntual $p_X(x)$ para todo $x\in R_X$, entonces la esperanza de cualquier función real $h(x)$, está dada por
+	$$E(h(x)) = \sum_{x\in R_X} h(x)p_X(x)$$
+	si la serie es absolutamente convergente, o sea si $\sum_{x\in R_X} |h(x)|p_X(x) < \infty$
+	
+	\item \textbf{Linealidad:} Si $a$ y $b$ son constante reales, $E(aX + b) = aE(X) + b$
+	\item Si $X$ es una v.a. tal que $P(X=c)=1$, entonces $E(X) = c$
+
+	\end{enumerate}
+	
+	\subsection{Varianza y desvío estandar de una v.a.}
+	Sea $X$ una v.a. con función de probabilidad puntual $p_X(x)$ y esperanza $\mu_X$, definimos la varianza de $X$ como:
+	\begin{align*}
+	V(X) = \sigma_x^2 = E\left[(X-\mu_x)^2\right]
+	\end{align*}
+	
+	y la desvio estandar como:
+	\begin{align*}
+	\sigma_x = +\sqrt{V(X)}
+	\end{align*}
+	
+		\paragraph{Varianza de Ensayo Bernoulli:} Sea $X$ una variable aleatoria Bernoulli con función de probabilidad puntual:
+		\begin{align*}
+	        p_X(x) = \left\{
+	        \begin{array}{cc}
+	            \alpha & \text{ si } x = 1 \\
+	            1-\alpha & \text{ sino}
+	        \end{array}
+	        \right.
+		\end{align*}
+		siendo $0 <\alpha < 1$, entonces su varianza es $$V(X) = (1-\alpha)^2\alpha + (0-\alpha)^2(1-\alpha) = \alpha(1-\alpha)\left[(1-\alpha)+\alpha\right] = \alpha(1-\alpha)$$
+	
+	\subsubsection{Propiedades}
+	\begin{enumerate}
+	\item $V(X) = E(X^2) - \left(E(X)\right)^2$
+
+	\item $V(aX+b) = a^2V(X)$ y $\sigma_{aX+b} = |a|\sigma_X$
+	
+	\item $P(X=c)=1 \Rightarrow V(X) = 0$
+	\end{enumerate}
+
+\subsection{Distribución Binomial}
+
+Un \textbf{ensayo bernoulli} es un experimento con dos posibles resultados: \textbf{Éxito = 1} ó \textbf{Fracaso = 0}.
+
+Dada una sucesión de $n$ ensayos Bernoulli con probabilidad de éxito $p$ independientes entres si, se denomina a variable binomial a la v.a. $X$ tal que $X =$ ``número de éxitos en n repeticiones'' y notamos $\dbin{X}{n}{p}$.
+
+\begin{itemize}
+	\item \textbf{Rango:} $R_X = \{0 .. n\}$
+    \item \textbf{Función de probabilidad puntual}$$P(X=k) = p_X(k)= \binom{n}{k}p^k(1-p)^{n-k}$$
+   	\item \textbf{Función de distribución}
+   	\begin{align*}
+    F_X(x) = \left\{
+	    \begin{array}{ll}
+    		0 & x < 0 \\
+    		p_X(0) & 0 \leq x \leq 1 \\
+    		\sum_{j=0}^{[x]} p_X(j) & k \leq x < k+1 < n \\
+    	\end{array}
+    \right.
+    \end{align*}
+    donde $[x]$ denota la parte entera de $x$.
+    \item \textbf{Esperanza y varianza}
+    $$E(X) = np \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = np(1-p)$$
+\end{itemize}
+
+\subsection{Distribución Geometrica}
+
+Supongamos que se repite un ensayo de Bernoulli de manera independiente hasta obtener el primer éxito y definamos la v.a. $X=$ ``numero de repeticiones hasta obtener el primer éxito''. Entonces si $P(\text{Éxito}) = p$, se dice que $X$ tiene distribución Geometrica y se nota: $\dgeo{X}{p}$
+
+\begin{itemize}
+\item \textbf{Rango:} $R_X = \nat$
+\item \textbf{Función de probabilidad puntual:} $p_X(k) = (1-p)^{k-1}p$
+\item \textbf{Función de densidad:}$$F_X(k) =\left\{ \begin{array}{ll}
+0 & \text{si } x < 1 \\
+1 - (1-p)^k  & \text{si } x \leq 1\\
+\end{array}\right. $$
+\item \textbf{Esperanza y varianza}
+$$E(X) = \frac{1}{p} \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = \frac{1-p}{p^2}$$
+\end{itemize}
+
+
+
+\paragraph{Falta de memoria}
+Sea $\dgeo{X}{p}$ y sean $n$ y $m$ números naturales cualesquiera, $$P(X > n+m | X > n) = P(X > m)$$
+
+\subsection{Distrbución Binomial Negativa}
+
+Supongamos que se repite, de manera independiente, un ensayo Bernoulli con probabilidad de exito $P(\text{Éxito}) = p$ y definamos la
+v.a. $X=$ ``número de repeticiones hasta obtener el $r-$ésimo éxito'', entonces $X$ es una v.a. con distribución binomial negativa
+y se nota $\dnbin{X}{r}{p}$. 
+
+Esta variable aleatoria es una generalización de la vairable aleatoria Geometirca, la cual corresponde al caso $r=1$.
+
+Sea $k \geq r$, $k\in\nat$ entones:
+
+\begin{itemize}
+\item \textbf{Rango:} $R_X = \{r, r+1, r+2, ...\}$
+\item \textbf{Función de probabilidad puntual:} 
+$$p_X(k) = \binom{k-1}{r-1}p^r(1-p)^{k-1}$$
+\item \textbf{Función de densidad:}\begin{align*}
+F_X(k) = \left\{ \begin{array}{ll}
+	0 & x < r \\
+	\sum\limits_{k=r}^{[x]}\binom{k-1}{r-1}p^r(1-p)^{k-1} & x \leq k < x+1 < n
+\end{array}
+\right.
+\end{align*}
+\item \textbf{Esperanza y Varianza}
+$$E(X) = \frac{r}{p} \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = \frac{r(1-p)}{p^2}$$
+\end{itemize}
+
+\paragraph{Observación:} Esta variable aleatoria suele también definirse como el número de fracasos ante de obtener el $r$-ésimo éxito. Si la denotamos $X^*$, entonces:
+\begin{itemize}
+\item \textbf{Rango:} $R_X = \nat\cup \{0\}$
+\item \textbf{Función de probabilidad puntual:} 
+$$p_{X^*}(k) = \binom{r+k-1}{k}p^r(1-p)^{k}$$
+\item \textbf{Esperanza y Varianza}
+$$E(X^*) = \frac{r(1-p)}{p} \hspace*{8mm}\text{y}\hspace*{8mm} V(X^*) = \frac{r(1-p)}{p^2}$$
+\end{itemize}
+
+\subsection{Distribución Hipergeométrica}
+Supongamos que se tiene una población de $N$ elementos que debe ser muestreada y cada elemento puede ser clasificado como éxito o fracaso. Sabiendo que hay $D$ éxitos en la población, se extrae una muestra de $n$ elementos de forma tal que cualquier subconjunto del mismo tamaño tiene la misma probabilidad de ser elegido, definimos $X=$ ``número de éxitos en la muestra de tamaño $n$''. Entonces $X$ tiene distribución hipergeométrica y se nota $\dhiper{X}{n}{N}{D}$
+
+\begin{itemize}
+\item \textbf{Función de probabilidad puntual}
+\begin{align*}
+p_X(k) = \frac{\binom{D}{k}\binom{N-D}{n-k}}{\binom{N}{n}} \hspace*{1cm} \max(0,n-(N-D))\leq k \leq \min(n,D)
+\end{align*}
+\item \textbf{Esperanza y Varianza}
+$$E(X) = n\frac{D}{N}  \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = \frac{N-n}{N-1}n\frac{D}{N}\left(1-\frac{D}{N}\right)$$
+\end{itemize}
+
+\paragraph{Observacion 1} El factor $\left(\frac{N-n}{N-1}\right)$ que aparece en la expresión de la varianza se denomina factor de corrección por población finita.
+\paragraph{Observacion 2} Si $n$ es pequeño en relación a $N$, la hipergeométrica puede ser aproximada por la distribución Binomial de párametros $n$ y $p=D/N$.
+
+\subsection{Distribución Poisson}
+Sea $\dbin{X}{n}{p}$, con $n \rightarrow \infty$ y $p\rightarrow 0$, de manera que $np = \lambda$, entonces $X$ tiene distribución Poisson y se note $\dpois{X}{\lambda}$
+
+\begin{enumerate}
+\item \textbf{Rango:} $R_X = \{0, 1, 2, ...\}$
+\item \textbf{Función de probabilidad puntual}\begin{align*}
+p_X(k) = \binom{n}{k}p^k(1-p)^{n-k}\longrightarrow\frac{e^{-\lambda}\lambda^k}{k!}~\hspace*{1cm}\forall k\in\nat_0
+\end{align*}
+\item \textbf{Esperanza y Varianza}
+$$E(X) = \lambda  \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = \lambda$$
+\end{enumerate} 
+
+\subsubsection{Proceso de Poisson}
+Supongamos que se observa la ocurrencia de un evento a lo largo del tiempo y que existe una cantidad positiva $\theta > 0$, tal que:
+\begin{enumerate}
+\item La probabilidad de que ocurra exactamente un evento en un intervalo pequeño de longitud $\Delta t$ es aproximadamente $\theta\Delta t$, es decir que:
+$$P(\text{ocurra un evento en }\Delta t) = \theta\Delta t + o(\Delta t)$$
+siendo $o(h)$ una función $g(h)$ tal que $\lim\limits_{h\to 0}\frac{g(h)}{h} = 0$.
+\item La probabilidad de que ocurra más de un evento en un intervalo pequeño de longitu $\Delta t$ es despreciable cuando se la compara con la probabilidad de que ocurra un evento, es decir:
+$$P(\text{ocurra un evento en }\Delta t) =  o(\Delta t)$$
+\item El número de eventos que ocurren en un intervalo es independiente del número de eventos que ocurren en otro intervalo disjunto.
+\end{enumerate}
+
+Entonces, el número de ocurrencias dle evento en un periodo de longitud $t$ tiene distribución de Poisson de parámetro $(\theta t)$, es decir que la variable aleatoria $X_t$ = ``número de ocurrencias del evento en el intervalo de longitud $t$" satisface $\dpois{X_t}{\theta t}$
+
+\paragraph{Observación} A $\theta$ se le suele llamar \textbf{tasa media de ocurrencia} o \textbf{intensidad} del Proceso de Poisson.
+
+\section{Variables aleatorias continuas}
+Una variable aleatoria $X$ es continua si existe una función $f:\reales\to\reales^+$ llamada \textbf{función de densidad} de la variable aleatoria $X$ tal que
+$$P(x\in A) = \int_A f(x)dx \hspace*{1cm} \forall A\subseteq\reales$$
+
+En particular, si $A=[a,b]$, entonces:
+
+$$P(a\leq x\leq b) = \int_a^b f(x)dx$$ y $P(X=a) = P(a\leq X \leq a)= 0$
+
+\paragraph{Propiedad:} Para que una función $f(x)$ sea una función de densidad, debe satisfacer:
+\begin{align*}
+f(x)\geq 0~\forall~x\in\reales \\
+\int_{-\infty}^{\infty} f(x)dx = 1
+\end{align*}
+
+\paragraph{Observación:} $f(x)$ no es una probabilidad.
+
+\subsection{Función de distribución acumulada}
+La \textbf{función de distribución acumulada} de una variable aleatoria continua $X$ con función de densidad $f(x)$ se define para todo $x\in\reales$, como
+$$F_X(x) = P(X\leq x) = \int_{-\infty}^{x}f(t)dt$$
+
+\paragraph{Propiedad:} Sea $X$ una variable aleatoria continua,
+\begin{enumerate}
+\item $\forall~x\in\reales$, $F_X(x) \in [0,1]$
+\item Si $x_1 < x_2\Rightarrow F_X(x_1) \leq F_X(x_2)$, es decir, $F_X(x)$ es monótona no decreciente.
+\item $F_X(x)$ es continua en todo punto.
+\item $\lim\limits_{x\to\infty} F_X(x) = 1$ y $\lim\limits_{x\to-\infty} F_X(x) = 0$
+\end{enumerate}
+
+\paragraph{Proposición:} Sean $a$ y $b$ tales que $a\leq b$, entonces:
+$$P(a\leq X\leq b) = P(a\leq X < b) = P(a < X \leq b) = P(a < X < b) = F(b)-F(a) $$
+
+\paragraph{Proposición:} Si $X$es una variable aleatoria continua con función de densidad $f(x)$ y función de distribución acumulada $F(x)$, entonces todo punto donde $F(x)$ es derivable vale que:
+
+$$F'(x) = \frac{\partial F(x)}{\partial x} = f(x)$$
+
+\paragraph{Percentiles de una distribución continua: } Sea $X$ una variable aleatoria continua con función de densidad $f(x)$ y función de distribución acunulada $F(x)$ y sea $0<p<1$. El percentil $(100 p)$-ésimo de la distribución de $X$ es el valor $x_p$ tal que 
+
+$$F(x_p) = P(X\leq x_p) = \int_{-\infty}^{x_p} f(t)dt = p$$
+\subsection{Esperanza y varianza de variables aleatorias continuas}
+Sea $X$ una variable aleatoria continua con función de densidad $f(x)$, la \textbf{esperanza} o el \textbf{valor esperado de $X$} se define como
+
+$$E(X) = \mu_X = \int_{-\infty}^{\infty} xf(x)dx$$
+
+\textbf{Proposición: } Si la variable continua tiene función de densidad $f(x)$, entonces la esperanza de cualquier función real $h(x)$ está dada por:
+
+$$E(h(X)) = \int_{-\infty}^{\infty} h(x)f(x)dx$$
+
+\textbf{Linealidad: } Si $a$ y $b$ son constante reales, $E(aX+b) = aE(x)+b$.
+
+\subsection{Varianza de una variable aleatoria continua}
+Sea $X$ una variable aleatoria continua con esperanza $\mu_X$ y densidad $f(x)$, la \textbf{varianza de \textit{X}} es
+$$V(X) = \sigma_X^2 = E\left[\left(X-\mu_X\right)^2\right] = \int_{-infty}^{infty}(x-\mu_x)^2 f(x)$$
+
+\textbf{Proposición: } $V(X) = E(X^2) - \left(E(X)\right)^2$
+
+\textbf{Propiedad:} Sea $X$ una variable aleatoria continua con densidad $f(x)$, $$V(aX+b) = a^2V(X) \hspace*{8mm}y\hspace*{8mm} \sigma_{aX+b} = |a|\sigma_X$$
+
+\subsection{Distribución Uniforme}
+Se dice que $X$ tiene distribución uniforme en el intervalo $[A,B]$, si su función de densidad es:
+$$f(x) =\frac{1}{B-A}I_{[A,B]}(x)$$
+
+\paragraph{Notación:} $\duni{X}{A}{B}$
+
+\paragraph{Función de distribución acumulada}
+\begin{align*}
+F(x) =\left\{
+\begin{array}{ll}
+0 & \text{si } x < A \\
+\frac{x-A}{B-A} & \text{si } A\leq x \leq B\\
+1 &\text{si } x > B
+\end{array}
+\right.
+\end{align*}
+
+\paragraph{Esperanza y Varianza}
+$$E(X) = \frac{A+B}{2}  \hspace*{8mm}\text{y}\hspace*{8mm} V(X) = \frac{(B-A)^2}{12}$$
+\subsection{Distribución Normal}
+Se dice que $X$ tiene distribución Normal de parámetros $\mu$ y $\sigma^2$ ($\mu\in\reales$,  $\sigma >0$) $[A,B]$, si su función de densidad es:
+$$f(x) =\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2\sigma^2}(x-\mu)^2}$$
+
+\paragraph{Notación:} $\dnom{X}{\mu}{\sigma^2}$
+
+El gráfico de la función de densidad normal tiene forma de campana con eje de simetría en $x=\mu$ y puntos de inflexión en $x=\mu+\sigma$ y $x=\mu-\sigma$.
+
+\subsubsection{Distribución normal estándar}
+Se idce que $Z$ tiene distribución norma estándar si sus parámetros son $\mu = 0$ y $\sigma^2 = 1$, es decir $\dnom{Z}{0}{1}$. Su función de densidad estará dada por:
+
+$$f(z) =\frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}$$
+
+y su función de distribución $\Phi(z)$ es:
+
+$$\Phi(z) = F(z) =\int_{-\infty}^{z}\frac{1}{\sqrt{2\pi}}e^{-\frac{t^2}{2}}dt$$
+
+Esta integral no tiene una expresión analitica conocida.
+
+\paragraph{Esperanza y Varianza}
+Sea $\dnom{Z}{0}{1}$, entonces:
+$$E(Z) = 0  \hspace*{8mm}\text{y}\hspace*{8mm} V(Z) = 1$$
+\paragraph{Propiedades}
+\begin{enumerate}
+\item Si $\dnom{X}{\mu}{\sigma^2}\Rightarrow Z = \dnom{\frac{X-\mu}{\sigma}}{0}{1}$
+\item Si $\dnom{Z}{0}{1}$ y $\sigma > 0\Rightarrow X = \dnom{\sigma Z+\mu}{\mu}{\sigma^2}$
+\item Si $\dnom{X}{\mu}{\sigma^2}\Rightarrow E(X) = \mu$ y $V(X)=\sigma^2$
+\end{enumerate}
+\subsection{Distribución Gamma}
+Dado $\alpha > 0$, se define la función Gamma o función factorial como:
+$$\Gamma(\alpha) = \int_{0}^{\infty} x^{\alpha-1}e^{-x}dx$$
+
+\paragraph{Propiedades}
+\begin{enumerate}
+\item Si $\alpha > 1$, $\Gamma(\alpha) = (\alpha-1)\Gamma(\alpha-1)$
+\item Si $\alpha\in\nat$, $\Gamma(\alpha) = (\alpha-1)!$
+\item $\Gamma(\frac{1}{2}) = \sqrt{\pi}$
+\end{enumerate}
+
+\paragraph{Distribución Gamma} Se dice que $X$ tiene distribución Gamma de parámetros $\alpha$ y $\lambda$ ($\alpha>0$, $\lambda>0$) si su función de densidad está dada por
+
+$$f(x) = \frac{e^{-\lambda x} x^{\alpha-1}\lambda^\alpha}{\Gamma(\alpha)}I_{(0,\infty)}(x)$$
+
+\paragraph{Notación:} $\Gamma{X}{\alpha}{\lambda}$
+
+Si $\lambda=1$, la distribución se denomina Gamma estándar y su densidad está dada por:
+$$f(x) = \frac{e^{-x} x^{\alpha-1}}{\Gamma(\alpha)}I_{(0,\infty)}(x)$$
+
+Esta función de densidad es estrictamente decreciente si $\alpha \leq 1$, y si $\alpha > 1$ alcanza un máximo y después decrece.
+
+\paragraph{Esparanza y Varianza:}
+$\dgamma{X}{\alpha}{\lambda}$, entonces: $E(X) =\frac{\alpha}{\lambda}$ y $V(X) = \frac{\alpha}{\lambda^2}$
+
+\paragraph{Propiedad: } Si $\dgamma{X}{\alpha}{\lambda}$ y a$>0$, entonces $\dgamma{aX}{\alpha}{\lambda /\text{a}}$
+
+\paragraph{Observación:} Algunos autores utilizan otra parametrización de la distribución Gamma, definiendo como segundo parámetro de la distribución a $\frac{1}{\lambda}$. Es decir $\dgamma{X}{\alpha}{\beta}$ si su función es densidad es:
+
+$$f(x) = \frac{e^{-\frac{x}{\beta}} x^{\alpha-1}}{\lambda^\beta\Gamma(\alpha)}I_{(0,\infty)}(x)$$
+
+En este caso, $E(X) = \alpha\beta$ y $V(X) = \alpha\beta^2$
+\subsection{Distribución Exponencial}
+Una variable eleatoria exponencial es una variable aleatoria Gamma con parámetro $\alpha = 1$. Entonces decimos que $X$ tiene distribución exponencial de parámetro $\lambda$ si su función de densidad es:
+
+$$f(x) = e^{-\lambda x} \lambda I_{(0,\infty)}(x)$$
+
+\paragraph{Notación:} $\dexp{X}{\lambda}$
+\paragraph{Función de distribución acumulada}
+\begin{align*}
+F(x) =\left\{
+\begin{array}{ll}
+0  & \text{si } x \leq 0\\
+1 - e^{-\lambda x} & \text{si } x > 0\\
+\end{array}
+\right.
+\end{align*}
+
+\paragraph{Esperanza y Varianza} Si $\dexp{X}{\lambda}$ entonces $E(X) = \frac{1}{\lambda}$ y $V(X) = \frac{1}{\lambda^2}$
+
+\paragraph{Falta de memoria:} Sea $\dexp{X}{\lambda}$ y sean $s$ y $t$ números reales positivos cualesquiera, entonces:
+$$P(X>s+t~|~X>s) = P(X> t)$$
+
+\paragraph{Proposición:} Dado un proceso de Poisson de intensidad $v$, si se define la variable aleatoria $T =$ ``tiempo hasta la ocurrencia del primer evento'', entonces $\dexp{T}{v}$
+\section{Distribución conjunta de variables aleatorias}
+Sean $X$ e $Y$ variables aleatorias discretas definidas sobre un espacio muestral $S$. La \textbf{función de probabilidad conjunta} del par $(X,Y)$, $p_{XY}$ se define como:
+
+$$p_XY(x,y) = P(X = x, Y = y)$$
+
+El conjunto  $R_XY =  \{(x,y) / x \in R_X,~y\in R_Y\}$ es el recorrido o rango del vector aleatorio $(X,Y)$.
+
+Dado cualquier conjunto $A\subseteq \reales^2$:
+
+$$P((X,Y)\in A) = \underset{(x,y)\in A}{\sum\sum} p_{XY}(x,y)$$
+
+Una función de probabilidad conjunta satisface:
+
+\begin{itemize}
+	\item $p_{XY}(x,y) \leq 0~\hspace*{5mm} \forall(x,y)$
+	\item $\sum\limits_x\sum\limits_y p_{XY}(x,y) = 1$
+\end{itemize}
+
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio discreto con función de probabilidad conjunta $p_{XY}(x,y)$, las \textbf{funciones de probabilidad marginal} de $X$ e $Y$ están dadas por
+
+	$$p_X(x) = \sum_y p_{XY}(x,y)$$
+	$$p_Y(x) = \sum_x p_{XY}(x,y)$$
+
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio discreto con función de probabilidad conjunta $p_{XY}(x,y)$, la \textbf{funcion de distribución acumulada conjunta} de $X$ e $Y$ está dada por
+
+$$F_{XY}(x,y) = \sum_{s\leq x}\sum_{t\leq y} p_{XY}(s,t)\hspace*{5mm}\forall(x,y)\in\reales^2$$
+
+\paragraph{Vectores continuos}
+Sean $X$ e $Y$ variables aleatorias continuas definidas sobre un espacio muestral $S$. El vector  $(X,Y)$ es continuo si existe una función, denomidada \textbf{función de densidad conjunta} $f_{XY}(x,y):\reales^2\to\reales_{\leq 0}$ , tal que:
+
+$$P((X,Y)\in A) = \underset{A}{\int\int} f_{XY}(x,y)dxdy\hspace*{5mm}\forall A\subseteq\reales^2$$
+
+En particular, si $A = [a,b]\times[c,d]$,
+
+$$P((X,Y)\in A) = \int_a^b\int_c^d f_{XY}(x,y)dydx$$
+
+Una función de probabilidad conjunta satisface:
+
+\begin{itemize}
+	\item $f_{XY}(x,y) \leq 0~\hspace*{5mm} \forall(x,y)$
+	\item $\int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty} f_{XY}(x,y)dyd = 1$
+\end{itemize}
+
+\paragraph{Definición:} Diremos que el vector aleatorio tiene \textbf{distribuición uniforme} sobre una región $A\subset\reales^2$ si su densidad es constante sobre la región y $0$ fuera de ella, es decir:
+
+$$(X,Y)\sim U(A) \iff f_{XY}(x,y) = \left\{ \begin{array}{ll}
+k & \text{si} (x,y)\in A\\
+0 & \text{si} (x,y)\notin A\\
+\end{array}\right.$$
+	
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio continuo con función de densidad conjunta $p_{XY}(x,y)$, las \textbf{funciones de probabilidad marginal} de $X$ e $Y$ están dadas por
+	
+	$$f_X(x) = \int\limits_{-\infty}^{\infty} f_{XY}(x,y)dy$$
+	$$f_Y(y) = \int\limits_{-\infty}^{\infty} f_{XY}(x,y)dx$$
+	
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio continuo con función de denisdad conjunta $p_{XY}(x,y)$, la \textbf{función de distribución acumulada conjunta} de $(X,Y)$ está dada por
+	
+	$$F_{XY}(x,y) = \int\limits_{-\infty}^{x}\int\limits_{-\infty}^{y} f_{XY}(s,t)dtds\hspace*{5mm}\forall(x,y)\in\reales^2$$
+
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio discreto con función de probabilidad conjunta $p_{XY}(x,y)$, marginales $p_X(x)$ y $p_Y(y)$ y sea $x$ tal que $p_X(x) > 0$, la \textbf{función de probabilidad condicional} de $Y$ dado $X = x$ está dada por
+
+$$P_{Y | X = x}(y) = \frac{p_{XY}(x,y)}{p_X(x)}$$
+
+Del mismo modo, sea $y$ tal $p_Y(y) > 0$, \textbf{la función de probabilidad condicional} de $X$ dado $Y = y$ está dada por:
+
+$$P_{X | Y = y}(x) = \frac{p_{XY}(x,y)}{p_Y(y)}$$
+
+\paragraph{Definición:} Sea $(X,Y)$ un vector aleatorio continuo con función de densidad conjunta $p_{XY}(x,y)$, marginales $f_X(x)$ y $f_Y(y)$ y sea $x$ tal que $p_X(x) > 0$, la \textbf{función de probabilidad condicional} de $Y$ dado $X = x$ está dada por
+
+$$f_{Y | X = x}(y) = \frac{f_{XY}(x,y)}{f_X(x)}$$
+
+Del mismo modo, sea $y$ tal $f_Y(y) > 0$, \textbf{la función de probabilidad condicional} de $X$ dado $Y = y$ está dada por:
+
+$$f_{X | Y = y}(x) = \frac{f_{XY}(x,y)}{f_Y(y)}$$
+
+Se denomina \textbf{soporte de una densidad} al conjunto de valores en los cuales la densidad es positiva..
+\subsection{Independencia de variables aleatorios}
+Las variables aleatorias $X$ e $Y$ son independientes si y solo si para todo $a < b$ y $c < d$ se satisface:
+
+$$P(\{a < X < b\}\cup \{ c < Y < d\}) = P(a < X < b)P(c < Y < d)$$
+
+Si esta condición no se satisface, diremos que $X$ e $Y$ son dependientes.
+
+\subsubsection{Esperanza, covarianza y correlación}
+Sean $X$ e $Y$ dos variables aleatorias discretas con función de probabilidad conjunta $p_{XY}(x,y)$ y sea $h(x,y):\reales^2\to\reales$, entonces $h(X,Y)$ es una variable aleatorio y 
+
+$$E(h(X,Y)) = \sum_x\sum_y h(x,y)p_{XY}(x,y)$$
+
+siempre que esta esperanza exista.
+
+\paragraph{Proposición:}Sean $X$ e $Y$ dos variables aleatorias continuas con función de densidad conjunta \\ $f_{XY}(x,y)$ y sea $h(x,y):\reales^2\to\reales$, entonces $h(X,Y)$ es una variable aleatorio y 
+
+$$E(h(X,Y)) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty} h(x,y)f_{XY}(x,y)$$
+
+siempre que esta esperanza exista.
+
+\paragraph{Proposición:} Sean $X$ e $Y$ dos variables aleatorias discretas o continuas con función de probabilidad conjunta o densidad $p_{XY}(x,y)$ ó $f_{XY}(x,y)$ respectivamente y sea $a$ y $b$ números reales, entonces:
+
+$$E(aX + bY) = aE(X) + bE(Y)$$
+
+\paragraph{Proposición:} Si $X$ e $Y$ son variables aleatorias independientes entonces $E(XY) = E(X)E(Y)$
+
+\paragraph{Definición:} Sean $X$ e $Y$ dos variables aleatorias con esperanzas $\mu_x$ y $\mu_y$ respectivamente, la \textbf{covarianza} entre $X$ e $Y$ se define como:
+
+$$\text{Cov}(X,Y) = E[(X-\mu_x)(Y-\mu_y)]$$
+
+\paragraph{Propiedades}
+\begin{itemize}
+	\item Cov$(X,X) = V(X)$
+	\item Cov$(X,Y) = E(XY) - E(X)E(Y)$
+	\item Si $X$ e $Y$ son variables aleatorias independientes, Cov$(X,Y)=0$. La reciproca no es cierta en general.
+\end{itemize}
+
+\paragraph{Definición:} Sean $X$ e $Y$ dos variables aleatorias con esperanzas $\mu_x$ y $\mu_y$ respectivamente y varianza positiva, el \textbf{coeficiente de correalción} entre $X$ e $Y$ se define como:
+
+$$\rho(X,Y) = \frac{\text{Cov}(X,Y)}{\sigma_X\sigma_Y}$$
+
+siendo $\sigma_X$ y $\sigma_Y$, los desvíos standard de $X$ e $Y$ resepectivamente..
+
+\paragraph{Propiedades:}
+\begin{itemize}
+	\item Sean $a$, $b$, $c$ y $d$ números reales, $a\neq 0$, $c\neq 0$ y $X$ e $Y$ dos variables aleatorias cualesquiera con varianza positiva, entonces
+	
+	$$\rho(aX+b, cY+d) = \text{sg}(ac)\rho(X,Y)$$
+	
+	donde sg denota la función signo.
+	
+	\item $-1\leq \rho(X,Y) \leq 1$
+	
+	\item $|\rho(X,Y)| = 1 \iff Y = aX + b$ con probabilidad 1, para ciertos valores reales de $a$ y $b$ y $a\neq 0$.
+\end{itemize}
+\subsection{Extensión a más de dos dimensiones}
+Sean $X_1,\dots,X_k$ variables aleatorias discretas, la \textbf{función de probabilidad conjunta} del vector aleatorio $(X_1,\dots,X_k)$ se define como:
+
+$$p_{X_1,\dots,X_k}(x_1,\dots,x_k) = P(X_1 = x_1,\dots, X_k = x_k)$$
+
+y dado cualquier cojunto $A\subseteq\reales^k$:
+
+$$P((X_1,\dots,X_k)\in A) = \underset{(x_1,\dots,x_k)\in A}{\sum\dots\sum} p_{X_1,\dots,X_k}(x_1,\dots,x_k)$$
+
+\subsubsection{Distribución Multinomial}
+Supongamos qu se repite $n$ veces en forma independiente una experiencia, que en cada repitición hay $k$ resultados posibles $(k \leq 2)$, cada uno de los cuales ocurre con probabilidad $p_i (1\leq i \leq k)$ y que estas probabilidades se mantienen constantes en todas las repeticiones.
+
+Si definimos $X_i$ como el número de veces que ocurre el resultado $i$ ($1\leq i\leq k$), la distribución conjunta de $(X_1,\dots,X_k)$ se denomina distribución multinomial de parámetros $n, p_1,\dots, p_k$ y notamos $(X_1,\dots,X_k)\sim M(n, p_1,\dots, p_k)$.
+
+La correspondiente función de probabilidad conjunta está dada por:
+\begin{align*}
+p_{X_1,\dots,X_k}(x_1,\dots,x_k) = \left\{\begin{array}{ll}
+\frac{n!}{x_1!\dots x_k!}p_1^{x_1}\dots p_k^{x_k} 1& \text{si } 0 \leq x_i \leq n~\forall i,~\sum_{i=1}^{n} x_i = n\\
+0 & \text{ en otro caso}\\
+\end{array}\right.
+\end{align*}
+
+En forma similar a lo hecho para el caso bidimensional se pueden definir las \textbf{funciones de probabilidad marginal}.
+
+La \textbf{disctribución marginal} de $X_i$ es binomial de parámetros $n$ y $p$, para todo $1\leq i \leq k$
+
+
+
+\subsubsection{Vector aleatorio continuo}
+El vector aleatorio $(X_1,\dots,X_k)$ es continuo si existe una función $f_{X_1\dots X_k}:\reales^k\to\reales_{\geq 0}$, denominada \textbf{función de densidad conjunta}, tal que
+
+$$P((X_1,\dots,X_k)\in A) = \int\dots\int f_{X_1\dots X_k}(x_1,\dots,x_k)dx_1\dots dx_k~\forall A\subseteq \reales^k$$
+
+En forma similar a lo hecho para el caso bidimensional se pueden definir las \textbf{funciones de densidad marginal}.
+
+\paragraph{Definición:} $X_1,\dots,X_k$ son variables aleatorias \textbf{independientes} si y solo si:
+
+$p_{X_1,\dots,X_k}(x_1,\dots,x_k) = p_{X_1}(x_1)\dots p_{X_k}(x_k)$ en  el  caso discreto,
+
+$f_{X_1,\dots,X_k}(x_1,\dots,x_k) = f_{X_1}(x_1)\dots p_{X_k}(x_k)$ en  el  caso continuo.
+
+
+\subsection{Sumas y promedios de variables aleatorias}
+\begin{itemize}
+	\item Sean  $\dpois{X}{\lambda}$ e $\dpois{Y}{\mu}$ variables aleatorias independientes y sea $V = X + Y$ entonces $\dpois{V}{\lambda + \mu}$
+	\item Sean  $\dexp{X}{\lambda}$ e $\dpois{Y}{\lambda}$ variables aleatorias independientes y sea $V = X + Y$ entonces $\dgamma{V}{2}{\lambda}$
+	\item Sean  $\dgamma{X}{\alpha}{\lambda}$ e $\dgamma{Y}{\beta}{\lambda}$ variables aleatorias independientes y sea $V = X + Y$ entonces $\dgamma{V}{\alpha+\beta}{\lambda}$
+\end{itemize}
+
+\paragraph{Propiedad:} Sean $X_1,\dots,X_n$ variables aleatorias cualesquiera con $E(X_i) = \mu_i$ y $V(X_i)=\sigma^2$ y $a_1,\dots,a_n$ números reales, entonces:
+
+
+$$E\left(\sum_{i=1}^{n} a_iX_i\right) = \sum_{i=1}^{n} a_i\mu_i $$
+
+$$V\left(\sum_{i=1}^{n} a_iX_i\right) = \sum_{i=1}^{n} a^2_i\sigma^2_i + 2\sum_{i<j} a^ia_j\text{cov}(X_i, X_j)$$
+
+\paragraph{Corolario:} Sean $X_1,\dots,X_n$ variables aleatorias identicamente istribuidas con $E(X_i) = \mu$ y $V(X_i)=\sigma^2$ y $a_1,\dots,a_n$ números reales, entonces:
+
+
+$$E\left(\sum_{i=1}^{n} X_i\right) = n\mu$$
+
+$$V\left(\sum_{i=1}^{n} X_i\right) = n\sigma^2_i$$
+
+y
+
+$$E(\bar{X}) = E\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = \mu$$
+
+$$V(\bar{X}) = V\left(\frac{\sum_{i=1}^{n} X_i}{n}\right) = \frac{\sigma^2}{n}$$
+
+
+\subsection{Función Generadora de Momentos y sus Propiedades}
+Si $X$ es una variable aleatoria, el momento de orden $k$ de $X$ se define como $E(X^k)$ siempre que la esperanza exista.
+
+\paragraph{Función generadora de momentos:} La función generadora de momentos de una variable aleatoria $X$ es una función $M_X(t)$ a valores reales definida como:
+\begin{align*}
+M_X(t) = E(e^{tX})\left\{
+\begin{array}{ll}
+\sum\limits_{x\in R_X} e^{tx}p_X(x) & \text{si } $X$ \text{ es discreta}\\
+\int_{-\infty}^{\infty} e^{tx}f_X(x)dx & \text{si } $X$ \text{ es continua}\\
+\end{array}
+\right.
+\end{align*}
+
+siempre que el valor esperado exista para todo $t \in (-h,h)$, $h > 0$.
+
+\paragraph{Teorema:} Sea $X$ una v.a. para la cual existe la función generadora de momentos $M_X(t)$ entonces:
+
+\begin{align*}
+	E(X^n) =  \left.\frac{\partial^{n}}{\partial t^{n}} M_X(t)
+		\right|_{t=0}
+\end{align*}
+
+\paragraph{Lema:} Si la función $g(t)$ definida por
+
+\begin{align*}
+	g(t) = \sum_{}^{x} e^{tx}p(x)\hspace{5mm}\textbf{ó}\hspace{5mm}g(t) = \int_{\infty}^{-\infty} f(x)dx
+\end{align*}
+
+converge para todo $t\in (-h,h)$ para algún $h > 0$, entonces existen las derivadas de orden $n$ de $g(t)$ para todo $t\in(-h,h)$ y para todo $n$ entero positivo y se obtienen como
+
+\begin{align*}
+	\frac{\partial^{n}g(t)}{\partial t^{n}} = \sum_{}^{x} \frac{\partial^{n}e^{tx}p(x)}{\partial t^{n}} \hspace{5mm}\textbf{ó}\hspace{5mm}	\frac{\partial^{n}g(t)}{\partial t^{n}} = \int_{\infty}^{-\infty}\frac{\partial^{n}e^{tx}}{\partial t^{n}}f(x)dx
+\end{align*}
+
+
+\paragraph{Propiedad:} Sea $X$ una variable aleatoria con función generadora de momentos $M_X(t)$, entonces si $Y = aX+b$, entonces $M_Y(t) = e^{bt}M_X(at)$
+
+\paragraph{Teorema de unicidad:} Si existe la función generadora de momentos de una variable aleatoria, es única y determina a la función de densidad o probabilidad de la variable aleatoria salvo a lo sumo en un conjunto de probabilidades $0$.
+
+\vspace*{5mm}
+\begin{tabular}{|l|l|}
+	\hline &\\
+	\textbf{Distribución} & $M_X(t)$ \\
+		\hline& \\
+	Bi(n,p) & $(e^t + 1-p)^n$\\
+		\hline &\\
+	P($\lambda$)& $e^{\lambda(e^t-1)}$\\
+		\hline &\\
+	N($\mu$, $\rho^2$)& $e^{\frac{\sigma^2t^2}{2}+\mu t}$\\
+		\hline &\\
+	$E$($\lambda$)& $\frac{\lambda}{\lambda-t}$\\
+		\hline &\\
+	$G$($\alpha$, $\lambda$)& $ \left(\frac{\lambda}{\lambda-t}\right)^\alpha$\\
+		\hline &\\
+	$U$(a,b) & $ \frac{e^{tb} - e^{ta}}{t(b-a)}$\\
+		\hline &\\
+	$G$(p) & $\frac{pe^t}{1-(1-p)e^t}$\\
+		\hline &\\
+	$BN$(r,p) & $\left(\frac{pe^t}{1-(1-p)e^t}\right)^r$\\
+		\hline
+\end{tabular}
+
+
+\paragraph{Función generadora de momentos en la suma de variables aleatorias independientes:} Sean, en principio $X$ e $Y$ dos variables aleatorias independientes, entonces la función generadora de la suma $X+Y$ es el producto de las funciones generadoras, es decir:
+
+$$M_{X+Y}(t) = M_X(t)M_Y(t)$$
+
+\subsubsection{Generación de números aleatorios}
+El método más conocido es el \textbf{método de congruencias}. Para generar números con distribución uniforme en el intervalo $(0,1)$ debemos generar $X_n$ enteros entre $0$ y un número natural $m$ y luego tomar la fracción:
+
+$$U_n = \frac{X_n}{m}$$
+
+Dados cuatro números $m$,$a$, $c$ y $X_0$, formamos la secuencia de números aleatorios $X_n$ de la siguiente forma:
+
+$$X_{n+1} \equiv (aX + c) \mod m, \hspace*{5mm} n \geq 0$$
+
+es decir que $X_{n+1}$ es el resto entero de dividir $aX + c$ por $m$
+Sea $U$ una variable aleatoria con distribución $U(0,1)$ y $G$ una función e distribución acumulada continua y estrictamente creciente. Si $X=G^{-1}(U)$, entonces la función de distribución acumulada de $X$ es $G$, es decir $F_X = G$.
+
+\paragraph{Teorema:} Sea $U$ una variable aleatoria con distribución $U(0,1)$ y $G$ una función de distribución acumulada. Existe una función $H$ tal que $H(U)$ tiene distribución acumulada $G$.
+
+\subsection{Desigualdad de Tchebycheft}
+Sea $X$ una variable aleatoria con $E(X) = \mu$ y $V(X) = \sigma^2 < \infty$, entonces $\forall \epsilon > 0$  $$P(|X-\mu| > \epsilon) \leq \frac{\sigma^2}{\epsilon^2}$$
+
+\paragraph{Observación:} La cota que provee la desigualdad de Chebyshev puede ser grosera o, peor aún, no informativa.
+
+\subsubsection{Formas equivalentes de la desigualdad de Chebyshev}
+\begin{itemize}
+	\item $\forall \epsilon > 0$  $$P(|X-\mu| \leq \epsilon) \geq 1 - \frac{\sigma^2}{\epsilon^2}$$
+	\item $\forall k > 1$  $$P(|X-\mu| > k\sigma) \leq \frac{1}{k^2}$$
+	\item $\forall k > 1$  $$P(|X-\mu| \leq k\sigma) \geq \frac{1}{k^2}$$
+\end{itemize}
+
+\subsection{Ley de los Grandes Números}
+Sea $(X_n)$ $(n\geq 1)$ una sucesión de variables aleatorias, diremos que  $X_n$ \textbf{converge en probabilidad} a la variable aleatoria $X$ y lo notaremos $X_n \overset{p}{\longrightarrow} X$, si:
+
+$$\lim_{n\to\infty}P(|X-\mu| > \epsilon) = 0$$
+
+\paragraph{Ley de los Grandes Números:} Sean $X_1,\dots,X_n$ variables aleatorias independientes e identicamente distribuidas con $E(X) = \mu$ y $V(X) = \sigma^2 < \infty$, entonces
+$$\bar{X}_n\overset{p}{\longrightarrow} \mu$$
+siendo $\bar{X}_n = \frac{\sum_{i=1}^{n}X_i}{n}$ el denominado promedio muestral.
+
+\paragraph{Propiedades}
+\begin{itemize}
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $\dbin{X}{n_i}{p}$, entonces:
+	$$\dbin{\sum_{i=1}^{n}X_i}{\sum_{i=1}^{n}n_i}{p}$$
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $\dpois{X}{ \lambda_i}$, entonces:
+	$$\dpois{\sum_{i=1}^{n}X_i}{\sum_{i=1}^{n}\lambda_i}$$
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $\dgeo{X}{p}$, entonces:
+	$$\dnbin{\sum_{i=1}^{n}X_i}{n}{p}$$
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $\dexp{X}{\lambda}$, entonces:
+	$$\dgamma{\sum_{i=1}^{n}X_i}{n}{\lambda}$$
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $\dgamma{X}{n_i}{\lambda}$, entonces:
+	$$\dgamma{\sum_{i=1}^{n}X_i}{\sum_{i=1}^{n}n}{\lambda}$$
+	\item Si $X_1,\dots,X_n$ son variables independientes tales que $dnom{X}{\mu_i}{\sigma^2}$ y $a_1,\dots,a_n$ son números reales, entonces:
+	$$\dnom{\sum_{i=1}^{n}a_iX_i}{\sum_{i=1}^{n}a_i\mu_i}{\sum_{i=1}^{n}a_i^2\sigma^2}$$
+\end{itemize}
+\paragraph{Teorema del Central Límite}
+Sean $X_1,\dots,X_n$ variables aleatorias e identicamente distribuidas con $E(X_i) = \mu$ y $V(X_i) = \sigma^2 < \infty$, sea $T =  \sum_{i=1}^{n}X_i$, entonces si $n$ es suficientemente grande vale que:
+$$\dnoma{\frac{T-n\mu}{\sqrt{n}\sigma}}{0}{1}\hspace*{1cm}\dnoma{\frac{\sqrt{n}(\bar{X}-\mu)}{\sigma}}{0}{1}$$
+o dicho de otro modo,
+$$\dnomts{\frac{T-n\mu}{\sqrt{n}\sigma}}\hspace*{1cm}\dnomts{\frac{\sqrt{n}(\bar{X}-\mu)}{\sigma}}$$
+donde la convergencia en distribución $(\overset{d}{\longrightarrow})$ se interpreta del siguiente modo:
+$$P\left(\frac{T-n\mu}{\sqrt{n}\sigma} \leq a\right) \cong \Phi(a)\hspace*{1cm} P\left(\frac{\sqrt{n}(\bar{X}-\mu)}{\sigma} \leq a\right) \cong \Phi(a)$$
+es decir, que las funciones de distribución converngen a la función de distribución normal standard.
+
+\subsubsection{Correción por continuidad}
+Cuando se aproxima una distribución discreta por una continua, como es el caso de la rocimación de la distribución binomial por la nomrla, es neceario efectuar una correción.
+
+En general, cuando al variable es discreta y $x_i-x_{i-1} = 1$,  la correción se realiza en la forma $P(X\leq a) = P(X \leq a + 0.5)$ y $P(X\geq a) = P(X \geq a - 0.5)$
+
+\paragraph{Proposición:} Sean $W_1,\dots,W_2$ variables aleatorias independientes con distribución $E(1)$. Consideremos el siguiente proceso. Comenzamos a medir el tiempo en $t=0$ y considermaos que ocurre el primer evento en el instante $W_1$, el segundo en el instante $W_1+W_2$, y en general el $k$-ésimo evento en el instante $W_1+\dots+W_k$. Si para $t > 0$, definimos la variable aleatoria $X_t = $ cantidad de eventos que ocurren en el intervalo $[0,t]$, entonces $X_t$ es una variable discreta y su distribución es $P(t)$.

@@ -1,0 +1,538 @@
+\part{Estadística}
+\section{Introducción y estadística descriptiva}
+Los métodos de \textbf{Análisis Exploratorio} o \textbf{Estadística Descriptiva} ayudan a comprender la estructura de los datos, de manera de detectar tanto un patrón de comportamiento general como apartamientos del mismo.
+
+La \textbf{inferencia estadística} nos permite tanto hacer predicciones y estimaciones como decidir entre dos hipótesis opuestas relativas a la población de la cuál provienen los datos (test de hipotesis).
+
+Los métodos estadísticos aplicados sobre datos obenidos apartir de muestras aleatorias, permiten cuantificar el error que podemos cometer en un estimación o calcular la probabilidad de cometer un error al tomar una decisión en un test de hipotesis.
+
+\subsection{Estadística descriptiva}
+Examinaremos los datos en fomra descriptiva con el fin de:
+\begin{itemize}
+	\item Organizar la información
+	\item Sintetizar la información
+	\item Ver sus características más relevantes
+	\item Presentar la información..
+\end{itemize}
+
+\paragraph{Población:} Conjunto total de lo sujetos o unidades de análisis de interés en el estudio.
+
+\paragraph{Muestra:} Cuaquier subconjunto de sujetos o unidades de análisis de la población en estudio.
+
+\paragraph{Unidad de análisis o observación:} Objeto bajo estudio.
+
+\paragraph{Variable:} Cualquier caracterísitca de la unidad de observación que interese registrar y que en el momento de ser registradada puede ser transformada en un número.
+
+\paragraph{Valor de una variable, Dato, Observación o Medición:} número que describe a la característica de interés en una undad de observación particular.
+
+\paragraph{Caso o Registro:} Conjunto de mediciones realizadas sobre una unidad de observación.
+
+\subsection{Datos cuantitativos}
+\subsubsection{Esquema Tallo y Hoja}
+Nos da una primera aproximación rápida al a distribución de los datos sin perder de vistas las observaciones.
+
+\begin{enumerate}
+	\item Ordenamos los datos de menor a mayor.
+	\item Separamos cada observación en dos partes: \textbf{tallo} y \textbf{hoja}.
+	\item Listamos en forma vertical y creciente los tallos y agregamos las hojas a la derecha del tallo correspondiente
+\end{enumerate}
+
+\paragraph{Ejemplo:} La siguiente tabla contiene 45 observaciones:
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+	\hline
+	96 & 93 & 88 & 117 & 127 & 95 & 113 & 96 \\
+	\hline
+	108 & 94 & 148 & 156 & 139 & 142 & 94 & 107 \\
+	\hline
+	125 & 155 & 155 & 103 & 112 & 127 & 117 & 120 \\
+	\hline
+	112 & 135 & 132 & 111 & 125 & 104 & 106 & 139 \\
+	\hline
+	134 & 119 & 97 & 89 & 118 & 136 & 125 & 143 \\
+	\hline
+	120 & 103 & 113 & 124 & 138 &   &   &  \\
+	\hline
+\end{tabular}
+
+\vspace*{5mm}
+A continuación se muestra el diagrama tallo hoja:
+
+\vspace*{5mm}
+\begin{tabular}{r|l}
+	9 & 3445667\\
+	10 & 334678\\
+	11 & 122337789\\
+	12 & 00455577\\
+	13 & 2456899\\
+	14 & 238\\
+	15 & 556\\
+\end{tabular}
+\end{center}
+
+\paragraph{¿Que se puede ver en este tipo de diagramas?}
+\begin{itemize}
+	\item Rango de las observaciones, valores máximos y mínimos.
+	\item Forma de la distribución: simétria, asimetría a derecha, asimetría a izquierda y cuántos picos tiene la distribución.
+	\item Posición del centro de la distribución y concentración de los datos.
+	\item Desviaciones marcadas respecto al comportamiento general: outliears o valores atípicos.
+\end{itemize}
+\paragraph{¿Como elegimos los valores de los tallos?}
+En general se recomienda utilizar entre 8 y 20 tallos. El número de tallos debe ser tal que permita mostrar una imagen general de la estructura del conjunto de datos. Demasiados detalles en general serán poco informativos, demasiado agrupamiento puede distorsionar la imagen del conjunto.
+
+Cuando el volumen de dato es muy grande conviene usar otro tipo de gráficos que tambien son de fácil interpretación.
+
+\subsubsection{Gráficos de tallo-hojas espalda con espalda. Comparación de grupos}
+Los gráficos de tallo-hojas son útiles para comparar la distribución de una variable en dos condiciones o grupos. EL gráfico se denomina tallo-hojas espalda con espalda porque ambos grupos comparte los tallos.
+
+\begin{center}
+\begin{tabular}{r|c|l}
+\textbf{T1} & & \textbf{T2} \\
+\hline
+	&5 & 47\\
+	&6 & 2\\
+	74 &7 & 37\\
+	963 &8 & 778999\\
+	660 &9 & 0358\\
+	9662 &10 & 222\\
+	821 &11 & 7\\
+	70 &12 & \\
+	2 &13 & \\
+	&14 & \\
+	&15 & \\
+	&16 & \\
+\end{tabular}
+\end{center}
+
+\subsubsection{Histograma}
+\begin{enumerate}
+	\item Se divide el rango de los datos en \textbf{intervalos o clases} que no se superpongan. Las clases deben ser \textbf{excluyentes} y \textbf{exhaustivas}.
+	\item Se cuenta la cantidad de datos en cada intervalo o clase, es decir la \textbf{frecuencia}.
+	\item Se gráfica el histograma en un par de ejes coordenados representando en las abscisas los intervalos y sobre cada uno de ellos un rectángulo cuya área sea proporcional a la frecuencia relativa de dicho intervalo.
+\end{enumerate}
+No es necesario que todos los intervalos tengan la misma longitud.
+
+Un conjunto de datos que no se distribuye simétricamente, se dice que es \textbf{asímetrico}.
+
+\subsection{Medidas de Resumen}
+\subsubsection{Medidas de posición o centrado}
+Un modo de resumir un conjunto de datos númericos es a través de un número que represente a todos, en el sentido de ser un valor típico para el conjunto.
+Supongamos que tenemos un conjunto de $n$ datos que genéricamente representaremos por: $x_1,\dots,x_n$:
+
+\paragraph{Promedio o Media Muestral:} Es el punto de equilibrio del conjunto de datos. Es una medida muy sensible a la presencia e datos anómalos  (outliers).
+
+$$\bar{x} = \frac{\sum\limits_{i=1}^{n}x_i}{n}$$
+
+\paragraph{Mediana muestral:} Es una medida el centro de los datos en tanto divide a la muestra ordeada en dos parte de igual tamaño. Deja la mitad de los datos cada lado.  La mediana esresitente a la presencia de datos atípicos. También puede ser útil cuando algunos datos han sido censurados.
+
+$$\tilde{x} =\left\{ \begin{array}{ll}
+x_{(k+1)} & \text{si } n = 2k + 1 \\
+\frac{x_{(k)} + x_{(k+1)}}{2} & \text{si } n=2k \\
+\end{array}\right.$$
+
+\paragraph{Media $\alpha$-podada:} Es un promedio calculdado sobre los datos una vee que se han eliminado $\alpha\cdot 100\%$ de os datos más pequeños y $\alpha\cdot 100\%$ de los datos más grandes. Es una medida intermedia entre la media y la mediana.
+
+$$\bar{x}_{\alpha} = \frac{x_{([n\alpha] + 1)} + \dots + x_{(n-[n\alpha])}}{n-2[n\alpha]}$$
+
+Otra posible manera de definiral es elminando $(n\cdot\alpha)$ datos en cada extremo. Si $(n\cdot\alpha)$ es entero y, cuando no lo es, interpolando entre dos medias $\alpha$-podadas, una en a cual se podan $[n\cdot\alpha]$ en cada extremo y otra en la que se podan $[n\cdot\alpha]+1$ datos en cada extremo.
+
+La media es una media $\alpha$-podada con $\alpha = 0$ y la mediana una media podada con $\alpha$ tan próximo a $0.5$ como sea posible.
+
+Se eligirá el $\alpha$ dependiendo de cuantos outliners se pretende excluir y de cuán robusta queremos que sea la medida de posición. Una elección bastante común es $\alpha = 0.10$, que excluye un $20\%$ de los datos.
+
+Si la dstribución es simétrica, la mediana y la media identifican al mismo punto. Si es asimétrica derecha (cola larga hacia la derecha), entoces $\bar{x} > \tilde{x}$ y si es asimétrica a izquierda (cola larga hacia la izquierda), entonces $\bar{x} < \tilde{x}$
+
+\subsubsection{Medidas de dispersión y variabilidad}
+
+\paragraph{Rango muestral:} Es la diferencia entre el valor más grande y el más pequeño de los datos:
+
+$$\text{Rango} = \max(X_i) - \min(X_i)$$
+
+Esta medida es muy sensible a la precensia de outliers. Además no capta la dispersión interna del conjunto de datos.
+
+\paragraph{Varianza muestral:} Mide la viarabilidad de los datos alrededor de a media muestral.
+ 
+ $$S^2 = \frac{\sum\limits_{i=1}^{n}(x_i-\bar{x})^2}{n-1}$$
+
+\paragraph{Desvío Estándar Muestral:}  $S = \sqrt{S^2}$
+
+El desvío estándar tiene las misma unidades que los datos. Y estas medidas son son sensibles a la presencia de datos atípicos.
+
+\paragraph{Coeficient de Variación:} Es una medida que realciona el desvío standra con la media de una muestra:
+
+$$CV = \frac{S}{\bar{x}}$$
+
+No tiene propiedades estadísticas muy interesantes.
+
+\paragraph{Distancia intercuatil:} El percentil $\alpha\cdot100\%$ de la muestra ($0 < \alpha 1$) es el valor por debajo del cual se encuentra el $\alpha\cdot100\%$ de los datos en la muestra ordenada.
+
+Para calcularlo:
+\begin{enumerate}
+	\item Ordenamos la muestra de menor a mayor.
+	\item Buscamos el dato que ocupa la posición $\alpha\cdot(n+1)$. Si este número no es entero se interpolan los dos adayacentes.
+\end{enumerate}
+
+La mediana coincide con el percentil $50\%$. Llamaremos \textbf{cuartil inferior} al percentil $25\%$ y cuartil superior al percentil $75\%$.
+
+Entre los cuartiles se halla aproximadamente el $50\%$ central de los datos y el rando de estos es:
+
+$$d_i = \text{distancia intercuartil} = \text{cuartil superior} - \text{cuartil inferior}$$
+
+\paragraph{Cuartos y distancias entre cuartos:}
+\begin{itemize}
+	\item Se orden la muetra y se calcula la mediana de los datos.
+	\item Dividimos a la muestra ordenada en dos partes: la \textbf{primera} corresponde a los datos más pequeños que la mediana y la \textbf{segunda} corresponde a los datos más grandes que la mediana.
+	\item Si el tamaño de la muestra es \textit{par}, el \textbf{cuarto inferior} es la mediana de la primera mitad, mientras que el \textbf{cuarto superior} es la mediana de la segunda mitad.
+	\item Si el tamaño de la muestra es \textit{impar}, a la primera y a la segunda parte se las expande agregándose a cada una de ellas la mediana de todos los datos. El \textbf{cuarto inferior} es la mediana de la primera parte expandida y el \textbf{cuarto superior} es la mediana de la segunda parte expandida.
+\end{itemize}
+
+Definimos la \textbf{distancia entre cuartos} como:
+
+$$d_c = \text{cuarto superior} - \text{cuarto inferior}$$
+
+\paragraph{Desvío Absoluto Mediano (Desviación absoluta respecto de la mediana):}
+$$MAD = \text{mediana}(|x_i-\tilde{x}|)$$
+
+\begin{enumerate}
+	\item Ordenamos losdatos de menor a mayor.
+	\item Calculamos la mediana.
+	\item Calculamos la distancia de cada dato a la mediana.
+	\item Despreciamos el signo de las distnacias y las ordenamos de menor a mayor.
+	\item Buscamos la mediana de las distancias sin signo
+\end{enumerate}
+
+Sideseamos comparar la distancia intercuartil y la $MAD$, se compara a $S$ con $\frac{MAD}{0.675}$ ó $\frac{d_I}{1.35}$
+
+\paragraph{Números de resumen:} Los 5 números de resumen de la distribución de un conjunto de datos consisten en el \textbf{mínimo}, el \textbf{cuartil inferior}, la \textbf{mediana}, el \textbf{cuartil superior} y el \textbf{máximo}.
+
+\subsubsection{Box-Plots}
+\begin{enumerate}
+	\item Representamos una escala vertical u horizontal.
+	\item Dibujamos una caja cyos xtremos son os cuartiles y dentro de ella un segmento que corresponde a la mediana.
+	\item A partir de cada extremos dibujamos un segmento hasta el dato más alejado que está a lo sumo $1.5d_I$ del extremo de la caja. Estos segmentos se llaman bigotes.
+	\item Marcamos con un $*$ a aquellos datos que están entre $1.5d_I$ y $3d_I$ de cada extremo y con un círculo a aquellos que están a mas de $3d_I$ de cada extremo.
+\end{enumerate}
+
+A partir de un box-plot poemos apreciar los siguientes aspectos de la distribucón e un conjunto dado:
+\begin{itemize}
+	\item Posición
+	\item Dispersión
+	\item Asimetría
+	\item Longitud de las colas
+	\item Puntos anómalos o outliers.
+\end{itemize}
+
+\paragraph{Outliers:} Su detección es importante pues pueden determinar o influernciar fuertemente los resultadosde un análisis estdístico clásico. Si no hya evidencia de erro y su valor es posible no deberían ser eliminados. Asimismo, la presencia de outliers puede indicar que la escala elegida no es la más adecuada.
+
+\paragraph{Boxplots paralelos}
+Una apliación muy útil de los boxplots es la comparación de la distribución de dos o más conjuntos de datos graficando en una escala común los boxplots de cada de una las muestras.
+
+\paragraph{QQ-Plot (Normal Probability Plot):} El QQ-Plot es un gráfico que nos sirve para evaluar la cercanía de una distribución dada, en particular a la distribución normal.
+
+Consideremos a la muestra aleatoria $X_1,\dots,X_n$ y los correspondentes estadísticos de orden \\ $X_{(1)},\dots,X_(n)$. En el QQ-Plot se grafican en el eje de abscisas los percentiles de la distribución teórica (en nuestro caso normal) y en el eje de ordenadas las observaciones ordenadas, que pueden ser vistas como percentiles empíricos.
+
+\section{Estimación puntual}
+La mayoría de las distribuciones de probabilidad dependen de cierto número de parámetros.
+
+El objetivo de la \textit{estimación puntual} es usar una muestra para obtener números que, en algún sentido, sean los que mejor representan a los verdadero valores de los parámetros de interés.
+
+Un \textbf{estimador puntual} de un parámetro $\theta$, es un valor que puede ser considerado representativo de $\theta$ y se indicará $\hat{\theta}$. Se obtiene a partir de alguna función de la muestra.
+
+\subsection{Métodos de estimación puntual}
+
+\subsubsection{Método de momentos} 
+Dada una muestra aleatoria $X_1,\dots,X_n$ se denomina \textbf{momento muestral de orden k} a 
+
+$$\frac{\sum_{i=1}^{n} X_i^k}{n}$$
+
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución con función de probabilidad puntual o función de densidad que depende de $m$ parámetros $\theta_1,\dots,\theta_m$. Los estimadores de momentos de $\theta_1,\dots,\theta_m$ son los valores $\hat{\theta}_1,\dots,{\theta}_m$ que se obtienen igualando $m$ momentos poblacionales on los correspondientes momentos muestrales. En general, se obitenen resolviendo el siguiente sistema de ecuaciones:
+
+$$\frac{\sum_{i=1}^{n} X_i^k}{n} = E(X^k) \hspace*{1cm} k=1,2,\dots,m$$
+
+\subsubsection{Método de máxima verosimilitud}
+Sean $X_1,\dots,X_n$ variables aleatorias con función de probabilidad conjunta $p_{\bar{X}}(x_1,\dots,x_n)$ o función de densidad conjunta $f_{\bar{X}}(x_1,\dots,x_n)$ que depende de $m$ parámetros $\theta_1,\dots,\theta_m$. Cuando $(x_1,\dots,x_n)$ son los valores observados y la función de probabilidad o de densidad conjunta se considera función de los parámetros $\theta_1,\dots,\theta_m$, se denomina \textbf{función de verosimilitud} y se denota $L(\theta_1,\dots,\theta_m)$.
+
+Los estimadores de máxima verosimilitud (EMV) de $\theta_1,\dots,\theta_m$ son los valores $\hat{\theta_1},\dots,{\theta_m}$ que maximizan la función de verosimilitud, o sea los valores tales que
+
+$$L(\hat{\theta}_1,\dots,\hat{\theta}_m) \geq L(\tilde{\theta}_1,\dots,\tilde{\theta}_m)$$
+
+La forma general de los EMV s obtiene remplazando los valores observados $x_i$ por las variables $X_i$
+%Estimadores insesgados. Error cuadrático medio. Consistencia. Método de máxima verosimilitud. Método de los Momentos. Bootstrap.
+
+\paragraph{Propiedad de la invarianza de los EMV:} Sea $\hat{\theta}$ el EMV de $\theta$ y sea $h$ una función inyectiva con dominio en el rando de valores posibles de $\theta$, entonces el EMV de $h(\theta)$ es $h(\hat{\theta})$
+
+\subsubsection{Propiedades de los estimadores y criterios de selección}
+Dada una muestra $X_1,\dots,X_n$, donde $X_i\sim F_\theta$, un estimador puntual del parámetro $\theta$. La diferencia $$\hat{\theta} - \theta$$ es el error de estimación y una estimación será más precisa cuanto menor sea este error.
+
+\paragraph{Definición:} Un estimador puntual $\hat{\theta}$ del parámetro $\theta$ es \textbf{insesgado} si
+
+$$E_\theta (\hat{\theta}) = \theta\hspace*{5mm}\forall\theta$$
+
+Si $\hat{\theta}$ no es insesgado, se denomina \textbf{sesgo} de $\hat{\theta}$ a $b(\hat{\theta}) = E_\theta (\hat{\theta}) - \theta$.
+
+\paragraph{Definición:} Un estimador puntual $\hat{\theta}$ del parámetro $\theta$ basado en una muestra $X_1,\dots,X_n$ es \textbf{asintóticamente insesgado} si
+
+$$E_\theta(\hat{\theta}) \underset{n\to\infty}{\longrightarrow} \theta\hspace*{1cm}\forall\theta$$
+
+\paragraph{Principio de estimación insesgada de mínima varianza:} Entre todos los estimadores insesgados de $\theta$, elegir el de menor varianza. El estimador resultante se denomina \textbf{Insesgado de Mínima Varianza Uniformemente} (IMVU).
+
+\paragraph{Teorema:} Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$. Entonces $\bar{X}$ es estimador IMVU de $\mu$
+
+\paragraph{Definición:} El error estándar de un estimador $\hat{\theta}$ es su desviación estándar, es decir
+
+$$\sigma = \sqrt{V_\theta(\hat{\theta})}$$
+
+Si el error standard depende de parámetros desconocidos, éstos se reemplazan por un estimador y se obtiene el error standard estimado.
+
+\paragraph{Definición:} Sea $\hat{\theta}$ un estimador de $\theta$, su error cuadrático medio es:
+
+$$ECM_\theta(\hat{\theta}) = E_\theta\left[\left(\hat{\theta}-\theta\right)^2\right]$$
+
+Si el estimador $\hat{\theta}$ es insesgado el error cuadrático medio es igual a la varianza del etimador.
+
+\paragraph{Proposición:} $ECM_\theta(\hat{\theta}) = V_\theta(\hat{\theta}) + \left[b(\hat{\theta})\right]^2$, siendo $b(\hat{\theta})$ el sesgo del estimador.
+
+\paragraph{Principio de estimación del menor error cuadrático medio:} Dados dos o más estimadores del parámetro $\theta$, elegir el menor ECM. Si el estimador sesgado tiene una vairanza mucho menor que el insesgado, podría ser preferible su uso.
+
+\paragraph{Definición:}Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución que depende de un parámetro $\theta$ y sea $\hat{\theta}_n$ un estimador puntual de $\theta$ basado en esa muestra. Diremos que $\left\{\hat{\theta}_n\right\}$ es una sucesión \textbf{consistente} (o más brevemente que $\hat{\theta}_n$ es un estimador consistente de $\theta$) si
+
+$$\hat{\theta}_n\overset{p}{\longrightarrow} \theta$$
+
+es decir, si $\forall\epsilon > 0$, $P(|\hat{\theta}_n-\theta| >  \epsilon)\underset{n\to\infty}{\longrightarrow}0$
+
+\paragraph{Proposición:} Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución que depende de un parámetro $\theta$ y sea $\hat{\theta}_n$ un estimador de $\theta$ basado en la muestra de tamaño $n$. Si 
+\begin{enumerate}
+	 \item $E_\theta(\hat{\theta}_n)\underset{n\to\infty}{\longrightarrow}\theta$
+	 \item $V_\theta (\hat{\theta}_n)\underset{n\to\infty}{\longrightarrow}0$
+\end{enumerate}
+entonces, $\hat{\theta}_n$ es consistente de $\theta$.
+\section{Intervalos de confianza}
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución que depende un parámetro $\theta$. Dadas dos funciones de la muestra $a(X_1,\dots,X_n)$ y $b(X_1,\dots,X_n)$ tales que 
+$$P(a(X_1,\dots,X_n)\leq \theta\leq b(X_1,\dots,X_n)) = 1-\alpha$$
+con $\alpha$ pequeño, el intervalo $[a(X_1,\dots,X_n),b(X_1,\dots,X_n)]$ se denomina \textbf{intervalo de confianza de nivel} $1-\alpha$ para el parámetro $\theta$.
+
+Una vez construido el intervalo a partir de una muestra dada, tenemos \textit{confianza} de que el intervalo contenga a $\theta$.
+
+\subsection{Intervalos de confianza para los parámetros de una distribución normal}
+Sean dos variables aleatorias $\dnom{Z}{0}{1}$ y $U\sim\chi^2_n = \Gamma\left(\frac{n}{2}, \frac{1}{2}\right)$ independientes, entonces
+
+$$T = \frac{Z}{\sqrt{\frac{U}{n}}}\sim t_n$$
+
+Y se dice que $T$ tiene distribución $t$ de Student con $n$ grados de libertad. Esta distribución está tabulada para diferente valores de $n$. Su densidad es simétrica respecto al 0 y tiene forma de campana, pero tiene colas más pesadas que la distribución normal standard.
+
+\paragraph{Proposición:} Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$, entonces
+\begin{itemize}
+\item $$\dnom{\bar{X}}{\mu}{\frac{\sigma^2}{n}}\iff \dnom{\sqrt{n}\frac{\bar{X}-\mu}{\sigma}}{0}{1}$$
+\item
+$$\frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{n-1}\hspace*{1cm}\text{con } S^2 = \frac{\sum_{i=1}^{n}(X_i-\bar{X})^2}{n-1}$$
+
+\item $\bar{X}$ y $S^2$ son independientes.
+\item $$\sqrt{n}\frac{\bar{X}-\mu}{S}\sim t_{n-1}$$
+\end{itemize}
+
+\subsection{Intervalos de confianza para la media de la distribución normal con varianza conocida}
+Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma_0^2)$ con varianza $\sigma^2$ conocida, entonces
+
+$$\dnom{\sqrt{n}\frac{\bar{X}-\mu}{\sigma_0}}{0}{1}$$ y 
+
+$$P\left(-z_{\alpha/2}\leq\sqrt{n}\frac{\bar{X}-\mu}{\sigma_0}\leq z_{\alpha/2}\right) = 1-\alpha$$
+de donde se deduce el siguiente intervalo de confianza de nivel $1-\alpha$ para $\mu$,
+
+$$\left[\bar{X}-z_{\alpha/2}\frac{\sigma_0}{\sqrt{n}},\bar{X}+z_{\alpha/2}\frac{\sigma_0}{\sqrt{n}}\right]$$
+
+\subsection{Intervalos de confianza para la media de la distribución normal con varianza desconocida}
+Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$, entonces
+
+$$\sqrt{n}\frac{\bar{X}-\mu}{S}\sim t_{n-1}$$ y  el intervalo de confianza de nivel $1-\alpha$ para $\mu$ es:
+
+$$\left[\bar{X}-t_{n-1,\alpha/2}\frac{S}{\sqrt{n}},\bar{X}+t_{n-1,\alpha/2}\frac{S}{\sqrt{n}}\right]$$
+
+\subsection{Intervalos de confianza para la varianza de la distribución normal con media conocida}
+Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu_0,\sigma^2)$ con media $\mu_0$ conocida, entonces
+
+$$\dnom{\frac{X_i-\mu_0}{\sigma}}{0}{1}$$ y  el intervalo de confianza de nivel $1-\alpha$ para $\mu$ es:
+
+$$\left[\frac{\sum_{i=1}^{n}(X_i-\mu_0)^2}{\chi^2_{n,\alpha/2}},\frac{\sum_{i=1}^{n}(X_i-\mu_0)^2}{\chi^2_{n,1-\alpha/2}}\right]$$
+
+\subsection{Intervalos de confianza para la varianza de la distribución normal con media desconocida}
+Sean $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$, entonces
+
+$$\frac{(n-1)S^2}{\sigma^2}\sim\chi_{n-1}^2$$ y  el intervalo de confianza de nivel $1-\alpha$ para $\mu$ es:
+
+$$\left[\frac{(n-1)S^2}{\chi^2_{n,\alpha/2}},\frac{(n-1)S^2}{\chi^2_{n,1-\alpha/2}}\right]$$
+
+\subsection{Método general para obtener intervalos de confianza}
+\subsubsection{Determinación del tamaño de muestra}
+Consideremos el intervalo de confianza para $\mu$ con varizna conocida en el caso de una muestra aleatoria normal. La longitud del intervalo obtenido es $$L = 2z_{\alpha/2}\frac{\sigma_0}{\sqrt{n}}$$
+
+Si se desea un intervalo de longitud menor que igual que $L_0$, entonces $$n\geq\left(\frac{2z_{\alpha/2}\sigma_0}{L_0}\right)^2$$
+
+\subsubsection{Metodo general}
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución qu depende un parámatro $\theta$. Supongamos que existe ua función $T(X_1,\dots,X_n,\theta)$ cuya distribución n depende de $\theta$ ni de ningún otro parámetro desconocido. Entonces, existen dos variables $a$ y $b$ tales que
+	$$P(a\leq T(X_1,\dots,X_n,\theta)\leq b) = 1-\alpha$$
+y, a partir de esta expresión, es posible obtener un intervalo de confianza para $\theta$.
+
+La función $T(X_1,\dots,X_n,\theta)$ se denomina \textbf{pivote}.
+
+\subsection{Intervalos de confianza de nivel asintótico 1-\texorpdfstring{$\alpha$}{a}}
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución qu depende un parámatro $\theta$. Dadas dos suceciones $\{a_n(X_1,\dots,X_n)\}$ y $\{b_n(X_1,\dots,X_n)\}$ tales que
+$$\lim_{n\to\infty} P(a_n(X_1,\dots,X_n)\leq\theta\leq b_n(X_1,\dots,X_n)) = 1-\alpha$$
+la sucesión de intervalos $[a_n(X_1,\dots,X_n), b_n(X_1,\dots,X_n)]$ es una sucesión de \textbf{intervalos de confianza de nivel asintótico 1-$\alpha$} para el parámetro $\theta$. Tambien, se dice que, si $n$ es suficientemente grande, el intervalo $[a_n(X_1,\dots,X_n), b_n(X_1,\dots,X_n)]$ tiene nivel aproximado $1-\alpha$
+
+
+\paragraph{Propiedad}
+$$\left.\begin{array}{r}
+Y_n\overset{d}{\longrightarrow} Y \\
+U_n\overset{p}{\longrightarrow} a \\
+\end{array}\right\} \Rightarrow U_nY_n\overset{d}{\longrightarrow} aY$$
+
+\section{Test de Hipótesis}
+Se proponen dos hipotesis: A la primera se la denomina \textbf{hipotesis nula} y se designa $H_0$. Esta hipotesis implica que no hay efecto, es la hipotesis del status quo, o sea la de no cambio respecto de la situación inicial. La segunda hipotesis se denomina \textbf{hipotésis alternativa} y se designa $H_1$. Se la puede llamar la hipotesis del investigador.
+
+Un test es una regla de decisión basada en un \textbf{estádistico} o función de la muestra, en este caso $\bar{X}$, y en una \textbf{zona de rechazo}, es decir un conjunto e valores para los cuálesse rechaza la hipotesis nula $H_0$.
+
+Al tomar una decisión en base a una muestra, podemos cometer dos tipos de error:
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+	\hline
+	& \textbf{No se rechaza $H_0$} & \textbf{Se rechaza $H_0$} \\
+	\hline
+	\textbf{$H_0$ es cierta} & OK & Error tipo I \\
+	\hline
+	\textbf{$H_0$ no es cierta} & Error tipo II & OK \\
+	\hline
+\end{tabular}
+\end{center}
+
+Llamaremos \textbf{nivel de signifiación del test}, y lo designaremos $\alpha$, a la \textit{probabilidad de error tipo I} y designaremos $\beta$ a la \textit{probabilidad de error tipo II}.
+
+Como el estadístico se contruye bajo la condición de que $H_0$ es verdadera,lo que podemos controlar es la probabilidad de error tipo I.
+
+\paragraph{Definición:} La \textbf{función de potencia} es un test, $\pi(\mu)$, es la probabilidad de rechazar la hipótesis nula cuando el valor verdadero del parámetro es $\mu$.
+
+$$\pi(\mu) = \left\{\begin{array}{ll}
+\alpha(\mu) & \text{si } \mu\in H_0 \\
+1 - \beta(\mu) & \text{si } \mu\notin H_0 \\
+\end{array}\right.$$
+
+donde $\alpha(\mu)$ y $\beta(\mu)$ denota las probabilidad de error tipo I y tipo II respectivamente cuando el verdadero valor del parámetro es $\mu$.
+
+\subsection{Tipos de hipotesis a testear}
+\paragraph{Hipotesis unilaterales}
+\begin{itemize}
+\item $H_0$: $\theta = \theta_0$ (ó $\theta \leq \theta_0$) vs  $H_1: \theta > \theta_0$
+\item $H_0$: $\theta = \theta_0$ (ó $\theta \geq \theta_0$) vs  $H_1: \theta < \theta_0$
+\end{itemize}
+
+\paragraph{Hipotesis bilaterales}
+\begin{itemize}
+	\item $H_0$: $\theta = \theta_0$ vs  $H_1: \theta \neq \theta_0$
+\end{itemize}
+
+\subsection{Test de hipótesis de nivel \texorpdfstring{$\alpha$}{alfa} para los parámetros de la distribución normal}
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$
+
+\paragraph{Test para la media cuando la varianza es conocida:} Supongamos que $\sigma^2 = \sigma_0^2$ es conocida y consideremos las siguientes hipótesis:
+
+\begin{enumerate}
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \leq \mu_0$) vs  $H_1: \mu > \mu_0$
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \geq \mu_0$) vs  $H_1: \mu < \mu_0$
+	\item $H_0$: $\mu = \mu_0$ vs  $H_1: \mu \neq \mu_0$
+\end{enumerate}
+
+El estadístico del test es: $$T = \sqrt{n}\frac{\bar{X}-\mu_0}{\sigma_0}$$ y $\dnom{T}{0}{1}$.
+
+\textbf{Región de rechazo:}
+\begin{enumerate}
+\item $T\geq z_{\alpha}$
+\item $T \geq -z_{\alpha}$
+\item $|T| \geq z_{\alpha/2}$
+\end{enumerate}
+
+\paragraph{Test para la media cuando la varianza es desconocida:} Supongamos ahora que la varianza es desconocida y consideremos las mismas hipótesis sobre $\mu$:
+
+\begin{enumerate}
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \leq \mu_0$) vs  $H_1: \mu > \mu_0$
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \geq \mu_0$) vs  $H_1: \mu < \mu_0$
+	\item $H_0$: $\mu = \mu_0$ vs  $H_1: \mu \neq \mu_0$
+\end{enumerate}
+
+El estadístico del test es: $$T = \sqrt{n}\frac{\bar{X}-\mu_0}{\sigma_0}$$ y $T\sim t_{n-1}$.
+
+\textbf{Región de rechazo:}
+\begin{enumerate}
+	\item $T\geq t_{n-1,\alpha}$
+	\item $T \geq -t_{n-1,\alpha}$
+	\item $|T| \geq t_{n-1,\alpha/2}$
+\end{enumerate}
+
+\paragraph{Test para la varianza cuando la media es desconocida:} Las hipotesis a testear son:
+
+\begin{enumerate}
+	\item $H_0$: $\sigma^2 = \sigma^2_0$ (ó $\sigma^2 \leq \sigma^2_0$) vs  $H_1: \sigma^2 > \sigma^2_0$
+	\item $H_0$: $\sigma^2 = \sigma^2_0$ (ó $\sigma^2 \geq \sigma^2_0$) vs  $H_1: \sigma^2 < \sigma^2_0$
+	\item $H_0$: $\sigma^2 = \sigma^2_0$ vs  $H_1: \sigma^2 \neq \sigma^2_0$
+\end{enumerate}
+
+El estadístico del test es: $$U =\frac{(n-1)S^2}{\sigma^2_0}$$ y $U\sim \chi^2_{n-1}$.
+
+\textbf{Región de rechazo:}
+\begin{enumerate}
+	\item $U\geq \chi^2_{n-1,\alpha}$
+	\item $U \geq -\chi^2_{n-1,\alpha}$
+	\item $|U| \geq \chi^2_{n-1,\alpha/2}$ ó $|U| \leq \chi^2_{n-1,1-\alpha/2}$
+\end{enumerate}
+
+\subsection{Test de hipotesis de nivel aproximado \texorpdfstring{$\alpha$}{alfa} para la media de una distribución cualquira}
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución con media $\mu$ y varianza $\sigma^2 < \infty$. Aplicando el Teorema Central del Límite, sabemos que 
+
+$$\frac{\bar{X} - \mu}{\frac{\sigma}{\sqrt{n}}}\overset{d}{\longrightarrow} Z\sim N(0,1)$$
+
+Además, utilizando la propiedad enunciada al construir intervalos de confiana de nivel asintótico $(1-\alpha)$ para la media de una distribución cualquiera,
+
+$$\left.\begin{array}{r}
+\sqrt{n}\frac{\bar{X} - \mu}{\sigma}\overset{d}{\longrightarrow} N(0,1) \\
+\frac{\sigma}{S}\overset{p}{\longrightarrow} 1 \\
+\end{array}\right\} \Rightarrow\sqrt{n}\frac{\bar{X} - \mu}{S}\overset{d}{\longrightarrow} N(0,1)$$
+
+Por lo tanto, si $n$ es suficientemente grande, $$\sqrt{n}\frac{\bar{X} - \mu}{S}\overset{d}{\longrightarrow} N(0,1)$$
+
+
+Supongamos qu se desea testear a nivel aproximado $\alpha$ algunda de la hipotesis siguientes:
+
+\begin{enumerate}
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \leq \mu_0$) vs  $H_1: \mu > \mu_0$
+	\item $H_0$: $\mu = \mu_0$ (ó $\mu \geq \mu_0$) vs  $H_1: \mu < \mu_0$
+	\item $H_0$: $\mu = \mu_0$ vs  $H_1: \mu \neq \mu_0$
+\end{enumerate}
+
+y que $n$ es suficientemente grance. Utilizando como estadístico $$T = \sqrt{n}\frac{\bar{X}-\mu_0}{S}$$ y las siguientes regiones de rechazo:
+
+\textbf{Región de rechazo:}
+\begin{enumerate}
+	\item $T\geq z_{\alpha}$
+	\item $T \geq -z_{\alpha}$
+	\item $|T| \geq z_{\alpha/2}$
+\end{enumerate}
+
+\subsection{Relación entre tests de hipótesis bilaterales e intervalos de confianza} 
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una distribución $N(\mu,\sigma^2)$. Sabmos que el intervalo de confiana para $\mu$ de nivel $1-\alpha$ está dado por
+
+$$\left[\bar{X} - t_{n-1,\alpha/2}\frac{S}{\sqrt{n}}, \bar{X} + t_{n-1,\alpha/2}\frac{S}{\sqrt{n}}\right]$$
+
+Deseamos testear a nivel $\alpha$ las siguientes hipotesis:
+
+\begin{center}
+ $H_0$: $\mu = \mu_0$\hspace*{1cm}vs\hspace*{1cm}$H_1:\mu\neq\mu_0$
+\end{center}
+
+Podriamos construir un test de nivel $\alpha$ rechazando $H_0$ si $\mu_0$ no pertenece al intervalo de confianza.
+
+\paragraph{Propocisión:} Sea $IC(X_1,\dots,X_n)$ un intervalo de confianza de nivel $1-\alpha$ para un parámetro $\theta$, obtenido a partir de una muestra aleatoria $X_1,\dots,X_n$. Consideremos el problema de testear las hipotesis:
+\begin{center}
+	$H_0$: $\theta = \theta_0$\hspace*{1cm}vs\hspace*{1cm}$H_1:\theta\neq\theta_0$
+\end{center}
+
+El test que rechaza $H_0$ cuando $\theta_0\notin IC(X_1,\dots,X_n)$, tiene nivel $\alpha$.	

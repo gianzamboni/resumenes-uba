@@ -1,0 +1,345 @@
+\section{Polinomios}
+\subsection{Números complejos}
+$(\complejos,+,\cdot)$ es un cuerpo en el que no se puede definir una relación $\geq$.
+
+Dado $z\in\complejos$, la forma $z = a + bi$ con $a,b\in\reales$ se llama la\textbf{ forma binomial} de $z$, su \textbf{parte real} es $\text{Re}(z)=a$ y su \textbf{parte imaginaria} es $\text{Im}(z)=b$. Su \textbf{conjugado} $\overline{z} = a - bi \in\complejos$ y su \textbf{m\'odulo} es $|z|=\sqrt{a^2+b^2}$
+
+\paragraph{Propiedades}
+\begin{itemize}
+\begin{multicols}{2}
+\item $|z| = 0 \iff z = 0$
+\item $|z+w| \leq |z|+|w|$
+\item $z\cdot\overline{z} = |z|^2$
+\item $\overline{z\cdot w} = \overline{z}\cdot\overline{w}$
+\item $$z^{-1} = \frac{\overline{z}}{|z|^2}$$
+\item $|z\cdot w| = |z||w|$
+\item $\overline{\overline{z}} = z$
+\item $z = \overline{z} \iff z\in\reales$
+\item $z + \overline{z} = 2\text{Re}(z)$
+\item $z-\overline{z} = 2\text{Im}(z)i$
+\item Si $z\neq0$, $|z^{-1}| = |z|^{-1}$
+\item Si $z\neq0$, $|z^k| = |z|^k$ para todo $k\in\ent$
+\item $|\text{Re}(z)|\leq |z|$
+\item $|\text{Im(z)}|\leq|z|$
+\item $\overline{z+w} = \overline{z} + \overline{w}$
+\item $\overline{z}^{-1} = \overline{z^{-1}}$
+\item $||z|-|w||\leq |z-w|$
+\end{multicols}
+\item Sea $z\in\complejos$, entonces $\exists~w\in\complejos$ tal que $w^2 = (-w)^2 = z$. Y si $z\neq 0$ entonces $z$ tiene dos ra\'izes cuadradas distintas que son $w$ y $-w$.
+\end{itemize}
+
+La \textbf{forma trigonométrica} de $z$ es $\trigform{z}{r}{\theta}$ donde $r=|z|$ y $\theta$ es tal que $cos(\theta)=\frac{\text{Re}(z)}{|z|}$ y $\cos(\theta) = \frac{\text{Im}(z)}{|z|}$.
+
+Si elegimos $\theta$ con $0\leq\theta\leq2\pi$, entonces $\theta$ está determinado de forma \'unica y se denomina \textbf{argumento} de $z$ ($\text{arg}(z)$).
+
+\begin{itemize}
+\item \textbf{Formula de euler:} $e^{\theta i} =  \cos(\theta) + i\sen(\theta) ~\forall~\theta\in\reales$
+\item Sea $\trigform{z}{r}{\theta} = \eulerform{r}{\theta}$ con $r\in\reales_{\geq 0}$ y $\theta\in\reales$:
+\begin{itemize}
+\item $\trigform{\overline{z}}{r}{-\theta} = \eulerform{r}{-\theta}$
+\item $\trigform{z^{-1}}{r^{-1}}{-\theta} = \eulerform{r^{-1}}{-\theta}$
+\end{itemize}
+\item Sea $\trigform{z}{r}{\theta} = \eulerform{r}{\theta}$ y $\trigform{w}{s}{\psi} = \eulerform{s}{\psi}$ con $r,s\in\reales_{\geq 0}$ y $\psi,\theta\in\reales$:
+\begin{itemize}
+    \item $\trigform{z\cdot w}{rs}{\theta+\psi} = \eulerform{rs}{(\theta+\psi)}$
+    \item $\text{arg}(z+w) = \text{arg}(z) + \text{arg}(w) - 2k\pi$ con $k$ elegido de tal modo que $0\leq\text{arg}(z) + \text{arg}(w) - 2k\pi\leq 2\pi$
+    \item $\trigform{\frac{z}{w}}{\frac{r}{s}}{\theta-\psi} = \eulerform{\frac{r}{s}}{(\theta-\psi)}$
+    \item $\trigform{z^n}{r^n}{n\theta} = \eulerform{r^n}{n\theta}$
+    \item $\text{arg}(z^n) = n\text{arg}(z) - 2k\pi$ con $k$ elegido de tal modo que $0\leq n\text{arg}(z) - 2k\pi\leq 2\pi$
+    \item $\text{arg}(z^{-1}) = -\text{arg}(z) + 2k\pi$
+    \item $\text{arg}(z+w) = \text{arg}(z) + \text{arg}(w) - 2k\pi$
+\end{itemize}
+\end{itemize}
+
+Otra forme de escribir $z = a + bi$ es en forma de tuplas: $z=(a,b)$
+
+\begin{itemize}
+    \item $(a,b) + (c,d) = (a+c,b+d)$
+    \item $(a,b)\cdot(c,d) = (ac-bd,ad+bc)$
+\end{itemize}
+
+\subsection{Raices n-ésimas}
+Sea $z\in\complejos$, hallar las \textbf{ra\'ices $n$-ésimas} de $z$ consiste en determinar los $w\in\complejos$ que cumplen $w^n = z$.
+
+Sea $n\in\nat$ y sea $z=\eulerform{s}{\psi}\in\complejos$ con $s\in\reales_{\geq 0}$ y $0\leq\psi\leq 2\pi$, entonces $z$ tiene $n$ raíces $n$-ésimas $w_0,\dots,w_{n-1}$ donde:
+
+$$w_k = \eulerform{s^{\frac{1}{n}}}{\theta_k} \text{  donde  } \theta_k = \frac{\psi + 2k\pi}{n} \text{ para } 0\leq k \leq n-1$$
+
+\subsubsection{Raíces de la unidad}
+Cuando $z=1$, el polinomio $x^n - z$ cumple que todas sus raíces $w_0,\dots,w_n$ satisfacen $w^l = 1$ para $0\leq l\leq n-1$. Estas raíces se denominan \textbf{raíces $n$-ésimas de la unidad} y cumplen que $$w_k = \eulerform{}{\frac{2k\pi}{n}} \texttt{ con } 0\leq k\leq n-1$$
+
+Sea $n\in\nat$, el conjunto $G_n$ es el \textbf{conjunto de raíces $n$-ésimas de la unidad}, es decir:
+$$G_n =\{w\in\complejos~:~w^n = 1\} = \{w_k = \eulerform{}{\frac{2k\pi}{n}}  ~:~0\leq k\leq n-1\}$$
+
+\paragraph{Propiedades}
+Sea $n\in\nat$:
+\begin{itemize}
+    \item $w\in G_n \iff w^n = 1$
+    \item $(G_n,\cdot)$ es un grupo abeliano, es decir que $\forall~n\in\nat$:
+    \begin{itemize}
+        \item $\forall~w,z\in G_n$ se tiene que $w\cdot z\in G_n$
+        \item $1\in G_n$
+        \item $\forall~w\in G_n,~\exists w^{-1}\in G_n$
+    \end{itemize}
+    \begin{multicols}{2}
+    \item $w\in G_n\to |w| = 1$
+    \item $\forall~w\in G_n,~w^{-1} = \overline{w}\in G_n$
+    \item $-1\in G_n \iff n$ es par
+    \item Sea $m\in\ent$, $n|m\to w^m = 1$
+    \item $\forall~w\in G_n,~w^{-1} = \overline{w} = w^{n-1}$
+    \item Sea $m\in\nat$, $G_n\cap G_m = G_{(n:m)}$
+    \item Sea $m\in\nat$, $n|m\iff G_n\subset\ G_m$
+    \item Si $z\in G_n$, $\overline{z}^k = z^{-k} = z^{n-k}$
+    \end{multicols}
+    \item Sea $m,m'\in\ent$, $\modulo{m}{m'}{n}\to w^m = w^{m'}$
+    \item Existe $w\in G_n$ tal que $G_n = \{w^0, w^1,\dots,w^{n-1}\}$
+\end{itemize}
+
+\subsubsection{Raíces primitivas}
+Sea $n\in\nat$, se dice que $w\in\complejos$ es una \textbf{raíz $n$-ésima primitiva de la unidad} si \newline $G_n = \{w^k ~:~0\leq k\leq n-1\}$
+
+\paragraph{Propiedades} Sea $n\in\nat$ y $w\in\complejos$:
+\begin{itemize}
+    \item $w$ es una raíz $n$-ésima primitiva de la unidad si y solo si vale que $\forall~m\in\ent$, $w^m = 1 \iff n|m$.
+    \item Si $w$ es una raíz primitiva de la unidad, entonces $w^k$ es una raíz primitiva de la unidad si y solo si $(n:k)=1$
+    \item Sea $w_k =\eulerform{}{\frac{2k\pi}{n}}$ con $0\leq k\leq n-1$, entonces $w_k$ es una raíz primitiva de la unidad si y solo si $(n:k)=1$.
+    \item Sea $p$ un primo, entonces cualquiera sea $k$, $1\leq k\leq p-1$, se tiene que $\eulerform{}{\frac{2k\pi}{n}}$ es raíz $p$-ésima primitiva de la unidad. Es decir que $\forall~w\in G_p$, $w\neq 1$ se tiene que $w$ es una raíz $p$-ésima primitiva de la unidad.
+\end{itemize}
+\subsection{Polinomios}
+Sea $K$ un cuerpo, se dice que $f$ es un \textbf{polinomio con coeficientes en $K$} si $f$ es de la forma:
+\begin{equation*}
+    f = a_nX^n + a_{n-1}X^{n-1} + \dots + a_1X + a_0 = \sum_{i=0}^{n}a_iX^i
+\end{equation*}
+para algún $n\in\nat_0$, donde $X$ es una indeterminada sobre $K$ y $a_i\in K$ para $0\leq i\leq n$. Los elementos $a_i$ se llaman los \textbf{coeficientes} de $f$.
+
+Dos polinomios son \textbf{iguales} si y solo si coinciden todos sus coeficientes, es decir, si $f=\sum_{i=0}^{n}a_iX^i$ y $g=\sum_{i=0}^{n}b_iX^i$, entonces $f = g \iff a_i = b_i$, $0\leq i \leq n$.
+
+El conjunto de todos los polinomios $f$ con coeficientes en $K$ se nota $K\left[ X \right] $
+
+Si $f$ no es el polinomio nulo ($f\neq 0$), entonces se puede escribir para algún $n\in\nat_0$, de la forma $f=\sum_{i=0}^{n}a_iX^i$ con $a_n\neq 0$.
+
+En ese caso, $n$ es el \textbf{grado} de $f$ y se nota gr$(f)$ y $a_n$ es el \textbf{coeficiente principal} de $f$.
+
+El polinomio nulo no tiene grado. Cuando el coeficiente principal de $f$ es igual a 1, entonces se dice que el polinomio es \textbf{mónico}.
+
+\paragraph{Operaciones}: Sean $f=\sum_{i=0}^{n}a_iX^i$ y $g=\sum_{i=0}^{n}b_iX^i$ polinomios en $K\left[ X \right]$: 
+\begin{itemize}
+    \item La \textbf{suma} se define como:
+    \begin{equation*}
+        f + g = \sum_{i=0}^{n}(a_i + b_i)X^i
+    \end{equation*}
+    \item La \textbf{multiplicación} como:
+    \begin{equation*}
+        f\cdot g = \sum_{k=0}^{n+m}c_kX^k \text{ donde } c_k = \sum_{i+j = k} a_ib_j
+    \end{equation*}
+\end{itemize}
+
+\paragraph{Propiedades:} Sea $K$ un cuerpo y sean $f,g\in K\left[ X \right]$ no nulos, entonces:\
+\begin{itemize}
+    \item Si $f+g\neq 0$, entonces $\text{gr}(f+g)\leq \text{max}\{\text{gr}(f),\text{gr}(g)\}$
+    \item gr($f\cdot g)$) = gr$(f)$ + gr$(g)$
+    \item cp$(f\cdot g) =$ cp$(f)\cdot$ cp$(g)$
+\end{itemize}
+
+Sea $K$ un cuerpo, entonces $(K\left[X\right],+,\cdot)$ es un anillo conmutativo y vale que:
+\begin{equation*}
+    \forall~f,g\in K\left[X\right],~f\cdot g = 0\to f=0 \text{ ó } g=0
+\end{equation*}
+
+
+$f\in\cuerpo{K}{X}$ es inversible si y solo si $f\in K^\times$, o sea que los elementos inversibles de $\cuerpo{K}{X}$ son los polinomios de grado 0.
+
+\subsubsection{Divisibilidad}
+Sean $f,g\in\cuerpo{K}{X}$ con $g\neq0$, se dice que g \textbf{divide a} $f$, y se nota $g|f$, si existe un polinomio $q\in\cuerpo{K}{X}$ tal que $f = q\cdot g$
+
+\paragraph{Propiedades}
+\begin{itemize}
+    \item Todo polinomio $g\neq 0$ satisface que $g|0$
+    \item Si $f|g$ y $g\neq 0$, entonces gr$(f) \leq$ gr$(g)$
+    \item $g|f\iff cg|f$, $\forall~c\in K^\times$
+    \item $g|f$ y $f|g\iff f = cg$ para algún $c\in K^\times$
+    \item $f|g$ y gr$(f) =$ gr$(g)\to f = k\cdot g$ para algun $k\in K$ 
+    \item Para todo $f\in\cuerpo{K}{X}$, $f\not\in K$ se tiene $c|f$ y $cf|f$, $\forall~c\in K^\times$.
+\end{itemize}
+
+La \textbf{divisibilidad} de los polinomios cumple exactamente las mismas propiedades que la divisibilidad de los números enteros.
+
+\subsubsection{Reducibilidad}
+Sea $f\in\cuerpo{K}{X}$, se dice que $f$ es \textbf{irreducible} en $\cuerpo{K}{X}$ cuando $f\not\in K$ y los únicos divisores de $f$ son de la forma $g=c$ ó $g = cf$ para algún $c\in K^\times$. O sea que $f$ tiene únicamente dos divisores mónicos (distintos), que son $1$ y $f/\text{cp(f)}$.
+
+Y se dice que $f$ es reducible en $\cuerpo{K}{X}$ cuando $f\not\in K$ y $f$ tiene algún divisor $g\in\cuerpo{K}{X}$ con $g\neq c$ y $g\neq cf$, $\forall~c\in K^\times$, es decir, $f$ tiene algún divisor $g\in\cuerpo{K}{X}$ (no nulo por definición) con $0\leq \text{gr}(g)\leq\text{gr}(f)$.
+
+\subsubsection{Algoritmo de la división}
+Dados $f,g\in\cuerpo{K}{X}$ no nulos, existen únicos $q,r\in\cuerpo{K}{X}$ que satisfacen:
+\begin{equation*}
+    f = q\cdot g + r \text{ con } r = 0 \text{ ó gr}(r) < \text{gr}(g) 
+\end{equation*}
+
+Se dice que $q$ es el \textbf{cociente} y $r$ es el \textbf{resto} de la división de $f$  por $g$, que notaremos $r_g(f)$.
+
+\subsubsection{Máximo Común Divisor (MCD)}
+Sean $f,g\in\cuerpo{K}{X}$ no ambos nulos. El máximo común divisor entre $f$ y $g$, que se nota $(f:g)$, es el polinomio mónico de mayor grado que divide simultáneamente a $f$ y a $g$.
+
+\paragraph{Prpiedades:} Sean $f,g\in\cuerpo{K}{X}$,
+\begin{itemize}
+    \item $(f:0) = \frac{f}{\text{cp}(f)}$
+    \item Sea $g$ no nulo. Si $f = q\cdot g + r$ para $q, r\in\cuerpo{K}{X}$, entonces $(f:g)= (g:r)$.
+    \item Sea $c\in K^\times$, $(c:g) = 1$\
+    \item Si $g|f$, entonces $(f:g) = \frac{g}{\text{cp}(g)}$
+    \item Por el algoritmo de la división de euclides existen $s,t\in\cuerpo{K}{X}$ tal que $(f:g) = sf + tg$
+    \item Si ni $f$ ni $g$ son nulos. El MCD entre $f$ y $g$ es el único polinomio mónico $h\in\cuerpo{K}{X}$ que satisface simultáneamente que $h|f$ y $h|g$.
+    \item Si $\overline{h}\in\cuerpo{K}{X}$ satisface que $\overline{h}|g$ y $\overline{h}|f \to \overline{h}|h$  
+\end{itemize}
+\subsubsection{Polinomios coprimos}
+Sean $f,g\in\cuerpo{K}{X}$ no ambos nulos, se dice que $f$ y $g$ son \textbf{coprimos} si satisfacen $(f:g)=1$.
+\paragraph{Propiedades}:
+\begin{itemize}
+    \item Si $g$ y $h$ son coprimos, entonces $g|f~\land~h|f\iff gh|f$
+    \item Si $g$ y $h$ son coprimos, entonces $g|hf\iff g|h$
+\end{itemize}
+
+Sea $f\in\cuerpo{K}{X}$ un polinomio irreducible en $\cuerpo{K}{X}$, entonces:
+\begin{itemize}
+    \item $\forall~g\in\cuerpo{K}{X}$, $(f:g)=\frac{f}{\text{cp}(f)}$ si $f|g$ y $(f:g) = 1$ si $f\nmid g$.
+    \item $\forall~g\in\cuerpo{K}{X}$, $f|gh\to f|g$ ó $f|h$.
+\end{itemize}
+
+\subsubsection{Reducibilidad de un polinomio}
+Sea $K$ un cuerpo y sea $f\in\cuerpo{K}{X}$ un polinomio no constante, entonces existen únicos polinomios irreducible mónicos $g_1,\dots,g_r$ tales que: 
+\begin{equation*}
+    f = cg_1^{m_1}\dots g_r^{m_r} \text{ donde } c\in K-\{0\} \text{ y }  m_1,\dots,m_r\in\nat
+\end{equation*}
+
+Sea $f = a_nX^n + \dots + a_1X + a_0 \in\cuerpo{K}{X}$ un polinomio, entonces $f$ define en forma natural una función $f:K\rightarrow K$, $f(x) = a_nx^n + \dots + a_1x + a_0$ que se llama \textbf{función de evaluación}.
+
+\paragraph{Propiedades:}
+\begin{itemize}
+\item $(f+g)(x) = f(x) + g(x)$
+\item $(f\cdot g)(x) = f(x)\cdot g(x)$
+\item Si $f = gq + r$ con $q,g,r\in\cuerpo{K}{X}$, entonces $f(x) = g(x)q(x) + r(x)$
+\end{itemize}
+
+\subsubsection{Raíces de un polinomio}
+Sea $f\in\cuerpo{K}{X}$ y $x\in K$, si $f(x)=0$ se dice que $x$ es una \textbf{raíz} de  $f$ en $K$.
+\begin{center}
+\begin{minipage}{0.8\textwidth}
+$x$ es raíz de $f \iff f(x) = 0 \iff (X-x)|f \iff f = (X-x)q$ para algún $q\in\cuerpo{K}{X}$
+\end{minipage}
+\end{center}
+
+\paragraph{Propiedades:}
+\begin{itemize}
+\item Si $f\neq 0$, $X-x$ es un factor irreducible (mónico) en la descomposición en irreducibles de $f\in\cuerpo{K}{X}$.
+\item Si $g|f$ en $\cuerpo{K}{X}$, sea $x\in K$ una raíz de $g$ $\to$ $x$ es raíz de $f$.
+\item $f(x)=0$ y $g(x) = 0 \iff (f:g)(x) = 0$
+\end{itemize}
+
+
+\subsubsection{Polinomios cuadráticos}
+Sea $K$ un cuerpo y sea $f = aX^2 + bX + c\in\cuerpo{K}{x}$, con $a\neq 0$, un polinomio cuadrático. Entonces se define el \textbf{discriminante} de $f$ como $\Delta = b
+^2 - 4ac$.
+
+\paragraph{Propiedades:} Sea $f$ un polinomio cuadrático en $\cuerpo{K}{X}$,
+\begin{itemize}
+\item $f$ es reducible en $\cuerpo{K}{X}$ si y solo si $f$ tiene una raíz en $K$
+\item Si existe $w^2 = \Delta$, entonces $f$ tiene al menos una raíz en $K$.
+\item Si $2\neq0$ en $K$, $f$ es reducible en $\cuerpo{K}{X}\iff$ existe $w^2 = \Delta$ y, en ese caso, las raíces de $f$ en $K$ son
+\begin{equation*}
+    x_{\pm} = \frac{-b \pm w}{2a}
+\end{equation*}
+y $f = a(X-x_+)(x-x_-)$ es la factorización de $f$ en $\cuerpo{K}{X}$.
+\end{itemize}
+
+\subsubsection{Multiplicad de raíces}
+Sean $f\in\cuerpo{K}{X}$ no nulo y sea $m\in\nat_0$, se dice que $x\in K$ es una raíz de multiplicidad $m$ de $f$ si $(X-x)^m|f$ y $(X-x)^{m+1}\nmid f$. Y notamos $\text{mult}(x,f) = m$
+
+\paragraph{Propiedades: }
+\begin{itemize}
+\item mult$(x,f)\leq$ gr$(f)$
+\item mult$(x,f) = 0\iff x$ no es raíz de $f$.
+\end{itemize}
+
+\subsubsection{Derivadas}
+Sea $f = a_nX^n + \dots + a_0 \in\cuerpo{K}{X}$, definimos su \textbf{derivada} como:
+\begin{equation*}
+    f' = na_nX^{n-1} + a_1\in\cuerpo{K}{X}
+\end{equation*}
+
+\paragraph{Propiedades:}
+\begin{itemize}
+    \item $(f+g)' = f' + g'$
+    \item $(g\circ f)' = (g'\circ f)\cdot f'$
+    \item $f'' = (f')'$ y $f^{(m)} = (f^{(m-1)})'$
+    \item Sea $f\in\cuerpo{K}{X}$ y sea $x\in K$,
+    \begin{itemize}
+        \item $x$ es raíz múltiple de $f$ si y solo si $f(x) = 0$ y $f'(x) = 0$.
+        \item $x$ es raíz simple de $f$ si y solo si $f(x)=0$ y $f'(x)\neq 0$
+    \end{itemize}
+    \item Sea $K=\racionales,\reales$ ó $\complejos$ y $x\in K$ entonces:
+    \begin{itemize}
+        \item mult$(x,f) = m \iff f(x)=0$ y mult$(x,f') = m-1$
+        \item \begin{equation*}
+             \text{mult}(x,f) = m \iff\left\{
+                \begin{array}{c}
+                    f(x) = 0 \\
+                    f'(x) = 0 \\
+                    \vdots \\
+                    f^{(m-1)} = 0 \\
+                    f^{(m)} = 0 \\
+                \end{array}
+             \right.
+        \end{equation*}
+    \end{itemize}
+    
+    \item Sean $x_1,\dots,x_r\in K$ raíces distintas de $f$ tales que mult$(x_1,f)=m_1,\dots,\text{mult}(x_r,f)=m_r$, entonces $(X-x_1)^{m_1}\dots(X-x_r)^{m_r}|f$.
+    \item Sea $K$ un cuerpo y sea $f\in\cuerpo{K}{x}$ un polinomio no nulo de grado n, entonces $f$ tiene a lo sumo $n$ raíces en $K$ contadas con multiplicidad.
+\end{itemize}
+
+\subsubsection{Polinomios en \texorpdfstring{$\complejos$}{complejos}}
+Sea $f\in\cuerpo{\complejos}{X}$ un polinomio no constante, entonces $\exists~z\in\complejos~/~f(z)=0$ y si $\text{gr}(f) = n$, entonces $f$ tiene exactamente $n$ raíces irreducibles contadas con multiplicidad en $\complejos$.
+
+\paragraph{Propiedades}: Sea $f\in\cuerpo{\complejos}{X}$,
+\begin{itemize}
+    \item $f$ es irreducible en $\cuerpo{\complejos}{X}$ si y solo si gr$(f)=1$.
+    \item La factorización en irreducibles de $f$ en $\cuerpo{C}{X}$ es de la forma:
+    \begin{equation*}
+        f = c(x-z_1)^{m_1}\dots(x-z_r) \text{ donde } z_1,\dots,z_r\in\complejos  \text{ son distintos, } m_1,\dots,m_r\in\nat \text{ y } c\in\complejos^\times
+    \end{equation*}
+\end{itemize}
+No existe ninguna formula que describa las raíces complejas de un polinomio general cualquiera $f\in\cuerpo{\complejos}{X}$ de grado mayor igual a $s$ a partir de sus coeficientes, de las operaciones elementales $+,-,\cdot,/$ y extracciones de raíces $n$-ésimas.
+
+\subsection{Polinomios en \texorpdfstring{$\reales$}{reales}}
+\paragraph{Propiedades:}Sea $f\in\cuerpo{\reales}{X}$
+\begin{itemize}
+    \item Si $f$ es de grado impar, entonces $f$ tiene al menos una raíz en $\reales$. 
+    \item Sea $z\in\complejos-\reales$, entonces:
+    \begin{itemize}
+        \item $f(z) = 0\iff f(\overline{z}) = 0$
+        \item $\forall~m\in\nat$, mult$(z,f) =  m \iff$ mult$(\overline{z},f) = m$
+        \item $(X-z)(X-\overline{z})$ es un polinomio irreducible en $\cuerpo{\reales}{X}$
+        \item $f(z)=0 \to (X-z)(X-\overline{z})|f$ en $\cuerpo{R}{X}$
+        \item mult$(z,f) = m \to ((X-z)(X-\overline{z}))^m|f$ en $\cuerpo{R}{X}$
+    \end{itemize}
+    \item Los polinomios irreducibles en $\cuerpo{R}{X}$ son exactamente los siguientes: los de grado 1 y los de grado dos con discriminante negativo.
+    \item Sea $f\in\cuerpo{\reales}{X}-\reales$ entonces, la factorización en irreducibles de $f\in\cuerpo{\reales}{X}$ es de la forma:
+    \begin{equation*}
+        f = c(X-x_1)^{m_1}\dots(X-x_r)^{m_r}(x^2 + b_1x + c_1)^{n_1}\dots(x^2 + b_sx + c_s)^{n_s}
+    \end{equation*}
+    donde $c\in\reales^\times$, $r,s\in\nat_0$, $m_i,n_j\in\nat~\forall~1\leq i\leq r, 1\leq j\leq s$, $x_1,\dots,x_r\in\reales$, $b_i,c_i\in\reales$ y $\Delta_j = b_j^2 - 4c_j < 0$.
+    \item Sea $f=a_nX^n + \dots + a_0\in\cuerpo{\ent}{X}$ con $a_n,a_0\neq0$, si $\frac{\alpha}{\beta}\in\racionales$ es una raíz racional de $f$, con $\alpha$ y $\beta$ coprimos, entonces $\alpha|a_0$ y $\beta|a_n$.
+\end{itemize}
+
+\subsubsection{Lema de Gauss (Algoritmo)}
+\begin{enumerate}
+    \item Construir el conjunto de divisores positivos y negativos de $a_0$ ($\mathcal{N}$)
+    \item Construir el conjunto de divisores positivos y negativos de $a_n$ ($\mathcal{D}$)
+    \item Las raíces del polionomio $f$ se encuentran en el conjunto de todas las fracciones coprimas $\alpha/\beta$, eligiendo $\alpha$ en $\mathcal{N}$ y $\beta$ en $\mathcal{D}$.
+\end{enumerate}
+
+Sea $m\in\racionales$ tal $\sqrt{m}\notin\racionales$, y sean  $a,b\in\racionales$, con $b\neq0$. Sea $f\in\cuerpo{\racionales}{X}$, entonces:
+\begin{itemize}
+    \item $g := \left(X-\left(a+b\sqrt{m}\right)\right)\left(X-\left(a-b\sqrt{m}\right)\right)$
+    \item $f\left(a+b\sqrt{m}\right) =0 \to g|f\in\cuerpo{\racionales}{X}$
+    \item $f\left(a+b\sqrt{m}\right) = 0 \iff f\left(a-b\sqrt{m}\right) = 0$
+    \item $\forall~m\in\nat$, mult$(a+b\sqrt{m}, f) = m\iff $ mult$(a-b\sqrt{m}, f) = m$
+\end{itemize}

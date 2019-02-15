@@ -1,0 +1,384 @@
+\section{Números enteros}
+El grupo de números enteros ($\ent$)  satisface las siguientes propiedades:
+\begin{itemize}
+    \item \textbf{Conmutatividad:} $a+b=b+a$ y $a\cdot b = b\cdot a$
+    \item\textbf{Asociatividad:} $(a+b)+c = a+(b+c)$ y $(a\cdot b)\cdot c = a\cdot (b\cdot c)$
+    \item \textbf{Tiene un elemento neutro:} Para la suma es el $0$ ($a+0 = a$) y para la multiplicación el $1$ ($a\cdot 1 = a$)
+    \item \textbf{Existe el opuesto:} respecto de la suma $a + (-a) = 0$
+    \begin{multicols}{2}
+    \item $a\cdot(b+c) = a\cdot b+ a\cdot c$
+    \item $a\cdot b = 0 \to a = 0$ ó $b=0$
+    \item $a\cdot b = a\cdot c$ y $a\neq 0 \to b=c$
+    \item $\ent$ es un conjunto inductivo bien ordenado.
+    \end{multicols}
+    \end{itemize}
+    
+
+\subsection{Divisibilidad}
+Sean $a,d\in\ent$, $d\neq0$. Se dice que $d$ divide a $a$ ($d|a$) si existe un elemento $k\in\ent$ tal que $a=kd$.
+\begin{equation*}
+    d|a \iff\exists~k\in\ent~ / ~a=kd
+\end{equation*}
+
+El conjunto de \textbf{divisores} de un elemento $a\in\ent$ es $\texttt{Div}(a) = \{d\in\nat : d|a\}$ y el conjunto de \textbf{divisores positivos} del mismo elementos es $\texttt{Div}_{+}(a) = \{d\in\nat : d|a \land d>0\}$
+
+\paragraph{Propiedades}
+\begin{itemize}
+\begin{multicols}{2}
+    \item $\forall~d\in\ent,~d|0$
+    \item $d|a \iff -d|a \iff d|-a \iff -d|-a$
+    \item Si $a\neq 0$ y $d|a\to |d|\leq|a|$
+    \item $d|a$ y $a|d \iff a = \pm d$
+    \item $(\forall~a\in\ent)~1|a \land -1|a ~\land~ a|a~\land~-a|a$
+    \item $0|a \iff a = 0$
+    \item $a|b \land b|c \to a|c$
+    \item $a|b \land a|c \to a|(a+b) ~ \land ~ a|(a-b)$
+    \item $a|b \to a|bc~(\forall~c\in\ent)$
+    \item $a|(b\pm c) \land a|b \to a|c$
+    \item $a|b \iff ac|bc~(\forall~c\in\ent)$
+    \item $d|a \iff d^n|a^n~(\forall~n\in\nat$)
+    \item $n|m \to (a^n-1)|(a^m-1)$
+\end{multicols}
+\end{itemize}
+
+\subsubsection{Números primos (Primera parte)}
+Se dice que $a\in\ent$ es un \textbf{número primo} si $a\neq0, \pm 1$ y tiene únicamente 4 divisores (o 2 divisores). En cambio, se dice que $a$ es \textbf{compuesto} si $a\neq0, \pm 1$ y tiene más de 4 divisores (o más de 2 divisores positivos).
+\paragraph{Propiedades}
+\begin{itemize}
+\item Si $d\in\ent$ y $d|ab\to d|a$ ó $d|b$
+\item Sea $a\in\ent$,  $a\neq0,\pm 1$, entonces $\exists~p$ primo tal que $p|a$
+\item Existen infinitos primos
+\item Si $a$ no es primo, entonces existe $p<a$ tal que $p|a$
+\item Si $a$ no es primo, entonces existe $p$ tal que $1\leq p\leq\sqrt{a}$ y $p|a$.
+\end{itemize}
+
+\subsection{Algoritmo de la división}
+Dados $a,d\in\ent$ con $d\neq0$, existen $k,r\in\ent$ que satisfacen $a = k\cdot d + r$ con $0\leq r\leq|d|$. Además, $k$ y $r$ son únicos en tales condiciones. Llamamos \textbf{cociente} a $k$, \textbf{resto} a $r$, \textbf{dividendo} a $a$ y \textbf{divisor} a $d$.
+A partir de ahora notaremos $r_d(a)$ a $r$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item $r_d(a+b) = r_d(r_d(a) + r_d(b))$
+\item $r_d(a\cdot b) = r_d(r_d(a)\cdot r_d(b))$
+\item $r_d(a^n) = r_d(r_d(a)^n)$
+\end{itemize}
+
+\subsubsection{Codificación en base \textit{d}}
+Sea $d\in\nat$ con $d\geq2$. Todo número $a\in\nat$ admite un desarrollo en base $d$ de la forma:
+$$a = r_n\cdot d^n + r_{n-1}\cdot d^{n-1} + \dots + r_1\cdot d^1 + r_0$$ con $0 < r_i < d$ para todo $0 \leq i \leq n$ y $r_n\neq 0$ si $a\neq 0$
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item El número más grande de tamaño $n$ en base $d$ es el número $d^n - 1$.
+\item Se pueden escribir $d^n$ números usando $n$ símbolos en base $d$.
+\item El tamaño (cantidad de dígitos) en base $d$ de un número $a\in\nat$ es $\lceil\texttt{log}_d(a)\rceil + 1$
+\end{itemize}
+
+\subsection{Relación de congruencia}
+Sean $a,b\in\ent$, decimos que $a$ \textbf{es congruente a} $b$ \textbf{módulo} $d$ si $d|(b-a)$. y notamos $\modulo{a}{b}{d}$ ó $\moduloI{a}{b}{d}$.
+
+$\modulo{a}{b}{d}$ es una relación de equivalencia que parte a los números enteros de la siguiente manera:
+    $$\overline{a} = \{b\in\ent : r_d(b) = r_d(a)\}$$
+
+Es decir, que la clase equivalencia está formada por todos los elementos de los enteros cuyo resto sea el mismo que el resto de $a$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\begin{multicols}{2}
+\item $r_d(a) = 0 \iff d|a \iff \modulo{a}{0}{d}$
+\item $(\forall~a\in\ent)~\modulo{a}{r_d(a)}{d}$
+\item $\modulo{a}{r}{d}$ con $0 < r < |d| \to r = r_d(a)$
+\item $\moduloI{r_1}{r_2}{d}$ con $0 < r_1, r_2 < |d| \to r_1 = r_2$
+\item $\modulo{a}{b}{d} \iff r_d(a) = r_d(b)$
+\item $(\forall~a\in\ent,~d\in\nat)~\moduloI{a}{a}{d} $
+\item $\moduloI{a}{b}{d} \to \moduloI{b}{a}{d}$
+\item $\moduloI{a}{b}{d} \to \moduloI{b}{a}{d}$
+\item $\moduloI{a}{b}{d}$ y $\moduloI{b}{c}{d} \to \moduloI{a}{c}{d}$
+\item $\moduloI{a}{b}{d} \to \moduloI{a+c}{b+c}{d}$ para todo $c\in\ent$
+\item $\moduloI{a}{b}{d} \iff \moduloI{ac}{bc}{d}$ para todo $c\in\ent$
+\item $\moduloI{a}{b}{d} \to \moduloI{a^n}{b^n}{d}$ para todo $n\in\nat$
+\item $\modulo{a}{a + dq}{d}$ para todo $q\in\ent$
+\end{multicols}
+\item $\moduloI{a}{b}{d} ~\land~ \moduloI{c}{e}{d} \to \moduloI{a+c}{e+b}{d} ~\land~ \moduloI{a\cdot c}{b\cdot e}{d}$
+\item Sea $c\in\nat$, $\moduloI{a}{b}{d}\iff \moduloI{a c}{b c}{d c}$
+
+\item Dado $d\in\ent$, la relación $\modulo{a}{b}{d}$ define $d$ clases de equivalencias distintas.
+\end{itemize}
+\subsubsection{Criterios de divisibilidad}
+Sea $a = r_1r_2r_3\dots r_n$ un desarrollo decimal de $a$, entonces:
+
+\begin{itemize}
+    \item $3|a \iff 3|(r_1 + r_2 + \dots + r_n)$
+    \item $11|a \iff 11|((-1)^{n}r_n + (-1)^{n-1}r_{n-1}+\dots + r_0)$
+\end{itemize}
+
+\subsection{Máximo común divisor (MCD)}
+Sean $a,b\in\ent$ no nulos, definimos el conjunto de \textbf{divisores comunes} como el conjunto elementos que dividen a $a$ y a $b$ al mismo tiempo:
+
+$$\divcom{a}{b} = \{d\in\ent ~:~d|a~\land~d|b\}$$
+
+Y el \textbf{máximo común divisor} entre $a$ y $b$, que se nota $(a:b)$, es el mayor de los divisores comunes entre $a$ y $b$. Es decir $(a:b)$
+
+$$(a:b) = c~/~ c\in \divcom{a}{b} ~\land~(\forall~d\in \divcom{a}{b})~d\leq c$$
+
+\paragraph{Propiedades}
+\begin{itemize}
+\begin{multicols}{2}
+    \item $(a:b) = (b:a)$ para todo $a,b\in\ent$ no nulos
+    \item $(a:b) = (|a|:|b|)$
+    \item $(a:1) = 1$ para todo $a\in\ent$
+    \item $(a:0) = |a|$ para todo $a\in(\ent-\{0\})$
+    \item Si $c|a$ y $c|b\to c|(a:b)$
+    \item $(a:b)$ es único
+    \item $(\forall~a,b\in\ent)~(~b|a\to (a:b) = |b|~)$
+\end{multicols}
+\item Si $p$ es un primo positivo, entonces, para todo $a\in\ent$ vale:
+\begin{equation*}
+    (a:p) = \left\{
+        \begin{array}{l}
+        p \text{ si } p|a \\
+        1 \text{ sino}
+        \end{array}
+    \right.
+\end{equation*}
+\item Sean $a,b\in\ent$ no nulos y sea $k\in\ent\to\divcom{a}{b} = \divcom{a}{a - kb}$
+\item Sean $a,b\in\ent$ con $b\neq0$. Si $a=bq + r$ con $q,r\in\ent$ $\to (a:b) = (b:r)$
+\end{itemize}
+
+\subsection{Algoritmo de euclídes}
+
+El algoritmo de euclídes hace usa de estas propiedades para calcular el MCD. Y propone lo siguiente:
+
+Sean $a,b\in\ent$ no nulos, existe $l\in\nat_0$ tal que en una sucesión de $l+1$ divisiones se llega por primera vez al resto nulo $r_{l+1} = 0$. Entonces $(a:b) = r_l$, el último resto no nulo.
+\begin{equation*}
+\begin{array}{c}
+    a =  k_1b + r_1\\
+    b =  k_2r_1 + r_2 \\
+    \vdots \\
+    r_{l-2} = k_lr_{l-1} + r_{l} \\
+    r_{l-1} = k_{l+1}r_{l} + r_{l+1}
+\end{array}
+\end{equation*}
+
+
+\paragraph{Propiedades/Consecuencias:}
+
+\begin{itemize}
+    \item $(a^m -1 : a^n-1) = a^{(m:n)}-1$
+    \item Sean $a,b\in\ent$ no nulos $\to\exists~t,s\in\ent~/~(a:b) = at + bs$
+    \item Sean $a,b\in\ent$ no nulos y $c\in\ent$, existen $s', t'\in\ent$ tal que $c = s'a + t'b$ si y solo si $(a:b)|c$
+    \item $(a:b)$ es el número natural más chico que se puede escribir como combinación enteras de $a$ y $b$
+    \item $d|a$ y $d|b\iff d|(a:b)$
+    \item Sean $a,b,k\in\ent$ no nulos, entonces $(ka : kb) = |k|(a:b)$
+    \item Sean $a,b\in\ent$ y $d\in\nat$, son equivalentes:
+    \begin{itemize}
+        \item $d|a$, $d|b$ y si $c|a$ y $c|b$ entonces $c\leq d$
+        \item $d|a$, $d|b\to\exists~s,t\in\ent~/~d=sa+tb$
+        \item $d|a$, $d|b$ y si $c|a$ y $c|b$ entonces $c|d$
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Números coprimos}
+Si $(a:b) = 1$ entonces se dice que $a$ y $b$ son \textbf{coprimos} y se nota $a\bot b$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Si $d=(a:b)\to \frac{a}{d}$ y $\frac{b}{d}$ son enteros y son coprimos.
+\begin{multicols}{2}
+\item $a\bot b\iff\exists~s,t\in\ent~/~1 = sa + tb$
+\item $c|a$ y $d|a$ y $c\bot d \iff cd|a$ 
+\item $d|ab$ y $d\bot a\to d|b$
+\item $d|a$ y $d|b$ y $\frac{a}{d}\bot\frac{b}{d}$ entonces $d = (a:b)$
+\item Sea $p$ primo, si $p|ab\to p|a$ ó $p|b$
+\item $a\bot b$ y $a\bot c \iff a\bot bc$
+\end{multicols}
+\item Sean $a,b\in\ent$ no nulos, entonces $\frac{a}{(a:b)}\bot\frac{b}{(a:b)}$
+\item Sea $a,b\in\ent$ y $m_1,m_2\in\nat$ tal que $m_1\bot m_2$, entonces $\moduloI{a}{b}{m_1}$ y \newline $\moduloI{a}{b}{m_2} \iff \moduloI{a}{b}{m_1m_2}$
+\begin{multicols}{2}
+\item $(a:b) = 1\to(a^n:b^n) = 1$
+\item $(a:b) = d\to(a^n:b^n) = d^n$
+\end{multicols}
+\item Sea $p$ un número primo y $a\in\ent$ entonces $\divp{p} = \{1,p\}$ y por lo tanto \newline $\divcomp{p}{a}\subset\{1,p\}$
+\item Si $p$ y $q$ son números primos, entonces $(p:q) = 1$.
+\end{itemize}
+
+\subsection{Factorización}
+Sea $p$ un número primo y $a_1\cdot a_2\cdot\dots\cdot a_n  \in\ent$ con $n\geq 2$, tal que $p|a_1\cdot a_2\cdot\dots\cdot a_n$ entonces $p|a_i$ para algún $0\leq i \leq n$ 
+
+Sea $a\in\ent$, $a\neq0,\pm 1$, entonces $a$ se escribe en forma única (\textbf{factoriza}) como producto de números primos, es decir:
+\begin{center}
+\begin{minipage}{0.8\textwidth}
+$\forall~a\in\ent~/~a\neq0,\pm1$, $\exists~r\in\nat$ tal que existen $p_1,\cdots,p_r$ primos distintos y $m_1,\dots,m_r$ números naturales tales que $a=\pm p_1^{m_1}\cdot p_2^{m_2}\cdot\dots\cdot p_r^{m_r}$
+\end{minipage}
+\end{center}
+
+\paragraph{Propiedades}
+
+\begin{itemize}
+\item Sean $a,b\in\ent$ no nulos de la forma $a=\pm p_1^{m_1}p_2^{m_2}\dots p_r^{m_r}$ y $b=\pm p_1^{n_1}p_2^{n_2}\dots p_r^{n_r}$, entonces:
+\begin{itemize}
+\item $a\cdot b = p_1^{m_1+n_1}p_2^{m_2 + n_2}\dots p_r^{m_r + n_r}$
+\item $a^k = p_1^{km_1}p_2^{km_2}\dots p_r^{km_r}$
+\item $(a:b) = p_1^{min\{m_1,n_1\}}\dots p_r^{min\{m_r,n_r\}}$
+\end{itemize}
+\item Dado $p$ primo, $p|a\iff$ $p$ aparece en la factorización en primos de $a$.
+\item Cualquiera sea $a\in\ent$, $a$ es divisible por un número finito de primos distintos.
+
+\item Sea $a\in\ent$ y $a = \pm p_1^{m_1}p_2^{m_2}\dots p_r^{m_r}$ la factorización en primos de $a$, entonces:
+\begin{itemize}
+\item $d|a\iff d =\pm p_1^{n_1}p_2^{n_2}\dots p_r^{n_r}$ con $0\leq n_1 \leq m_1$,\dots, $0\leq n_r\leq m_r$
+\item $|\divp{a}| = \prod_{i=0}^{r} m_i$ y $|Div(a)| = 2*|\divp{a}|$
+\end{itemize}
+\item $d|a \iff d^n|a^n$
+\item Sean $a,b\in\ent$ no nulos de la forma $a=\pm p_1^{m_1}p_2^{m_2}\dots p_r^{m_r}$ y $b=\pm q_1^{n_1}q_2^{n_2}\dots q_r^{n_r}$, entonces $(a:b) = 1\iff p_i\neq q_j~\forall~i,j$
+\item $(a:b) = 1 \iff (a^n : b^m) = 1$ $\forall~m,n\in\nat$
+\item $(a^n:b^n) = (a:b)^n$ $\forall~n\in\nat$
+\end{itemize}
+
+\subsection{Mínimo Común Múltiplo (MCM)}
+Sean $a,b\in\ent$ no nulos, el \textbf{mínimo común múltiplo} entre $a$ y $b$ ($[a:b]$) es el menor número natural que es múltiplo de $a$ y de $b$. 
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Sean $a,b\in\ent$ no nulos de la forma $a=\pm p_1^{m_1}p_2^{m_2}\dots p_r^{m_r}$ y $b=\pm p_1^{n_1}p_2^{n_2}\dots p_r^{n_r}$, entonces: $$[a:b] =  p_1^{max\{m_1,n_1\}}\dots p_r^{max\{m_r,n_r\}}$$
+\begin{multicols}{2}
+\item $a|m$ y $b|m \iff [a:b]|m$
+\item Si $a|b\to [a:b] = |b|$
+\item $|a\cdot b| = (a:b)[a:b]$
+\item Si $(a:b)=1\to [a:b] = |a\cdot b|$
+\end{multicols}
+\end{itemize}
+
+\subsection{Ecuaciones lineales diofánticas}
+Las \textbf{ecuaciones diofánticas} son las ecuaciones lineales de la forma $aX + bY = c$ con $a,b,c\in\ent$, $a,b$ no ambos nulos de las cuales se buscan los pares $(X,Y)$ de soluciones enteras.
+
+Si $a = 0$ ó $b=0$, el problema se vuelve un problema de divisibilidad. $aX + 0Y = c$ tiene solución entera $\iff a|c$ y, en ese caso, las soluciones son todos los pares $(\frac{c}{a}, j)$ con $j\in\ent$.
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Sean $a,b,c\in\ent$ no nulos, la ecuación diofántica $aX + bY = c$ admite soluciones enteras si y solo si $(a:b)|c$.
+\item Sean $a,b\in\ent$ no nulos y coprimos, entonces la ecuación diofántica $aX+bY=c$ tiene soluciones enteras para todo $c\in\ent$
+\end{itemize}
+
+Sean $aX+bY=c$ y $a'X+b'Y=c'$ dos ecuaciones diofánticas, se dicen \textbf{equivalentes} si tienen exactamente las mismas soluciones. Y notamos $$ax+by=c\leftrightsquigarrow a'X+b'Y=c'$$
+
+\paragraph{Propiedades}
+\begin{itemize}
+\item Sean $a,b,c\in\ent$ no nulos tales que $(a:b)|c$, entonces:
+$$ax+by=c\leftrightsquigarrow \frac{a}{(a:b)}X+\frac{b}{(a:b)}'Y=\frac{c}{(a:b)}$$
+\item Sean $a,b\in\ent$ no nulos, el conjunto $S_0$ de soluciones de la ecuación diofantica $aX+bY=c$ es:
+\begin{itemize}
+\item $S_0 = \phi$ si $(a:b)\nmid c$
+\item $S = \{(x,y)~:~x=x_0 + b'k, y=y_0 + a'k\}$ donde $a' = \frac{a}{(a:b)}$ y $b'=\frac{b}{(a:b)}$
+\end{itemize}
+\end{itemize}
+
+\subsection{Ecuaciones lineales de congruencia}
+Dado $m\in\nat$ se puede aplicar el análisis realizado para las ecuaciones diofánticas a las ecuaciones de la forma $\modulo{aX}{c}{m}$ para $a,c\in\ent$.
+\paragraph{Propiedades}
+\begin{itemize}
+\item $\modulo{aX}{c}{m}\leftrightsquigarrow\modulo{a'X}{c'}{m'}$ si tienen exactamente las mismas soluciones.
+\item Sea $m\in\nat$, dados $a,c\in\ent$, la ecuación de congruencia $\modulo{aX}{c}{m}$ tiene soluciones si y solo si $(a:m)|c$. Además, si ese es el caso, vale que $$\modulo{aX}{c}{m}\leftrightsquigarrow\modulo{\frac{a}{(a:m)}X}{\frac{c}{(a:m)}}{\frac{m}{(a:m)}}$$
+\item Sean $m\in\nat$, $a,c,d\in\ent$, entonces $$\modulo{(da)X}{dc}{(dm)}\leftrightsquigarrow\modulo{a}{c}{m}$$
+\item Sean $m\in\nat$ y $a\in\ent$ tal que $a\bot m$, entonces la ecuación de congruencia $\modulo{aX}{c}{m}$ tiene soluciones enteras cualquiera sea $c\in\ent$
+\item El conjunto $S$ de soluciones enteras de la ecuación de congruencia $\modulo{aX}{c}{m}$ es:
+\begin{itemize}
+\item $S=\phi$ cuando $(a:m)|c$
+\item $S=\{x\in\ent~:~\modulo{x}{x_0}{m'}\}$ donde $x_0\in\ent$ es una solución particular cualquiera de la ecuación y $m' = \frac{m}{(a:m)}$
+\end{itemize}
+\end{itemize}
+\subsection{Sistemas equivalentes}
+Sean $m_1,\dots,m_n\in\nat$ coprimos dos a dos, entonces:
+\begin{equation*}
+    \left\{
+        \begin{array}{c}
+            \moduloI{x}{c}{m_1}\\
+            \moduloI{x}{c}{m_2}\\
+            \vdots\\
+            \moduloI{x}{c}{m_n}
+        \end{array}
+    \right. \leftrightsquigarrow \modulo{x}{c}{m_1m_2\dots m_n}
+\end{equation*}
+
+Sean $m,m'\in\nat$ tales que $m'|m$, entonces para todo $c,c'\in\ent$ vale:
+\begin{itemize}
+\item Si $\nmodulo{c}{c'}{m}$, entonces el siguiente sistema es incompatible (no tiene soluciónes enteras):
+$$\left\{
+\begin{array}{c}
+\modulo{x}{c'}{m'} \\
+\modulo{x}{c}{m}\\
+\end{array}
+\right.
+$$
+\item Si $\modulo{c}{c'}{m}$ entonces:
+$$\left\{
+\begin{array}{c}
+\modulo{x}{c'}{m'} \\
+\modulo{x}{c}{m}\\
+\end{array}
+\right.\leftrightsquigarrow\modulo{X}{c}{m}
+$$
+\end{itemize}
+
+\subsection{Teorema chino del resto}
+Sean $m_1,\dots,m_n\in\nat$ coprimos dos a dos, entonces para todo $c_1,\dots,c_n\in\ent$, el sistema:
+\begin{equation*}
+    \left\{
+        \begin{array}{c}
+            \moduloI{x}{c}{m_1}\\
+            \moduloI{x}{c}{m_2}\\
+            \vdots\\
+            \moduloI{x}{c}{m_n}
+        \end{array}
+    \right.
+\end{equation*}
+tiene soluciónes enteras $S=\{x\in\ent~:~\modulo{x}{x_0}{m_1m_2\dots m_n}\}$
+
+\subsection{Pequeño teorema de fermat}
+
+Sea $p$ un primo positivo, entonces $\forall~a\in\ent$:
+\begin{itemize}
+\item $\modulo{a^p}{a}{p}$
+\item $p\nmid a\to \modulo{a^{n}}{a^{r_{p-1}(n)}}{p}$
+\end{itemize}
+
+\paragraph{Consecuencias/Propiedades}
+\begin{itemize}
+\item Sea $p$ un primo positivo, entonces $\forall~a\in\ent$ tal que $p\nmid a$ y $n\in\nat$ se tiene que $\modulo{n}{r}{p-1}\to \modulo{a^n}{a^{r}}{p}$.
+\item Sean $p$ y $q$ dos primos distintos y $a\in\ent$ coprimo con $p\cdot q$, entonces $\moduloI{a^{(p-1)(q-1)}}{1}{pq}$ y por lo tanto, para todo $m\in\nat$ vale:
+$$\modulo{m}{r}{(p-1)(q-1)}\to\modulo{a^m}{a^r}{pq}$$
+\end{itemize}
+
+\subsubsection{Teorema de Euler}
+Sea $m = p_1^{r_1}\dots p_s^{r-2}$ la factorización en primos de $m$, entonces definimos \newline $\varphi(m) = \varphi(p_1^{r_1})\dots \varphi(p_s^{r-2})$ y si $p$ es un primo, $\varphi(p) = p-1$.
+
+\paragraph{Propiedades:} Sea $m,a\in\ent$ tal que $(m:a)=1$ y $p$ un primo, entonces
+\begin{itemize}
+\item $\moduloI{a^{\varphi(m)}}{1}{m}$
+\item $\varphi(a\cdot m) = \varphi(a)\varphi(m)$    
+\item $\varphi(p^{r}) = p^{r-1}(p-1)$
+\end{itemize}
+
+\subsection{Anillos y cuerpos}
+Sea $m\in\nat$, consideremos en $\ent$ la relación de congruencia módulo $m$. Entonces:
+\begin{enumerate}
+    \item Sea $0\leq r\leq m$, la clase de equivalencia $\overline{r}$ de $r$ es $\overline{r} = \{a\in\ent~:~\modulo{a}{r}{m}\}$ y $\ent = \overline{0}\cup\overline{1}\cup\dots\cup\overline{r-1}$ es la partición de $\ent$ asociada esta relación de equivalencia.
+    \item Notamos $\ent/m\ent = \{ \overline{0},\overline{1},\dots,\overline{r-1}\}$ y si $+$ y $\cdot$ son las operaciones definidas por \\ $\overline{r_1}+\overline{r_2} = \overline{r_1 + r_2}$ y $\overline{r_1}\cdot\overline{r_2} = \overline{r_1 \cdot r_2}$ entonces $\ent/m\ent$ es un \textbf{anillo conmutativo}
+\end{enumerate}
+
+\paragraph{Propiedad:} 
+\begin{itemize}
+\item Sean $m\in\nat$ y $a\in\ent$, entonces la ecuación de congruencia $\modulo{aX}{c}{m}$ tiene solución si y solo si $(a:m)=1$ y, en este caso, la solución $x_0$ es única y $1\leq x_0<m$.
+\item Sea $p$ un primo positivo y sea $a\in\nat$ tal que $p\nmid a$, entonces la ecuación de congruencia \\ $\modulo{aX}{1}{p}$ tiene solución única $x_0$ con $1\leq x_0\leq p$.
+\end{itemize}
+
+\subsubsection{Elementos inversibles}
+El elemento $\overline{r}$ es inversible en $\ent/m\ent$ si
+y solo si existe $\overline{x} \in \ent/m\ent$ tal que $r\cdot x = 1$ .
+
+\paragraph{Propiedad:} 
+\begin{itemize}
+\item En los enteros, los únicos elementos que tienen inverso multiplicativo son el $-1$ y el $1$.
+\item Sea $m\in\ent$ y $r\in\ent/m\ent$, entonces $\overline{r}$ es inversible en $\ent/m\ent$ si y solo si $(m:r)=1$.
+\item Sea $p$ un primo positivo, entonces $(\ent/p\ent, +,\cdot)$ es un \textbf{cuerpo}, es decir, además de ser un anillo conmutativo, satisface que todo elemento no nulo de $\ent/p\ent$ es inversible.
+\end{itemize}
