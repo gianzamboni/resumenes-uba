@@ -23,19 +23,42 @@
 \babel@aux{spanish}{}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introducci\IeC {\'o}n}{2}{section.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces figure}}{2}{figure.1}}
-\newlabel{fig:arquitectura}{{1}{2}{figure}{figure.1}{}}
+\newlabel{fig:intro::arquitectura}{{1}{2}{figure}{figure.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Componentes del ISA}{2}{subsection.1.1}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {1.1.1}Regitros}{2}{subsubsection.1.1.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.1.2}Arquitectura de Von Neumann}{3}{subsubsection.1.1.2}}
-\newlabel{Intro::ISA::Von_Neuman}{{1.1.2}{3}{Arquitectura de Von Neumann}{subsubsection.1.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.1.2}Arquitectura de Von Neumann}{4}{subsubsection.1.1.2}}
+\newlabel{sec::Intro::ISA::Von_Neuman}{{1.1.2}{4}{Arquitectura de Von Neumann}{subsubsection.1.1.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Arquitectura de Von Newmman}}{4}{figure.2}}
-\newlabel{fig:vonneumanarquichtecture}{{2}{4}{Arquitectura de Von Newmman}{figure.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Microarquitectura}{4}{section.2}}
+\newlabel{fig:intro:componentesIsa::vonsneumanarquichtecture}{{2}{4}{Arquitectura de Von Newmman}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Microarquitectura}{4}{subsection.1.2}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Pipelining}{6}{section.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Analog\IeC {\'\i }a de la lavander\IeC {\'\i }a: 4 personas tienen que lavar, secar, doblar y guardar su ropa sucia. Solo disponemos de una lavadora, una secadora, un ``doblador'' y un ropero. Si cada parte del proceso toma 30 minutos, y lo realizamos de manera secuencial, entonces completarlo para las 4 personas tomar\IeC {\'\i }a ocho horas, mientras que si lo hacemos con un pipeline el tiempo se reduce a tres horas y media.}}{6}{figure.3}}
+\newlabel{fig:pipelining}{{3}{6}{Analogía de la lavandería: 4 personas tienen que lavar, secar, doblar y guardar su ropa sucia. Solo disponemos de una lavadora, una secadora, un ``doblador'' y un ropero. Si cada parte del proceso toma 30 minutos, y lo realizamos de manera secuencial, entonces completarlo para las 4 personas tomaría ocho horas, mientras que si lo hacemos con un pipeline el tiempo se reduce a tres horas y media}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Pipeline Hazards}{7}{subsection.2.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Branch Prediction}{8}{section.3}}
+\newlabel{sec::branchPrediction}{{3}{8}{Branch Prediction}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Predicciones est\IeC {\'a}ticas}{8}{subsection.3.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Predicciones din\IeC {\'a}micas}{8}{subsection.3.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Maquinas de estados de predicci\IeC {\'o}n para un buffer de 2 bits}}{9}{figure.4}}
+\newlabel{fig:2bit-buffer-prediction}{{4}{9}{Maquinas de estados de predicción para un buffer de 2 bits}{figure.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}{\color  {red}Tomasulo}}{10}{section.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Instruction Level Paralelism}{10}{section.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dependencias de instrucciones}{10}{subsection.5.1}}
+\newlabel{sec:instructionLevelParalelism:dependenciaDeInstrucciones}{{5.1}{10}{Dependencias de instrucciones}{subsection.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Fetching and Decode}{11}{subsection.5.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Interrupciones}{11}{subsection.5.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}In-Order Instruction Completion}{12}{subsubsection.5.3.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Result Shift Register}}{12}{figure.5}}
+\newlabel{fig:shiftregister}{{5}{12}{Result Shift Register}{figure.5}{}}
 \citation{*}
 \bibstyle{plain}
 \bibdata{bibliography}
 \bibcite{18447Spring2018}{1}
-\bibcite{Patt2001RequirementsB}{2}
-\bibcite{book:876261}{3}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Medidas de Performance}{5}{subsection.2.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Response time:}{5}{subsection.2.2}}
+\bibcite{inproceedings}{2}
+\bibcite{Patt2001RequirementsB}{3}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}Reorder-Buffer}{13}{subsubsection.5.3.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Reorder buffer}}{13}{figure.6}}
+\newlabel{fig:reorder-buffer}{{6}{13}{Reorder buffer}{figure.6}{}}
+\bibcite{Patterson:2013:COD:2568134}{4}
+\bibcite{Smith95themicroarchitecture}{5}
+\bibcite{book:876261}{6}

@@ -1,8 +1,0 @@
-\babel@toc {spanish}{}
-\contentsline {section}{\numberline {1}Introducci\IeC {\'o}n}{2}{section.1}
-\contentsline {subsection}{\numberline {1.1}Componentes del ISA}{2}{subsection.1.1}
-\contentsline {subsubsection}{\numberline {1.1.1}Regitros}{2}{subsubsection.1.1.1}
-\contentsline {subsubsection}{\numberline {1.1.2}Arquitectura de Von Neumann}{3}{subsubsection.1.1.2}
-\contentsline {section}{\numberline {2}Microarquitectura}{4}{section.2}
-\contentsline {subsection}{\numberline {2.1}Medidas de Performance}{5}{subsection.2.1}
-\contentsline {subsection}{\numberline {2.2}Response time:}{5}{subsection.2.2}
