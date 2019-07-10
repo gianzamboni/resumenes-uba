@@ -13,7 +13,9 @@
 \newpage
 \section{Introducción}
 
-La \textbf{arquitectura de computadoras} es la ciencia y arte de diseñar las interfaces hardware/software para crear un sistema computacional que posea los requerimientos funcionales, de perfomance, consumo (de energía) y de costo (económico) adecuados para realizar determinadas tareas.
+La \textbf{arquitectura de una computadora} es el conjunto derecursos accesibles para el programador que, por lo general, se mantienen a lo largo de los diferentes modelos de procesadores de esa arquitectura (puede evolucionar pero la tendencia es mantener compatibilidad hacia los modelos anteriores).
+
+Diseñar una arquitectura implica diseñar las interfaces hardware/software para crear un sistema computacional que posea los requerimientos funcionales, de perfomance, consumo (de energía) y de costo (económico) adecuados para realizar determinadas tareas.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
@@ -67,7 +69,7 @@ Como se vió en Organización del computador I, las mayoría de las ISA usadas a
 	\item \textbf{Write Back:} Se almacenan los resultados obtenidos en el lugar indicado.
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.4\textwidth]{imagenes/von-neuman-arquichtecture}
 	\caption{Arquitectura de Von Newmman}
@@ -111,11 +113,13 @@ En otras palabras, la microarquitectura comprende la tecnología utilizada para 
 %Donde \textit{Clock Cycle} son la cantidad de ciclos de reloj (ticks) que se utilizaron en la tarea y \textit{Clock Rate} es el tiempo que dura cada tick del reloj.
 
 \newpage
+\part{Instruction Level Parallelism}
 \section{Pipelining}
-El Pipeline es una técnica que permite superponer el procesamiento de múltiples instrucciones en una ejecución. En vez de processar una instrucción completamente (realizar todas las etapas del procesamiento: Fetch, Decode, Execute, Access, Write) y luego otra,  una vez que la primera instrucción fue fetcheada y pasa a la etapa de decodificación, se comienza a fetchear la siguiente instrucción. 
+El Pipeline es una técnica que permite superponer el procesamiento de múltiples instrucciones en una ejecución. Una vez que la primera instrucción fue fetcheada y pasa a la etapa de decodificación, se comienza a fetchear la siguiente instrucción. 
 
-Bajo condiciones ideales y con un gran número de instrucciones, la mejora en velocidad de ejecución es directamente proporcional a la cantidad de etapas en el pipe. Es decir, un pipeline de 5 etapas, es aproximadamente 5 veces más rápido que el procesamiento secuencial.  Notemos que el pipelining no modifica el tiempo que se tarda en procesar una instrucción (\textbf{latency / latencia}), sino que mejora el perfomance aumentando la cantidad de instrucciones que se procesan por unidad de tiempo (\textbf{throughput}).
+Bajo condiciones ideales y con un gran número de instrucciones, la mejora en velocidad de ejecución es directamente proporcional a la cantidad de etapas en el pipe. Es decir, un pipeline de 5 etapas, es aproximadamente 5 veces más rápido que el procesamiento secuencial.  
 
+Si bien, el pipelining, reduce el tiempo de ejecución de un programa, debemos notar que no lo hace modificando el tiempo que se tarda en procesar una instrucción (\textbf{latency / latencia}), sino que aumenta la cantidad de instrucciones que se procesan por unidad de tiempo (\textbf{throughput}).
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\linewidth]{imagenes/pipelining}
@@ -132,29 +136,34 @@ Para facilitar una implementación efectiva del pipeline, el set de instruccione
 \end{itemize}
 
 \subsection{Pipeline Hazards}
-Hay situaciones en las que una instrucción no puede ser procesada en el siguiente ciclo de reloj. Estos eventos pueden llegar a detener el flujo del pipeline y generar una demora (\textbf{hazards}) en la ejecución del programa. A continuación veremos los tres tipos de obstáculos que se pueden dar:
+Hay situaciones, en las que una instrucción no puede ser ejecutada en el siguiente ciclo de reloj debido a algún obstaculo (\textbf{hazards}). Estos eventos pueden llegar a detener el flujo del pipeline (\textbf{pipeline stall}) y generar una demora en el procesamiento de las instrucciones. A continuación veremos los tres tipos de obstaculos que se pueden dar:
 
 \begin{itemize}
 	\item \textbf{Estructurales (Structural Hazards):} El hardware no soporta la combinación de instrucciones que queremos ejecutar en el mismo ciclo de reloj. Por ejemplo, si una instrucción debe acceder a memoria mientras otra debe realizar un fetch en la misma memoria. En este caso, las dos instrucciones deben utilizar los mismos recursos y debería darsele prioridad a la primera instrucción dejando a la segunda en espera.
-	\item \textbf{De datos (Data Hazards):} Hay una instrucción en el pipeline que depende de los resultados de otra (tambien en el pipeline) y debe esperar a que ésta se complete para poder terminar. Esto puede bloquear el pipe durante varios ciclos de reloj ya que se debe procesar completamente la primer instrucción. Para minimizar el impacto de este obstáculo, por lo general, se agrega extra hardware que permite conseguir el valor deseado apenas sea calculado (cuando termina la etapa de ejecución) directamente de los componentes internos para no tener que esperar a que sea guardado en memoria (esta técnica se llama \textbf{forwarding} o \textbf{bypassing}).
-	\item \textbf{De control (Control or Branch Hazards):} La instrucción que se fetcheó no es la instrucción que debe ejecutarse en este ciclo de reloj. Esto sucede cuando una de las instrucciones del pipe es una instrucción condicional. En estos casos, cuando la instrucción es fetcheada, el pipeline no puede saber cual es la próxima instrucción que debe ser ejecutada ya que esto depende del resultado de la instrucción actual. Una posible solución es parar apenas se haga el fetch del condicional y esperar hasta obtener sus resultado. Otra, es realizar predicciones (\textbf{branch prediction}) y ejecutar las instrucciones con más probabilidad de ser ejecutadas. En este último caso, el pipeline procede sin demoras si la predicción fue correcta, sino debe eliminar las instrucciones procesadas y volver a comenzar desde el lugar correcto.
+	
+	Para resolver esto, debería agregarse harwdare (como buffers, caches, etc).
+	\item \textbf{De datos (Data Hazards):} Hay una instrucción en el pipeline que depende de los resultados de otra instrucción (tambien en el pipeline) y debe esperar a que ésta se complete para poder terminar. Esto puede bloquear el pipe durante varios ciclos de reloj ya que se debe procesar completamente la primer instrucción. 
+	
+	Para minimizar el impacto de este obstáculo, por lo general, se agrega extra hardware que permite conseguir el valor deseado apenas sea calculado (cuando termina la etapa de ejecución) directamente de los componentes internos para no tener que esperar a que sea guardado en memoria (esta técnica se llama \textbf{forwarding} o \textbf{bypassing}).
+	\item \textbf{De control (Control or Branch Hazards):} La instrucción que se fetcheó no es la que debe ejecutarse en este ciclo de reloj. Esto sucede cuando una de las instrucciones del pipe es de control. Cuando es fetcheada, el pipeline no puede saber cual es la próxima instrucción que debe ser ejecutada ya que esto depende del resultado de la instrucción actual.
+	
+	Una posible solución es parar apenas se haga el fetch del condicional y esperar hasta obtener sus resultado. Otra, es realizar predicciones (\textbf{branch prediction}) y ejecutar las instrucciones con más probabilidad de ser ejecutadas. En este último caso, el pipeline procede sin demoras si la predicción fue correcta, sino debe eliminar las instrucciones procesadas y volver a comenzar desde el lugar correcto.
 \end{itemize}
 
 \newpage
 \section{Branch Prediction}\label{sec::branchPrediction}
 
-\paragraph{Branching:} Cuando se fetchea una instrucción condicional, se genera una ramificación en el código. Hay dos caminos posibles por el que puede seguir la ejecución y no tenemos seguro cual de los dos tomar.
+\paragraph{Branching:} Cuando se fetchea una instrucción condicional, se genera una ramificación en el código. Hay dos caminos posibles por el que puede seguir la ejecución y el camino que se debe ejecutar lo decide el resultado de la instrucción fetcheada. 
 
-\paragraph{Untaken Branch:} Se dice cuando el camino tomado es el que ejecuta la instrucción siguiente a la del condicional dentro del programa.
+\paragraph{Untaken Branch:} Se dice cuando el camino tomado es el que ejecuta la instrucción que le sigue al condicional dentro del programa.
 
-\paragraph{Taken Branch:} Cuando se ejecuta la instrucción que se encuentra en la dirección del salto de la instrucción condicional. \\
+\paragraph{Taken Branch:} Cuando se ejecuta la instrucción que se encuentra en la dirección del salto de la instrucción condicional.
 
-
-En la sección anterior se presentó la técnica de pipelining y los posibles problemas que se pueden llegar a tener cuando se usa. Uno de estos eran los problemas de control que bloqueaban el pipe cuando una de las instrucciones fetcheadas era de control. Hay diversos tipos de predicción que intentan disminuir el impacto de este problema, algunas de ellas son:
+\paragraph{Branch penalty:} Cuando se fetchea la instruccción incorrecta, debe descartarse todo lo que estaba pre procesado hasta ese momento. El pipeline se vacía y deben transcurrir $n-1$ ciclos de clock hasta el próximo resultado ($n = $ cantidad de etapas del pipeline).
 
 \subsection{Predicciones estáticas}
 \begin{itemize}
-	\item \textbf{Assume Branch Not Taken:}  Se fetchea la siguiente instrucción secuencial del programa. Si el salto no se realiza, entonces la ejecución del pipe continúa sin problemas. Si el salto se realiza, entonces se deberán descartar las instrucciones fetcheadas y decodificadas hasta el momento para poder retomar en el lugar correspondiente.
+	\item \textbf{Assume Branch Not Taken:}  Se fetchea la siguiente instrucción secuencial del programa. Si el salto no se realiza, entonces la ejecución del pipe continúa sin problemas. Si el salto se realiza, se aplica el branch penalty.
 	\item \textbf{Assume Branch Taken}: Análogo al anterior, pero esta vez, se fetchea la instrucción en la dirección de memoria apuntada por el salto.
 	\item \textbf{Predict by Opcode}: Se asume que el salto va a ser tomado o no dependiendo de la instrucción a ser ejecutada.
 \end{itemize}
@@ -166,7 +175,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 \begin{itemize}
 	\item\textbf{Branch Prediction Buffer}: Se mantiene una tabla indexada por la dirección de memoria de la instrucción del salto y 2 bits que indican si los últimos dos saltos hacia esa instrucción fueron tomados o no.
 	
-	\begin{figure}[h]
+	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=0.7\linewidth]{imagenes/2bit-buffer-prediction}
 		\caption{Maquinas de estados de predicción para un buffer de 2 bits}
@@ -175,7 +184,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 
 	Las primeras implementaciones de esta técnica hacían uso de un único bit que se remplazaba cada vez que la predicción fallaba. En ciertos casos, la eficiencia de este método no era satisfactoria llegando a fallar completamente en otros(por ejemplo, si los saltos termina formando una secuencia intercalada de Taken y Not taken).
 	
-	\item \textbf{Branch Target Buffer (BTB)}: Es una caché en la que se almacena en cada entrada la dirección de la instrucción de control y la dirección de la instrucción que fue ejecutada despues de resolver el branching.
+	\item \textbf{Branch Target Buffer (BTB)}: Es una caché en la que se almacena, en cada entrada, la dirección de la instrucción de control y la dirección de la instrucción que fue ejecutada despues de resolver el branching.
 	
 	Cuando se fetchea una instrucción de control, se accede a esta caché usando el valor del program counter.
 	\begin{itemize}
@@ -193,16 +202,18 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 \end{itemize}
 
 \newpage
-\section{Instruction Level Paralelism}
-Hoy en dia la mayoría de los procesadores son superscalares, es decir, explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Este modelo se desvía radicalmente del de ejecución secuencial, sin embargo, por razones de compatibilidad, se debe mantener/simular ciertos aspectos del mismo.
+\section{Procesadores Superscalares}
+Son procesadores que explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Agrega más pipelines a la ejecución, lo que permite incrementar aún más la cantidad de instrucciones procesadas por ciclo de rel.
+
+Sin embargo, los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
 
 Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
 
 Más precisamente, un procesador superescalar implementa:
 
 \begin{enumerate}
-	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción de resultados y saltos.
-	\item Métodos para determinar dependencias de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
+	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción 1de resultados y saltos.
+	\item Métodos para determinar dependenciaLevels de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
 	\item Métodos para iniciar, o resolver, múltiples instrucciones en paralelo.
 	\item Recursos para la ejecución en paralelo de varias instrucciones, incluyendo multiples unidades funcionales de pipelines y jerarquías de memorias capaces de atender simultáneamente múltiples referencias a memoria.
 	\item Métodos para manejar datos a través de instrucciones de lectura/escritura e interfaces de memoria que tengán en cuenta el comportamiento dinámico (y muchas veces impredecibles) de las jerarquías diseñadas.
@@ -229,29 +240,34 @@ En los procesadores superescalares, una caché de instrucciones es usada para re
 
 El program counter se utiliza para determinar la posición de una instrucción en la caché.
 
-Si se produjo un hit, se fetchea el bloque de instrucciones y luego se le suma, al program counter, el tamaño del mismo. Si hay un miss, el caché debe pedir la instrucción buscada en memoria.
+\begin{itemize}
+	\item Si se produce un hit, se fetchea el bloque de instrucciones y se suma al program counter el tamaño del bloque fetcheado.
+	\item Si hay un miss, el caché, pide la instrucción buscada en memoria y la copia.
+	\item Se identifica el tipo de cada instrucción. Si alguna es de control, se realizan las predicciones usando alguno de los métodos mencionado en en la sección \ref{sec::branchPrediction}.
+	\item Las instrucciones son decodificadas en  \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidad de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
+	
+	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando las instrucciones son decodificadas1, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (es decir, se mapean dos o mas régistros físicos al mismo registro lógico).
 
-Una vez conseguido el bloque de instrucciones, se identifican el tipo de cada instrucción. Si alguna es de control, entonces se realizan las predicciones necesarias mediante alguno de los métodos nombrados en la sección \ref{sec::branchPrediction}. Luego, las instrucciones son decodificadas en \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidad de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
+	Este mapeo se guarda en una tabla que asocia cada entrada a una instrucción y permite identificar el registro lógico que le corresponde. De esta forma, cuando sea necesario actualizar el estado visible de la arquitectura, la instrucción leerá su resultado del registro físico adecuado.
 
-En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando son decodificadas, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (es decir, se mapean dos o mas régistros físicos al mismo registro lógico).
+	\item Una vez que todas las instrucciones asociadas a un registro físico son completadas (modifican el estado visible), el registro es liberado para que pueda ser usado por otro bloque de instrucciones. 		
+\end{itemize}
 
-Este mapeo se guarda en una tabla que asocia cada entrada a una instrucción y permite identificar el registro lógico que le corresponde. De esta forma, cuando sea necesario actualizar el estado visible de la arquitectura, la instrucción leerá su resultado del registro físico adecuado.
-
-
-Una vez que todas las instrucciones asociadas a un registro físico son completadas (modifican el estado visbile), el registro es liberado para que pueda ser usado por otro bloque de instrucciones.
 
 \subsection{Ejecución de instrucciones}
 \subsubsection{Interrupciones}
 Existen dos tipos de interrupciones:
 \begin{itemize}
-	\item \textbf{Excepciones} (o trampas), que se genera cuando se produce un error durante la ejecución o el fetching de ciertas instrucciones. Por ejemplo, opcodes ilegales,s errores numéricos o page faults.
-	\item \textbf{Interrupciones externas}: Son causadas por instrucciones específicas y dispositivos externos qué están ejecutando algún proceso. Por ejemplo las interrupciones generadas por los dispositivos de entrada/salida (mouse, teclados, pantallas), timers, etc
+	\item \textbf{Excepciones} (o trampas): Se generan cuando se produce un error durante la ejecución o el fetching de ciertas instrucciones. Por ejemplo, opcodes ilegales, errores numéricos o page faults.
+	\item \textbf{Interrupciones externas}: Son causadas por instrucciones específicas y dispositivos externos qué están ejecutando algún proceso. Por ejemplo las interrupciones generadas por los dispositivos de entrada/salida (mouse, teclados, pantallas), timers, etc.
 \end{itemize}
 
-Cuando ocurre una interrupción, el software o el hardware (o una combinación de ambos) guardan el estado del proceso interrumpido. Este estado consiste, generalmente, del program counter, los registros y la memoria. Si el estado guardado es consistente con la arquitectura secuencial del modelo, entonces diremos que la interrupción es \textbf{precisa}. Para ser más especificos, se debe cumplir que:
+Cuando ocurre una interrupción, el software o el hardware (o una combinación de ambos) guardan el estado del proceso interrumpido. Este estado consiste, generalmente, del program counter, los registros y la memoria.
+
+\paragraph{Interrupción precisa:} Una interrupción es precisa si el estado guardado es consistente con la arquitectura secuencial del modelo. Osea se debe cumplir que:
 \begin{enumerate}
-	\item Todas las instrucciones previas a la indicada por el program counter, deben haber sido ejecutadas y deben haber modificado el estado del proceso correctamente.
-	\item Ninguna de las instrucciones siguientes a la indicada por el program counter debe haber ejecutadas ni deben haber modificado el estado del proceso.
+	\item Todas las instrucciones previas a la indicada por el program counter deben haber sido ejecutadas y deben haber modificado el estado del proceso correctamente.
+	\item Ninguna de las instrucciones siguientes a la indicada por el program counter debe haber sido ejecutadas ni deben haber modificado el estado del proceso.
 	\item Si la interrupción es causada por una excepción en una instrucción del programa, entonces el program counter guardado debe apuntar a la instrucción interrumpida.
 \end{enumerate}
 
@@ -260,7 +276,7 @@ Si el estado guardado es inconsistente con el modelo de arquitectura secuencial 
 Hay varias formas de evitar las interrupciones imprecisas:
 
 \subsubsection{In-Order Instruction Completion}
-Las instrucciones modifican el estado del proceso solo cuando se sabe que todas las instrucciones previas están libres de excepciones. Para asegurar esto, se utiliza un registro llamado ``result shift register'' que contiene una tabla de $n$  entradas ($n$ la longitud del pipeline más largo). Una instrucción que toma $i$ ciclos de reloj reserva la $i$-ésima entrada de la tabla y en cada ciclo se la desplaza una posición hacia abajo.
+Las instrucciones modifican el estado del proceso solo cuando se sabe que todas las instrucciones previas están libres de excepciones. Para asegurar esto se utiliza un registro llamado ``result shift register'' que contiene una tabla de $n$  entradas ($n$ la longitud del pipeline más largo). Una instrucción que toma $i$ ciclos de reloj reserva la $i$-ésima entrada de la tabla y en cada ciclo se la desplaza una posición hacia abajo.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\linewidth]{imagenes/shift-register}
@@ -268,16 +284,16 @@ Las instrucciones modifican el estado del proceso solo cuando se sabe que todas 
 	\label{fig:shiftregister}
 \end{figure}
 
-Si la $i$-esima entrada contiene información valida, entonces la instrucción se pausa hasta el próximo ciclo de reloj y se rechequea la información de la misma.
+Si la $i$-esima entrada contiene información valida, entonces se pausa la instrucción. En el proximo ciclo, se rechequea si la entrada está libre y se realiza el movimiento.
 
 Para evitar que una instrucción más corta se complete antes que otra de mayor longitud (cuando este es el orden deseado) se rellenan con información invalida todas las entradas anteriores que no fueron reservadas. De esta forma, la nueva instrucción es pausada hasta el próximo ciclo de reloj.
 
 \subsubsection{Reorder-Buffer}
 La principal desventaja del método anterior, es que instrucciones rápidas serán retenidas a pesar de no tener dependencias.
 
-Para evitar esto, se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que indican el orden en el que deben modificar el estado de la computadora. Cuando son completadas, se almacena en la entrada indicada (por el tag) del buffer.
+Para resolver este problema, se agrega un ``reorder buffer`` que indica el orden en el que las instrucciones deben modificar el estado visible. Entonces, se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que cumple con el objetivo mencionado. Cuando son completadas, se las almacena en la entrada indicada (por el tag) del buffer.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.5\textwidth]{imagenes/reorder-buffer}
 	\caption{Reorder buffer}
@@ -294,31 +310,32 @@ En este caso, si ocurre una excepción, se debe recorrer el history buffer para 
 
 \paragraph{Future File:} Otra solución es mantener dos arhicvos de registros. Uno que se actualice en el orden especificado por el programa (\textbf{Architectural File}). Y otro que se actualiza apenas se completa una instrucción (\textbf{Future File}).
 
-Si ocurre una excepción simplemente se debe mostar el Arquitecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
+Si ocurre una excepción simplemente se debe mostear el Arquitecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
 
-\paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si cuando se ejecuta la instrucción, la predicción resulta ser errónea, entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
+\paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea1 entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
 
 \subsubsection{Out of Order Execution (Tomasulo)}
-El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución.
+El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
+\begin{itemize}
+	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
+	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
+	\item Las instrucciones deben saber cuando sus operandos estan listos (``Ready'').
+	\item Despachar (``disparar'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
+\end{itemize}
 
-\paragraph{Register Renaming:} Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
+\paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
 
-\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que esté lista para ser ejecutada.
+\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que esté lista para ser ejecutada. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
 
-Un RS chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada operando cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
+Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
 
-Cada vez que una unidad de ejecución pone disponible un operando, este transmite el \textbf{tag} asociado al operando junto con su valor a todas las RS.
+\paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar a cada operación.
 
-Cuando una instrucción tiene todos sus operandos, el RS espera a que la unidad funcional correspondiente esté libre y luego despacha la instrucción hacia la misma.
-
-\paragraph{Common Data Bus}: Es un datapath que cruza la salidad de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack.
-
-\newpage
-\paragraph{Pseudocodigo}:
+\paragraph{Pseudocodigo:}
 Cada Registro contiene un tag que indica el último escritor en el registro.
 
 \begin{algorithmic}
-\If{RS tiene discursos disponibles antes del renaming}
+\If{RS tiene recursos disponibles antes del renaming}
 	\State{Se inserta en la RS la instrucción y los opernados renombrados (valor fuente / tag)}
 	\State{Se renombra si y solo si la RS tiene recursos disponibles.}
 	\Else
@@ -344,7 +361,146 @@ Cada Registro contiene un tag que indica el último escritor en el registro.
 \EndIf
 \EndWhile
 \end{algorithmic}
-	\nocite{*}
+
+\newpage
+\part{Subsistema de memoria}
+\section{El sistema de memoria}
+\subsection{Principio de vencidad o localidad}
+\paragraph{Temporal Locality:} Una dirección de memoria que está siendo accedida actualmente tiene muy alta probabilidad de seguir siendo accedida en el futuro inmediato.
+
+\paragraph{Spatial Locality}: Si se está accediendo a una dirección determinada de memoria actualmente, la probabilidad de que está dirección y sus adyacentes sean accedidas en el futuro inmediato es muy alta.
+
+La localidad de los programas surge naturalmente de su estructura. La mayoría contiene loops, las instrucciones y los datos usados en ellos será accedido repetidamente lo que genera localidad temporal. Además, como las instrucciones del programa son accedidas secuencialmente se tiene localidad espacial.
+
+\subsection{Jerarquías de memoria}
+Para aprovechar estos principios se implementan la memoria de una computadora como una \textbf{jerarquía de memoria}. Está consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientas más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata proveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
+
+En la actualidad, hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoría principal es implementada con DRAM (Dynamic Random Acces Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Acces Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\textwidth]{imagenes/memory-heriarchy}
+	\caption{Memory Hierarchy}
+	\label{fig:memory-hierarchy}
+\end{figure}
+
+Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos niveles adyacentes. El nivel más alto - el más cercano al procesador - es más pequeño y rapido ya que usa tecnología más cara que el nivel más bajo.
+
+\paragraph{Bloque:} La mínima unidad de información que puede estar presente en la jerarquía de dos niveles (la que está compuesta por las dos memorias que intercambian información).
+
+\paragraph{Hit:} Se produce cuando la información pedida por el procesador se encuentra en algún bloque de la memoria que se está utilizando.
+
+\paragraph{Miss:} Cuando la información debe ser buscada en el nivel inferior de la jerarquía.
+
+\paragraph{Hit Rate:} La fracción de accesos a memoria encontrados en cada de la jerarquía. A menudo es usado como medida de rendimiento de la misma.
+
+\paragraph{Miss Rate: } 1 - hit rate (para cada nivel)
+
+\paragraph{Hit time:} El tiempo que se tarda en acceder a un bloque en cada nivel de la jerarquía.
+
+\paragraph{Miss penalty:} El tiempo requerido para fetchear un bloque desde el nivel inferior de la jerarquía (incluyendo tiempo de acceso, transmisión y copiado del bloque).
+
+\section{Tipos de memoria}\label{sec::Memoria::Tipos}
+Hay dos tipos de memoria:
+
+
+\begin{itemize}
+	\item \textbf{No volátiles:} Son memorias capaces de retener la información almacenada cuando se les desconecta la alimentación. Son la tercera digievolución de las memorias \textbf{ROM} (Read Only Memory) que debían ser grabadas por el fabricante del chip y no eran modificables.
+	
+	De ROM pasaron a ser componentes programables que podían ser borrados con luz ultravioleta de una determinada longitud de onda. Y, luego, se convirtieron en las actuales memorias flash que pueden ser grabadas por algoritmos de escritura \textit{on the fly} por el usuario. El ejemplo más habitual son los discos de estado sólido de los equipos portátiles modernos.
+	
+	Se usan fundamentalmente para almacenar el programa de arranque de cualquier sistema.
+	
+	\item\textbf{Volatiles:} Conocidas como \textbf{RAM}, se caracterizan por que una vez interrumpida la alimentación eléctrica, la información que almacenaban se pierde.
+	
+	Estas memorias pueden almacenar mayores cantidades de información y modificarla en tiempo real a gran velocidad a comparación de las No Volátiles.
+	
+	Se clasifican de acuerdo con la tecnología y su diseño interno en:
+	
+	\begin{itemize}
+		\item \textbf{Dinámicas (DRAM):} Almacenan la información en forma de una carga en un capacitor y la sostiene durante un breve lapso de tiempo con la ayuda de un transistor.
+		
+		Para guardar la información, se activa el transistor que aplica el voltaje apropiado a la linea del bit. Una vez cargado, el capacitor, se desactiva. 
+		
+		Después de un tiempo, la carga del capacitor (que se empieza a descargar) llega a un determinado threshold y en necesario volver a activar el transistor para cargar la información otra vez (si había un uno).
+		
+		Durante una operación de lectura, los capacitores de la celda seleccionada son activados y descargados completamente. En este caso, un amplificador detecta los valores leídos y aplica voltaje a las lineas de bits necesarias para volver a cargar
+ 		los capacitores necesarios. Esto aumenta el tiempo de acceso a la celda ya que no se puede liberar la operación hasta no haber repuesto el estado de carga de cada uno de ellos.
+ 		\item \textbf{Estáticas (SRAM):} Almacenan la información en un biestable. Una celda se compone de seis transitores (por lo que tienen menos capacidad por componente que las dinámicas)
+ 		
+ 		Tres de los seis transistores están saturados (conducen la máxima corriente posible de forma permanente) y los otros tres están al corte (conducen una corriente prácticamente insignificante pero no nula). Esto genera un mayor consumo de energía por celda.
+ 		
+ 		La lectura es directa y no destructiva, lo que se traduce en un tiempo de acceso bajo en comparación con las memorias dinámicas.
+	\end{itemize}
+
+\end{itemize}
+
+\section{Memoria Caché}
+Los niveles de caché son bancos de SRAM de muy alta velocidad, que contienen una copia de los datos e instrucciones que están en memoria principal. Éstos deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos de memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
+
+Para implementar estas memorias, se debe agregar un controlador que se encarga de mantener la caché actualizada y de indicarle que datos debe mandar al procesador.
+
+\subsection{Operción de lectura}
+\begin{itemize}
+	\item El procesador inicial un ciclo de lectura de memoria, envía la dirección necesaria al controlador de caché.
+	\item El controlador, busca la dirección en el directorio de la caché.
+	\begin{itemize}
+		\item Si hay un \textbf{hit}, busca el ítem en la memoria caché y lo envía al procesador.
+		\item Si hay un \textbf{miss},  busca el ítem en el sistema de memoria y lo copia en la caché. Actualiza el directorio de la misma y después manda la data al procesador.
+	\end{itemize}
+\end{itemize}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\textwidth]{imagenes/cache}
+	\caption{Operación de lectura}
+	\label{fig:reading-operation}
+\end{figure}
+
+\subsection{Organización de la caché}
+
+\paragraph{Línea:} Elemento mínimo de palabra de datos dentro del caché. Corresponde a un múltiplo del tamaño de la palabra de datos de memoria. Esto nos permite copiar, en memoria, el ítem requerido y aquellos que lo rodean (principio de vecindad espacial).
+
+\paragraph{Set:} Un conjunto que contiene $2^{ln}$ lineas de la caché.
+
+\subsubsection{Mapeo directo}
+Se divide, a la memoria en $2^j - 1$ paginas. Y cada página en $n$ bloques.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/cache-mapeo-directo}
+	\caption{Mapeo directo}
+	\label{fig:direct-mapping}
+\end{figure}
+\begin{itemize}
+	\item Los primeros $j$ bits de la dirección identifican la página a la que pertenece la línea.
+	\item Los siguientes $n$, el set que les corresponde en la caché.
+	\item Los $ln$ bits identifican la línea que le corresponde dentro del set
+	\item y los últimos $b$ bits indican el índice de la palabra buscada dentro de la línea.
+\end{itemize}
+
+Para  buscar una dirección de memoria, en este tipo de caché:
+
+\begin{itemize}
+	\item Se busca el set en el que se encontraría esa dirección.
+	\item Si el set tiene información válida, se corrobora que sea de la página de memoria a la que pertenece esa dirección.
+	\begin{itemize}
+		\item Si la página es correcta, entonces se accede al set en busca de la línea correspondiente y se vuelve el dato pédido.
+		\item Sino, se trae de memoria un bloque de tamaño del set y remplaza el set actual por ese.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Asociativa de dos vías}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/cache-asociativo-vias}
+	\caption{Asociativo por 2 vías}
+	\label{fig:direct-mapping}
+\end{figure}
+
+Cuando se trae un bloque de memoria, éste puede ser copiado en cualquiera de las dos mitades mientras sea dentro del set correspondiente. Se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir cual mitad remplazar con la nueva información.
+\nocite{*}
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
