@@ -1,11 +1,14 @@
 \input{../document.setup}
 
+\addbibresource{bibliography.bib}
+
 \title{Organización del Computador II}
 \author{Gianfranco Zamboni}
 
 \input{../page.setup}
 
 \newcommand{\red}[1]{{\color{red}#1}}  			% Rojo, duh (?)
+
 \begin{document}
 	\maketitle
 	\tableofcontents
@@ -13,7 +16,7 @@
 \newpage
 \section{Introducción}
 
-La \textbf{arquitectura de una computadora} es el conjunto derecursos accesibles para el programador que, por lo general, se mantienen a lo largo de los diferentes modelos de procesadores de esa arquitectura (puede evolucionar pero la tendencia es mantener compatibilidad hacia los modelos anteriores).
+La \textbf{arquitectura de una computadora} es el conjunto de recursos accesibles para el programador que, por lo general, se mantienen a lo largo de los diferentes modelos de procesadores de esa arquitectura (puede evolucionar pero la tendencia es mantener compatibilidad hacia los modelos anteriores).
 
 Diseñar una arquitectura implica diseñar las interfaces hardware/software para crear un sistema computacional que posea los requerimientos funcionales, de perfomance, consumo (de energía) y de costo (económico) adecuados para realizar determinadas tareas.
 
@@ -195,7 +198,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 		\end{itemize}
 		\item Si el valor se encuentra en el BTB, se aplica el campo de dirección de target almacenado.
 		\begin{itemize}
-			\item si el resultado es \textit{taken}, no hay penalidad, y no se guarda en el BTB ningún nuevo valor ya que el que está almacenado es el que nos sirve.
+			\item si el resultado es \textit{taken} no hay penalidad. No se guarda en el BTB ningún nuevo valor ya que el que está almacenado es el que nos sirve.
 			\item Si el resultado es \textit{Non-taken}, guarda el nuevo valor en el BTB, luego de la penalidad correspondiente en el pipeline. 
 		\end{itemize}
 	\end{itemize}
@@ -203,7 +206,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 
 \newpage
 \section{Procesadores Superscalares}
-Son procesadores que explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Agrega más pipelines a la ejecución, lo que permite incrementar aún más la cantidad de instrucciones procesadas por ciclo de rel.
+Son procesadores que explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Agrega más pipelines a la ejecución, lo que permite incrementar aún más la cantidad de instrucciones procesadas por ciclo de reloj.
 
 Sin embargo, los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
 
@@ -213,7 +216,7 @@ Más precisamente, un procesador superescalar implementa:
 
 \begin{enumerate}
 	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción 1de resultados y saltos.
-	\item Métodos para determinar dependenciaLevels de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
+	\item Métodos para determinar dependencias de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
 	\item Métodos para iniciar, o resolver, múltiples instrucciones en paralelo.
 	\item Recursos para la ejecución en paralelo de varias instrucciones, incluyendo multiples unidades funcionales de pipelines y jerarquías de memorias capaces de atender simultáneamente múltiples referencias a memoria.
 	\item Métodos para manejar datos a través de instrucciones de lectura/escritura e interfaces de memoria que tengán en cuenta el comportamiento dinámico (y muchas veces impredecibles) de las jerarquías diseñadas.
@@ -236,7 +239,7 @@ Las \textbf{dependencias de datos} se da entre instrucciones que referencian el 
 
 
 \subsection{Fetching and Decode}
-En los procesadores superescalares, una caché de instrucciones es usada para reducir la latencia y el ancho de banda del fetching. Esta caché está organizada en bloques o lineas que contienen varias instrucciones consecutivas y almacena el tipo de cada una de ellas (si es de control, de operación, de lectura de memoria, etc). 
+En los procesadores superescalares, una caché de instrucciones es usada para reducir la latencia y incrementar el ancho de banda del fetching. Esta caché está organizada en bloques o lineas que contienen varias instrucciones consecutivas y almacena el tipo de cada una de ellas (si es de control, de operación, de lectura de memoria, etc). 
 
 El program counter se utiliza para determinar la posición de una instrucción en la caché.
 
@@ -246,12 +249,59 @@ El program counter se utiliza para determinar la posición de una instrucción e
 	\item Se identifica el tipo de cada instrucción. Si alguna es de control, se realizan las predicciones usando alguno de los métodos mencionado en en la sección \ref{sec::branchPrediction}.
 	\item Las instrucciones son decodificadas en  \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidad de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
 	
-	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando las instrucciones son decodificadas1, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (es decir, se mapean dos o mas régistros físicos al mismo registro lógico).
-
-	Este mapeo se guarda en una tabla que asocia cada entrada a una instrucción y permite identificar el registro lógico que le corresponde. De esta forma, cuando sea necesario actualizar el estado visible de la arquitectura, la instrucción leerá su resultado del registro físico adecuado.
+	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando las instrucciones son decodificadas, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (\textbf{Algoritmo de tomasulo}, sección \ref{ilp::tomasulo}).
 
 	\item Una vez que todas las instrucciones asociadas a un registro físico son completadas (modifican el estado visible), el registro es liberado para que pueda ser usado por otro bloque de instrucciones. 		
 \end{itemize}
+
+
+\subsubsection{Out of Order Execution (Tomasulo)}\label{ilp::tomasulo}
+El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
+\begin{itemize}
+	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
+	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
+	\item Las instrucciones deben saber cuando sus operandos estan listos (``Ready'').
+	\item Despachar (``disparar'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
+\end{itemize}
+
+\paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
+
+\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que esté lista para ser ejecutada. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
+
+Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
+
+\paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar a cada operación.
+
+\paragraph{Pseudocodigo:}
+Cada Registro contiene un tag que indica el último escritor en el registro.
+
+\begin{algorithmic}
+	\If{RS tiene recursos disponibles antes del renaming}
+	\State{Se inserta en la RS la instrucción y los opernados renombrados (valor fuente / tag)}
+	\State{Se renombra si y solo si la RS tiene recursos disponibles.}
+	\Else
+	\State{stall}
+	\EndIf
+	\While{esté en la RS, cada instrucción debe}
+	\State{Mirar el tráfico por el \textbf{Common Data Bus (CDB)} en busca de \textbf{tags} que corespondan a sus Operandos fuente.}
+	\State{Cuando se detecta un \textbf{tag}, se graba el valor de la fuente y se mantiene en RS.}
+	\State{Cuando ambos operandos están disponibles, la instrucciónn se marca \textbf{Ready} para ser despachada}
+	\If{Unidad Funcional disponible}
+	\State{Se depscacha la instrucción a esa unidad funcional}
+	\EndIf
+	\If{Finalizada la ejecución de la instrucción}
+	\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CBD} (\textbf{tag broadcast})}
+	\If{El archivo de registros está conectado al CDB}
+	\If{tag del Archivo de Registro $==$ tag broadcast}
+	\State{Registro = valor broadcast}
+	\State{bit de validez = '1'}
+	\State{Recupera \textbf{tag} renombrado}
+	\State{No queda copia válida del tag en el sistema}
+	\EndIf
+	\EndIf
+	\EndIf
+	\EndWhile
+\end{algorithmic}
 
 
 \subsection{Ejecución de instrucciones}
@@ -277,7 +327,7 @@ Hay varias formas de evitar las interrupciones imprecisas:
 
 \subsubsection{In-Order Instruction Completion}
 Las instrucciones modifican el estado del proceso solo cuando se sabe que todas las instrucciones previas están libres de excepciones. Para asegurar esto se utiliza un registro llamado ``result shift register'' que contiene una tabla de $n$  entradas ($n$ la longitud del pipeline más largo). Una instrucción que toma $i$ ciclos de reloj reserva la $i$-ésima entrada de la tabla y en cada ciclo se la desplaza una posición hacia abajo.
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.5\linewidth]{imagenes/shift-register}
 	\caption{Result Shift Register}
@@ -313,54 +363,6 @@ En este caso, si ocurre una excepción, se debe recorrer el history buffer para 
 Si ocurre una excepción simplemente se debe mostear el Arquitecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
 
 \paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea1 entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
-
-\subsubsection{Out of Order Execution (Tomasulo)}
-El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
-\begin{itemize}
-	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
-	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
-	\item Las instrucciones deben saber cuando sus operandos estan listos (``Ready'').
-	\item Despachar (``disparar'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
-\end{itemize}
-
-\paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
-
-\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que esté lista para ser ejecutada. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
-
-Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
-
-\paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar a cada operación.
-
-\paragraph{Pseudocodigo:}
-Cada Registro contiene un tag que indica el último escritor en el registro.
-
-\begin{algorithmic}
-\If{RS tiene recursos disponibles antes del renaming}
-	\State{Se inserta en la RS la instrucción y los opernados renombrados (valor fuente / tag)}
-	\State{Se renombra si y solo si la RS tiene recursos disponibles.}
-	\Else
-		\State{stall}
-\EndIf
-\While{esté en la RS, cada instrucción debe}
-\State{Mirar el tráfico por el \textbf{Common Data Bus (CDB)} en busca de \textbf{tags} que corespondan a sus Operandos fuente.}
-\State{Cuando se detecta un \textbf{tag}, se graba el valor de la fuente y se mantiene en RS.}
-\State{Cuando ambos operandos están disponibles, la instrucciónn se marca \textbf{Ready} para ser despachada}
-\If{Unidad Funcional disponible}
-\State{Se depscacha la instrucción a esa unidad funcional}
-\EndIf
-\If{Finalizada la ejecución de la instrucción}
-\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CBD} (\textbf{tag broadcast})}
-\If{El archivo de registros está conectado al CDB}
-\If{tag del Archivo de Registro $==$ tag broadcast}
-\State{Registro = valor broadcast}
-\State{bit de validez = '1'}
-\State{Recupera \textbf{tag} renombrado}
-\State{No queda copia válida del tag en el sistema}
-\EndIf
-\EndIf
-\EndIf
-\EndWhile
-\end{algorithmic}
 
 \newpage
 \part{Subsistema de memoria}
@@ -435,6 +437,7 @@ Hay dos tipos de memoria:
 
 \end{itemize}
 
+\newpage
 \section{Memoria Caché}
 Los niveles de caché son bancos de SRAM de muy alta velocidad, que contienen una copia de los datos e instrucciones que están en memoria principal. Éstos deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos de memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
 
@@ -496,13 +499,78 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 	\centering
 	\includegraphics[width=0.75\textwidth]{imagenes/cache-asociativo-vias}
 	\caption{Asociativo por 2 vías}
-	\label{fig:direct-mapping}
+	\label{fig:asociativo-mapping}
 \end{figure}
 
 Cuando se trae un bloque de memoria, éste puede ser copiado en cualquiera de las dos mitades mientras sea dentro del set correspondiente. Se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir cual mitad remplazar con la nueva información.
-\nocite{*}
-\bibliographystyle{plain}
-\bibliography{bibliography}
 
+\subsection{Operación de escritura (Coherencia de caché)}
+
+Cuando modificamos un valor, sería ideal que el cambio se vea reflejado tanto en la caché como en memoria principal. Si esto no pasa, entonces diremos que las memorias son inconsistentes/incoherentes.
+
+Dependiendo del sistema (si hay una sola CPU o más de una) hay distintos modos de encarar este problema conocidos como \textbf{políticas de escritura}. Decidir cuál de ellas usar constituye una de las decisiones más importantes en el diseño del sistema de memoria:
+
+\begin{itemize}
+	\item \textbf{Write through:} Cada vez que hay que hay que modificar una dirección, el procesador manda el dato tanto a memoria príncipal como al controlador de la caché y se realiza la escritura en ambas memorias. 
+	
+	Esto garantiza coherencia entre ambos datos de manera absoluta pero penaliza cada escritura con el tiempo de acceso a DRAM. Osea, que la performance se degrada durante estas operaciones.
+	
+	\item \textbf{Write through buffered:} El procesador manda la data al controlador de caché que la actualiza y sigue ejecutando instrucciones y usando datos de la misma.
+	
+	El controlador dispone de un buffer de escritura que va almacenando estas modificaciones mientras se espera qe sean escritas a memoria. Cuando la escritura finaliza, se desencola y sigue con la próxima modificación.
+	
+ 	Si el buffer está lleno cuando el procesador pide una escritura, entonces se debe parar la ejecución y esperar a que tenga una entrada libre. Si bien, la ocurrencia de los stalls es reducida, estos siguen pasando.
+ 	
+ 	\item \textbf{Copy back:} Se modifican solo las líneas de la caché y se marcan como \textbf{dirty} (modificadas). El controlador, escribe el bloque en memoria cuando debe ser remplazada por otro. 
+ 	
+ 	Este método mejora el performance cuando el procesador puede generar escrituras tan o más rápido de lo que puede escribir en memoria. Sin embargo, es mucho más difícil de implementar.
+\end{itemize}
+
+Si el procesador realiza un miss mientras el controlador caché está accediendo a la DRAM, para actualizar el valor, deberá esperar hasta que se termine la actualización para poder acceder a la misma.
+
+\subsubsection{Coherencia en sistemas multi-procesador (Snoop Bus)}
+El bus es un conjunto de cables que conecta varios dispositivos, cada uno de los cuales puede observar cada transacción del bus. Cuando un procesador emite un pedido a su caché, el controlador examina el estado de la misma y realiza las acciones adecuadas para completarlo. Esto puede generar transacciones para acceder a memoria.
+
+En este caso, cada procesador posee una caché de primer nivel y todas ellas son conectadas al subsistema de memoria principal a través un único bus que es compartido. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/multiprocesor-caches}
+	\caption{Bus de memoria compartido}
+	\label{fig:busCompartido}
+\end{figure}
+
+Cuando un procesador modifica un bloque de memoria presente en su caché, se produce una incoherencia en las caches de los otros procesadores que tenían su propia copia del bloque. Esto sucede porque la misma contiene un valor obsoleto en la dirección de memoria modificada por el primer procesador.
+
+%\paragraph{Coherencia (en multiprocesadores):} Un sistema de memoria es coherente si es posible, para toda dirección, construir un orden serial de todas las operaciones que acceden a ella tal que:
+%\begin{itemize}
+%	\item Es consistente con los resultados de le ejecución.
+%	\item Las operaciones emitidas por un procesador ocurren en el orden que fueron producidas por el mismo.
+%	\item El valor devuelto por cada lectura es el valor escrito por la última operación de escritura en ese orden.
+%\end{itemize}
+%
+%Está implícita, en esta definición, la propiedad de \textbf{serialización de escritura}. Ésta nos asegura que todos los procesadores ven todas las escrituras a una dirección en el mismo orden.
+
+%\paragraph{Snooping bus:}
+La coherencia se mantiene haciendo que cada controlador de caché espíe el bus y monitoreé las transacciones. El controlador del bus funciona como arbitro para  decidir el orden en el que estas son ejecutadas. Cuando una transacción es enviada por el bus, se envia la dirección a la que se está accediendo y el tipo de operación que se está realizando sobre ella.
+
+Cada controlador de cache, toma la dirección enviada por el bus y chequea si tiene una copia del bloque referenciado por la misma.
+
+\begin{itemize}
+	\item \textbf{con write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
+	
+	El problema con este método es que cada se accede a memoria por cada operación de almacenamiento.
+	
+	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas, ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar, a través, de 4 estados, la validez de nuestros datos.
+\end{itemize}
+
+\subsubsection{Protocolo MESI}
+
+\newpage
+\part*{Bibliography}
+\nocite{*}
+\printbibliography[keyword=intro,title={Introduccion}]
+\printbibliography[keyword=ilp,title={Instruction Level Paralellism}]
+\printbibliography[keyword=memory,title={Jerarquías de memoria}]
 \end{document}
 
