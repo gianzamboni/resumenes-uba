@@ -508,7 +508,7 @@ Cuando se trae un bloque de memoria, éste puede ser copiado en cualquiera de la
 
 Cuando modificamos un valor, sería ideal que el cambio se vea reflejado tanto en la caché como en memoria principal. Si esto no pasa, entonces diremos que las memorias son inconsistentes/incoherentes.
 
-Dependiendo del sistema (si hay una sola CPU o más de una) hay distintos modos de encarar este problema conocidos como \textbf{políticas de escritura}. Decidir cuál de ellas usar constituye una de las decisiones más importantes en el diseño del sistema de memoria:
+Dependiendo del sistema (si hay una sola CPU o más de una) se utilizan distintas \textbf{políticas de escritura}. Decidir cuál de ellas usar constituye una de las decisiones más importantes en el diseño del sistema de memoria:
 
 \begin{itemize}
 	\item \textbf{Write through:} Cada vez que hay que hay que modificar una dirección, el procesador manda el dato tanto a memoria príncipal como al controlador de la caché y se realiza la escritura en ambas memorias. 
@@ -557,15 +557,56 @@ La coherencia se mantiene haciendo que cada controlador de caché espíe el bus 
 Cada controlador de cache, toma la dirección enviada por el bus y chequea si tiene una copia del bloque referenciado por la misma.
 
 \begin{itemize}
-	\item \textbf{con write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
+	\item \textbf{con write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando el procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
 	
-	El problema con este método es que cada se accede a memoria por cada operación de almacenamiento.
+	El problema con este método es que se accede a memoria por cada operación de almacenamiento.
 	
-	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas, ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar, a través, de 4 estados, la validez de nuestros datos.
+	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas, ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar, a través la validez de nuestros datos.
 \end{itemize}
 
 \subsubsection{Protocolo MESI}
+En este protocolo, un bloque de memoria en la caché puede estar en cuatro estados:
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/mesi-state-graph}
+	\caption{Diagrama de estados de MESI}
+	\label{fig:mesiDiagram}
+\end{figure}
+
+\begin{itemize}
+	\item \textbf{Modified (M):} Es la única copia valida. La memoria principal está desactualizada y ninguna otra caché tiene una copia valida del mismo bloque.
+	\item \textbf{Exclusive (E):} Esa caché es la única que contiene una copia de ese bloque. Además, esa copia, no está modificada.
+	\item \textbf{Shared (S):} Está presente en esa caché sin ninguna modificación, la memoria principal está actualizada y puede haber otra caché que también lo tenga.
+	\item \textbf{Invalid (I):} No está presente en la caché o contiene información desactualizada.
+\end{itemize}
+
+\paragraph{Lectura de un bloque:}
+Supongamos que el procesador necesita leer un bloque de memoria, entonces produce un processor read (\textbf{PR}):
+\begin{itemize}
+	\item Si el bloque esta en caché (\textbf{Modified}, \textbf{Exclusive} o \textbf{Shared}), se resuelve el pedido.
+	\item Si el bloque es \textbf{Invalid}, entonces se genera un busRead (\textbf{BR}) y todas las cachés responden con una señal indicando si tienen o no una copia del valor pedido:
+	\begin{itemize}
+		\item Si no está en ninguna otra caché, entonces se lo carga en modo \textbf{Exclusive} desde memoria principal.
+		\item Si lo tiene alguna otra, se copia el bloque en modo \textbf{shared} después de haber tomado las medidas necesarias para mantener la consistencia. Si la otra caché lo tiene:
+		\begin{itemize}
+			\item En modo \textbf{Exclusive}, se lo pasa a estado \textbf{Shared}.
+			\item En modo \textbf{Modified}, se copian a memoria principal los cambios realizados y se lo pasa a \textbf{Shared}
+			\item En modo \textbf{Shared}, no se hace nada.
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\paragraph{Escritura de un bloque:} Ahora, para escribir en un bloque, el procesador primero debe asegurarse que es el único con permisos de escritura, entonces:
+
+\begin{itemize}
+	\item Si el dato está en caché en modo \textbf{Modified} o \textbf{Exclusive}, genera un processor write (\textbf{PW}) y se modifica la caché. En el segundo caso, se pasa al estado \textbf{Modified}.
+	\item Si está en \textbf{Invalid} ó \textbf{Shared}:
+	\begin{itemize}
+		\item Genera un Processor Request For Ownership (\textbf{PRFO}). Esto hace que todas las otras cachés invaliden sus copias del bloque.
+		\item Luego, genera el proccesor write (\textbf{PW}), realiza las modificaciones y pasa el bloque a \textbf{Modified}
+	\end{itemize}
+\end{itemize}
 \newpage
 \part*{Bibliography}
 \nocite{*}
