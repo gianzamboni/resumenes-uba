@@ -23,7 +23,7 @@ Diseñar una arquitectura implica diseñar las interfaces hardware/software para
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
 	\includegraphics[width=0.25\textwidth]{imagenes/arquitectura}
-	\caption{figure}{La computadora definida en niveles de abstracción}
+	\caption{La computadora definida en niveles de abstracción}
 	\label{fig:intro::arquitectura}
 \end{wrapfigure}
 
@@ -238,7 +238,7 @@ Las \textbf{dependencias de datos} se da entre instrucciones que referencian el 
 \end{itemize}
 
 
-\subsection{Fetching and Decode}
+\subsection{Fetching and Decode}\label{ilp::superscalars::fetchDecode}
 En los procesadores superescalares, una caché de instrucciones es usada para reducir la latencia y incrementar el ancho de banda del fetching. Esta caché está organizada en bloques o lineas que contienen varias instrucciones consecutivas y almacena el tipo de cada una de ellas (si es de control, de operación, de lectura de memoria, etc). 
 
 El program counter se utiliza para determinar la posición de una instrucción en la caché.
@@ -402,6 +402,7 @@ Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos 
 
 \paragraph{Miss penalty:} El tiempo requerido para fetchear un bloque desde el nivel inferior de la jerarquía (incluyendo tiempo de acceso, transmisión y copiado del bloque).
 
+\newpage
 \section{Tipos de memoria}\label{sec::Memoria::Tipos}
 Hay dos tipos de memoria:
 
@@ -499,7 +500,7 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 	\centering
 	\includegraphics[width=0.75\textwidth]{imagenes/cache-asociativo-vias}
 	\caption{Asociativo por 2 vías}
-	\label{fig:asociativo-mapping}
+`	\label{fig:asociativo-mapping}
 \end{figure}
 
 Cuando se trae un bloque de memoria, éste puede ser copiado en cualquiera de las dos mitades mientras sea dentro del set correspondiente. Se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir cual mitad remplazar con la nueva información.
@@ -521,7 +522,7 @@ Dependiendo del sistema (si hay una sola CPU o más de una) se utilizan distinta
 	
  	Si el buffer está lleno cuando el procesador pide una escritura, entonces se debe parar la ejecución y esperar a que tenga una entrada libre. Si bien, la ocurrencia de los stalls es reducida, estos siguen pasando.
  	
- 	\item \textbf{Copy back:} Se modifican solo las líneas de la caché y se marcan como \textbf{dirty} (modificadas). El controlador, escribe el bloque en memoria cuando debe ser remplazada por otro. 
+ 	\item \textbf{Copy back / Write back:} Se modifican solo las líneas de la caché y se marcan como \textbf{dirty} (modificadas). El controlador, escribe el bloque en memoria cuando debe ser remplazada por otro. 
  	
  	Este método mejora el performance cuando el procesador puede generar escrituras tan o más rápido de lo que puede escribir en memoria. Sin embargo, es mucho más difícil de implementar.
 \end{itemize}
@@ -608,10 +609,117 @@ Supongamos que el procesador necesita leer un bloque de memoria, entonces produc
 	\end{itemize}
 \end{itemize}
 \newpage
-\part*{Bibliography}
+\part{Procesadores Intel}
+\section{The microarhchitecture of the Pentium 4 Processor (Netburst microarchitecture)}
+
+La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.35\textwidth]{imagenes/p4-block-architecture}
+	\caption{Diagrama básico}
+	\label{fig:p4DiagramaBasico}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.8\textwidth]{imagenes/p4-architecture}
+	\caption{Architectura del procesador}
+	\label{fig:p4DiagramaBasico}
+\end{figure}
+
+\subsection{Front end}
+Se dedica al fetcheo y decodificación de instrucciones y la predicción de saltos. Esta compuesto por:
+\subsubsection*{Instruction Translation Lookaside Buffer (TLB)}
+Traduce las direcciones lineales del puntero de instrucciones en las direcciones físicas necesarias para acceder a la caché L2. Además, realizar los chequeos de permisos de paginación.
+
+\subsubsection*{Front end Branch Target Buffer}
+Fetchea las instrucciones IA-32 que deben ser ejecutadas de la caché L2. El uso de Branch Prediction permite al procesador comenzar a fetchear y ejecutar instrucciones mucho antes de que el outcome de las ramificaciones sea averiguado.
+	
+Si una rama no se encuentra en el BTB, el hardware de predicciones decide que hacer dependiendo el desplazamiennto de la rama (\textbf{forward} o \textbf{backward}). Backwards branches se asumen Taken y Forward Branches se asumen Not-Taken.
+	
+\subsubsection*{IA-32 Instruction Decoder}
+Recibe las instrucciones IA-32 desde la caché L2 y las decodifica en primitivas (llamadas micro-operaciones). Una vez decodificadas, si la instrucción consiste en menos de 4 micro-operaciones, entonces es almacenada en la \textbf{Trace Caché}. Sino es enviada a la \textbf{microcode ROM}.
+
+\subsubsection*{Trace Caché} 
+Es la caché de instrucciones primaria o de Nivel 1 (\textbf{L1}) donde se guardan ya decodificadas. La mayoría de las instrucciones son fetcheadas y ejecutadas desde esta caché. Solo cuando hay un caché miss, la microarquitectura, fetchea y decodifica desde la instrucciones desde la caché \textbf{L2}.
+	
+Las instrucciones IA-32 tienen un número variable de bits y muchas opciones. La lógica de decodificación necesita tener en cuenta esto y convertirlas en micro-operaciones que la máquina sepa como ejecutar. Esto se hace especialmente difícil cuando se tratan de decodificar varias instrucciones en un único ciclo de reloj de alta frecuencia.
+	
+Además, cuando la predicción de un branch es errónea, el tiempo de recuperación es mucho más corto si la máquina no tiene que re-decodificar las instrucciones IA-32 necesarias para reanudar la ejecución en el lugar correcto.
+	
+El cacheo de las micro operaciones permite, a la microarquitectura, evitar el uso decodificador de instrucciones IA-32 durante gran parte de la ejecución.
+	
+La caché toma las micro-operaciones decodificadas y las ensambla en secuencias ordenadas llamadas trazas (\textbf{traces}). El orden es el mismo en el que ocurrirían si el programa fuese ejecutado secuencialmente. Esto permite que el target de los branch sean incluidos en la misma linea de traza incluso si estan separados por miles de bytes en el programa.
+
+La caché tiene su propio BTB (TBTB) para predecir cual es la próxima micro-operación a ser ejecutada. Esta es más chica que la BTB principal ya que solo debe realizar predicciones sobre el subset de instrucciones presentes en la caaché.
+\subsubsection*{Microcode ROM}
+Esta ROM es usada para instrucciones IA-32 complejas como mover strings y para manejar faults e interrupciones.
+
+Cuando se encuentra una instrucción IA-32 compleja, la Trace Chache llama a esta ROM que emite las micro-operaciones necesarias para ejecutarla. Cuando termina de hacer esto, el control vuelve al Trace Caché.
+
+Las micro-operaciones que provienen de la caché y la microcode ROM son encoladas en un buffer ordenado, lo que ayuda a suavizar el flujo de micro-operaciones al Out-Of-Order Engine.
+
+\subsection{Out-of-order engine}
+Reordena las instrucciones para que sean ejecutadas apenas todos sus operandos estén listos. Y se encarga de presentar el estado correcto al front end cuando es necesario modificarlo.
+
+El procesador inte encontrar tantas instrucciones como sea posible ejecutar cada ciclo de reloj. El motor fuera de orden ejecutará todas aquellas que estén listas para ser ejecutadas incluso si no lo hacen en el orden original del programa.
+
+\subsubsection*{Allocator (Asignador?)}
+El allocator se encarga de distribuir los recursos (entradas del archivo de registros, buffers, alus, etc)) del sistema entre las micro operaciones que deben ser ejecutadas. Si un recurso no está disponible para alguna de las micro-operaciones que llegaron desde el front end, entonces se pausa la asignación por un ciclo de reloj. Cuando todos los recursos están disponibles, entonces los asigna a las instrucciones y las despacha al pipeline para que sean ejecutadas.
+
+A todas las instrucciones les asigna una entrada en el reorder buffer, lo que permite mantener un seguimiento del estado de la micro-operación, el registro donde se guardarán los resultados de la micro-operación y una entrada en alguna de las colas que se encuentran en frente del scheduler.
+
+\subsubsection*{Register Renaming}
+El proceso de renombre remueve falsos conflictos causados por múltiples instrucciones independientes que necesitan de un mismo registro. Esto se logra creando varias instancias del mismo registro que indiquen quien las escribió por última vez y el valor adecuado. Ver sección \ref{ilp::superscalars::fetchDecode} 
+
+\subsubsection*{Scheduling de micro-operaciones}
+Hay dos colas FIFO, una para operaciones de memoria y otra para el resto. Se permite que cada cola sea leída en cualquier orden, lo que permite que la ventana de ejecución fuera de orden sea más grande.
+
+Los schedulers de micro-operaciones determinan cuando una micro-operación está lista para ser ejecutadas y permiten reordenarlas manteniendo las dependencias correctas. 
+
+Para enviar las micro-operaciones a las ALU, existen puertos a los que se conectan múltiples schedulers. Cuando varios de ellos, tiene instrucciones listas para la ejecución, se arbitra el uso de estos puertos. 
+
+\subsection{Integer and Floating Point Excution Units}
+Es donde se ejecutan las instrucciones. 
+
+Los registros de enteros y los de puntos flotantes se encuentran separados. Cada archivo de registros, además, está conectado a una red que permite enviar resultados completos que todavía no fueron escritos en los registros a las nuevas micro-operaciones.
+
+\subsubsection*{Low Latency Integer ALU}
+Está diseñada para optimizar performance manejando los casos más comunes tan rápido como sea posible. Es capaz de completar operaciones en medio ciclo del reloj principal. Aproximadamente el 60-70\% de las micro-operaciones de enteros pasan por esta ALU. Ejecutandolas a la mitad de la latencia del clock principal ayuda a acelerar la ejecución de la mayoría de los programas.
+
+\subsubsection*{Complex Integer Operation}
+Los shift, rotaciones multiplicaciones y divisiones tienen una larga latencia (ocupan varios ciclos de reloj), por esta razón son mandados a otros componentes más complejos. 
+
+\subsubsection*{Low Latency Level 1 (L1) Data Cache}
+La latencia de las operaciones de lectura es un aspecto clave en la performance del procesador. Esto es especialmente verdad para los programas del IA-32 porque hay un limitado numero de registros en el ISA. Por esta razón se agrega una pequeña caché de baja latencia que consigue su información desde una caché de segundo nivel. La L2 es más grande, tiene un gran ancho de banda y latencia media.
+
+Con la alta frecuencia y la profundidad del pipeline del pentium 4, el scheduler de micro-operaciones despacha instrucciones más rapido de lo que el load puede ser ejecutado. En la mayoría de los casos, el scheduler asume que hubo en hit en la caché L1. Si la lectura genera un miss entonces habrá, en el pipeline, operaciones dependientes con información errónea que deben volver a ser ejecutadas. Para esto se utiliza un mecanismo conocido como \textbf{replay} que trackea las instrucciones durante su ejecución y, si ocurre el caso mencionado, las detiene e intenta ejecutar nuevamente. 
+
+\subsubsection*{Store-To-Load Forwarding}
+Debido a la profunidad del pipeline, una instrucción de almacenamiento puede tomar varios ciclos de reloj para ser retiradas por lo que quizás fueron completadas pero sus resultados todavía no se encuentran en caché. Además de que, por lo general, tienen que esperar a que previos stores que ya fueron terminados terminen de actualizar la caché y commiteen el nuevo estado.
+ 
+A menudo, otras instrucciones deben hacer uso de estos datos y hacerlas esperar hasta que estén en memoria deterioraría el performance del pipeline. Por esta razón, se utiliza un buffer de escrituras pendientes (\textbf{pending store buffer}) que permite que los reasultados que todavía no fueron escritos en cache sean utilizados por las nuevas operaciones. Este proceso es llamado \textbf{store-to-load forwarding}.
+
+Este forwarding es permitido si un load utiliza la misma dirección que un store que halla sido completado y se encuentre en este buffer. Además, el dato pedido debe ser del mismo tamaño o más chico que el store pendiente e iniciar en la misma dirección. Si la información pedida por el load se superpone parcialmente con la información del store o necesita hacer uso de más de dos stores pendientes, entonces el forwarding no se permite y  la instrucción debe conseguir su data desde la caché luego de que las operaciones pendientes sean commiteadas.
+
+\subsubsection*{FP/SSE Execution Units}
+Es donde se ejecutan las operacion de punto flotante, MMX, SSE y SSE2.
+\subsection{Memory Subsysten}
+El sistema de memoria, compuesto por una caché L2 y el bus del sistema.
+
+\subsubsection*{Level 2 Instruction and Data Cache}
+Contiene las instrucciones que hacen miss en la Trace Cache y la información que produce un miss en la cache L1. Es una caché asociativa de 8 vías y usa un algoritmo write-back para escribir las modificaciones en memoria.
+
+A esta caché se asocia un prefetcher que monitorea los patrones de acceso a memoria y recuerda la historia de los misses para detectar flujos de datos concurrentes y rellenar la caché con información que podría ser utilizada más adelante por el programa. Además, intenta minimizar el prefetching de datos que podrían causar una sobrecarga de la memoria del sistema y provocar el delay de los accesos que el programa realmente necesita.
+
+\subsubsection*{400Mhz System Bus}
+Tiene un ancho de banda de 3.2 Gbytes por segundo, esto permite que las aplicaciones realizen data streaming desde la memoria. Tiene un protocolo que divide las transacciones y un pipeline profundo para permitir que el subsistema de memoria atienda varios accesos/escrituras simultaneamente. 
+\newpage
+\part*{Bibliografía}
 \nocite{*}
 \printbibliography[keyword=intro,title={Introduccion}]
 \printbibliography[keyword=ilp,title={Instruction Level Paralellism}]
 \printbibliography[keyword=memory,title={Jerarquías de memoria}]
+\printbibliography[keyword=intel,title={Procesadores Intel}]
 \end{document}
 
