@@ -29,15 +29,15 @@ Diseñar una arquitectura implica diseñar las interfaces hardware/software para
 
 Estas tareas son problemas que pasaron por varias transformaciones (desde su descripción en un lenguaje natural hasta convertirse en un programa) y deben ser ejecutadas por una computadora. La tarea del arquitecto consiste en diseñar el \textbf{Instruction Set Architecture} (ISA), un conjunto de instrucciones que usarán los programas compilados para decir al micropocesador que hacer. El ISA es implementado por un conjunto de estructuras de hardware conocidas como \textbf{microarquitectura}.
 
-El ISA y la microarquitectura sientan las bases para que el diseño del procesador que conseguir el balance adecuado de los factores mencionados para llevar a cabo ciertas tareas de la manera más optima posible. Habrá casos en los que daremos prioridad a un subconjunto de ellos en detrimento de otros (por ejemplo, podriamos elegir mejorar perfomance y aumentar el costo, o quitar performance para mejorar el consumo energético).
+El ISA y la microarquitectura sientan las bases para que el diseño del procesador consiga el balance adecuado de los factores mencionados y pueda llevar a cabo ciertas tareas de la manera más optima posible. Habrá casos en los que daremos prioridad a un subconjunto de ellos en detrimento de otros (por ejemplo, podriamos elegir mejorar perfomance y aumentar el costo, o quitar performance para mejorar el consumo energético).
 
 \subsection{Componentes del ISA}
 El ISA es la especificación completa de la interfaz entre los programas y el hardware que debe llevar a cabo las operaciones. Entre otras cosas, especifica:
 
 \subsubsection{Regitros}
 \begin{itemize}
-	\item \textbf{Registros:} Celdas de memoria dentro del cpu que son usados para almacenar los datos necesarios para ejecutar una instrucción. Éstos son visibles al programa y se clasifican según su uso: Acumuladores, De dirección ó De Proposito General.
-	\item  \textbf{Instrucciones}: Tareas que pueden ser llevadas a cabo por la computadora. Cada una de ellas está compuesta por su \textbf{opcode} (que se espera que la computadora haga) y sus \textbf{operandos} (a que datos debe hacerlo). En una ISA, podremos encontrar tres tipos de instrucciones:
+	\item \textbf{Registros:} Celdas de memoria dentro del cpu que son usadas para almacenar los datos necesarios para ejecutar una instrucción. Éstos, son visibles al programa y se clasifican según su uso: Acumuladores, De dirección ó De Proposito General.
+	\item  \textbf{Instrucciones}: Tareas que pueden ser llevadas a cabo por la computadora. Cada una de ellas está compuesta por su \textbf{opcode} (que se espera que la computadora haga) y sus \textbf{operandos} (a que datos debe hacerlo). En una ISA podremos encontrar tres tipos de instrucciones:
 	\begin{itemize}
 		\item De \textbf{Operacion}: Procesan datos.
 		\item De \textbf{trasnporte}: Transportan información entre la memoria, los registros y los dispositivos de entrada salida.
@@ -45,14 +45,14 @@ El ISA es la especificación completa de la interfaz entre los programas y el ha
 	\end{itemize}
 	
 	Dependiendo que valores puedan modificar las instrucciones de operación, podremos clasificar las arquitecturas en: \textbf{Arquitecturas Load/Store} (solo pueden operar en registros) o \textbf{Arquitecturas memory/memory} (se pueden modificar los valores directamente en memoria)
-	\item \textbf{Tipos de datos}: Representación deben tener ciertos valores para que puedan ser interpretados por la microarquitectura.
+	\item \textbf{Tipos de datos}: Representación que deben tener ciertos valores para poder ser interpretados por la microarquitectura.
 	\item \textbf{Espacio de memoria}: La cantidad de bloques univocamente distinguibles en memoria y el tamaño de cada uno de estos bloques
 	\item \textbf{Direccionamiento}: Los mecanismos usados por la computadora para saber donde están almacenados los datos. Puede ser:
 	\begin{itemize}
 		\item \textbf{Inmediato:} El operando está incluido en la instrucción.
 		\item \textbf{Directo o absoluto:} El operando es la dirección de memoria donde se encuentra el valor a ser utilizado.
 		\item \textbf{Indirecto:} El operando es una dirección de memoria donde se encuentra la dirección de memoria en la que está almacenado el valor deseado.
-		\item \textbf{De desplazamiento:} La instrucción toma como operandos una dirección de memoria que se toma como \textbf{base} y un \textbf{offset}, que es un número que indica cuanto hay que desplazar la base para encontrar el valor deseado, es decir $dir = base + offset$
+		\item \textbf{De desplazamiento:} La instrucción toma como operandos una dirección de memoria que se toma como \textbf{base} y un \textbf{offset}. La base es una dirección de memoria y el offset, un número que indica cuanto hay que desplazar la base para encontrar el valor deseado, es decir $dir = base + offset$
 		\item \textbf{Indexado:} Lo mismo que el anterior, pero con el \textit{offset} guardado en un registro.
 		\item \textbf{De Memoria Indirecta:} El operando es un registro en el que se encuentra guardada la dirección de memoria indirecta.
 	\end{itemize}
@@ -78,12 +78,12 @@ Como se vió en Organización del computador I, las mayoría de las ISA usadas a
 	\caption{Arquitectura de Von Newmman}
 	\label{fig:intro:componentesIsa::vonsneumanarquichtecture}
 \end{figure}
-Cada instrucción es extraída de la memoria usando la dirección indicada por el \textbf{Instruction Pointer}. La unidad de control se encarga de indicar a la memoria si son necesarios otros valores para poder llevar a cabo su ejecución y luego pasa todo los datos a la unidad de procesamiento.
+Cada instrucción es extraída de la memoria usando la dirección indicada por el \textbf{Instruction Pointer}. La unidad de control se encarga de indicar a la memoria si son necesarios otros valores para poder llevar a cabo su ejecución y, luego, pasa todo los datos a la unidad de procesamiento.
 
 Si bien este es el ciclo que ``ve'' un programador, la implementación de las ISA (microarquitectura) usa estructuras de hardware más complejas que permiten acelerar la ejecución de cada fase.
 
 \subsection{Microarquitectura}
-La micoarquitectura es la implementación a nivel hardware de la ISA, es decir, es un conjunto de componentes electrónicos organizados de cierta manera para que respeten esas especificaciones. En la sección \ref{sec::Intro::ISA::Von_Neuman}, vimos como el usuario ve el ciclo de instrucciones. Desde el punto de vista de la implementación (hardware), el ciclo es realizado por unidades de procesamiento que operan sobre los datos de acuerdo a ciertas señales. 
+La micoarquitectura es la implementación a nivel hardware de la ISA, es decir, es un conjunto de componentes electrónicos organizados de cierta manera para que respeten esas especificaciones.  Desde el punto de vista de la implementación (hardware), el ciclo es realizado por unidades de procesamiento que operan sobre los datos de acuerdo a ciertas señales. 
 
 Cada instrucción es una señal que usa el procesador de instrucciones para decidir que conjunto de componentes electrónicos deben ser activados para poder llevar a cabo la operación deseada. Especificamente, las instrucciones indican: 
 
@@ -92,14 +92,7 @@ Cada instrucción es una señal que usa el procesador de instrucciones para deci
 	\item \textbf{Control Logic:} Que elementos de hardware determinan las señales de control que indican al datapath lo que debe hacer con los datos.
 \end{itemize}
 
-En otras palabras, la microarquitectura comprende la tecnología utilizada para construir el hardware, la organización e interconexión de la memoria, el diseño de los bloques de CPU y la implementación de distintos mecanismos de procesamiento que no son visibles para el programador. Algunas de las características encontradas en las microarquitecturas actuales son:
-
-\begin{itemize}
-	\item Pipelining
-	\item Ejecución de múltiple instrucciones simultáneamente.
-	\item Ejecución fuera de orden
-	\item y Cachés de dato e instrucciones separadas, entre otros.
-\end{itemize}
+En otras palabras, la microarquitectura comprende la tecnología utilizada para construir el hardware, la organización e interconexión de la memoria, el diseño de los bloques de CPU y la implementación de distintos mecanismos de procesamiento que no son visibles para el programador. 
 
 %\subsection{Medidas de Performance}
 %La escala y complejidad de los sistemas de software modernos, junto con las técnicas usadas por los diseñadores de hardware para mejorar el rendimiento de los dispositivos, ha logrado hacer que el rendimiento pueda depender de varios factores.
@@ -122,11 +115,11 @@ El Pipeline es una técnica que permite superponer el procesamiento de múltiple
 
 Bajo condiciones ideales y con un gran número de instrucciones, la mejora en velocidad de ejecución es directamente proporcional a la cantidad de etapas en el pipe. Es decir, un pipeline de 5 etapas, es aproximadamente 5 veces más rápido que el procesamiento secuencial.  
 
-Si bien, el pipelining, reduce el tiempo de ejecución de un programa, debemos notar que no lo hace modificando el tiempo que se tarda en procesar una instrucción (\textbf{latency / latencia}), sino que aumenta la cantidad de instrucciones que se procesan por unidad de tiempo (\textbf{throughput}).
+Si bien el pipelining reduce el tiempo de ejecución de un programa, debemos notar que no lo hace modificando el tiempo que se tarda en procesar una instrucción (\textbf{latency / latencia}) sino que aumenta la cantidad de instrucciones que se procesan por unidad de tiempo (\textbf{throughput}).
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\linewidth]{imagenes/pipelining}
-	\caption{Analogía de la lavandería: 4 personas tienen que lavar, secar, doblar y guardar su ropa sucia. Solo disponemos de una lavadora, una secadora, un ``doblador'' y un ropero. Si cada parte del proceso toma 30 minutos, y lo realizamos de manera secuencial, entonces completarlo para las 4 personas tomaría ocho horas, mientras que si lo hacemos con un pipeline el tiempo se reduce a tres horas y media.}
+	\caption{Analogía de la lavandería: 4 personas tienen que lavar, secar, doblar y guardar su ropa sucia. Solo disponemos de una lavadora, una secadora, un ``doblador'' y un ropero. Si cada parte del proceso toma 30 minutos, y lo realizamos de manera secuencial, completarlo para las 4 personas tomaría ocho horas, mientras que si lo hacemos con un pipeline el tiempo se reduce a tres horas y media.}
 	\label{fig:pipelining}
 \end{figure}
 
@@ -135,22 +128,22 @@ Para facilitar una implementación efectiva del pipeline, el set de instruccione
 \begin{itemize}
 	\item Todas las instrucciones deben tener la misma longitud (en la arquitectura IA-32, donde las instrucciones tienen longitud variada, esto se logra descomponiendo cada instrucción en micro-operaciones de longitud fija y a estas microoperaciones se les aplica el pipelining).
 	\item Todas las instrucciones deben tener la misma estructura, es decir, la cantidad de parámetros y la ubicación dentro de la instrucción que los explicita deben ser las mismas (o lo más parecidas posibles). 
-	\item Los operandos deben estar alineados en memoria, esto es, las direcciones de memoria que ocupan deben ser múltiplo del tamaño de las palabras usadas para que los datos puedan ser transferidos en una única etapa del pipeline.
+	\item Los operandos deben estar alineados en memoria. Esto es, las direcciones de memoria que ocupan deben ser múltiplo del tamaño de las palabras usadas para que los datos puedan ser transferidos en una única etapa del pipeline.
 \end{itemize}
 
 \subsection{Pipeline Hazards}
-Hay situaciones, en las que una instrucción no puede ser ejecutada en el siguiente ciclo de reloj debido a algún obstaculo (\textbf{hazards}). Estos eventos pueden llegar a detener el flujo del pipeline (\textbf{pipeline stall}) y generar una demora en el procesamiento de las instrucciones. A continuación veremos los tres tipos de obstaculos que se pueden dar:
+Hay situaciones en las que una instrucción no puede ser ejecutada en el siguiente ciclo de reloj debido a algún obstaculo (\textbf{hazards}). Estos eventos pueden llegar a detener el flujo del pipeline (\textbf{pipeline stall}) y generar una demora en el procesamiento de las instrucciones. A continuación veremos los tres tipos de obstaculos que se pueden dar:
 
 \begin{itemize}
 	\item \textbf{Estructurales (Structural Hazards):} El hardware no soporta la combinación de instrucciones que queremos ejecutar en el mismo ciclo de reloj. Por ejemplo, si una instrucción debe acceder a memoria mientras otra debe realizar un fetch en la misma memoria. En este caso, las dos instrucciones deben utilizar los mismos recursos y debería darsele prioridad a la primera instrucción dejando a la segunda en espera.
 	
-	Para resolver esto, debería agregarse harwdare (como buffers, caches, etc).
+	Para resolver esto debería agregarse harwdare (como buffers, caches, etc).
 	\item \textbf{De datos (Data Hazards):} Hay una instrucción en el pipeline que depende de los resultados de otra instrucción (tambien en el pipeline) y debe esperar a que ésta se complete para poder terminar. Esto puede bloquear el pipe durante varios ciclos de reloj ya que se debe procesar completamente la primer instrucción. 
 	
 	Para minimizar el impacto de este obstáculo, por lo general, se agrega extra hardware que permite conseguir el valor deseado apenas sea calculado (cuando termina la etapa de ejecución) directamente de los componentes internos para no tener que esperar a que sea guardado en memoria (esta técnica se llama \textbf{forwarding} o \textbf{bypassing}).
 	\item \textbf{De control (Control or Branch Hazards):} La instrucción que se fetcheó no es la que debe ejecutarse en este ciclo de reloj. Esto sucede cuando una de las instrucciones del pipe es de control. Cuando es fetcheada, el pipeline no puede saber cual es la próxima instrucción que debe ser ejecutada ya que esto depende del resultado de la instrucción actual.
 	
-	Una posible solución es parar apenas se haga el fetch del condicional y esperar hasta obtener sus resultado. Otra, es realizar predicciones (\textbf{branch prediction}) y ejecutar las instrucciones con más probabilidad de ser ejecutadas. En este último caso, el pipeline procede sin demoras si la predicción fue correcta, sino debe eliminar las instrucciones procesadas y volver a comenzar desde el lugar correcto.
+	Una posible solución es parar apenas se haga el fetch del condicional y esperar hasta obtener sus resultado. Otra, es realizar predicciones (\textbf{branch prediction}) y ejecutar las instrucciones con más probabilidad de ser ejecutadas. En este último caso, el pipeline procede sin demoras si la predicción fue correcta sino debe eliminar las instrucciones procesadas y volver a comenzar desde el lugar correcto.
 \end{itemize}
 
 \newpage
@@ -166,8 +159,8 @@ Hay situaciones, en las que una instrucción no puede ser ejecutada en el siguie
 
 \subsection{Predicciones estáticas}
 \begin{itemize}
-	\item \textbf{Assume Branch Not Taken:}  Se fetchea la siguiente instrucción secuencial del programa. Si el salto no se realiza, entonces la ejecución del pipe continúa sin problemas. Si el salto se realiza, se aplica el branch penalty.
-	\item \textbf{Assume Branch Taken}: Análogo al anterior, pero esta vez, se fetchea la instrucción en la dirección de memoria apuntada por el salto.
+	\item \textbf{Assume Branch Not Taken:}  Se fetchea la siguiente instrucción secuencial del programa. Si el salto no se realiza entonces la ejecución del pipe continúa sin problemas. Si el salto se realiza, se aplica el branch penalty.
+	\item \textbf{Assume Branch Taken}: Análogo al anterior pero se fetchea la instrucción en la dirección de memoria apuntada por el salto.
 	\item \textbf{Predict by Opcode}: Se asume que el salto va a ser tomado o no dependiendo de la instrucción a ser ejecutada.
 \end{itemize}
 
@@ -185,7 +178,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 		\label{fig:2bit-buffer-prediction}
 	\end{figure}
 
-	Las primeras implementaciones de esta técnica hacían uso de un único bit que se remplazaba cada vez que la predicción fallaba. En ciertos casos, la eficiencia de este método no era satisfactoria llegando a fallar completamente en otros(por ejemplo, si los saltos termina formando una secuencia intercalada de Taken y Not taken).
+	Las primeras implementaciones de esta técnica hacían uso de un único bit que se remplazaba cada vez que la predicción fallaba. En ciertos casos, la eficiencia de este método no era satisfactoria llegando a fallar completamente en otros (por ejemplo, si los saltos termina formando una secuencia intercalada de Taken y Not taken).
 	
 	\item \textbf{Branch Target Buffer (BTB)}: Es una caché en la que se almacena, en cada entrada, la dirección de la instrucción de control y la dirección de la instrucción que fue ejecutada despues de resolver el branching.
 	
@@ -208,14 +201,14 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 \section{Procesadores Superscalares}
 Son procesadores que explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Agrega más pipelines a la ejecución, lo que permite incrementar aún más la cantidad de instrucciones procesadas por ciclo de reloj.
 
-Sin embargo, los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
+Un problema es que los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
 
-Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
+Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios, deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
 
 Más precisamente, un procesador superescalar implementa:
 
 \begin{enumerate}
-	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción 1de resultados y saltos.
+	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción de resultados y saltos.
 	\item Métodos para determinar dependencias de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
 	\item Métodos para iniciar, o resolver, múltiples instrucciones en paralelo.
 	\item Recursos para la ejecución en paralelo de varias instrucciones, incluyendo multiples unidades funcionales de pipelines y jerarquías de memorias capaces de atender simultáneamente múltiples referencias a memoria.
@@ -247,21 +240,21 @@ El program counter se utiliza para determinar la posición de una instrucción e
 	\item Si se produce un hit, se fetchea el bloque de instrucciones y se suma al program counter el tamaño del bloque fetcheado.
 	\item Si hay un miss, el caché, pide la instrucción buscada en memoria y la copia.
 	\item Se identifica el tipo de cada instrucción. Si alguna es de control, se realizan las predicciones usando alguno de los métodos mencionado en en la sección \ref{sec::branchPrediction}.
-	\item Las instrucciones son decodificadas en  \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidad de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
+	\item Las instrucciones son decodificadas en  \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidades de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
 	
-	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando las instrucciones son decodificadas, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (\textbf{Algoritmo de tomasulo}, sección \ref{ilp::tomasulo}).
+	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando son decodificadas, cada uno de ellos es mapeado (o renombrado) a un registro físico y las dependencias artificiales son resueltas indicando a las instrucciones involucradas que usen distintos registros físicos (\textbf{Algoritmo de tomasulo}, sección \ref{ilp::tomasulo}).
 
 	\item Una vez que todas las instrucciones asociadas a un registro físico son completadas (modifican el estado visible), el registro es liberado para que pueda ser usado por otro bloque de instrucciones. 		
 \end{itemize}
 
 
 \subsubsection{Out of Order Execution (Tomasulo)}\label{ilp::tomasulo}
-El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
+El algoritmo de Tomasulo crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
 \begin{itemize}
 	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
 	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
 	\item Las instrucciones deben saber cuando sus operandos estan listos (``Ready'').
-	\item Despachar (``disparar'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
+	\item Despachar (``dispatch'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
 \end{itemize}
 
 \paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
@@ -270,7 +263,7 @@ El algoritmo de Tomasulo, crea un scheduling dinamico que permite ejecutar instr
 
 Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
 
-\paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar a cada operación.
+\paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar cada operación.
 
 \paragraph{Pseudocodigo:}
 Cada Registro contiene un tag que indica el último escritor en el registro.
@@ -290,7 +283,7 @@ Cada Registro contiene un tag que indica el último escritor en el registro.
 	\State{Se depscacha la instrucción a esa unidad funcional}
 	\EndIf
 	\If{Finalizada la ejecución de la instrucción}
-	\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CBD} (\textbf{tag broadcast})}
+	\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CDB} (\textbf{tag broadcast})}
 	\If{El archivo de registros está conectado al CDB}
 	\If{tag del Archivo de Registro $==$ tag broadcast}
 	\State{Registro = valor broadcast}
@@ -321,12 +314,10 @@ Cuando ocurre una interrupción, el software o el hardware (o una combinación d
 	\item Si la interrupción es causada por una excepción en una instrucción del programa, entonces el program counter guardado debe apuntar a la instrucción interrumpida.
 \end{enumerate}
 
-Si el estado guardado es inconsistente con el modelo de arquitectura secuencial y no satisface estas condiciones, entonces la interrupción es \textbf{imprecisa}. 
-
-Hay varias formas de evitar las interrupciones imprecisas:
+Si el estado guardado es inconsistente con el modelo de arquitectura secuencial y no satisface estas condiciones entonces la interrupción es \textbf{imprecisa}. 
 
 \subsubsection{In-Order Instruction Completion}
-Las instrucciones modifican el estado del proceso solo cuando se sabe que todas las instrucciones previas están libres de excepciones. Para asegurar esto se utiliza un registro llamado ``result shift register'' que contiene una tabla de $n$  entradas ($n$ la longitud del pipeline más largo). Una instrucción que toma $i$ ciclos de reloj reserva la $i$-ésima entrada de la tabla y en cada ciclo se la desplaza una posición hacia abajo.
+Las instrucciones modifican el estado del proceso solo cuando se sabe que todas las instrucciones previas están libres de excepciones. Para asegurar esto se utiliza un registro llamado ``result shift register'' que contiene una tabla de $n$  entradas ($n$ la longitud del pipeline más largo). Una instrucción que toma $i$ ciclos de reloj, reserva la $i$-ésima entrada de la tabla y en cada ciclo se la desplaza una posición hacia abajo.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.5\linewidth]{imagenes/shift-register}
@@ -334,14 +325,14 @@ Las instrucciones modifican el estado del proceso solo cuando se sabe que todas 
 	\label{fig:shiftregister}
 \end{figure}
 
-Si la $i$-esima entrada contiene información valida, entonces se pausa la instrucción. En el proximo ciclo, se rechequea si la entrada está libre y se realiza el movimiento.
+Si la $i$-esima entrada contiene información valida entonces se pausa la instrucción. En el proximo ciclo, se rechequea si la entrada está libre y se realiza el movimiento.
 
 Para evitar que una instrucción más corta se complete antes que otra de mayor longitud (cuando este es el orden deseado) se rellenan con información invalida todas las entradas anteriores que no fueron reservadas. De esta forma, la nueva instrucción es pausada hasta el próximo ciclo de reloj.
 
 \subsubsection{Reorder-Buffer}
-La principal desventaja del método anterior, es que instrucciones rápidas serán retenidas a pesar de no tener dependencias.
+La principal desventaja del método anterior es que instrucciones rápidas serán retenidas a pesar de no tener dependencias.
 
-Para resolver este problema, se agrega un ``reorder buffer`` que indica el orden en el que las instrucciones deben modificar el estado visible. Entonces, se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que cumple con el objetivo mencionado. Cuando son completadas, se las almacena en la entrada indicada (por el tag) del buffer.
+Para resolver este problema se agrega un \textbf{reorder buffer} que indica el orden en el que las instrucciones deben modificar el estado visible. Entonces, se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que cumple con el objetivo mencionado. Cuando son completadas, se las almacena en la entrada indicada (por el tag) del buffer.
 
 \begin{figure}[ht]
 	\centering
@@ -350,7 +341,7 @@ Para resolver este problema, se agrega un ``reorder buffer`` que indica el orden
 	\label{fig:reorder-buffer}
 \end{figure}
 
-El buffer contiene un puntero a la entrada que corresponde a la próxima instrucción a ser ejecutada. Cuando dicha entrada contenga información valida, se  chequea si hubo excepciones. Sí no las hubo, se modifican los registros/memoria necesarios y se mueve el puntero a la próxima entrada. Sino, se emite la excepción y se invalidan todas las entradas posteriores.
+El buffer contiene un puntero a la entrada que corresponde a la próxima instrucción a ser ejecutada. Cuando dicha entrada contenga información válida, se  chequea si hubo excepciones. Sí no las hubo, se modifican los registros/memoria necesarios y se mueve el puntero a la próxima entrada. Sino, se emite la excepción y se invalidan todas las entradas posteriores.
 
 En algunos casos, la dependencia entre instrucciones requiere el uso de valores que todavía no fueron escritos en los registros. Para conseguirlos es necesario acceder al buffer de reordenamiento, lo que agrega latencia y complejidad a la ejecución.
 
@@ -362,7 +353,7 @@ En este caso, si ocurre una excepción, se debe recorrer el history buffer para 
 
 Si ocurre una excepción simplemente se debe mostear el Arquitecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
 
-\paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea1 entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
+\paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
 
 \newpage
 \part{Subsistema de memoria}
@@ -370,12 +361,12 @@ Si ocurre una excepción simplemente se debe mostear el Arquitecture File para c
 \subsection{Principio de vencidad o localidad}
 \paragraph{Temporal Locality:} Una dirección de memoria que está siendo accedida actualmente tiene muy alta probabilidad de seguir siendo accedida en el futuro inmediato.
 
-\paragraph{Spatial Locality}: Si se está accediendo a una dirección determinada de memoria actualmente, la probabilidad de que está dirección y sus adyacentes sean accedidas en el futuro inmediato es muy alta.
+\paragraph{Spatial Locality:} Si actualmente se está accediendo a una dirección determinada de memoria, la probabilidad de que ésta y sus adyacentes sean accedidas en el futuro inmediato es muy alta.
 
-La localidad de los programas surge naturalmente de su estructura. La mayoría contiene loops, las instrucciones y los datos usados en ellos será accedido repetidamente lo que genera localidad temporal. Además, como las instrucciones del programa son accedidas secuencialmente se tiene localidad espacial.
+La localidad de los programas surge naturalmente de su estructura. La mayoría contiene loops, osea que las instrucciones y los datos usados en ellos será accedido repetidamente lo que genera localidad temporal. Además, como son accedidas secuencialmente se tiene localidad espacial.
 
 \subsection{Jerarquías de memoria}
-Para aprovechar estos principios se implementan la memoria de una computadora como una \textbf{jerarquía de memoria}. Está consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientas más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata proveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
+Para aprovechar estos principios, se implementa la memoria de una computadora como una \textbf{jerarquía}. Ésta, consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientas más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata prooveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
 
 En la actualidad, hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoría principal es implementada con DRAM (Dynamic Random Acces Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Acces Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
 
@@ -394,7 +385,7 @@ Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos 
 
 \paragraph{Miss:} Cuando la información debe ser buscada en el nivel inferior de la jerarquía.
 
-\paragraph{Hit Rate:} La fracción de accesos a memoria encontrados en cada de la jerarquía. A menudo es usado como medida de rendimiento de la misma.
+\paragraph{Hit Rate:} La fracción de accesos a memoria encontrados en cada nivel1 de la jerarquía. A menudo es usado como medida de rendimiento de la misma.
 
 \paragraph{Miss Rate: } 1 - hit rate (para cada nivel)
 
@@ -423,31 +414,31 @@ Hay dos tipos de memoria:
 	\begin{itemize}
 		\item \textbf{Dinámicas (DRAM):} Almacenan la información en forma de una carga en un capacitor y la sostiene durante un breve lapso de tiempo con la ayuda de un transistor.
 		
-		Para guardar la información, se activa el transistor que aplica el voltaje apropiado a la linea del bit. Una vez cargado, el capacitor, se desactiva. 
+		Para guardar la información se activa el transistor que aplica el voltaje apropiado a la linea del bit. Una vez cargado el capacitor, se desactiva. 
 		
 		Después de un tiempo, la carga del capacitor (que se empieza a descargar) llega a un determinado threshold y en necesario volver a activar el transistor para cargar la información otra vez (si había un uno).
 		
 		Durante una operación de lectura, los capacitores de la celda seleccionada son activados y descargados completamente. En este caso, un amplificador detecta los valores leídos y aplica voltaje a las lineas de bits necesarias para volver a cargar
  		los capacitores necesarios. Esto aumenta el tiempo de acceso a la celda ya que no se puede liberar la operación hasta no haber repuesto el estado de carga de cada uno de ellos.
- 		\item \textbf{Estáticas (SRAM):} Almacenan la información en un biestable. Una celda se compone de seis transitores (por lo que tienen menos capacidad por componente que las dinámicas)
+ 		\item \textbf{Estáticas (SRAM):} Almacenan la información en un biestable. Una celda se compone de seis transitores (por lo que tienen menos capacidad por componente que las dinámicas).
  		
  		Tres de los seis transistores están saturados (conducen la máxima corriente posible de forma permanente) y los otros tres están al corte (conducen una corriente prácticamente insignificante pero no nula). Esto genera un mayor consumo de energía por celda.
  		
- 		La lectura es directa y no destructiva, lo que se traduce en un tiempo de acceso bajo en comparación con las memorias dinámicas.
+ 		La lectura es directa y no destructiva lo que se traduce en un tiempo de acceso bajo en comparación con las memorias dinámicas.
 	\end{itemize}
 
 \end{itemize}
 
 \newpage
 \section{Memoria Caché}
-Los niveles de caché son bancos de SRAM de muy alta velocidad, que contienen una copia de los datos e instrucciones que están en memoria principal. Éstos deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos de memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
+Los niveles de caché son bancos de SRAM de muy alta velocidad que contienen una copia de los datos e instrucciones que están en memoria principal. Éstos, deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos en memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
 
-Para implementar estas memorias, se debe agregar un controlador que se encarga de mantener la caché actualizada y de indicarle que datos debe mandar al procesador.
+Para implementar estas memorias se debe agregar un controlador que se encarga de mantener la caché actualizada y de indicarle que datos debe mandar al procesador.
 
 \subsection{Operción de lectura}
 \begin{itemize}
-	\item El procesador inicial un ciclo de lectura de memoria, envía la dirección necesaria al controlador de caché.
-	\item El controlador, busca la dirección en el directorio de la caché.
+	\item El procesador inicia un ciclo de lectura de memoria, envía la dirección necesaria al controlador de caché.
+	\item El controlador busca la dirección en el directorio de la caché.
 	\begin{itemize}
 		\item Si hay un \textbf{hit}, busca el ítem en la memoria caché y lo envía al procesador.
 		\item Si hay un \textbf{miss},  busca el ítem en el sistema de memoria y lo copia en la caché. Actualiza el directorio de la misma y después manda la data al procesador.
@@ -514,20 +505,20 @@ Dependiendo del sistema (si hay una sola CPU o más de una) se utilizan distinta
 \begin{itemize}
 	\item \textbf{Write through:} Cada vez que hay que hay que modificar una dirección, el procesador manda el dato tanto a memoria príncipal como al controlador de la caché y se realiza la escritura en ambas memorias. 
 	
-	Esto garantiza coherencia entre ambos datos de manera absoluta pero penaliza cada escritura con el tiempo de acceso a DRAM. Osea, que la performance se degrada durante estas operaciones.
+	Esto garantiza coherencia entre ambos datos de manera absoluta pero penaliza cada escritura con el tiempo de acceso a DRAM. Osea que la performance se degrada durante estas operaciones.
 	
 	\item \textbf{Write through buffered:} El procesador manda la data al controlador de caché que la actualiza y sigue ejecutando instrucciones y usando datos de la misma.
 	
-	El controlador dispone de un buffer de escritura que va almacenando estas modificaciones mientras se espera qe sean escritas a memoria. Cuando la escritura finaliza, se desencola y sigue con la próxima modificación.
+	El controlador dispone de un buffer de escritura que va almacenando estas modificaciones mientras se espera a que sean escritas a memoria. Cuando la escritura finaliza, se desencola y sigue con la próxima modificación.
 	
- 	Si el buffer está lleno cuando el procesador pide una escritura, entonces se debe parar la ejecución y esperar a que tenga una entrada libre. Si bien, la ocurrencia de los stalls es reducida, estos siguen pasando.
+ 	Si el buffer está lleno cuando el procesador pide una escritura, entonces se debe parar la ejecución y esperar a que tenga una entrada libre. Si bien la ocurrencia de los stalls es reducida, estos siguen pasando.
  	
- 	\item \textbf{Copy back / Write back:} Se modifican solo las líneas de la caché y se marcan como \textbf{dirty} (modificadas). El controlador, escribe el bloque en memoria cuando debe ser remplazada por otro. 
+ 	\item \textbf{Copy back / Write back:} Se modifican solo las líneas de la caché y se marcan como \textbf{dirty} (modificadas). El controlador escribe el bloque en memoria cuando debe ser remplazada por otro. 
  	
  	Este método mejora el performance cuando el procesador puede generar escrituras tan o más rápido de lo que puede escribir en memoria. Sin embargo, es mucho más difícil de implementar.
 \end{itemize}
 
-Si el procesador realiza un miss mientras el controlador caché está accediendo a la DRAM, para actualizar el valor, deberá esperar hasta que se termine la actualización para poder acceder a la misma.
+Si el procesador realiza un miss mientras el controlador caché está accediendo a la DRAM, para actualizar el valor deberá esperar hasta que se termine la opreación para poder acceder a la misma.
 
 \subsubsection{Coherencia en sistemas multi-procesador (Snoop Bus)}
 El bus es un conjunto de cables que conecta varios dispositivos, cada uno de los cuales puede observar cada transacción del bus. Cuando un procesador emite un pedido a su caché, el controlador examina el estado de la misma y realiza las acciones adecuadas para completarlo. Esto puede generar transacciones para acceder a memoria.
@@ -562,7 +553,7 @@ Cada controlador de cache, toma la dirección enviada por el bus y chequea si ti
 	
 	El problema con este método es que se accede a memoria por cada operación de almacenamiento.
 	
-	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas, ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar, a través la validez de nuestros datos.
+	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar la validez de nuestros datos.
 \end{itemize}
 
 \subsubsection{Protocolo MESI}
@@ -577,7 +568,7 @@ En este protocolo, un bloque de memoria en la caché puede estar en cuatro estad
 
 \begin{itemize}
 	\item \textbf{Modified (M):} Es la única copia valida. La memoria principal está desactualizada y ninguna otra caché tiene una copia valida del mismo bloque.
-	\item \textbf{Exclusive (E):} Esa caché es la única que contiene una copia de ese bloque. Además, esa copia, no está modificada.
+	\item \textbf{Exclusive (E):} Esa caché es la única que contiene una copia de ese bloque. Además, esa copia no está modificada.
 	\item \textbf{Shared (S):} Está presente en esa caché sin ninguna modificación, la memoria principal está actualizada y puede haber otra caché que también lo tenga.
 	\item \textbf{Invalid (I):} No está presente en la caché o contiene información desactualizada.
 \end{itemize}
@@ -586,9 +577,9 @@ En este protocolo, un bloque de memoria en la caché puede estar en cuatro estad
 Supongamos que el procesador necesita leer un bloque de memoria, entonces produce un processor read (\textbf{PR}):
 \begin{itemize}
 	\item Si el bloque esta en caché (\textbf{Modified}, \textbf{Exclusive} o \textbf{Shared}), se resuelve el pedido.
-	\item Si el bloque es \textbf{Invalid}, entonces se genera un busRead (\textbf{BR}) y todas las cachés responden con una señal indicando si tienen o no una copia del valor pedido:
+	\item Si el bloque es \textbf{Invalid} entonces se genera un busRead (\textbf{BR}) y todas las cachés responden con una señal indicando si tienen o no una copia del valor pedido:
 	\begin{itemize}
-		\item Si no está en ninguna otra caché, entonces se lo carga en modo \textbf{Exclusive} desde memoria principal.
+		\item Si no está en ninguna otra caché, se lo carga en modo \textbf{Exclusive} desde memoria principal.
 		\item Si lo tiene alguna otra, se copia el bloque en modo \textbf{shared} después de haber tomado las medidas necesarias para mantener la consistencia. Si la otra caché lo tiene:
 		\begin{itemize}
 			\item En modo \textbf{Exclusive}, se lo pasa a estado \textbf{Shared}.
@@ -598,20 +589,21 @@ Supongamos que el procesador necesita leer un bloque de memoria, entonces produc
 	\end{itemize}
 \end{itemize}
 
-\paragraph{Escritura de un bloque:} Ahora, para escribir en un bloque, el procesador primero debe asegurarse que es el único con permisos de escritura, entonces:
+\paragraph{Escritura de un bloque:} Para escribir en un bloque, el procesador primero debe asegurarse que es el único con permisos de escritura, entonces:
 
 \begin{itemize}
 	\item Si el dato está en caché en modo \textbf{Modified} o \textbf{Exclusive}, genera un processor write (\textbf{PW}) y se modifica la caché. En el segundo caso, se pasa al estado \textbf{Modified}.
 	\item Si está en \textbf{Invalid} ó \textbf{Shared}:
 	\begin{itemize}
-		\item Genera un Processor Request For Ownership (\textbf{PRFO}). Esto hace que todas las otras cachés invaliden sus copias del bloque.
+		\item Genera un Processor Request For Ownership (\textbf{PRFO}), pasa el bloque a estado \textbf{Exlusive} y todas las otras cachés invaliden sus copias.
 		\item Luego, genera el proccesor write (\textbf{PW}), realiza las modificaciones y pasa el bloque a \textbf{Modified}
 	\end{itemize}
 \end{itemize}
 \newpage
 \part{Procesadores Intel}
-\section{The microarhchitecture of the Pentium 4 Processor (Netburst microarchitecture)}
+\section{The microarhchitecture of the Pentium 4 Processor}
 
+\subsection{Netburst microarchitecture}
 La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
 
 \begin{figure}[ht]
@@ -624,13 +616,13 @@ La microarquitectura de este procesador se puede separar en 4 grandes bloques: F
 	\centering
 	\includegraphics[width=0.8\textwidth]{imagenes/p4-architecture}
 	\caption{Architectura del procesador}
-	\label{fig:p4DiagramaBasico}
+	\label{fig:p4DiagramaCompleto}
 \end{figure}
 
 \subsection{Front end}
 Se dedica al fetcheo y decodificación de instrucciones y la predicción de saltos. Esta compuesto por:
-\subsubsection*{Instruction Translation Lookaside Buffer (TLB)}
-Traduce las direcciones lineales del puntero de instrucciones en las direcciones físicas necesarias para acceder a la caché L2. Además, realizar los chequeos de permisos de paginación.
+\subsubsection*{Instruction Translation Lookaside Buffer (ITLB)}
+Traduce las direcciones lineales del puntero de instrucciones en las direcciones físicas necesarias para acceder a la caché L2. Además, realiza los chequeos de permisos de paginación.
 
 \subsubsection*{Front end Branch Target Buffer}
 Fetchea las instrucciones IA-32 que deben ser ejecutadas de la caché L2. El uso de Branch Prediction permite al procesador comenzar a fetchear y ejecutar instrucciones mucho antes de que el outcome de las ramificaciones sea averiguado.
@@ -641,7 +633,7 @@ Si una rama no se encuentra en el BTB, el hardware de predicciones decide que ha
 Recibe las instrucciones IA-32 desde la caché L2 y las decodifica en primitivas (llamadas micro-operaciones). Una vez decodificadas, si la instrucción consiste en menos de 4 micro-operaciones, entonces es almacenada en la \textbf{Trace Caché}. Sino es enviada a la \textbf{microcode ROM}.
 
 \subsubsection*{Trace Caché} 
-Es la caché de instrucciones primaria o de Nivel 1 (\textbf{L1}) donde se guardan ya decodificadas. La mayoría de las instrucciones son fetcheadas y ejecutadas desde esta caché. Solo cuando hay un caché miss, la microarquitectura, fetchea y decodifica desde la instrucciones desde la caché \textbf{L2}.
+Es la caché de instrucciones primaria o de Nivel 1 (\textbf{L1}) donde, éstas, se guardan ya decodificadas. La mayoría de las instrucciones son fetcheadas y ejecutadas desde esta caché. Solo cuando hay un caché miss, la microarquitectura fetchea y decodifica desde la instrucciones desde la caché \textbf{L2}.
 	
 Las instrucciones IA-32 tienen un número variable de bits y muchas opciones. La lógica de decodificación necesita tener en cuenta esto y convertirlas en micro-operaciones que la máquina sepa como ejecutar. Esto se hace especialmente difícil cuando se tratan de decodificar varias instrucciones en un único ciclo de reloj de alta frecuencia.
 	
@@ -651,21 +643,21 @@ El cacheo de las micro operaciones permite, a la microarquitectura, evitar el us
 	
 La caché toma las micro-operaciones decodificadas y las ensambla en secuencias ordenadas llamadas trazas (\textbf{traces}). El orden es el mismo en el que ocurrirían si el programa fuese ejecutado secuencialmente. Esto permite que el target de los branch sean incluidos en la misma linea de traza incluso si estan separados por miles de bytes en el programa.
 
-La caché tiene su propio BTB (TBTB) para predecir cual es la próxima micro-operación a ser ejecutada. Esta es más chica que la BTB principal ya que solo debe realizar predicciones sobre el subset de instrucciones presentes en la caaché.
+La caché tiene su propio BTB (TBTB) para predecir cual es la próxima micro-operación a ser ejecutada. Esta es más chica que la BTB principal ya que solo debe realizar predicciones sobre el subset de instrucciones presentes en la caché.
 \subsubsection*{Microcode ROM}
 Esta ROM es usada para instrucciones IA-32 complejas como mover strings y para manejar faults e interrupciones.
 
-Cuando se encuentra una instrucción IA-32 compleja, la Trace Chache llama a esta ROM que emite las micro-operaciones necesarias para ejecutarla. Cuando termina de hacer esto, el control vuelve al Trace Caché.
+Cuando se encuentra una instrucción IA-32 compleja, la Trace Chache la llama y, ésta, emite las micro-operaciones necesarias para ejecutarla. Cuando termina de hacer esto, el control vuelve al Trace Caché.
 
-Las micro-operaciones que provienen de la caché y la microcode ROM son encoladas en un buffer ordenado, lo que ayuda a suavizar el flujo de micro-operaciones al Out-Of-Order Engine.
+Las micro-operaciones que provienen de la caché y la microcode ROM son encoladas en un buffer ordenado (\textbf{uop queue}), lo que ayuda a suavizar el flujo de micro-operaciones al Out-Of-Order Engine.
 
 \subsection{Out-of-order engine}
-Reordena las instrucciones para que sean ejecutadas apenas todos sus operandos estén listos. Y se encarga de presentar el estado correcto al front end cuando es necesario modificarlo.
+Reordena las instrucciones para que sean ejecutadas apenas todos sus operandos estén listos y se encarga de presentar el estado correcto al front end cuando es necesario modificarlo.
 
-El procesador inte encontrar tantas instrucciones como sea posible ejecutar cada ciclo de reloj. El motor fuera de orden ejecutará todas aquellas que estén listas para ser ejecutadas incluso si no lo hacen en el orden original del programa.
+El procesador intenta encontrar tantas instrucciones como sea posible ejecutar cada ciclo de reloj. El motor fuera de orden ejecutará todas aquellas que estén listas para ser ejecutadas incluso si no lo hacen en el orden original del programa.
 
 \subsubsection*{Allocator (Asignador?)}
-El allocator se encarga de distribuir los recursos (entradas del archivo de registros, buffers, alus, etc)) del sistema entre las micro operaciones que deben ser ejecutadas. Si un recurso no está disponible para alguna de las micro-operaciones que llegaron desde el front end, entonces se pausa la asignación por un ciclo de reloj. Cuando todos los recursos están disponibles, entonces los asigna a las instrucciones y las despacha al pipeline para que sean ejecutadas.
+El allocator se encarga de distribuir los recursos (entradas del archivo de registros, buffers, alus, etc) del sistema entre las micro operaciones que deben ser ejecutadas. Si un recurso no está disponible para alguna de las micro-operaciones que llegaron desde el front end, se pausa la asignación por un ciclo de reloj. Cuando todos los recursos están disponibles, entonces los asigna a las instrucciones y las despacha al pipeline para que sean ejecutadas.
 
 A todas las instrucciones les asigna una entrada en el reorder buffer, lo que permite mantener un seguimiento del estado de la micro-operación, el registro donde se guardarán los resultados de la micro-operación y una entrada en alguna de las colas que se encuentran en frente del scheduler.
 
@@ -673,15 +665,14 @@ A todas las instrucciones les asigna una entrada en el reorder buffer, lo que pe
 El proceso de renombre remueve falsos conflictos causados por múltiples instrucciones independientes que necesitan de un mismo registro. Esto se logra creando varias instancias del mismo registro que indiquen quien las escribió por última vez y el valor adecuado. Ver sección \ref{ilp::superscalars::fetchDecode} 
 
 \subsubsection*{Scheduling de micro-operaciones}
-Hay dos colas FIFO, una para operaciones de memoria y otra para el resto. Se permite que cada cola sea leída en cualquier orden, lo que permite que la ventana de ejecución fuera de orden sea más grande.
+Hay dos colas FIFO, una para operaciones de memoria y otra para el resto. Las colas son atendidas en cualquier orden, lo que permite que la ventana de ejecución fuera de orden sea más grande.
 
-Los schedulers de micro-operaciones determinan cuando una micro-operación está lista para ser ejecutadas y permiten reordenarlas manteniendo las dependencias correctas. 
+Hay varios schedulers, cada uno de los cuales se encarga de processar un determinado tipo de instrucción. Cada uno de ellos determinan cuando una micro-operación está lista para ser ejecutadas y permiten reordenarlas manteniendo las dependencias correctas. 
 
-Para enviar las micro-operaciones a las ALU, existen puertos a los que se conectan múltiples schedulers. Cuando varios de ellos, tiene instrucciones listas para la ejecución, se arbitra el uso de estos puertos. 
+Luego, envian las micro-operaciones a las ALU a través de puertos especializados (dependiendo el tipo de instrucción) a los que se conectan múltiples schedulers.
 
 \subsection{Integer and Floating Point Excution Units}
-Es donde se ejecutan las instrucciones. 
-
+Es donde se ejecutan las instrucciones.
 Los registros de enteros y los de puntos flotantes se encuentran separados. Cada archivo de registros, además, está conectado a una red que permite enviar resultados completos que todavía no fueron escritos en los registros a las nuevas micro-operaciones.
 
 \subsubsection*{Low Latency Integer ALU}
@@ -691,7 +682,7 @@ Está diseñada para optimizar performance manejando los casos más comunes tan 
 Los shift, rotaciones multiplicaciones y divisiones tienen una larga latencia (ocupan varios ciclos de reloj), por esta razón son mandados a otros componentes más complejos. 
 
 \subsubsection*{Low Latency Level 1 (L1) Data Cache}
-La latencia de las operaciones de lectura es un aspecto clave en la performance del procesador. Esto es especialmente verdad para los programas del IA-32 porque hay un limitado numero de registros en el ISA. Por esta razón se agrega una pequeña caché de baja latencia que consigue su información desde una caché de segundo nivel. La L2 es más grande, tiene un gran ancho de banda y latencia media.
+La latencia de las operaciones de lectura es un aspecto clave en la performance del procesador. Esto es especialmente verdad para los programas del IA-32 porque hay un limitado numero de registros en el ISA. Por esta razón, se agrega una pequeña caché de baja latencia que consigue su información desde una caché de segundo nivel. La L2 es más grande, tiene un gran ancho de banda y latencia media.
 
 Con la alta frecuencia y la profundidad del pipeline del pentium 4, el scheduler de micro-operaciones despacha instrucciones más rapido de lo que el load puede ser ejecutado. En la mayoría de los casos, el scheduler asume que hubo en hit en la caché L1. Si la lectura genera un miss entonces habrá, en el pipeline, operaciones dependientes con información errónea que deben volver a ser ejecutadas. Para esto se utiliza un mecanismo conocido como \textbf{replay} que trackea las instrucciones durante su ejecución y, si ocurre el caso mencionado, las detiene e intenta ejecutar nuevamente. 
 
@@ -713,7 +704,134 @@ Contiene las instrucciones que hacen miss en la Trace Cache y la información qu
 A esta caché se asocia un prefetcher que monitorea los patrones de acceso a memoria y recuerda la historia de los misses para detectar flujos de datos concurrentes y rellenar la caché con información que podría ser utilizada más adelante por el programa. Además, intenta minimizar el prefetching de datos que podrían causar una sobrecarga de la memoria del sistema y provocar el delay de los accesos que el programa realmente necesita.
 
 \subsubsection*{400Mhz System Bus}
-Tiene un ancho de banda de 3.2 Gbytes por segundo, esto permite que las aplicaciones realizen data streaming desde la memoria. Tiene un protocolo que divide las transacciones y un pipeline profundo para permitir que el subsistema de memoria atienda varios accesos/escrituras simultaneamente. 
+Tiene un ancho de banda de 3.2 Gbytes por segundo, esto permite que las aplicaciones realizen data streaming desde la memoria. Tiene un protocolo que divide las transacciones y un pipeline profundo para permitir que el subsistema de memoria atienda varios accesos/escrituras simultáneamente. 
+
+\newpage
+\section{Hyper-Threading Technology Architecture and Microarchitecture}
+\subsection{Thread Level Paralellism}
+Tradicionalmente, para mejorar el perfomance, los diseñadores se enfocaban en desarrollar relojes de alta velocidad, ejecución paralela de instrucciones y caches. Sin embargo, en los últimos años, con el desarrollo del internet, se ha visto la necesidad de ejecutar varias tareas simultáneamente. Por esta razón, se han comenzado a desarrollar distintas técnicas de paralelismo a nivel thread (procesos):
+
+\begin{itemize}
+	\item \textbf{Chip multiprocessing:}
+	 Se utilizan dos procesadores. Cada uno de ellos tiene a su disposición un conjunto completo de recursos de ejecucion y arquitecturales. Pueden o no compartir una caché de primer nivel. Tiene como desventaja que el chip resultante es mas grande y consume más que un chip single-core.
+	\item\textbf{Time-slice multithreading:} Un solo procesador ejecuta múltiples threads switcheando entre ellos. El switching se haces después de un determinado período de tiempo o cuando se produce un evento de larga latencia (operaciones que tomen demasiados ciclos de reloj, como lecturas de memoria). La primer opción genera demasiado tiempo muerto que podría ser aprovechado para ejecución de instrucciones, la segunda sirve para aplicaciones de servidores que tienen un gran número de caché misses y ambos threads ejecutan tareas similares. Ninguna de ellas logra superposición optima cuando varias fuentes usan ineficientemente los recursos (branch mispredictions, instrucciones dependientes, etc).
+	\item \textbf{Simultaneous multi-threading:} Varios threads pueden ser ejecutados simultaneamente en un solo procesador sin necesidad del switching. Este método es el que mejor aprovecha los recursos del procesador y es el que implementa la arquitectura de Hyper-Threading de Intel.
+\end{itemize}
+
+\subsection{Hyper-threading technology architecture}
+
+La tecnología de hyper-threading hace que un procesador físico aparezcan como múltiples procesadores lógicos en la arquitectura. Osea que los programas y los sistemas operativos usarán los procesadores lógicos como si fuesen físicos, luego la microarquitectura se encargará de realizar la distribución de recursos necesarias entre los procesadores físicos.
+
+En chips, normales, cada procesador tiene una copia completa del estado de las arquitecturas (registros de proposito general, de control, de interrupciones y algunos de estado de la maquina). 
+
+En hyper-threading, cada procesador físico tiene una copia completas de este estado y un controlador de instrucciones programables (APIC) por cada procesador lógico que contenga.  Las cachés, unidades de ejecución, branch predictors, lógicas de control y buses son compartidas por todos ellos.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/multithreading-procesor}
+	\caption{Procesador con tecnología de hyper-threading}
+	\label{fig:xenonHyperThreadingTechnology}
+\end{figure}
+
+\subsubsection{Front-End}
+\paragraph{Execution Trace Cache (TC):}
+Por cada procesador lógico, la caché tiene un set de next-instruction-pointers que trackean independientemente el progreso de alguno de los dos threads ejecutandose. Si ambos necesitan accederla al mismo tiempo, el acceso se otorga a uno de ellos y luego al otro en ciclos de reloj alternados.
+	
+Si uno de los procesadores lógicos está \textit{stalled} o es incapaz de usar la TC, el otro puede usar la caché completamente (cada ciclo de reloj).
+
+Cada entrada de la caché tiene un tag que indica el thread al que pertenece y es2 reservada dinámicamente según sea necesario.
+
+\paragraph{Microcode ROM:} Se usan dos punteros para contolar independientemente los flujos si los dos procesadores lógicos están ejecutando instrucciones complejas. Comparten las entradas de la ROM. El acceso es alternado de la misma manera que en la trace caché.
+
+\paragraph{ITLB y Branch Prediction:} Cada procesador lógico tiene su propia ITLB y su propio conjunto de conjunto de punteros a instrucciones, esto permite trackear el progreso de fetch para cada uno de ellos.
+
+La lógica de fetch a cargo de hacer requests a las caché L2, los arbitra en orden first-come first-served manteniendo reservado un espacio para cada procesador en la cola. De esta manera, ambos procesadores lógicos pueden tener fetches pendientes simultáneamente. 
+
+Una vez fetcheadas, cada procesador lógico tiene su propio conjunto de buffers para retener las instrucciones que deben ser decodificadas.
+
+El \textit{return stack buffer}, que predice la dirección a la que debe retornar una instrucción, es duplicados ya que es las predicciones son mejores si hacen independientemente para cada thread.
+
+Cada procesador lógico tiene \textit{branch history buffer} local y los dos comparten un buffer global en el que, a cada entrada, se agrega un tag con el ID del procesador al que corresponde.
+
+\paragraph{IA-32 Instruction Decode: } Se comparte este componente. Cuando los dos threads tiene que decodificar instrucciones simultáneamente, la lógica de decodificación alterna el uso de los buffers. En general, varias instrucciones de un mismo procesador son decodificadas antes de pasar al otro.
+
+A pesar de decodificar las instrucciones de cada procesador lógico por separado, se mantiene una copia de todos los estados necesitados para decodificarlas por cada uno de ellos. 
+
+Si solo un procesador necesita usar el decodificador, se le asigna el uso completo a éste. Las instrucciones decodificadas se escriben en la Trace Caché y son forwardeadas a la cola de micro-operaciones.
+
+\paragraph{Cola de micro operaciones (uop queue):} Está particionada para que cada procesador lógico tenga la mitad de las entradas.
+
+\subsubsection{Out-of-order execution engine}
+
+\paragraph{Allocator:} Cada procesador lógico solo puede usar la mitad de entradas de los buffers principales (de reordenamiento, tracing y secuencialización).
+
+\begin{itemize}
+	\item Si ambos procesadores tienen micro-operaciones en la uop queue, el allocator las atendera alternadamente en cada ciclo de reloj.
+	\item Si uno de ellos ha alcanzado el límites de recursos que puede usar, le manda una señal para que entre en \textit{stall} hasta que libere alguno.
+	\item Si la uop queue solo contiene micro-operaciones de uno de los procesadores, el allocator lo atenderá en cada ciclo (manteniendo el limite de asignación de recursos).
+\end{itemize}
+ 
+ La límitación de recursos ayuda a la máquin, a reforzar \textbf{fairness} (uso justo) y previene deadlocks. 
+ 
+\paragraph{Register Rename}
+Dado que cada procesador lógico debe mantener y traquear su propio estado de arquitectura, hay un register alias table por cada uno. El proceso de renombre se realiza en paralelo a la asignación de recursos (mientras el allocator está trabajando) por lo que la lógica de renombre trabaja sobre las mismas micro-operaciones que el allocator.
+
+Una vez que los dos componentes mencionados terminan de procesar una operacion, ésta es ubicada en la cola correspondiente (general o de memoria) a la espera del scheduler.
+
+\paragraph{Instruction Scheduling:} 
+La cola general y la de instrucciones de memoria les envian micro-operaciones tan rapido como puedan alternando las instrucciones de ambos procesadores.
+
+Cada scheduler tiene su propia cola de scheduling. Para  asegurar fairness, cada procesador lógico puede tener un limitado número de entradas activas en éstas (este limite es independiente de su tamaño). A parte de eso, al momento de evaluar las micro-operaciones, el scheduler solo se basa en la dependencia de inputs y la disponibilidad de recursos para elegirlas.
+
+\paragraph{Execution units}
+Dado que los registros lógicos fueron renombrados a registros físicos en un achivo físico de registros compartidos, para ejecutar las microoperaciones solo es necesario acceder a éste. Por lo que las unidades de ejecución funcionan igual que antes.
+
+Después de la ejecución, las micro-operaciones son enviadas al buffer de reordenamiento que está particionado de tal manera que cada procesador lógico solo pueda la mitad de sus entradas.
+
+\paragraph{Retirement:} Cuando hay micro-operaciónes de ambos procesadores lógicos que deben ser retiradas, se  retiran las instrucciones en orden del programa altarnedamente.
+
+Si un procesador lógico no está listo para retirar ninguna instrucción, entonces se atiende completamente al otro procesador..
+
+Una vez que los almacenamientos han sido retirados, deben ser escritos en la caché L1 del procesador físico. Para esto, se commite en caché atendiendo alternadamente a cada procesador lógico.
+
+\subsubsection{Subsistema de memoria}
+
+\paragraph{Direction Tranlation Lookaside Buffer (DTLB):} Traduce direcciones a direcciones físicas. Es compartido. Cada entrada incluye el ID del procesador lógico a la que está asignada. Además, cada uno de ellos, tienen reservado un registro para asegurar fairness y progreso al procesar los DTLB misses.
+
+\paragraph{L1, L2 y L3 Data Caches:}
+Son cachés asociativas con líneas de 128-bytes. Los dos procesadores lógicos comparten todas sus entradas.
+
+Las caches son ajenas a la lógica de multithreading. Esto puede llegar a potenciales conflictos lo que podría resultar en un deterioro del performance. Sin embargo, tambien existe la posibilidad de que uno de los procesadores pida información que el otro quiera usar. En estos casos, el performance se ve benificiado.
+
+\paragraph{Bus:} Incluye al controlador de interrupciones programables (APIC) local.
+La cola de requests y los buffer de espacios son compartidos. Los request al APIC local y los recursos de envío de interrupciones son únicos para cada procesador lógico. Las requests de cada uno de ellos es distinguida con un tag pero no se les da ningun tipo de prioridad.
+
+\subsection{Modos Single-Task y Multi-Task}
+\begin{itemize}
+	\item \textbf{Multi-Task Mode (MT):} Los dos procesadores lógicos se encuentran activos y los recursos compartidos se dividen como fue descrito anteriormente.
+	\item \textbf{Single-Task Mode (ST):} Solo un procesador lógico está activo y los recursos que habían sido particionados en modo multi task son completamentes asignados a éste.
+\end{itemize}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/single-multi-task-modes}
+	\caption{Asignación de recursos para los distintos modos}
+	\label{fig:xenonSingleMultiTaskModes}
+\end{figure}
+La arquitectura IA-32 tiene una instrucción llamada HALT que para la ejecución de un procesador y le permite entra en modo de bajo consumo. Ésta es una instrucción prilegiada, es decir, solo pueden ejecutarla el sistema operativos y procesos de privilegio 0.
+
+En un procesador con tecnología de hyper-threading, HALT transiciona de modo MT a ST0 o ST1 dependiendo de en que procesador lógico se halla ejecutado la instrucción. Si fue ejecutada por el procesador 0, entonces solo queda activo el 1 y viceversa.
+
+Si se envía una interrupción a un procesador halteado entonces se vuelve a modo MT.
+
+\subsection{Sistemas operativos y aplicaciones}
+El sistema operativo se debe encargar de implementar dos optimizaciones para obtener el mejor rendimiento posible.
+
+La primera es usar la instrucción HALT si uno de los procesadores lógicos está activo y el otro no. Un sistema operativo que no use esta optimización hará que el procesador que no se encuentra en uso entre en un idle-loop durante el cual se ejecutaran instrucciones para chequear si hay trabajo para hacer Este loop puede llegar a consumir una cantidad significante de recursos de ejecución que podrían estar siendo usados por el procesador lógico activo.
+
+La segunda optimización, es que al momento de realizar el scheduling de threads, primero debería mandarlos a procesadores físicos distintos. Cuando esto ya no sea posible, recién ahí comenzar a usar los procesadores lógicos.
+
+\newpage
+\section{The Intel Pentium M Processor Michorarchitecture and Perfomance}
 \newpage
 \part*{Bibliografía}
 \nocite{*}
