@@ -1,0 +1,478 @@
+\part{Procesadores Intel}
+Esta parte son los papers resumidos. Todos describen (a medias) técnicas que fueron implementadas por intel en alguno de sus procesadores y cual era su objetivo al implementarla (básicamente, conseguir el mejor balance posible entre rendimiento y consumo de energía). A veces, saltan con coneptos nuevos que nunca definen en ningún lado (y para los que google no ayuda mucho). En estos casos, dependiendo que tan claro sean, tenemos dos opciones:
+\begin{enumerate}
+	\item Asumir su significado y rogar a [dios/furfaro/quien sea que haya que rogarle] que estemos en lo correcto.
+	\item Hacer como que la palabra no existe, pasar al siguiente párrafo y rogar a [dios/furfaro/quien sea que haya que rogarle] que justo eso no sea importante para el final.
+\end{enumerate}
+
+Teniendo en cuenta esto, leer estos resumenes a discreción.
+
+\section{Netburst microarchitecture (Pentium 4, paper \cite{Sager01themicroarchitecture})}
+La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.35\textwidth]{imagenes/p4-block-architecture}
+	\caption{Diagrama básico}
+	\label{fig:p4DiagramaBasico}
+\end{figure}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.8\textwidth]{imagenes/p4-architecture}
+	\caption{Architectura del procesador}
+	\label{fig:p4DiagramaCompleto}
+\end{figure}
+
+\subsection{Front end}
+Se dedica al fetcheo y decodificación de instrucciones y la predicción de saltos. Esta compuesto por:
+\subsubsection*{Instruction Translation Lookaside Buffer (ITLB)}
+Traduce las direcciones lineales del puntero de instrucciones en las direcciones físicas necesarias para acceder a la caché L2. Además, realiza los chequeos de permisos de paginación.
+
+\subsubsection*{Front end Branch Target Buffer}\label{sec::Intel::Netburst::frontEnd::btb}
+Fetchea las instrucciones IA-32 que deben ser ejecutadas de la caché L2. El uso de Branch Prediction permite al procesador comenzar a fetchear y ejecutar instrucciones mucho antes de que el outcome de las ramificaciones sea averiguado.
+	
+Si una rama no se encuentra en el BTB, el hardware de predicciones decide que hacer dependiendo el desplazamiennto de la rama (\textbf{forward} o \textbf{backward}). Backwards branches se asumen Taken y Forward Branches se asumen Not-Taken.
+
+\subsubsection*{IA-32 Instruction Decoder}
+Recibe las instrucciones IA-32 desde la caché L2 y las decodifica en primitivas (llamadas micro-operaciones). Una vez decodificadas, si la instrucción consiste en menos de 4 micro-operaciones, entonces es almacenada en la \textbf{Trace Caché}. Sino es enviada a la \textbf{microcode ROM}.
+
+\subsubsection*{Trace Caché} 
+Es la caché de instrucciones primaria o de Nivel 1 (\textbf{L1}) donde se guardan ya decodificadas en forma de micro-operaciones. Una vez almacenadas, cada micro-op, puede ser usada repetidamene cono si fuese una caché de instrucciones convencional.
+
+Las instrucciones IA-32 tienen un número variable de bits y muchas opciones. La lógica de decodificación necesita tener en cuenta esto y convertirlas en micro-operaciones que la máquina sepa como ejecutarlas. Esto se hace especialmente difícil cuando se tratan de decodificar varias instrucciones en un único ciclo de reloj de alta frecuencia. Además, cuando la predicción de un branch es errónea, el tiempo de recuperación es mucho más corto si la máquina no tiene que re-decodificarlas para reanudar la ejecución en el lugar correcto.
+	
+El cacheo de las micro-operaciones permite, a la microarquitectura, evitar el uso decodificador de instrucciones IA-32 durante gran parte de la ejecución.
+
+La caché ensambla las micro-ops en secuencias llamadas trazas (\textbf{traces}) que respetan el orden de ejecución predecido del programa. Esto permite que el target de los branch sean incluidos en la misma linea de traza incluso si estan separados por miles de bytes en el programa. Así, tanto el target como el branch, pueden ser enviados al motor fuera-de-orden al mismo tiempo.
+
+La mayoría de las instrucciones son fetcheadas y ejecutadas desde esta caché. Solo cuando hay un caché miss, la microarquitectura fetchea y decodifica la instrucciones desde la caché \textbf{L2}.
+
+La caché tiene su propio BTB (TBTB) para predecir cual es la próxima micro-operación a ser ejecutada. Esta es más chica que la BTB principal ya que solo debe realizar predicciones sobre el subset de instrucciones presentes en la caché.
+
+\subsubsection*{Microcode ROM}
+Esta ROM es usada para instrucciones IA-32 complejas como mover strings y para manejar faults e interrupciones.
+
+Cuando se encuentra una instrucción IA-32 compleja, la Trace Chache la llama y, ésta, emite las micro-operaciones necesarias para ejecutarla. Cuando termina de hacer esto, el control vuelve al Trace Caché.
+
+Las micro-operaciones que provienen de la caché y la microcode ROM son encoladas en un buffer ordenado (\textbf{uop queue}), lo que ayuda a suavizar el flujo de micro-operaciones al Out-Of-Order Engine.
+
+\subsection{Out-of-order engine}
+Reordena las instrucciones para que sean ejecutadas apenas todos sus operandos estén listos y se encarga de presentar el estado correcto al front end cuando es necesario modificarlo. Su principal tarea es extraer paralelismo del flujo de instrucciones preservando la semántica de ejecución correcta del programa. Esto lo logra reordenando el orden de ejecución las micro-operaciones de acuerdo a sus dependencias y las disponibilidad de sus operandos.
+
+
+\subsubsection*{Allocator (Asignador de recursos)}
+El allocator se encarga de distribuir los recursos (entradas del archivo de registros, buffers, alus, etc) del sistema entre las micro operaciones que deben ser ejecutadas. Si un recurso no está disponible para alguna de las micro-operaciones que llegaron desde el front end, se pausa la asignación por un ciclo de reloj. Cuando todos los recursos están disponibles, entonces los asigna a las instrucciones y las despacha al pipeline para que sean ejecutadas.
+
+A todas las instrucciones les asigna una entrada en el reorder buffer, lo que permite mantener un seguimiento del estado de la micro-operación, el registro donde se guardarán los resultados de la micro-operación y una entrada en alguna de las colas que se encuentran en frente del scheduler.
+
+\subsubsection*{Register Renaming}
+El proceso de renombre remueve falsos conflictos causados por múltiples instrucciones independientes que necesitan de un mismo registro. Esto se logra creando varias instancias del mismo registro que indiquen quien las escribió por última vez y el valor adecuado. Ver sección \ref{ilp::superscalars::fetchDecode} 
+
+\subsubsection*{Scheduling de micro-operaciones}
+Hay dos colas FIFO, una para operaciones de memoria y otra para el resto. Las colas son atendidas en cualquier orden, lo que permite que la ventana de ejecución fuera de orden sea más grande.
+
+Hay varios schedulers, cada uno de los cuales se encarga de processar un determinado tipo de instrucción. Cada uno de ellos puede determina cuando una micro-operación está lista para ser ejecutadas trackeando sus registros de entrada. Cuando los operandos fueron generados, se considera que la micro-operación está lista para ser ejecutada. Entonces, el scheduler, agrega a la cola de ejecución la micro-operación en el momento en que los recursos necesarios estén disponibles.
+
+El scheduler detecta los flujos de ejecución independientes en una secuencia de micro-operaciones y permite que sean ejecutados paralelamente sin importar su orden general.
+
+Los scedulers, están conectados a distintos puertos de despachos que envían las instrucciones a sus respectivas unidades de ejecución.
+
+\subsection{Integer and Floating Point Excution Units}
+Es donde se ejecutan las instrucciones.
+Los registros de enteros y los de puntos flotantes se encuentran separados. Cada archivo de registros, además, está conectado a una red que permite enviar resultados completos que todavía no fueron escritos en los registros a las nuevas micro-operaciones.
+
+\subsubsection*{Low Latency Integer ALU}
+Está diseñada para optimizar performance manejando los casos más comunes tan rápido como sea posible. Es capaz de completar operaciones en medio ciclo del reloj principal. Aproximadamente el 60-70\% de las micro-operaciones de enteros pasan por esta ALU. Ejecutandolas a la mitad de la latencia del clock principal ayuda a acelerar la ejecución de la mayoría de los programas.
+
+\subsubsection*{Complex Integer Operation}
+Los shift, rotaciones multiplicaciones y divisiones tienen una larga latencia (ocupan varios ciclos de reloj), por esta razón son mandados a otros componentes más complejos. 
+
+\subsubsection*{Low Latency Level 1 (L1) Data Cache}
+La latencia de las operaciones de lectura es un aspecto clave en la performance del procesador. Esto es especialmente verdad para los programas del IA-32 porque hay un limitado numero de registros en el ISA. Por esta razón, se agrega una pequeña caché de baja latencia que consigue su información desde una caché de segundo nivel. La L2 es más grande, tiene un gran ancho de banda y latencia media.
+
+Con la alta frecuencia y la profundidad del pipeline del pentium 4, el scheduler de micro-operaciones despacha instrucciones más rapido de lo que el load puede ser ejecutado. En la mayoría de los casos, el scheduler asume que hubo en hit en la caché L1. Si la lectura genera un miss entonces habrá, en el pipeline, operaciones dependientes con información errónea que deben volver a ser ejecutadas. Para esto se utiliza un mecanismo conocido como \textbf{replay} que trackea las instrucciones durante su ejecución y, si ocurre el caso mencionado, las detiene e intenta ejecutar nuevamente. 
+
+\subsubsection*{Store-To-Load Forwarding}\label{sec::Intel::NetBurst::FrontEnd::Forwarding}
+Los datos son escritos en la caché L1 en el orden programático y solo cuando se puede garantizar que el valor es no-especulativo. Es decir, todas las operaciones anteriores a la isntrucción de almacenamiento deben haber sido completadas antes de que sea commiteado. Debido a la profunidad del pipeline, esto puede tomar varios ciclos de reloj.
+
+A menudo, nuevas instrucciones deben hacer del dato que se está reteniendo y hacerlas esperar hasta que estén en la caché deterioraría el performance del pipeline. Por esta razón, se utiliza un buffer de escrituras pendientes (\textbf{pending store buffer} o \textbf{store forwading buffer}, SFB) que permite que los resultados que todavía no fueron escritos en cache sean utilizados por ellas. Este proceso es llamado \textbf{store-to-load forwarding}.
+
+Cuando una instrucción necesita un dato, en paralelo con el acceso a caché, se reliza una comparación partial de la dirección con todas las entradas en el SFB. Si alguna matchea con la dirección parcial, entonces se carga la información desde el buffer en vez de usar la caché. Se utiliza una comparación parcial para que la latencia del mecanismo sea la misma que la del lookup de la caché.
+
+Mas adelante en el pipeline, un \textbf{Memory Ordering Buffer} debe asegurar que el dato forwardeado provenga de la escritura más reciente. En caso que el forwarding sea incorrecto, entonces la lectura debe ser ejecutada otra vez después de que todos los writes de los que depende hayan sido guardados en caché.
+
+El forwarding puede ser realizado solo cuando se cumplen las siguientes condiciones:
+\begin{itemize}
+	\item El load utiliza la misma dirección que haya sido completado pero todavía no commiteado en caché (osea que se encuentre en store forwading buffer).
+	\item El dato pedido deber ser del mismo tamaño o más chico que el del store pendiente e iniciar en la misma dirección.
+\end{itemize}
+
+Si la información pedida por el load se superpone parcialmente con la información del store o necesita hacer uso de más de dos stores pendientes, entonces el forwarding no se permite y  la instrucción debe conseguir su data desde la caché luego de que las operaciones pendientes sean commiteadas.
+
+
+\subsubsection*{FP/SSE Execution Units}
+Es donde se ejecutan las operacion de punto flotante, MMX, SSE y SSE2.
+\subsection{Memory Subsysten}
+El sistema de memoria, compuesto por una caché L2 y el bus del sistema.
+
+\subsubsection*{Level 2 Instruction and Data Cache}
+Contiene las instrucciones que hacen miss en la Trace Cache y la información que produce un miss en la cache L1. Es una caché asociativa de 8 vías y usa un algoritmo write-back para escribir las modificaciones en memoria.
+
+A esta caché se asocia un prefetcher que monitorea los patrones de acceso a memoria y recuerda la historia de los misses para detectar flujos de datos concurrentes y rellenar la caché con información que podría ser utilizada más adelante por el programa. Además, intenta minimizar el prefetching de datos que podrían causar una sobrecarga de la memoria del sistema y provocar el delay de los accesos que el programa realmente necesita.
+
+\subsubsection*{400Mhz System Bus}
+Tiene un ancho de banda de 3.2 Gbytes por segundo, esto permite que las aplicaciones realizen data streaming desde la memoria. Tiene un protocolo que divide las transacciones y un pipeline profundo para permitir que el subsistema de memoria atienda varios accesos/escrituras simultáneamente. 
+
+\newpage
+\section{Thread Level Paralelism (Procesadores Xenon, paper \cite{marr02threads})}
+
+Tradicionalmente, para mejorar el perfomance, los diseñadores se enfocaban en desarrollar relojes de alta velocidad, ejecución paralela de instrucciones y caches. Sin embargo, en los últimos años, con el desarrollo del internet, se ha visto la necesidad de ejecutar varias tareas simultáneamente. Por esta razón, se han comenzado a desarrollar distintas técnicas de paralelismo a nivel thread (procesos):
+
+\begin{itemize}
+	\item \textbf{Chip multiprocessing:}
+	 Se utilizan dos procesadores. Cada uno de ellos tiene a su disposición un conjunto completo de recursos de ejecucion y arquitecturales. Pueden o no compartir una caché de primer nivel. Tiene como desventaja que el chip resultante es mas grande y consume más que un chip single-core.
+	\item\textbf{Time-slice multithreading:} Un solo procesador ejecuta múltiples threads switcheando entre ellos. El switching se haces después de un determinado período de tiempo o cuando se produce un evento de larga latencia (operaciones que tomen demasiados ciclos de reloj, como lecturas de memoria). La primer opción genera demasiado tiempo muerto que podría ser aprovechado para ejecución de instrucciones, la segunda sirve para aplicaciones de servidores que tienen un gran número de caché misses y ambos threads ejecutan tareas similares. Ninguna de ellas logra superposición optima cuando varias fuentes usan ineficientemente los recursos (branch mispredictions, instrucciones dependientes, etc).
+	\item \textbf{Simultaneous multi-threading:} Varios threads pueden ser ejecutados simultaneamente en un solo procesador sin necesidad del switching. Este método es el que mejor aprovecha los recursos del procesador y es el que implementa la arquitectura de Hyper-Threading de Intel.
+\end{itemize}
+
+\subsection{Hyper-threading technology architecture}
+
+La tecnología de hyper-threading hace que un procesador físico aparezcan como múltiples procesadores lógicos en la arquitectura. Osea que los programas y los sistemas operativos usarán los procesadores lógicos como si fuesen físicos, luego la microarquitectura se encargará de realizar la distribución de recursos necesarias entre los procesadores físicos.
+
+En chips, normales, cada procesador tiene una copia completa del estado de las arquitecturas (registros de proposito general, de control, de interrupciones y algunos de estado de la maquina). 
+
+En hyper-threading, cada procesador físico tiene una copia completas de este estado y un controlador de instrucciones programables (APIC) por cada procesador lógico que contenga.  Las cachés, unidades de ejecución, branch predictors, lógicas de control y buses son compartidas por todos ellos.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/multithreading-procesor}
+	\caption{Procesador con tecnología de hyper-threading}
+	\label{fig:xenonHyperThreadingTechnology}
+\end{figure}
+
+\subsubsection{Front-End}
+\paragraph{Execution Trace Cache (TC):}
+Por cada procesador lógico, la caché tiene un set de next-instruction-pointers que trackean independientemente el progreso de alguno de los dos threads ejecutandose. Si ambos necesitan accederla al mismo tiempo, el acceso se otorga a uno de ellos y luego al otro en ciclos de reloj alternados.
+	
+Si uno de los procesadores lógicos está \textit{stalled} o es incapaz de usar la TC, el otro puede usar la caché completamente (cada ciclo de reloj).
+
+Cada entrada de la caché tiene un tag que indica el thread al que pertenece y es2 reservada dinámicamente según sea necesario.
+
+\paragraph{Microcode ROM:} Se usan dos punteros para contolar independientemente los flujos si los dos procesadores lógicos están ejecutando instrucciones complejas. Comparten las entradas de la ROM. El acceso es alternado de la misma manera que en la trace caché.
+
+\paragraph{ITLB y Branch Prediction:} Cada procesador lógico tiene su propia ITLB y su propio conjunto de conjunto de punteros a instrucciones, esto permite trackear el progreso de fetch para cada uno de ellos.
+
+La lógica de fetch a cargo de hacer requests a las caché L2, los arbitra en orden first-come first-served manteniendo reservado un espacio para cada procesador en la cola. De esta manera, ambos procesadores lógicos pueden tener fetches pendientes simultáneamente. 
+
+Una vez fetcheadas, cada procesador lógico tiene su propio conjunto de buffers para retener las instrucciones que deben ser decodificadas.
+
+El \textit{return stack buffer}, que predice la dirección a la que debe retornar una instrucción, es duplicados ya que es las predicciones son mejores si hacen independientemente para cada thread.
+
+Cada procesador lógico tiene \textit{branch history buffer} local y los dos comparten un buffer global en el que, a cada entrada, se agrega un tag con el ID del procesador al que corresponde.
+
+\paragraph{IA-32 Instruction Decode: } Se comparte este componente. Cuando los dos threads tiene que decodificar instrucciones simultáneamente, la lógica de decodificación alterna el uso de los buffers. En general, varias instrucciones de un mismo procesador son decodificadas antes de pasar al otro.
+
+A pesar de decodificar las instrucciones de cada procesador lógico por separado, se mantiene una copia de todos los estados necesitados para decodificarlas por cada uno de ellos. 
+
+Si solo un procesador necesita usar el decodificador, se le asigna el uso completo a éste. Las instrucciones decodificadas se escriben en la Trace Caché y son forwardeadas a la cola de micro-operaciones.
+
+\paragraph{Cola de micro operaciones (uop queue):} Está particionada para que cada procesador lógico tenga la mitad de las entradas.
+
+\subsubsection{Out-of-order execution engine}
+
+\paragraph{Allocator:} Cada procesador lógico solo puede usar la mitad de entradas de los buffers principales (de reordenamiento, tracing y secuencialización).
+
+\begin{itemize}
+	\item Si ambos procesadores tienen micro-operaciones en la uop queue, el allocator las atendera alternadamente en cada ciclo de reloj.
+	\item Si uno de ellos ha alcanzado el límites de recursos que puede usar, le manda una señal para que entre en \textit{stall} hasta que libere alguno.
+	\item Si la uop queue solo contiene micro-operaciones de uno de los procesadores, el allocator lo atenderá en cada ciclo (manteniendo el limite de asignación de recursos).
+\end{itemize}
+ 
+ La límitación de recursos ayuda a la máquin, a reforzar \textbf{fairness} (uso justo) y previene deadlocks. 
+ 
+\paragraph{Register Rename}
+Dado que cada procesador lógico debe mantener y traquear su propio estado de arquitectura, hay un register alias table por cada uno. El proceso de renombre se realiza en paralelo a la asignación de recursos (mientras el allocator está trabajando) por lo que la lógica de renombre trabaja sobre las mismas micro-operaciones que el allocator.
+
+Una vez que los dos componentes mencionados terminan de procesar una operacion, ésta es ubicada en la cola correspondiente (general o de memoria) a la espera del scheduler.
+
+\paragraph{Instruction Scheduling:} 
+La cola general y la de instrucciones de memoria les envian micro-operaciones tan rapido como puedan alternando las instrucciones de ambos procesadores.
+
+Cada scheduler tiene su propia cola de scheduling. Para  asegurar fairness, cada procesador lógico puede tener un limitado número de entradas activas en éstas (este limite es independiente de su tamaño). A parte de eso, al momento de evaluar las micro-operaciones, el scheduler solo se basa en la dependencia de inputs y la disponibilidad de recursos para elegirlas.
+
+\paragraph{Execution units}
+Dado que los registros lógicos fueron renombrados a registros físicos en un achivo físico de registros compartidos, para ejecutar las microoperaciones solo es necesario acceder a éste. Por lo que las unidades de ejecución funcionan igual que antes.
+
+Después de la ejecución, las micro-operaciones son enviadas al buffer de reordenamiento que está particionado de tal manera que cada procesador lógico solo pueda la mitad de sus entradas.
+
+\paragraph{Retirement:} Cuando hay micro-operaciónes de ambos procesadores lógicos que deben ser retiradas, se  retiran las instrucciones en orden del programa altarnedamente.
+
+Si un procesador lógico no está listo para retirar ninguna instrucción, entonces se atiende completamente al otro procesador..
+
+Una vez que los almacenamientos han sido retirados, deben ser escritos en la caché L1 del procesador físico. Para esto, se commite en caché atendiendo alternadamente a cada procesador lógico.
+
+\subsubsection{Subsistema de memoria}
+
+\paragraph{Direction Tranlation Lookaside Buffer (DTLB):} Traduce direcciones a direcciones físicas. Es compartido. Cada entrada incluye el ID del procesador lógico a la que está asignada. Además, cada uno de ellos, tienen reservado un registro para asegurar fairness y progreso al procesar los DTLB misses.
+
+\paragraph{L1, L2 y L3 Data Caches:}
+Son cachés asociativas con líneas de 128-bytes. Los dos procesadores lógicos comparten todas sus entradas.
+
+Las caches son ajenas a la lógica de multithreading. Esto puede llegar a potenciales conflictos lo que podría resultar en un deterioro del performance. Sin embargo, tambien existe la posibilidad de que uno de los procesadores pida información que el otro quiera usar. En estos casos, el performance se ve benificiado.
+
+\paragraph{Bus:} Incluye al controlador de interrupciones programables (APIC) local.
+La cola de requests y los buffer de espacios son compartidos. Los request al APIC local y los recursos de envío de interrupciones son únicos para cada procesador lógico. Las requests de cada uno de ellos es distinguida con un tag pero no se les da ningun tipo de prioridad.
+
+\subsection{Modos Single-Task y Multi-Task}
+\begin{itemize}
+	\item \textbf{Multi-Task Mode (MT):} Los dos procesadores lógicos se encuentran activos y los recursos compartidos se dividen como fue descrito anteriormente.
+	\item \textbf{Single-Task Mode (ST):} Solo un procesador lógico está activo y los recursos que habían sido particionados en modo multi task son completamentes asignados a éste.
+\end{itemize}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/single-multi-task-modes}
+	\caption{Asignación de recursos para los distintos modos}
+	\label{fig:xenonSingleMultiTaskModes}
+\end{figure}
+La arquitectura IA-32 tiene una instrucción llamada HALT que para la ejecución de un procesador y le permite entra en modo de bajo consumo. Ésta es una instrucción prilegiada, es decir, solo pueden ejecutarla el sistema operativos y procesos de privilegio 0.
+
+En un procesador con tecnología de hyper-threading, HALT transiciona de modo MT a ST0 o ST1 dependiendo de en que procesador lógico se halla ejecutado la instrucción. Si fue ejecutada por el procesador 0, entonces solo queda activo el 1 y viceversa.
+
+Si se envía una interrupción a un procesador halteado entonces se vuelve a modo MT.
+
+\subsection{Sistemas operativos y aplicaciones}
+El sistema operativo se debe encargar de implementar dos optimizaciones para obtener el mejor rendimiento posible.
+
+La primera es usar la instrucción HALT si uno de los procesadores lógicos está activo y el otro no. Un sistema operativo que no use esta optimización hará que el procesador que no se encuentra en uso entre en un idle-loop durante el cual se ejecutaran instrucciones para chequear si hay trabajo para hacer Este loop puede llegar a consumir una cantidad significante de recursos de ejecución que podrían estar siendo usados por el procesador lógico activo.
+
+La segunda optimización, es que al momento de realizar el scheduling de threads, primero debería mandarlos a procesadores físicos distintos. Cuando esto ya no sea posible, recién ahí comenzar a usar los procesadores lógicos.
+
+\newpage
+\section{Intel Enhanced SpeedStep Technology (Pentium M, paper \cite{Gochman2003TheIP})}
+
+Diseñar un procesador \textit{Mobile} requiere considerar distintso tradeoffs de consumo/performance que no son necesarios en los procesadores tradicionales.
+
+\begin{itemize}
+	\item \textbf{Potencia, consumo de energía y temperatura}: Para mantener los transitores en un rango de temperatura de trabajo aceptable, el calor generado tiene que ser disipado de una manera costo-efectiva. Este problema aplica tanto a Mobile como a Desktop, sin embargo, en Mobile, el tamaño y peso de los dispositivos decrementan considerablemente el pico de consumo energético del procesador.
+
+	\item \textbf{Vida de la bateria:} Mientras más alta sea la potencia promedio usada, menos es el tiempo durante el que puede operar una batería. Esto limita el consumo de potencia promedio del procesador.
+\end{itemize}
+
+\subsection{Power-Awareness Philosophy and strategies}
+Se intenta: 
+\begin{itemize}
+	\item Conseguir un buen balance entre rendimiento y duración de la batería.
+	\item Intercambiar rendimiento por energía y viceversa, cuando sea necesario.
+\end{itemize}
+
+\paragraph{Más rendimiento vs Mayor duración de la bateria:} Respecto a esto no hicieron nada porque el procesador ya producía menos del 10\% del consumo de energía y no iban a lograr ninguna mejora decente.
+
+\subsubsection{Intercambio entre rendimiento y energía}
+ Hay veces en las que implementar un feature que permita ganar performance o ahorrar energía es mejor que simplemente escalar el voltaje/frecuencia de trabajo (método que se usaba en procesadores anteriores). La lógica y componentes necesarios para hacerlo, aumenta el consumo de energía pero la ganancia (en tiempo) que generan superan este costo.
+
+Algunas de las features que se agregaron fueron:
+\begin{itemize}
+	\item\textbf{Reducir el número de instrucciones por tarea:} Se utilizan mejores predictores para disminuir el número de instrucciones mal especuladas lo que reduce el número total de instrucciones procesadas.
+	
+	\item\textbf{Reducir el número de micro-ops por instrucción:} Atender y ejecutar cada instrucción consume energía. Eliminando micro-operaciones del flujo de ejecución o combinando varias de ellas se reduce el consumo total.
+	
+	\item\textbf{Reducir el número de switches entre transistores por micro-op:} Procesadores de alto rendimiento  proveen un alto nivel de paralelismo de instrucciones provocando demasiados switches. En algunos casos, se pueden realizar optimizaciones locales (por ejemplo, activar solo la parte que se va a usar de un componente). En otros, se agregan componentes que deciden si una unidad va a estar activa o no en el próximo ciclo y las apaga en caso de que ocurra lo segundo.
+	
+	\item\textbf{Reducir la cantidad de energía por switch de transistor:} Depende de la cantidad de transistores usados, su tipo, el voltaje de operacion y temperatura. Se utilizan dispositivos de descarga lenta (\textit{low-leakage}) y la tecnología Intel SpeedStep para disminuir los switches y, por lo tanto, el consumo energético. 
+\end{itemize}
+
+\subsection{Branch Prediction avanzado}
+
+Se utiliza como base el predictor del Pentium 4. Se le agregan dos componentes adicionales: Un detector de Loops y un predictor de branchs indirectos.
+
+\paragraph{Detector de Loops:} Analiza branches para ver si se comportan como loops. Esto es, si se mueven en una dirección (taken o not-taken) un número fijo de veces intercalando con único movimiento en la dirección opuesta. Cuando este comportamiento es detectado, se crea un conjunto de contadores que permite predecir con toda precisión el comportamiento del programa para iteraciones largas.
+
+\paragraph{Indirect Branchs:} Son generadas por instrucciones de control que, en vez de especificar la dirección a la que hay que saltar, indican donde está guardada esa dirección. Lenguajes como C++ y Java los usan para los switch case.
+
+\paragraph{Indirect Branch Predictor:} Predice basandose en el history buffer. Los targets siempre están ubicados en la tabla de punteros a instrucciones junto con el tipo de branch que las usa. Cuando ocurre una predicción errónea, en un indirect branch, el predictor almacena una nueva entrada en la tabla de punteros que corresponde a la entrada del history buffer que apunta a esta instrucción.
+
+Cada branch indirecto puede guardar tantas targets como sea necesario para diferentes patrones de historia global. Esto permite predecir correctamente usando solo la tablas de punteros.
+
+\subsection{Fusión de micro-operaciones}
+Una micro-operacion consiste en una única operación y dos operandos fuente. Algunas instrucciones deben ser decodificadas en mas de una micro-operación porque tienen que usar mas de dos operandos, o porque requieren completar una secuencia de operaciones no relacionadas. Esto tiene algunas desventajas:
+\begin{itemize}
+	\item El gran número de micro-operaciones crea presión en los recursos con  ancho de banda o capacidad limitada.
+	
+	\item El proceso de decodificación es más complejo que para aquellas instrucciones que se traducen en una única micro-operación.
+	
+	\item Enviar más micro-operaciones al sistema incrementa la energía requerida para completar una secuencia de instrucciones dada.
+\end{itemize}
+
+Con el mecanismo de fusión, el decoder puede fusionar dos micro-operaciones en una. A la micro-operación resultante se le asigna una única entrada en el Reorder Buffer y en el Reservation Station (RS) (cada una de sus entrada puede acomodar tres operandos fuente para soportar este nuevo tipo de operacion). 
+
+El dispatcher trata cada micro-op como si ocupasen la entrada completa. Ambas micro-operaciones pueden ser emitidas a sus respectivas unidades de ejecución en paralelo. Recién cuando las dos se ejecutaron completamente, pueden ser retiradas como una micro-operacion fusionada.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/micro-op-fusion}
+	\caption{Dominios de fusión de micro-operaciones}
+	\label{fig:MicroOpFusion}
+\end{figure}
+
+\subsection{Dedicated Stack Engine}
+La ISA provee las instrucciones PUSH, POP, CALL y RET que controlan el comportamiento del stack. Además posee el registro ESP (Stack Pointer Register) que es modificado por cada una de estas instrucciones.
+
+En el Pentium M, este efecto es implementado usando lógica dedicada cerca de los decodificadores. La idea es representar el punto de vista del programador ($ESP_P$) en cualquier momento usando un ESP historico ($ESP_O$, que se encuentre en el motor fuera de orden) y un delta ($ESP_D$, offset mantenido en el front-end).
+
+$$ESP_P = ESP_O + ESP_D$$
+
+Cuando una secuencia de pushs o pops es encontrada en el flujo de instrucciones, el hardware dedicado al stack ejecuta las modificaciones en el decoder y actualiza el $ESP_D$ además de modificar el parámetro de dirección para cada una de las micro-operaciones que referencien el stack. De esta manera, la unidad de generación de direcciones puede calcular la locación de memoria correcta.
+
+Los beneficios de esto son:
+
+\begin{itemize}
+	\item Las dependencias respecto del ESP son eliminidas dado que $ESP_O$, usado por el scheduler del motor fuera-de-orden, no cambia durante la secuencia de operaciones de stack. Esto nos da la oportunidad de paralizar aún más la ejecución.
+	
+	\item $ESP_D$ se actualiza usando sumadores especialmente dedicados lo que libera a las unidades de ejecución general para trabajar en otras micro-ops.
+	
+	\item Actualizar el $ESP_D$ en el front end elimina las micro-ops de actualización de ESP del motor fuera-de-orden. Esto permite ahorrar energía ya que hay menos micro-ops para ejecutar además de que los sumadores dejan de ser usados para operaciones pequeñas.
+\end{itemize}
+
+Dado que el motor dedicado del stack vive al principio del pipeline, todos sus calculos son especulativos. Para recuperar un estado preciso en cualquier momento, los valores de $ESP_0$ y $ESP_D$ deben ser recuperados para todas las instrucciones en la maquina. 
+
+El motor fuera-de-orden mantiene el $ESP_0$ como cualquier otro registro de proposito general y una tabla para guardar el $ESP_D$ por cada instrucción en el pipeline.
+
+Cuando el valor arquitectural ($ESP_P$) se necesita dentro del motor, entonces la lógica de decodificación automáticamente inserta una micro-operación que lo calcula. Cuando esto sucede, el $ESP_D$ es reseteado.
+
+\subsection{El bus del Pentium M}
+Es un bus con una cola in-order de 8 transacciones. Fue diseñado para sistemas mobile y ambientes uni-procesador.
+
+\paragraph{Sense amplifiers:} Son componentes electrónicos que amplifican las oscilaciones del voltaje para que los valores lógicos (0 o 1) sean adecuadamente reconocibles.
+
+\paragraph{}
+Cuando el bus está en modo idle, ahorra energía agresivamente desactivando todos sus \textit{sense amplifiers} por lo que no consumen nada. El procesador debe enviarle una señal (\textbf{DPWR\#} al bus de datos y \textbf{BPRI} al de direcciones) para que éste los active y puedan ser usados. Después de atender todas las transacciones necesarias, vuelve automáticamente a modo idle.
+
+\paragraph{Low Vtt:} Señal para reducir el consumo del bus. Como esto puede conllevar a ciertos problemas de comunicación se implementa un método de compensación para ajustar dinámicamente la potencia de uso durante la ejecución.
+
+\paragraph{PSI:} Señal para reducir el consumo de toda la plataforma.
+
+\subsection{Optimizaciones de bajo nivel}
+Otra forma de optimizar consumo, es apagando los clocks o desactivando partes especificas de un componente.
+
+Algunos componentes son capaces de darse cuenta cuando deben entrar en estado idle agregando un poco de lógica, otros no. 
+
+Para el segundo tipo se crearon controles que pueden identificar o predecir sus periodos idle y ordenar, a la unidad, que reduzca su consumo. La lógica de predicción usada por estos controles debe permitir que el componente se active completamente sin niguna penalidad de performance.
+
+\subsection{Tecnología Enhanced Intel Speedstep}
+En generaciones anteriores de procesadores, esta  tecnología cambiaba el modo de operacion del procesador (Lowest Frequency Mode o Highest Frequency Mode) bloqueando su uso durante la transición.
+
+La versión Enhanced trata de abordar los siguientes desafíos:
+\begin{itemize}
+	\item \textbf{Minimizar indisponibilidad del sistema y el procesador:}  Existen ciertas limitaciones físicas del sistema de suministro de energía durante la transición del voltaje que se traduce en un delay en estos componentes (quedan inhabilitados durante este tiempo).
+	\item Se debe prevenir la perdida de eventos del sistema como interrupciones y snoops que fueron bloqueados durante la transición.
+\end{itemize}
+
+Para resolver el problema se utilizan tres métodos:
+\begin{itemize}
+	\item \textbf{Cambio por separado del voltaje y la frecuencia:} Se hace en dos etapas. El voltaje se cambia en peqeños pasos incrementales, previniendo ruido en los clocks y permitiendo que el procesador siga ejecutando durante esta transición. 
+	
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=0.5\textwidth]{imagenes/voltage-transitions}
+		\caption{Secuencia de transicion de SpeedStep}
+		\label{fig:voltageTransitions}
+	\end{figure}
+
+\item \textbf{Particionamiento del clock y recuperación:} Se para el clock del core del procesador y el Phase-Locked-Loop (lo que se encarga de transmitir la señal del clock). La lógica de interrupciones y secuenciamiento utilizan el clock del bus (que permanece activo).
+
+\item \textbf{Bloqueo de eventos:}No deben perderse interrupciones, eventos de pin ni pedidos de snoop enviados durante la etapa de transición de frecuencia.
+
+La lógica del SpeedStep samplea todo los eventos de pin cuando el clock del núcleo está parado y son re-enviados al procesador una vez que está disponible.
+
+Los eventos del bus (interrupciones y snoops) son bloqueados usando un protocolo nativo de estos dispotivos que los capturan durante el período de transición de frecuencia.
+\end{itemize}
+
+\newpage
+\section{Mejoras realizadas al Pentium 4 con la técnología de 90nm (paper \cite{Boggs2004TheMO})}
+\subsection{Store-To-Forwarding Enhancement}
+Previamente, el forwarding era cancelado cuando las direcciones estaban desalineadas o se forwardeaba un dato incorrecto debido a la comparación parcial de direcicones (Sección \ref{sec::Intel::NetBurst::FrontEnd::Forwarding}).
+
+
+\paragraph{False forwarding:} Ocurre cuando el SFB detecta un match de dirección parcial entre un load y un store, pero sus direcciónes completas no matchean.
+
+\paragraph{Force Forwarding:} Permite que el Memory Ordering Buffer (MOB) tome control sobre la lógica de comparación parcial del Store Forwading Buffer (SFB).
+	
+Cuando se necesita hacer un load, el MOB determina su ``verdadera'' dependencia y debe decidir si la decisión del SFB es correcta y si la instrucción debe ser ejecutada otra vez. Si el chequeo de dependencia falla entonces puede corregir la logica del buffer de dos maneras:
+	\begin{itemize}
+		\item Forzando el forwardeo de la entrada correcta y rotando la data si es necesario (en caso de que el dato se encuentre desalineado).
+		\item Desactivando el forwarding si la dependencia no se encuentra en el SFB.
+	\end{itemize}
+\subsection{Front End}
+\subsubsection{Branch Predictor}
+Previamente, cuando un branch no se encontraba en el branch target buffer (BTB), si era una rama que saltaba hacia atras (Backward branch) se tomaba como \textit{taken} y si realizaba un salto hacia adelante (forward branch) no
+ (Seccion \ref{sec::Intel::Netburst::frontEnd::btb}). Si bien este algoritmo nos permite predecir correctamente cuando el backwards branch es de un loop, no siempre pertenece a uno.
+
+Algunas mejoras en el predictor estático:
+\begin{itemize}
+	\item Existe un threshold para la distancia entre un backwards branch y su target: Si el BTB no tiene ninguna predicción para una rama de este tipo y la distancia a su target es menor al threshold, entonce predice \textit{taken} sino predice \textit{not-taken}.
+	\item Hay branches con ciertas condiciones que, muchas veces, no son tomadas sin importar las dirección ni la distancia. Como estas condiciones no son comunes en loops, se predicen \textit{not-taken}.
+\end{itemize}
+
+Al predictor dinámico, se le agrego el Indirect Branch Predictor implementado para el Pentium M para reducir predicciones erróneas.
+
+\subsubsection{Detección de dependencias extras}
+En vez de mover un cero a un registro, una técnica común para hacerlo, es usar la instrucción \texttt{xor} consigo mismo. Esta técnica es preferida porque el código escrito es mucho más pequeño.
+
+En una máquina fuera-de-orden, esta extra dependencia, puede resultar en perdida de rendimiento. Previos procesadores, remueven esta dependencia en el registro fuete dado que no importa que valor se encuentre en él, el resultado será siempre el mismo. Como se agregaron nuevas instrucciones (SSE2) que pueden ser usadas de la misma manera, se agregó lógica para que también sean reconocidas.
+
+\subsubsection{Trace Caché}
+Se aumentó su tamaño y puede codificar mas tipos de micro-ops que en previos procesadores. Si una instrucción usa una micro-ops que no puede ser codificada, entonces debe ser secuenciada en la Microcode ROM. Esta mejora permite un mayo ancho de banda de micro-operaciones desde el front end hacia el motor de ejecución fuera de orden ya que remueve varias transciciones al ROM.
+
+\subsubsection{Unidades de ejecución}
+\begin{itemize}
+\item Se agrega un shifter a una de las ALUs. Esto permite ejecutar estas operaciones  sin necesidad de utilizar recursos que deberían estar destinados a instrucciones complejas de enteros (como se hacia en previos procesadores).
+
+\item Previamente, las multiplicaciones de enteros se ejecutaban en los multiplicadores de puntos flotantes. Esto generaba latencia porque se debían mover los operandos a la zona de punto flotante y después devolverlos a la de enteros. Ahora, hay un multiplicador de enteros especializados que evita esto.
+
+\item El tamaño de la caché L1 aumenta considerablemente su tamaño y el tamaño de la comparación de direcciónes parciales. Esto reduce el número de casos de falso aliasing.
+
+\item Los schedulers dedicados a instrucciones x87/SSE/SSE2/SSE3 aumentan su tamaño, lo que permite que aumente la ventana de oportunidad para encontrar paralelismo en algoritmos multimedia. 
+
+\item Se aumenta el tamaño de todas las colas que alimentan a los schedulers por lo que se pueden bufferear más micro-operaciones antes de que el allocator entre en modo \textit{stall}.
+
+\item Se agrega un predictor que indica si es muy probable que una micro-op de lectura reciba data forwardeada y, si es así, desde que entrada. Dada esta información, el scheduler de loads la retiene hasta que la instrucción de almacenamiento de la que depende sea puesta en la cola de ejecución. De esta forma, se reduce la latencia introducida cuando se debe re-ejecutar una instrucción de lectura fallida.
+\end{itemize}
+
+\subsection{Sistema de memoria}
+\paragraph{Cachés:} Se incrementan el tamaño de las cachés para reducir el tiempo que se gasta esperando a que la DRAM devuelva información.
+
+\paragraph{Page Table Walk:} Se recorre la tabla de paginación del sistema para ver si existe un mapeo de alguna dirección especifica.
+
+\paragraph{Software Prefetching:} El programador puede insertar instrucciones de prefetch para traer data a la cache antes de lo necesario. En las versiones previas, estas instrucciones traian datos desde la DRAM hasta la cache L2 para no contaminar la cache L1.
+
+Ahora, se agrega un mecanimos que permite a la instrucción iniciar un page table walk y rellenar al data translation lookaside buffer en caso de que el prefetch se haga sobre una página no cacheada.
+
+\paragraph{Hardware Prefetching:} Un dispositivo busca por flusjo de datos e intenta predecir que información va a ser usada a continuación. Este método es superior al software prefecthing ya que no requiere ningún esfuerzo por poarte del programador y puede mejorar el rendimiento en código que no tiene instrucciones de prefetch.
+
+\paragraph{Buses:} Se ensanchan los buses y se agregan buffers lo que permite tener una mayor cantidad de lecturas y escrituras simultáneas.
+
+\subsection{Hyper-Threading Technology}
+Se resuelven dos cuellos de botellas, que antes no habían sido tenidos en cuenta porque procesadores single-threaded no generaban problemas:
+
+\begin{itemize}
+	\item Antes, el procesador solo podía realizar un único page walk o atender un acceso de memoria. En multi-threading esto puede generar un problema por lo que ahora pueden ocurrir simultáneamente una o más veces cada operación.
+	\item El esquema de indexación parcial usado para la cache L1 genera conflictos cuando el patrón de acceso de cada procesador lógico matchean al mismo tag parcial incluso si están accediendo a regiones separadas de la memoria física. Esto causa contención en la caché, lo que reduce el hit rate.
+	
+	Para disminuir la probabilidad de que esto ocurra, por cada procesador lógico, se agrega al tag parcial un bit de contexto. Este bit es seteado o reseteado dinámicamente dependiendo de la inicilización de la estructura de la tabla de paginación de cada procesador. 
+	
+	Si dos procesadores lógicos intentan compartir el mismo directorio base en la memoria física, el bit de contexto de cada uno de ellos es seteado al mismo valor. Esto les permite compartir las entradas de la caché L1.
+	
+	Si las direcciones bases del directorio de páginas es diferente entonces es probable que estén trabajando en regiones físicamente separadas. En este caso, los bits de contexto se setean en valores distintos y la cache no se comparte.
+\end{itemize}
+
+\section{Core Multi-Processor (Intel Core Duo, paper \cite{gochman2006ICD})}
+La tecnología core multi-procesor, a diferencia de predecesores, incluye dos multiprocesadores físicos dentro de un mismo núcleo. 
+
+La tecnología Intel Core Duo se implementó con el objetivo de crear un procesador que sea adecuado para todas las plataformas mobiles (celulares, notebooks, datases, impresoras, etc). se basa en dos microprocesadores Pentium M mejorados que fueron integrados y comparten un caché L2. Con el fin de satisfacer las demandas de rendimiento se tomaron las siguientes decisiones:
+
+\subsection{Mejoras de rendimiento implementadas}
+\begin{itemize}
+	\item Mientras que la microarquitectura SSE es de 128 bit de ancho, la del Pentium M es de 64. En estos procesadores, cada instrucción se parte en pares de micro-operaciones de 64 bits lo que implica un cuello de botella en el front end del pipeline durante la etapa de decodificación.  
+	
+	Una máquina más ancha produciría mas calor e impactaría significativamente en el diseño térmico del sistema y la duración de la batería. Dado que el Pentium M fue diseñado principalmente para mobilidad, se decidió mantener la arquitectura del mismo tamaño y tratar de diluir el problema. Para esto, se introdujo un nuevo mecanismo que permite \textit{laminar}\footnote{El paper no dice que significa laminar pero da a entender que es algo parecido a la fusion} pares de micro-operaciones similares.
+\end{itemize}
