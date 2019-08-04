@@ -1,13 +1,13 @@
 \part{Procesadores Intel}
-Esta parte son los papers resumidos. Todos describen (a medias) técnicas que fueron implementadas por intel en alguno de sus procesadores y cual era su objetivo al implementarla (básicamente, conseguir el mejor balance posible entre rendimiento y consumo de energía). A veces, saltan con coneptos nuevos que nunca definen en ningún lado (y para los que google no ayuda mucho). En estos casos, dependiendo que tan claro sean, tenemos dos opciones:
+Esta parte son los papers resumidos. Todos describen (a medias) técnicas que fueron implementadas por intel en alguno de sus procesadores y cual era su objetivo al implementarla (básicamente, conseguir el mejor balance posible entre rendimiento y consumo de energía). A veces, saltan con conceptos nuevos que nunca definen en ningún lado (y para los que google no ayuda mucho). En estos casos, dependiendo que tan claro sean, tenemos dos opciones:
 \begin{enumerate}
 	\item Asumir su significado y rogar a [dios/furfaro/quien sea que haya que rogarle] que estemos en lo correcto.
 	\item Hacer como que la palabra no existe, pasar al siguiente párrafo y rogar a [dios/furfaro/quien sea que haya que rogarle] que justo eso no sea importante para el final.
 \end{enumerate}
 
-Teniendo en cuenta esto, leer estos resumenes a discreción.
+Teniendo en cuenta esto, si decidis leer estos resumenes, hacelo a discreción.
 
-\section{Netburst microarchitecture (Pentium 4, paper \cite{Sager01themicroarchitecture})}
+\section{Netburst microarchitecture (Pentium 4 \cite{Sager01themicroarchitecture})}
 La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
 
 \begin{figure}[ht]
@@ -124,7 +124,7 @@ A esta caché se asocia un prefetcher que monitorea los patrones de acceso a mem
 Tiene un ancho de banda de 3.2 Gbytes por segundo, esto permite que las aplicaciones realizen data streaming desde la memoria. Tiene un protocolo que divide las transacciones y un pipeline profundo para permitir que el subsistema de memoria atienda varios accesos/escrituras simultáneamente. 
 
 \newpage
-\section{Thread Level Paralelism (Procesadores Xenon, paper \cite{marr02threads})}
+\section{Thread Level Paralelism (Procesadores Xenon \cite{marr02threads})}
 
 Tradicionalmente, para mejorar el perfomance, los diseñadores se enfocaban en desarrollar relojes de alta velocidad, ejecución paralela de instrucciones y caches. Sin embargo, en los últimos años, con el desarrollo del internet, se ha visto la necesidad de ejecutar varias tareas simultáneamente. Por esta razón, se han comenzado a desarrollar distintas técnicas de paralelismo a nivel thread (procesos):
 
@@ -248,7 +248,7 @@ La primera es usar la instrucción HALT si uno de los procesadores lógicos est�
 La segunda optimización, es que al momento de realizar el scheduling de threads, primero debería mandarlos a procesadores físicos distintos. Cuando esto ya no sea posible, recién ahí comenzar a usar los procesadores lógicos.
 
 \newpage
-\section{Intel Enhanced SpeedStep Technology (Pentium M, paper \cite{Gochman2003TheIP})}
+\section{Intel Enhanced SpeedStep Technology (Pentium M \cite{Gochman2003TheIP})}
 
 Diseñar un procesador \textit{Mobile} requiere considerar distintso tradeoffs de consumo/performance que no son necesarios en los procesadores tradicionales.
 
@@ -358,8 +358,8 @@ Algunos componentes son capaces de darse cuenta cuando deben entrar en estado id
 
 Para el segundo tipo se crearon controles que pueden identificar o predecir sus periodos idle y ordenar, a la unidad, que reduzca su consumo. La lógica de predicción usada por estos controles debe permitir que el componente se active completamente sin niguna penalidad de performance.
 
-\subsection{Tecnología Enhanced Intel Speedstep}
-En generaciones anteriores de procesadores, esta  tecnología cambiaba el modo de operacion del procesador (Lowest Frequency Mode o Highest Frequency Mode) bloqueando su uso durante la transición.
+\subsection{Tecnología Enhanced Intel Speedstep}\label{sec::intel::enhancedSpeedStep::enhancedSpeedStep}
+En generaciones anteriores de procesadores, esta  tecnología cambiaba el modo de operacion del procesador (Lowest Frequency Mode o Highest Frequency Mode) bloqueando su uso durante la transición. Está transición consiste en ir reduciendo o aumentando en pequeños pasos la frecuencia y el voltaje.
 
 La versión Enhanced trata de abordar los siguientes desafíos:
 \begin{itemize}
@@ -388,7 +388,7 @@ Los eventos del bus (interrupciones y snoops) son bloqueados usando un protocolo
 \end{itemize}
 
 \newpage
-\section{Mejoras realizadas al Pentium 4 con la técnología de 90nm (paper \cite{Boggs2004TheMO})}
+\section{Mejoras realizadas al Pentium 4 con la técnología de 90nm \cite{Boggs2004TheMO}}
 \subsection{Store-To-Forwarding Enhancement}
 Previamente, el forwarding era cancelado cuando las direcciones estaban desalineadas o se forwardeaba un dato incorrecto debido a la comparación parcial de direcicones (Sección \ref{sec::Intel::NetBurst::FrontEnd::Forwarding}).
 
@@ -438,7 +438,7 @@ Se aumentó su tamaño y puede codificar mas tipos de micro-ops que en previos p
 \item Se agrega un predictor que indica si es muy probable que una micro-op de lectura reciba data forwardeada y, si es así, desde que entrada. Dada esta información, el scheduler de loads la retiene hasta que la instrucción de almacenamiento de la que depende sea puesta en la cola de ejecución. De esta forma, se reduce la latencia introducida cuando se debe re-ejecutar una instrucción de lectura fallida.
 \end{itemize}
 
-\subsection{Sistema de memoria}
+\subsection{Sistema de memoria}\label{secc::intel::90um::memoria}
 \paragraph{Cachés:} Se incrementan el tamaño de las cachés para reducir el tiempo que se gasta esperando a que la DRAM devuelva información.
 
 \paragraph{Page Table Walk:} Se recorre la tabla de paginación del sistema para ver si existe un mapeo de alguna dirección especifica.
@@ -465,14 +465,122 @@ Se resuelven dos cuellos de botellas, que antes no habían sido tenidos en cuent
 	Si las direcciones bases del directorio de páginas es diferente entonces es probable que estén trabajando en regiones físicamente separadas. En este caso, los bits de contexto se setean en valores distintos y la cache no se comparte.
 \end{itemize}
 
-\section{Core Multi-Processor (Intel Core Duo, paper \cite{gochman2006ICD})}
+\newpage
+\section{Chip Multi-Processor (Intel Core Duo \cite{gochman2006ICD})}
 La tecnología core multi-procesor, a diferencia de predecesores, incluye dos multiprocesadores físicos dentro de un mismo núcleo. 
 
-La tecnología Intel Core Duo se implementó con el objetivo de crear un procesador que sea adecuado para todas las plataformas mobiles (celulares, notebooks, datases, impresoras, etc). se basa en dos microprocesadores Pentium M mejorados que fueron integrados y comparten un caché L2. Con el fin de satisfacer las demandas de rendimiento se tomaron las siguientes decisiones:
+La tecnología Intel Core Duo se implementó con el objetivo de crear un procesador que sea adecuado para todas las plataformas mobiles (celulares, notebooks, datases, impresoras, etc). se basa en dos microprocesadores Pentium M mejorados que fueron integrados y comparten un caché L2. Con el fin de satisfacer las demandas de rendimiento y consumo se tomaron las siguientes decisiones:
 
 \subsection{Mejoras de rendimiento implementadas}
 \begin{itemize}
-	\item Mientras que la microarquitectura SSE es de 128 bit de ancho, la del Pentium M es de 64. En estos procesadores, cada instrucción se parte en pares de micro-operaciones de 64 bits lo que implica un cuello de botella en el front end del pipeline durante la etapa de decodificación.  
+	\item Mientras que la microarquitectura SSE es de 128 bits de ancho, la del Pentium M es de 64. En estos procesadores, cada instrucción SSE se parte en pares de micro-operaciones de 64 bits lo que implica un cuello de botella en el front end del pipeline durante la etapa de decodificación.  
 	
-	Una máquina más ancha produciría mas calor e impactaría significativamente en el diseño térmico del sistema y la duración de la batería. Dado que el Pentium M fue diseñado principalmente para mobilidad, se decidió mantener la arquitectura del mismo tamaño y tratar de diluir el problema. Para esto, se introdujo un nuevo mecanismo que permite \textit{laminar}\footnote{El paper no dice que significa laminar pero da a entender que es algo parecido a la fusion} pares de micro-operaciones similares.
+	Una máquina más ancha produciría mas calor e impactaría significativamente en el diseño térmico del sistema y la duración de la batería. Dado que el Pentium M fue diseñado principalmente para mobilidad, se decidió mantener la arquitectura del mismo tamaño y tratar de diluir el problema. Para esto, se introdujo un nuevo mecanismo que permite \textit{laminar}\footnote{El paper no dice que significa laminar pero da a entender que es algo parecido a la fusión} pares de micro-operaciones similares. En cierto punto del pipeline, el flujo de micro-operaciones laminadas es delaminado para ejecutar las micro-operaciones originales. 
+	
+	Este cambio no solo mejora el rendimiento de las operaciones vectoriales sino que ahorran energía dado que puede ser desactivado cuando el buffer se llena hasta cierto punto.
+	
+	\item Otro cuello de botella descubierto, fue en el  Floating Point Control Word (FPCW, un componente que controla la precisión de las operaciones de punto flotante). Antes, se consideraba ``constante'' durante la ejecución de un programa, pero en algunos programas se le cambiaba el modo antes de realizar ciertas operaciones. 
+	
+	Cada una de estas manipulaciones provoca un \textit{stall} en el pipeline. Por esta razón, se introdujo un nuevo mecanismo de renombre para que 4 versiones distintas de este registro puedan coexistir durante la ejecución sin interrumpir el pipeline.
+	
+	\item Antes, la división se realizaba iterando un número máximo (fijo) de iteraciones, lo que producía largas latencias. En esta versión del procesador, se agregó lógica que calcula el número de iteraciones requeridos para lograr la operación. De esta forma, una vez ejecutada la cantidad de iteraciones requeridas, la división devuelve el resultado.
+	
+	\item Se agrega un prefetcher de instrucciones a la caché L2 (Ver sección \ref{secc::intel::90um::memoria})
+
+\end{itemize}
+\subsection{Estructura general del procesador}
+Los procesadores Intel Core Duo utilizan un arquitectura de caché compartida para maximizar el rendimiento de las aplicaciones single y multi-threaded.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.375\textwidth]{imagenes/core-duo-block-diagram}
+	\caption{Estructura general del Intel Core Duo}
+	\label{fig:intelCoreDuoStructure}
+\end{figure}
+
+\begin{itemize}
+	\item Cada core tiene su propio APIC. Se presentan al sistema operativo como dos procesadores lógicos separadoss.
+	\item Cada core tiene su propia unidad de control de temperatura.
+	\item El sistema combina control de consumo por cada core y para todo el chip en general.
+\end{itemize}
+
+\subsection{Control de consumo energético}
+Para ahorrar perdida de energía (cosumo estático), se utilizan dos técnicas: Enhanced Sleep State Control y Dynamic Intel Smart Cache Sizing. Para controlar consumo de energía activa: Se utiliza una técnica basada en Intel SpeedStep technology (Sección \ref{sec::intel::enhancedSpeedStep::enhancedSpeedStep}).
+
+\paragraph{}\red{\textit{(Bueno, estoy apurado y necesito terminar antes del martes y ponerme a repasar. La traduccion y tratar de que quede bien fue)
+}}
+\subsubsection{Leakage power consumption}
+\paragraph{} The challenge of adding a second core on die while improving the overall power-consumption demands an improvement to the power states of the system in order to avoid power being wasted whenever a core is not active. We face two main problems: (1) since only a single power plane is used, it forces us to run all cores with the same voltage and frequency, and (2) the chip-set and the OS see both cores as a single entity that has the same state at the same time. Thus, the Intel Core Duo processor presents two separate views on the power state of the system, internally we manage the states of each core independently (per-core power state) ande externally we view the system as having a single, synchronized power state.
+
+There are five posible states:
+
+\begin{itemize}
+	\item \textbf{C0 - Active (per-core):} Power state is assumed to be in running mode.
+	\item \textbf{C1 - Auto halt (per-core):} When the core has nothing to do, the OS issues a halt command that shut off the core clock.
+	\item \textbf{C2 - Stop Clock (per-core):} Core and bus clocks are off
+	\item \textbf{C3 - Deep sleep (per-core):} Clock generator if off;
+	\item \textbf{C4 - Deeper Sleep:} Whole system voltage is reduced. Since the cores are connected to the same power plane, this must be done in coordination between the two cores.
+	\item \textbf{DC4 - Deeper C4:}	Further reduce voltage.
+\end{itemize}
+
+While being in a sleep state, the system still consumes static power (leakage). In Intel Core Duo Technology, we implement an advanced algorithm that tries to anticipate the effective cache memory footprint that the system need when moving from a deep sleep state to an active mode. The new mechanism keeps only the minimum cache memory size needed active, and it uses special circuit techniques to keep de rest of the cache memory in a state that consumes only a minimal amount of leakage power.
+
+\subsubsection{Active power consumption}
+In order to control the active power consumption, Intel Core Duo Technology uses Intel SpeedStep technology. When a set of working points is defined, each one has a different frequency and voltage and so different power consumption. The system can define at what working point it works in order to strike balance between the performance needs and the dynamic power consumption. This is usually done via the OS, using the ACPIs.
+
+\subsection{Thermal Design Point}
+In the previous Pentium M processor, a single analog thermal diode was used to measure die temperature. Thermal diode cannot be located at the hottest spot of the die and therefore some offset was applied to keep the CPU within specifications. For these system it was sufficient, since the die had a single hot spot. In the Intel Core Duo processor, there are several hot spots that change position as a function of the combined workload of both cores.
+
+The use of a digital thermometer allows tighter thermal control functions, allowing higher performance in the same form factor. The improved capability also allows us to achieve better ergonomic systems that do not get to hoot, can operate more quietly, and are more reliable.
+
+The thermal measurement function provides interfaces to power-management software such as the industry standard ACPI. Each core can be defined as an independient thermal zone, or a single thermal zone for the entire chip. The maximum temperature for each thermal zone is reported separately via dedicated registers that can be polled by the software.
+
+Intel Core Duo technology implemented a dual-core power monitor capability. It continuously tracks the die temperature. If the temperature reaches de maximum allowed value, a throttle mechanism is initiated. Throttling starts with the more efficient dynamic voltage scaling polyci and if not sufficient, the power monitor algorithm continues lowering the frequency. If an extreme cooling malfunctions occurs, an Out of Spec notification will be initiated, requesting a controlled complete shutdown.
+
+\subsection{Platfrom Power Managment}
+Inter Core Duo processor technology closely interacts with other components on the platform. One such component is the Voltage Regulator (VR).
+
+The CPU has internal knowledge of the activity demand and it communicates a request to go to higher power early enough for the VR to get ready for the increased demand.
+
+\subsection{Interl Core Solo Processor}
+In order to fit into very limited thermal constraints and power consumption, the Intel Core Duo processor has a derivative that contains a single core only. This can be achieved:
+
+\begin{itemize}
+	\item \textbf{by user or OS decision: }The system will keep the second core idle at CC4 state. Each time an interrupt is received or a broadcast IPI is sent, this core may need to wake up and go immediately back to sleep state, consuming small amounts of dynamic power.
+	\item \textbf{by a BIOS option:} The system does not recognize the other core and so it is kept in CC4 state all the time, consumming no dynamic power at all.
+	\item \textbf{Total disconnection:} The disvantage of the two methods described abover is that the core still consumes static power. In order to avoid this and reduce the power consumption of the core even further, Intel introduces the single-core version of the Inter Core Duo Technology, called Intel Core Solo Processor, which disconnects the non-active core from the power grid.
+\end{itemize}
+
+\newpage
+\section{Chip Multi Procesor (Intel Core Duo \cite{Mendelson:2006:CIS}): Known Performance issues}
+
+\subsection{MESI Protocol Modification}
+Intel Core Duo processor implements the same MESI protocol as in all other Pentum M processors.
+
+In order to improve performance, we optimized the protocol for faster communication between the cores, particularly when the data exist in the L2 cache.
+
+When a core issues an \textbf{RFO} (Request For Ownership), if the lnie is shared only by the other cache within CMP die, we can resolve thr RFO internally very fast, without going to the external bus at all. Only if the line is shared with another agent on the external bus do we need to issue the RFO externally.
+
+In the cas of a mult-package system, the number of coherence messages over the external bus is smaller than in similar DP or MP systems, since much of the communication is being resolved internally.
+
+\subsection{Shared vs Split Cache}
+Recently, different architectures use a split last-level cache in order to achieve a fast time-to-market of a dual-core system. Clear downsides of this solutoin are as follows:
+\begin{enumerate}
+	\item Cache coherent-related events that need to be served over the File System Buss, such as RFO or invalidation signals, greatly impact performance and power.
+	\item An ST application cannot take full advantage of the entire cache.
+\end{enumerate}
+
+The hard partitiones cache may preven one application from significantly reducing the amount of cache memory available to an application running on the other core.
+
+\subsubsection{False Sharing}
+False sharing happens when two or more threads access different address ranges on the same cache line simultaneously. This causes the cache line to be in the first level cache of the two cores.
+
+False sharing causes a severe performance penalty if one or more threads writes to the shared cache line. This causes invalidation of the cache line at the L1 cache of the other core. As a ressult, the next time that the other core accesses the cache line in question it will have to transfer it from the core that wrote it earlier through the bus, thereby incurring a mayor latency penalty.
+
+\subsubsection{Parallelizing code thata use great amount of data}
+When parallelizing code sections that use data sets exceeding the L2 cache and/or bus bandwith, if one of the threads is using the L2 cache and/or bus, then it is expected to get the maximum possible speedup when the other thread running on the other core does not interrupt its progress. However, if the two threads use the second-level cache there may be performance degradation if one of the following condition is true:
+\begin{itemize}
+	\item Their combined data set is greater than the L2 cache size.
+	\item Their combined bus usage is greater than bus capacity.
+	\item They both have extensive access to the same set in the L2 cache, and at least one of the threads writes to this cache line.
 \end{itemize}
