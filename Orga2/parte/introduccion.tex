@@ -20,7 +20,7 @@ El ISA es la especificación completa de la interfaz entre los programas y el ha
 
 \subsubsection{Regitros}
 \begin{itemize}
-	\item \textbf{Registros:} Celdas de memoria dentro del cpu que son usadas para almacenar los datos necesarios para ejecutar una instrucción. Éstos, son visibles al programa y se clasifican según su uso: Acumuladores, De dirección ó De Proposito General.
+	\item \textbf{Registros:} Celdas de memoria dentro del cpu que son usadas para almacenar los datos necesarios para ejecutar una instrucción. Éstos son visibles al programa y se clasifican según su uso: Acumuladores, De dirección ó De Proposito General.
 	\item  \textbf{Instrucciones}: Tareas que pueden ser llevadas a cabo por la computadora. Cada una de ellas está compuesta por su \textbf{opcode} (que se espera que la computadora haga) y sus \textbf{operandos} (a que datos debe hacerlo). En una ISA podremos encontrar tres tipos de instrucciones:
 	\begin{itemize}
 		\item De \textbf{Operacion}: Procan datos.
@@ -33,8 +33,10 @@ El ISA es la especificación completa de la interfaz entre los programas y el ha
 	\item \textbf{Espacio de memoria}: La cantidad de bloques univocamente distinguibles en memoria y el tamaño de cada uno de estos bloques
 	\item \textbf{Direccionamiento}: Los mecanismos usados por la computadora para saber donde están almacenados los datos. Puede ser:
 	\begin{itemize}
+		\item \textbf{Implicito:} El operando se puede deducir del código de operación de la instrucción.
 		\item \textbf{Inmediato:} El operando está incluido en la instrucción.
 		\item \textbf{Directo o absoluto:} El operando es la dirección de memoria donde se encuentra el valor a ser utilizado.
+		\item \textbf{Registro:} Todos los operandos involucrados son Registros del procesador.
 		\item \textbf{Indirecto:} El operando es una dirección de memoria donde se encuentra la dirección de memoria en la que está almacenado el valor deseado.
 		\item \textbf{De desplazamiento:} La instrucción toma como operandos una dirección de memoria que se toma como \textbf{base} y un \textbf{offset}. La base es una dirección de memoria y el offset, un número que indica cuanto hay que desplazar la base para encontrar el valor deseado, es decir $dir = base + offset$
 		\item \textbf{Indexado:} Lo mismo que el anterior, pero con el \textit{offset} guardado en un registro.

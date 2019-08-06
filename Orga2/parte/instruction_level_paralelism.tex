@@ -92,7 +92,7 @@ Son procesadores que explotan la ejecución paralela de instrucciones para mejor
 
 Un problema es que los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
 
-Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios, deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
+Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
 
 Más precisamente, un procesador superescalar implementa:
 
@@ -108,7 +108,7 @@ Más precisamente, un procesador superescalar implementa:
 \subsection{Dependencias de instrucciones}\label{sec:instructionLevelParalelism:dependenciaDeInstrucciones}
 Por lo general, se interpreta el binario de un programa como un conjunto de bloques compuestos de instrucciones contiguas. Una vez que se fetchea un bloque, se sabe que todas sus instrucciones van a ser ejecutadas eventualmente. Cuando esto suceda, diremos que el bloque es iniciado en una \textbf{ventana de ejecución}.
 
-Una vez que las instrucciones entran en esta ventana, son ejecutadas en paralelo teniendo en cuenta sus depencencias. Éstas, pueden ser de control o datos. Las de control son generadas por condicionales y pueden ser resueltas/optimizadas con predicciones (Seccion \ref{sec::branchPrediction}). 
+Una vez que las instrucciones entran en esta ventana, son ejecutadas en paralelo teniendo en cuenta sus depencencias que pueden ser de control o datos. Las de control son generadas por condicionales y pueden ser resueltas/optimizadas con predicciones (Seccion \ref{sec::branchPrediction}). 
 
 Las \textbf{dependencias de datos} se da entre instrucciones que referencian el mismo espacio de memoria. En estos casos, si las instrucciones no se ejecutan en el orden correcto, puede haber errores en las operaciones. Pueden ser Verdaderas o Artificales.
 \begin{itemize}
@@ -127,28 +127,50 @@ El program counter se utiliza para determinar la posición de una instrucción e
 
 \begin{itemize}
 	\item Si se produce un hit, se fetchea el bloque de instrucciones y se suma al program counter el tamaño del bloque fetcheado.
-	\item Si hay un miss, el caché, pide la instrucción buscada en memoria y la copia.
+	\item Si hay un miss, el caché pide la instrucción buscada en memoria y la copia.
 	\item Se identifica el tipo de cada instrucción. Si alguna es de control, se realizan las predicciones usando alguno de los métodos mencionado en en la sección \ref{sec::branchPrediction}.
 	\item Las instrucciones son decodificadas en  \textbf{tuplas de ejecución} que contienen la operación a ser ejecutada, las identidades de los elementos donde se encuentran los parámetros de entrada y donde deben guardase los resultados. 
 	
-	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando son decodificadas, se mapean (o renombrado) a un registro físico y las dependencias artificiales se resuelven indicando a las instrucciones involucradas que usen distintos registros físicos (\textbf{Algoritmo de tomasulo}, sección \ref{ilp::tomasulo}).
+	En el programa estático, las instrucciones utilizan los registros \textbf{lógicos} (los de la arquitectura). Por esta razón, cuando son decodificadas, se mapean (o renombran) a un registro físico y las dependencias artificiales se resuelven indicando a las instrucciones involucradas que usen distintos registros físicos (\textbf{Algoritmo de tomasulo}, sección \ref{ilp::tomasulo}).
 
 	\item Una vez que todas las instrucciones asociadas a un registro físico son completadas (modifican el estado visible), se libera el registro para que pueda ser usado por otro bloque de instrucciones. 		
 \end{itemize}
 
+\subsection{Scoreboarding}
+Cuando una instrucción es decodificada, se loggea en un archivo de registros llamado \textbf{scoreboard}. Éste se encarga de commitear, mandar a ejecutar y detectar dependencias. Cuando detecta que las instrucciones pueden leer sus operandos las manda a ejecutar. Si dedice que no puede hacer esto, monitorea cada cambio del hardware hastaa que los operandos necesarios estén disponibles.
+Además, controla cuando una instrucción puede escribir sus resultados en el registro correspondiente. De esta manera, la detección de hazards y su resolución es centralizada en el scoreboard. 
 
-\subsubsection{Out of Order Execution (Tomasulo)}\label{ilp::tomasulo}
-El algoritmo de Tomasulo crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesitamos:
+Durante la ejecución, cada instrucción pasa por cuatro etapas:
+
+\begin{enumerate}
+	\item \textbf{Issue:} Si hay una unidad funcional libre para la instrucción y ninguna otra instrucción activa necesita escribir en el registro destino, el scorboard la envia a esta unidad y actualiza su estado interno. Si hubiese otra instrucción que necesita del mismo registro, entonces se bloquea (\textit{stall}) hasta que todos los obstaculos hayan sido resueltos.
+	
+	Cuando esta etapa se bloquea \textit{stall}, el buffer de fetching tambien entra en este estado cuando se llena.
+	
+	\item \textbf{Lectura de operandos:} Un operando se encuentra disponible si ninguna instrucción activa emitida anteriormente necesita escribirlo. Cuand los operandos fuentes están habilitados, el scoreboar le dice a la unidad funcional que proceda a leerlos desde los registros y comienze la ejecución. De esta forma se  evitan los RAW hazards que, como se resuelven dinamicamente, permiten que las instrucciones sean ejecutadas fuera de orden.
+	
+	\item\textbf{Ejecución:} Las unidades funcionales comienzan la ejecución después de haber recibidos todos los operandos. Cuando el resultado está listo, lo notifica al scoreboard.
+	
+	\item\textbf{Escritura de resultado:} Una vez que el scoreboard recibe la notificación, chequea por WAR hazards. Si los encuentra, bloquea la escritura de la instrucción hasta que estos son resueltos.
+\end{enumerate}
+
+\paragraph{Desventajas de este método}
+\begin{itemize}
+	\item No puede aprovechar el forwarding de datos porque considera que un operando solo está listo cuando fue escrito en registro.
+	\item El scoreboard controla el progreso de una instrucción comunicándose con las unidades funcionales. Al haber un numero limitado de buses de operandos y resultados, debe asegurarse que el número de unidades funcionales habilitadas para proceder no excedan estos recursos.
+\end{itemize}
+\subsection{Tomasulo}\label{ilp::tomasulo}
+El algoritmo de Tomasulo crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesita:
 \begin{itemize}
 	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
 	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
-	\item Las instrucciones deben saber cuando sus operandos estan listos (``Ready'').
-	\item Despachar (``dispatch'') la instrucción a su Unidad Funcional ni bien todos sus operandos estén listos.
+	\item Saber cuando sus operandos estan listos (``Ready'').
+	\item Despachar (``dispatch'') cada una de ellas a su Unidad Funcional correspondiente ni bien todos sus operandos estén listos.
 \end{itemize}
 
 \paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
 
-\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que esté lista para ser ejecutada. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
+\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que estén listas para ser ejecutadas. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
 
 Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
 
@@ -221,7 +243,7 @@ Para evitar que una instrucción más corta se complete antes que otra de mayor 
 \subsubsection{Reorder-Buffer}
 La principal desventaja del método anterior es que instrucciones rápidas serán retenidas a pesar de no tener dependencias.
 
-Para resolver este problema se agrega un \textbf{reorder buffer} que indica el orden en el que las instrucciones deben modificar el estado visible. Entonces, se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que cumple con el objetivo mencionado. Cuando son completadas, se las almacena en la entrada indicada (por el tag) del buffer.
+Para resolver este problema se agrega un \textbf{reorder buffer} que indica el orden en el que las instrucciones deben modificar el estado visible. Entonces se permite que las instrucciones terminen en cualquier orden pero se les asigna un tag que cumple con el objetivo mencionado. Cuando son completadas, se las almacena en la entrada indicada (por el tag) del buffer.
 
 \begin{figure}[ht]
 	\centering

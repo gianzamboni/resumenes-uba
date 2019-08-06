@@ -8,9 +8,9 @@
 La localidad de los programas surge naturalmente de su estructura. La mayoría contiene loops, osea que las instrucciones y los datos usados en ellos será accedido repetidamente lo que genera localidad temporal. Además, como son accedidas secuencialmente se tiene localidad espacial.
 
 \subsection{Jerarquías de memoria}
-Para aprovechar estos principios, se implementa la memoria de una computadora como una \textbf{jerarquía}. Ésta, consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientas más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata prooveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
+Para aprovechar estos principios, se implementa la memoria de una computadora como una \textbf{jerarquía} que consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientras más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata proveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
 
-En la actualidad, hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoría principal es implementada con DRAM (Dynamic Random Acces Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Acces Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
+En la actualidad hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoría principal es implementada con DRAM (Dynamic Random Acces Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Acces Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
 
 \begin{figure}[ht]
 	\centering
@@ -19,7 +19,7 @@ En la actualidad, hay tres tipos de tecnologías usadas para construir las disti
 	\label{fig:memory-hierarchy}
 \end{figure}
 
-Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos niveles adyacentes. El nivel más alto - el más cercano al procesador - es más pequeño y rapido ya que usa tecnología más cara que el nivel más bajo.
+Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos niveles adyacentes. El nivel más alto - el más cercano al procesador - es más pequeño y rapido y usa tecnología más cara que el nivel más bajo.
 
 \paragraph{Bloque:} La mínima unidad de información que puede estar presente en la jerarquía de dos niveles (la que está compuesta por las dos memorias que intercambian información).
 
@@ -27,7 +27,7 @@ Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos 
 
 \paragraph{Miss:} Cuando la información debe ser buscada en el nivel inferior de la jerarquía.
 
-\paragraph{Hit Rate:} La fracción de accesos a memoria encontrados en cada nivel1 de la jerarquía. A menudo es usado como medida de rendimiento de la misma.
+\paragraph{Hit Rate:} La fracción de accesos a memoria encontrados en cada nivel de la jerarquía. A menudo es usado como medida de rendimiento de la misma.
 
 \paragraph{Miss Rate: } 1 - hit rate (para cada nivel)
 
@@ -49,7 +49,7 @@ Hay dos tipos de memoria:
 	
 	\item\textbf{Volatiles:} Conocidas como \textbf{RAM}, se caracterizan por que una vez interrumpida la alimentación eléctrica, la información que almacenaban se pierde.
 	
-	Estas memorias pueden almacenar mayores cantidades de información y modificarla en tiempo real a gran velocidad a comparación de las No Volátiles.
+	Estas memorias pueden almacenar mayor cantidad de información y modificarla en tiempo real a gran velocidad a comparación de las No Volátiles.
 	
 	Se clasifican de acuerdo con la tecnología y su diseño interno en:
 	
@@ -73,7 +73,7 @@ Hay dos tipos de memoria:
 
 \newpage
 \section{Memoria Caché}
-Los niveles de caché son bancos de SRAM de muy alta velocidad que contienen una copia de los datos e instrucciones que están en memoria principal. Éstos, deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos en memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
+Los niveles de caché son bancos de SRAM de muy alta velocidad que contienen una copia de los datos e instrucciones que están en memoria principal. Deben ser lo suficientemente grandes para que el procesador resuelva la mayor cantidad posible de búsquedas de código y datos en memoria asegurando una alta performance y lo suficientemente pequeñas para no afectar el consumo ni el costo del sistema.
 
 Para implementar estas memorias se debe agregar un controlador que se encarga de mantener la caché actualizada y de indicarle que datos debe mandar al procesador.
 
@@ -127,8 +127,13 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 	\end{itemize}
 \end{itemize}
 
-\subsection{Asociativa de dos vías}
+\subsubsection{Totalmente asociativa}
+Un bloque de memoria puede ser cargado en cualquier línea de la cache. Para determinar si un bloque se encuentra en la cache, se debe examinar el tag de todas las líneas para encontrar un match. Cuando la caché esta llena, se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir que bloque remplazar.
 
+
+Otros algoritmos de remplazo son FIFO (Firt In- First out, remplaza el bloque mas viejo) o LFU (Least frequently used, remplaza el bloque menos referenciado).
+
+\subsubsection{Asociativa de dos vías}
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.75\textwidth]{imagenes/cache-asociativo-vias}
@@ -136,7 +141,8 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 `	\label{fig:asociativo-mapping}
 \end{figure}
 
-Cuando se trae un bloque de memoria, éste puede ser copiado en cualquiera de las dos mitades mientras sea dentro del set correspondiente. Se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir cual mitad remplazar con la nueva información.
+Es una combinación de las dos anterios. La cache se divide en dos y a un bloque le corresponde un set especifico. Sin embargo, dentro de ese set puede ser copiado en cualquiera de las dos mitades. Cuando hay que remplazar un bloque, se utiliza un LRU para decidir cual mitad usar.
+
 
 \subsection{Operación de escritura (Coherencia de caché)}
 
@@ -160,12 +166,14 @@ Dependiendo del sistema (si hay una sola CPU o más de una) se utilizan distinta
  	Este método mejora el performance cuando el procesador puede generar escrituras tan o más rápido de lo que puede escribir en memoria. Sin embargo, es mucho más difícil de implementar.
 \end{itemize}
 
-Si el procesador realiza un miss mientras el controlador caché está accediendo a la DRAM, para actualizar el valor deberá esperar hasta que se termine la opreación para poder acceder a la misma.
+Si el procesador realiza un miss mientras el controlador caché está accediendo a la DRAM, deberá esperar a que la escritura termine para que su request sea atendido.
 
 \subsubsection{Coherencia en sistemas multi-procesador (Snoop Bus)}
-El bus es un conjunto de cables que conecta varios dispositivos, cada uno de los cuales puede observar cada transacción del bus. Cuando un procesador emite un pedido a su caché, el controlador examina el estado de la misma y realiza las acciones adecuadas para completarlo. Esto puede generar transacciones para acceder a memoria.
 
-En este caso, cada procesador posee una caché de primer nivel y todas ellas son conectadas al subsistema de memoria principal a través un único bus que es compartido. 
+
+El bus es un conjunto de cables que conecta varios dispositivos, cada uno de los cuales puede observar cada transacción del mismo. Cuando un procesador emite un pedido a su caché, el controlador examina el estado de la misma y realiza las acciones adecuadas para completarlo. Esto puede generar transacciones para acceder a memoria.
+
+\paragraph{SMP (Symetric Multiprocessors:)} Cada procesador posee una caché de primer nivel y todas ellas están conectadas al subsistema de memoria principal y dispostivos de E/S a través un único bus compartido.
 
 \begin{figure}[ht]
 	\centering
@@ -174,7 +182,7 @@ En este caso, cada procesador posee una caché de primer nivel y todas ellas son
 	\label{fig:busCompartido}
 \end{figure}
 
-Cuando un procesador modifica un bloque de memoria presente en su caché, se produce una incoherencia en las caches de los otros procesadores que tenían su propia copia del bloque. Esto sucede porque la misma contiene un valor obsoleto en la dirección de memoria modificada por el primer procesador.
+Cuando un procesador modifica un bloque de memoria presente en su caché, se produce una incoherencia en las caches de los otros procesadores que tenían su propia copia del bloque. Esto sucede porque contienen un valor obsoleto en la dirección de memoria modificada por el primer procesador.
 
 %\paragraph{Coherencia (en multiprocesadores):} Un sistema de memoria es coherente si es posible, para toda dirección, construir un orden serial de todas las operaciones que acceden a ella tal que:
 %\begin{itemize}
@@ -186,16 +194,16 @@ Cuando un procesador modifica un bloque de memoria presente en su caché, se pro
 %Está implícita, en esta definición, la propiedad de \textbf{serialización de escritura}. Ésta nos asegura que todos los procesadores ven todas las escrituras a una dirección en el mismo orden.
 
 %\paragraph{Snooping bus:}
-La coherencia se mantiene haciendo que cada controlador de caché espíe el bus y monitoreé las transacciones. El controlador del bus funciona como arbitro para  decidir el orden en el que estas son ejecutadas. Cuando una transacción es enviada por el bus, se envia la dirección a la que se está accediendo y el tipo de operación que se está realizando sobre ella.
+La coherencia se mantiene haciendo que cada controlador de caché espíe (snoop) el bus y monitoreé las transacciones. El controlador del bus funciona como arbitro para  decidir el orden en el que éstas son ejecutadas. Cuando una transacción es enviada por el bus, se envia la dirección a la que se está accediendo y el tipo de operación que se está realizando sobre ella.
 
-Cada controlador de cache, toma la dirección enviada por el bus y chequea si tiene una copia del bloque referenciado por la misma.
+Cada controlador de cache toma la dirección enviada por el bus y chequea si tiene una copia del bloque referenciado por la misma.
 
 \begin{itemize}
 	\item \textbf{con write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando el procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
 	
 	El problema con este método es que se accede a memoria por cada operación de almacenamiento.
 	
-	\item  \textbf{write-back:} Al momento, es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar la validez de nuestros datos.
+	\item  \textbf{write-back:} Al momento es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar la validez de nuestros datos.
 \end{itemize}
 
 \subsubsection{Protocolo MESI}
