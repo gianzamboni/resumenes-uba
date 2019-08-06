@@ -1,7 +1,6 @@
 \part{Procesadores Intel}
-Cosas muy específicas de intel que me parece que son al pedo, pero por las dudas.
 
-\section{Arquitectura básica Intel x86 y booteo de un sistema operativo}
+\section{Arquitectura básica Intel x86 y otras clases de furfaro}
 
 \subsection{Modos de operación}
 \begin{itemize}
@@ -63,16 +62,7 @@ La dirección lineal se divide en tres partes:
 
 En los procesadores intel, está la opción de páginación PAE, que habilita un par de pines más en el procesador para extender la longitud de las direcciones de 32 a 36 bits y aumentar el espacio de direccionamiento.
 
-\red{
-\paragraph{En cuanto a las siguientes secciones:}
-Esta parte son los papers resumidos. Todos describen (a medias) técnicas que fueron implementadas por intel en alguno de sus procesadores y cual era su objetivo al implementarla (básicamente, conseguir el mejor balance posible entre rendimiento y consumo de energía). A veces, saltan con conceptos nuevos que nunca definen en ningún lado (y para los que google no ayuda mucho). En estos casos, dependiendo que tan claro sean, tenemos dos opciones:
-\begin{enumerate}
-	\item Asumir su significado y rogar a [dios/furfaro/quien sea que haya que rogarle] que estemos en lo correcto.
-	\item Hacer como que la palabra no existe, pasar al siguiente párrafo y rogar a [dios/furfaro/quien sea que haya que rogarle] que justo eso no sea importante para el final.
-\end{enumerate}
-
-Teniendo en cuenta esto, si decidis leer estos resumenes, hacelo a discreción.
-}
+\red{A partir de acá resumenes de  los papers. Faltan los que hablan del Intel Core 2.}
 \section{Netburst microarchitecture (Pentium 4 \cite{Sager01themicroarchitecture})}
 La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
 
