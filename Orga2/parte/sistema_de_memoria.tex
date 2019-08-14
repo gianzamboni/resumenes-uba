@@ -10,7 +10,7 @@ La localidad de los programas surge naturalmente de su estructura. La mayoría c
 \subsection{Jerarquías de memoria}
 Para aprovechar estos principios, se implementa la memoria de una computadora como una \textbf{jerarquía} que consiste en múltiples niveles de memoria con diferentes tamaños y velocidades. Mientras más rápida sean, más caras por bit son. El objetivo es presentar al usuario con tanta memoria como sea posible con la tecnología más barata proveyendo, al mismo tiempo, la velocidad de acceso provista por las memorias más rápidas.
 
-En la actualidad hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoría principal es implementada con DRAM (Dynamic Random Acces Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Acces Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
+En la actualidad hay tres tipos de tecnologías usadas para construir las distintas jerarquías. La memoria principal es implementada con DRAM (Dynamic Random Access Memory) mientras que los niveles más cercanos al procesador (caché) usan SRAM (Static Random Access Memory)  [Ver sección \ref{sec::Memoria::Tipos}].
 
 \begin{figure}[ht]
 	\centering
@@ -19,7 +19,7 @@ En la actualidad hay tres tipos de tecnologías usadas para construir las distin
 	\label{fig:memory-hierarchy}
 \end{figure}
 
-Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos niveles adyacentes. El nivel más alto - el más cercano al procesador - es más pequeño y rapido y usa tecnología más cara que el nivel más bajo.
+Sin importar el tamaño de la jerarquía, los datos son copiados solo entre dos niveles adyacentes. El nivel más alto - el más cercano al procesador - es más pequeño y rápido y usa tecnología más cara que el nivel más bajo.
 
 \paragraph{Bloque:} La mínima unidad de información que puede estar presente en la jerarquía de dos niveles (la que está compuesta por las dos memorias que intercambian información).
 
@@ -47,7 +47,7 @@ Hay dos tipos de memoria:
 	
 	Se usan fundamentalmente para almacenar el programa de arranque de cualquier sistema.
 	
-	\item\textbf{Volatiles:} Conocidas como \textbf{RAM}, se caracterizan por que una vez interrumpida la alimentación eléctrica, la información que almacenaban se pierde.
+	\item\textbf{Volátiles:} Conocidas como \textbf{RAM}, se caracterizan por que una vez interrumpida la alimentación eléctrica, la información que almacenaban se pierde.
 	
 	Estas memorias pueden almacenar mayor cantidad de información y modificarla en tiempo real a gran velocidad a comparación de las No Volátiles.
 	
@@ -62,7 +62,7 @@ Hay dos tipos de memoria:
 		
 		Durante una operación de lectura, los capacitores de la celda seleccionada son activados y descargados completamente. En este caso, un amplificador detecta los valores leídos y aplica voltaje a las lineas de bits necesarias para volver a cargar
  		los capacitores necesarios. Esto aumenta el tiempo de acceso a la celda ya que no se puede liberar la operación hasta no haber repuesto el estado de carga de cada uno de ellos.
- 		\item \textbf{Estáticas (SRAM):} Almacenan la información en un biestable. Una celda se compone de seis transitores (por lo que tienen menos capacidad por componente que las dinámicas).
+ 		\item \textbf{Estáticas (SRAM):} Almacenan la información en un bi-estable Una celda se compone de seis transistores (por lo que tienen menos capacidad por componente que las dinámicas).
  		
  		Tres de los seis transistores están saturados (conducen la máxima corriente posible de forma permanente) y los otros tres están al corte (conducen una corriente prácticamente insignificante pero no nula). Esto genera un mayor consumo de energía por celda.
  		
@@ -77,7 +77,7 @@ Los niveles de caché son bancos de SRAM de muy alta velocidad que contienen una
 
 Para implementar estas memorias se debe agregar un controlador que se encarga de mantener la caché actualizada y de indicarle que datos debe mandar al procesador.
 
-\subsection{Operción de lectura}
+\subsection{Operación de lectura}
 \begin{itemize}
 	\item El procesador inicia un ciclo de lectura de memoria, envía la dirección necesaria al controlador de caché.
 	\item El controlador busca la dirección en el directorio de la caché.
@@ -122,7 +122,7 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 	\item Se busca el set en el que se encontraría esa dirección.
 	\item Si el set tiene información válida, se corrobora que sea de la página de memoria a la que pertenece esa dirección.
 	\begin{itemize}
-		\item Si la página es correcta, entonces se accede al set en busca de la línea correspondiente y se vuelve el dato pédido.
+		\item Si la página es correcta, entonces se accede al set en busca de la línea correspondiente y se vuelve el dato pedido
 		\item Sino, se trae de memoria un bloque de tamaño del set y remplaza el set actual por ese.
 	\end{itemize}
 \end{itemize}
@@ -141,7 +141,7 @@ Otros algoritmos de remplazo son FIFO (Firt In- First out, remplaza el bloque ma
 `	\label{fig:asociativo-mapping}
 \end{figure}
 
-Es una combinación de las dos anterios. La cache se divide en dos y a un bloque le corresponde un set especifico. Sin embargo, dentro de ese set puede ser copiado en cualquiera de las dos mitades. Cuando hay que remplazar un bloque, se utiliza un LRU para decidir cual mitad usar.
+Es una combinación de las dos anteriores. La cache se divide en dos y a un bloque le corresponde un set especifico. Sin embargo, dentro de ese set puede ser copiado en cualquiera de las dos mitades. Cuando hay que remplazar un bloque, se utiliza un LRU para decidir cual mitad usar.
 
 
 \subsection{Operación de escritura (Coherencia de caché)}
@@ -151,7 +151,7 @@ Cuando modificamos un valor, sería ideal que el cambio se vea reflejado tanto e
 Dependiendo del sistema (si hay una sola CPU o más de una) se utilizan distintas \textbf{políticas de escritura}. Decidir cuál de ellas usar constituye una de las decisiones más importantes en el diseño del sistema de memoria:
 
 \begin{itemize}
-	\item \textbf{Write through:} Cada vez que hay que hay que modificar una dirección, el procesador manda el dato tanto a memoria príncipal como al controlador de la caché y se realiza la escritura en ambas memorias. 
+	\item \textbf{Write through:} Cada vez que hay que hay que modificar una dirección, el procesador manda el dato tanto a memoria principal como al controlador de la caché y se realiza la escritura en ambas memorias. 
 	
 	Esto garantiza coherencia entre ambos datos de manera absoluta pero penaliza cada escritura con el tiempo de acceso a DRAM. Osea que la performance se degrada durante estas operaciones.
 	
@@ -173,7 +173,7 @@ Si el procesador realiza un miss mientras el controlador caché está accediendo
 
 El bus es un conjunto de cables que conecta varios dispositivos, cada uno de los cuales puede observar cada transacción del mismo. Cuando un procesador emite un pedido a su caché, el controlador examina el estado de la misma y realiza las acciones adecuadas para completarlo. Esto puede generar transacciones para acceder a memoria.
 
-\paragraph{SMP (Symetric Multiprocessors:)} Cada procesador posee una caché de primer nivel y todas ellas están conectadas al subsistema de memoria principal y dispostivos de E/S a través un único bus compartido.
+\paragraph{SMP (Symetric Multiprocessors:)} Cada procesador posee una caché de primer nivel y todas ellas están conectadas al subsistema de memoria principal y dispositivos de E/S a través un único bus compartido.
 
 \begin{figure}[ht]
 	\centering
@@ -194,16 +194,16 @@ Cuando un procesador modifica un bloque de memoria presente en su caché, se pro
 %Está implícita, en esta definición, la propiedad de \textbf{serialización de escritura}. Ésta nos asegura que todos los procesadores ven todas las escrituras a una dirección en el mismo orden.
 
 %\paragraph{Snooping bus:}
-La coherencia se mantiene haciendo que cada controlador de caché espíe (snoop) el bus y monitoreé las transacciones. El controlador del bus funciona como arbitro para  decidir el orden en el que éstas son ejecutadas. Cuando una transacción es enviada por el bus, se envia la dirección a la que se está accediendo y el tipo de operación que se está realizando sobre ella.
+La coherencia se mantiene haciendo que cada controlador de caché espíe (snoop) el bus y monitoreé las transacciones. El controlador del bus funciona como arbitro para  decidir el orden en el que éstas son ejecutadas. Cuando una transacción es enviada por el bus, se envía la dirección a la que se está accediendo y el tipo de operación que se está realizando sobre ella.
 
 Cada controlador de cache toma la dirección enviada por el bus y chequea si tiene una copia del bloque referenciado por la misma.
 
 \begin{itemize}
-	\item \textbf{con write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando el procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
+	\item \textbf{Write-through:} Todas las escrituras se realizan directamente en la memoria principal. Todas las caches que tengan una copia del bloque modificado invalidan esa entrada. De esta forma, cuando el procesador necesite leer esa dirección, se tendrá que volver a cargar el bloque desde la memoria principal.
 	
 	El problema con este método es que se accede a memoria por cada operación de almacenamiento.
 	
-	\item  \textbf{write-back:} Al momento es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar la validez de nuestros datos.
+	\item  \textbf{Write-back:} Al momento es el método más utilizado ya que reduce drásticamente estos accesos. Sin embargo, no puede ser usado directamente en estos sistemas ya que no sería posible identificar donde está el último valor válido de una dirección. Por esta razón, se desarrollaron protocolos de coherencias (el más popular de ellos M.E.S.I) que nos permiten identificar la validez de nuestros datos.
 \end{itemize}
 
 \subsubsection{Protocolo MESI}
@@ -249,3 +249,10 @@ Supongamos que el procesador necesita leer un bloque de memoria, entonces produc
 		\item Luego, genera el proccesor write (\textbf{PW}), realiza las modificaciones y pasa el bloque a \textbf{Modified}
 	\end{itemize}
 \end{itemize}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/mesi-implementation}
+	\caption{Implementación de MESI en un SMP}
+	\label{fig:mesiDiagram}
+\end{figure}

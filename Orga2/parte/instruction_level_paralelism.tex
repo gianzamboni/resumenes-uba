@@ -15,22 +15,23 @@ Si bien el pipelining reduce el tiempo de ejecución de un programa, debemos not
 Para facilitar una implementación efectiva del pipeline, el set de instrucciones propuesto debe permitir que todas las etapas tarden el mismo tiempo en ser ejecutadas. Esto implica que hay que tener ciertas consideraciones al momento de diseñarlo:
 
 \begin{itemize}
-	\item Todas las instrucciones deben tener la misma longitud (en la arquitectura IA-32, donde las instrucciones tienen longitud variada, esto se logra descomponiendo cada instrucción en micro-operaciones de longitud fija y a estas microoperaciones se les aplica el pipelining).
+	\item Todas las instrucciones deben tener la misma longitud (en la arquitectura IA-32, donde las instrucciones tienen longitud variada, esto se logra descomponiendo cada instrucción en micro-operaciones de longitud fija y a estas micro-operaciones se les aplica el pipelining).
 	\item Todas las instrucciones deben tener la misma estructura, es decir, la cantidad de parámetros y la ubicación dentro de la instrucción que los explicita deben ser las mismas (o lo más parecidas posibles). 
 	\item Los operandos deben estar alineados en memoria. Esto es, las direcciones de memoria que ocupan deben ser múltiplo del tamaño de las palabras usadas para que los datos puedan ser transferidos en una única etapa del pipeline.
 \end{itemize}
 
 \subsection{Pipeline Hazards}
-Hay situaciones en las que una instrucción no puede ser ejecutada en el siguiente ciclo de reloj debido a algún obstaculo (\textbf{hazards}). Estos eventos pueden llegar a detener el flujo del pipeline (\textbf{pipeline stall}) y generar una demora en el procesamiento de las instrucciones. A continuación veremos los tres tipos de obstaculos que se pueden dar:
+Hay situaciones en las que una instrucción no puede ser ejecutada en el siguiente ciclo de reloj debido a algún obstáculo (\textbf{hazards}). Estos eventos pueden llegar a detener el flujo del pipeline (\textbf{pipeline stall}) y generar una demora en el procesamiento de las instrucciones. A continuación veremos los tres tipos de obstáculos que se pueden dar:
 
 \begin{itemize}
-	\item \textbf{Estructurales (Structural Hazards):} El hardware no soporta la combinación de instrucciones que queremos ejecutar en el mismo ciclo de reloj. Por ejemplo, si una instrucción debe acceder a memoria mientras otra debe realizar un fetch en la misma memoria. En este caso, las dos instrucciones deben utilizar los mismos recursos y debería darsele prioridad a la primera instrucción dejando a la segunda en espera.
+	\item \textbf{Estructurales (Structural Hazards):} El hardware no soporta la combinación de instrucciones que queremos ejecutar en el mismo ciclo de reloj. Por ejemplo, si una instrucción debe acceder a memoria mientras otra debe realizar un fetch en la misma memoria. En este caso, las dos instrucciones deben utilizar los mismos recursos y debería dársele prioridad a la primera instrucción dejando a la segunda en espera.
 	
-	Para resolver esto debería agregarse harwdare (como buffers, caches, etc).
-	\item \textbf{De datos (Data Hazards):} Hay una instrucción en el pipeline que depende de los resultados de otra instrucción (tambien en el pipeline) y debe esperar a que ésta se complete para poder terminar. Esto puede bloquear el pipe durante varios ciclos de reloj ya que se debe procesar completamente la primer instrucción. 
+	Para resolver esto debería agregarse hardware (como buffers, caches, etc).
+	\item \textbf{De datos (Data Hazards):} Hay una instrucción en el pipeline que depende de los resultados de otra instrucción (también en el pipeline) y debe esperar a que ésta se complete para poder terminar. Esto puede bloquear el pipe durante varios ciclos de reloj ya que se debe procesar completamente la primer instrucción. 
 	
 	Para minimizar el impacto de este obstáculo, por lo general, se agrega extra hardware que permite conseguir el valor deseado apenas sea calculado (cuando termina la etapa de ejecución) directamente de los componentes internos para no tener que esperar a que sea guardado en memoria (esta técnica se llama \textbf{forwarding} o \textbf{bypassing}).
-	\item \textbf{De control (Control or Branch Hazards):} La instrucción que se fetcheó no es la que debe ejecutarse en este ciclo de reloj. Esto sucede cuando una de las instrucciones del pipe es de control. Cuando es fetcheada, el pipeline no puede saber cual es la próxima instrucción que debe ser ejecutada ya que esto depende del resultado de la instrucción actual.
+	
+	\item \textbf{De control (Control or Branch Hazards):} La instrucción que se fetcheó no es la que debe ejecutarse en este ciclo de reloj. Cuando aparece una instrucción de control es fetcheada, el pipeline no puede saber cual es la próxima instrucción que debe ser ejecutada ya que esto depende del resultado de la instrucción actual.
 	
 	Una posible solución es parar apenas se haga el fetch del condicional y esperar hasta obtener sus resultado. Otra, es realizar predicciones (\textbf{branch prediction}) y ejecutar las instrucciones con más probabilidad de ser ejecutadas. En este último caso, el pipeline procede sin demoras si la predicción fue correcta sino debe eliminar las instrucciones procesadas y volver a comenzar desde el lugar correcto.
 \end{itemize}
@@ -44,7 +45,7 @@ Hay situaciones en las que una instrucción no puede ser ejecutada en el siguien
 
 \paragraph{Taken Branch:} Cuando se ejecuta la instrucción que se encuentra en la dirección del salto de la instrucción condicional.
 
-\paragraph{Branch penalty:} Cuando se fetchea la instruccción incorrecta, debe descartarse todo lo que estaba pre procesado hasta ese momento. El pipeline se vacía y deben transcurrir $n-1$ ciclos de clock hasta el próximo resultado ($n = $ cantidad de etapas del pipeline).
+\paragraph{Branch penalty:} Cuando se fetchea la instrucción incorrecta, debe descartarse todo lo que estaba pre-procesado hasta ese momento. El pipeline se vacía y deben transcurrir $n-1$ ciclos de clock hasta el próximo resultado ($n = $ cantidad de etapas del pipeline).
 
 \subsection{Predicciones estáticas}
 \begin{itemize}
@@ -69,7 +70,7 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 
 	Las primeras implementaciones de esta técnica hacían uso de un único bit que se remplazaba cada vez que la predicción fallaba. En ciertos casos, la eficiencia de este método no era satisfactoria llegando a fallar completamente en otros (por ejemplo, si los saltos termina formando una secuencia intercalada de Taken y Not taken).
 	
-	\item \textbf{Branch Target Buffer (BTB)}: Es una caché en la que se almacena, en cada entrada, la dirección de la instrucción de control y la dirección de la instrucción que fue ejecutada despues de resolver el branching.
+	\item \textbf{Branch Target Buffer (BTB)}: Es una caché en la que se almacena, en cada entrada, la dirección de la instrucción de control y la dirección de la instrucción que fue ejecutada después de resolver el branching.
 	
 	Cuando se fetchea una instrucción de control, se accede a esta caché usando el valor del program counter.
 	\begin{itemize}
@@ -90,9 +91,9 @@ Este tipo de predicciones funcionan bien para piplines simples. Sin embargo, la 
 \section{Procesadores Superscalares}
 Son procesadores que explotan la ejecución paralela de instrucciones para mejorar el rendimiento. Agrega más pipelines a la ejecución, lo que permite incrementar aún más la cantidad de instrucciones procesadas por ciclo de reloj.
 
-Un problema es que los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazzards de su propio pipeline, debe lidiar tambien con las mismas etapas del otro pipeline. 
+Un problema es que los obstáculos estructurales quedan más expuestos. Cada etapa, ademas de lidiar con los data hazards de su propio pipeline, debe lidiar también con las mismas etapas del otro pipeline. 
 
-Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando secuencialidad innecesaria. Por esta razón, los programas binarios deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
+Este tipo de procesadores analizan los binarios secuenciales de los programas y lo paralelizan eliminando esencialidad innecesaria. Por esta razón, los programas binarios deben ser vistos más como una especificación de lo que debe hacerse y no como lo que realmente sucede.
 
 Más precisamente, un procesador superescalar implementa:
 
@@ -100,22 +101,22 @@ Más precisamente, un procesador superescalar implementa:
 	\item Estrategias de fetch que permiten fetchear múltiples instrucciones mediante la predicción de resultados y saltos.
 	\item Métodos para determinar dependencias de registros y mecanismos para comunicar esos valores cuando sea necesario durante la ejecución.
 	\item Métodos para iniciar, o resolver, múltiples instrucciones en paralelo.
-	\item Recursos para la ejecución en paralelo de varias instrucciones, incluyendo multiples unidades funcionales de pipelines y jerarquías de memorias capaces de atender simultáneamente múltiples referencias a memoria.
-	\item Métodos para manejar datos a través de instrucciones de lectura/escritura e interfaces de memoria que tengán en cuenta el comportamiento dinámico (y muchas veces impredecibles) de las jerarquías diseñadas.
+	\item Recursos para la ejecución en paralelo de varias instrucciones, incluyendo múltiples unidades funcionales de pipelines y jerarquías de memorias capaces de atender simultáneamente múltiples referencias a memoria.
+	\item Métodos para manejar datos a través de instrucciones de lectura/escritura e interfaces de memoria que tengan en cuenta el comportamiento dinámico (y muchas veces impredecibles) de las jerarquías diseñadas.
 	\item Métodos para actualizar los estados del proceso en el orden correcto (para mantener la apariencia de la ejecución en orden secuencial).
 \end{enumerate}
 
 \subsection{Dependencias de instrucciones}\label{sec:instructionLevelParalelism:dependenciaDeInstrucciones}
 Por lo general, se interpreta el binario de un programa como un conjunto de bloques compuestos de instrucciones contiguas. Una vez que se fetchea un bloque, se sabe que todas sus instrucciones van a ser ejecutadas eventualmente. Cuando esto suceda, diremos que el bloque es iniciado en una \textbf{ventana de ejecución}.
 
-Una vez que las instrucciones entran en esta ventana, son ejecutadas en paralelo teniendo en cuenta sus depencencias que pueden ser de control o datos. Las de control son generadas por condicionales y pueden ser resueltas/optimizadas con predicciones (Seccion \ref{sec::branchPrediction}). 
+Una vez que las instrucciones entran en esta ventana, son ejecutadas en paralelo teniendo en cuenta sus dependencias que pueden ser de control o datos. Las de control son generadas por condicionales y pueden ser resueltas/optimizadas con predicciones (Sección \ref{sec::branchPrediction}). 
 
-Las \textbf{dependencias de datos} se da entre instrucciones que referencian el mismo espacio de memoria. En estos casos, si las instrucciones no se ejecutan en el orden correcto, puede haber errores en las operaciones. Pueden ser Verdaderas o Artificales.
+Las \textbf{dependencias de datos} se da entre instrucciones que referencian el mismo espacio de memoria. En estos casos, si las instrucciones no se ejecutan en el orden correcto, puede haber errores en las operaciones. Pueden ser Verdaderas o Artificiales
 \begin{itemize}
 	\item \textbf{Dependencias verdaderas:} Cuando una instrucción debe leer un valor que todavía no fue generado por una instrucción previa (\textbf{Read after write hazard}).
-	\item \textbf{Dependecias artificiales:} Resultan de instrucciones que deben escribir un nuevo valor en una posición de memoria pero debe esperar a que las instrucciones previas utilizen el valor actual (\textbf{Write after Read hazzard}) o cuando varias instrucciones deben escribir la misma posición de memoria (\textbf{Write after Write hazzard}).
+	\item \textbf{Dependecias artificiales:} Resultan de instrucciones que deben escribir un nuevo valor en una posición de memoria pero debe esperar a que las instrucciones previas utilicen el valor actual (\textbf{Write after Read hazard}) o cuando varias instrucciones deben escribir la misma posición de memoria (\textbf{Write after Write hazard}).
 	
-	Estas dependencias son producidas por código no optimizado, por escasez de registros disponibles, por el deseo de economizar el uso de la memoría principal o por ciclos donde una instrucción puede colisionar consigo misma.
+	Estas dependencias son producidas por código no optimizado, por escasez de registros disponibles, por el deseo de economizar el uso de la memoria principal o por ciclos donde una instrucción puede colisionar consigo misma.
 	
 \end{itemize}
 
@@ -137,17 +138,17 @@ El program counter se utiliza para determinar la posición de una instrucción e
 \end{itemize}
 
 \subsection{Scoreboarding}
-Cuando una instrucción es decodificada, se loggea en un archivo de registros llamado \textbf{scoreboard}. Éste se encarga de commitear, mandar a ejecutar y detectar dependencias. Cuando detecta que las instrucciones pueden leer sus operandos las manda a ejecutar. Si dedice que no puede hacer esto, monitorea cada cambio del hardware hastaa que los operandos necesarios estén disponibles.
+Cuando una instrucción es decodificada, se loguea en un archivo de registros llamado \textbf{scoreboard}. Éste se encarga de commitear, mandar a ejecutar y detectar dependencias. Cuando detecta que las instrucciones pueden leer sus operandos las manda a ejecutar. Si decide que no puede hacer esto, monitorea cada cambio del hardware hasta que los operandos necesarios estén disponibles.
 Además, controla cuando una instrucción puede escribir sus resultados en el registro correspondiente. De esta manera, la detección de hazards y su resolución es centralizada en el scoreboard. 
 
 Durante la ejecución, cada instrucción pasa por cuatro etapas:
 
 \begin{enumerate}
-	\item \textbf{Issue:} Si hay una unidad funcional libre para la instrucción y ninguna otra instrucción activa necesita escribir en el registro destino, el scorboard la envia a esta unidad y actualiza su estado interno. Si hubiese otra instrucción que necesita del mismo registro, entonces se bloquea (\textit{stall}) hasta que todos los obstaculos hayan sido resueltos.
+	\item \textbf{Issue:} Si hay una unidad funcional libre para la instrucción y ninguna otra instrucción activa necesita escribir en el registro destino, el scoreboard la envía a esta unidad y actualiza su estado interno. Si hubiese otra instrucción que necesita del mismo registro, entonces se bloquea (\textit{stall}) hasta que todos los obstáculos hayan sido resueltos.
 	
-	Cuando esta etapa se bloquea \textit{stall}, el buffer de fetching tambien entra en este estado cuando se llena.
+	Cuando esta etapa se bloquea \textit{stall}, el buffer de Fetching también entra en este estado cuando se llena.
 	
-	\item \textbf{Lectura de operandos:} Un operando se encuentra disponible si ninguna instrucción activa emitida anteriormente necesita escribirlo. Cuand los operandos fuentes están habilitados, el scoreboar le dice a la unidad funcional que proceda a leerlos desde los registros y comienze la ejecución. De esta forma se  evitan los RAW hazards que, como se resuelven dinamicamente, permiten que las instrucciones sean ejecutadas fuera de orden.
+	\item \textbf{Lectura de operandos:} Un operando se encuentra disponible si ninguna instrucción activa emitida anteriormente necesita escribirlo. Cuando los operandos fuentes están habilitados, el scoreboard le dice a la unidad funcional que proceda a leerlos desde los registros y comience la ejecución. De esta forma se  evitan los RAW hazards que, como se resuelven dinámicamente, permiten que las instrucciones sean ejecutadas fuera de orden.
 	
 	\item\textbf{Ejecución:} Las unidades funcionales comienzan la ejecución después de haber recibidos todos los operandos. Cuando el resultado está listo, lo notifica al scoreboard.
 	
@@ -160,11 +161,11 @@ Durante la ejecución, cada instrucción pasa por cuatro etapas:
 	\item El scoreboard controla el progreso de una instrucción comunicándose con las unidades funcionales. Al haber un numero limitado de buses de operandos y resultados, debe asegurarse que el número de unidades funcionales habilitadas para proceder no excedan estos recursos.
 \end{itemize}
 \subsection{Tomasulo}\label{ilp::tomasulo}
-El algoritmo de Tomasulo crea un scheduling dinamico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesita:
+El algoritmo de Tomasulo crea un scheduling dinámico que permite ejecutar instrucciones fuera de orden y habilita el uso de múltiples unidades de ejecución. Para lograr esto necesita:
 \begin{itemize}
 	\item Mantener un ``link'' entre el productor de un dato con su(s) consumidor(es).
 	\item Mantener las instrucciones en espera hasta que estén listas para ejecución.
-	\item Saber cuando sus operandos estan listos (``Ready'').
+	\item Saber cuando sus operandos están listos (``Ready'').
 	\item Despachar (``dispatch'') cada una de ellas a su Unidad Funcional correspondiente ni bien todos sus operandos estén listos.
 \end{itemize}
 
@@ -187,14 +188,14 @@ Cada Registro contiene un tag que indica el último escritor en el registro.
 	\State{stall}
 	\EndIf
 	\While{esté en la RS, cada instrucción debe}
-	\State{Mirar el tráfico por el \textbf{Common Data Bus (CDB)} en busca de \textbf{tags} que corespondan a sus Operandos fuente.}
+	\State{Mirar el tráfico por el \textbf{Common Data Bus (CDB)} en busca de \textbf{tags} que correspondan a sus Operandos fuente.}
 	\State{Cuando se detecta un \textbf{tag}, se graba el valor de la fuente y se mantiene en RS.}
 	\State{Cuando ambos operandos están disponibles, la instrucciónn se marca \textbf{Ready} para ser despachada}
 	\If{Unidad Funcional disponible}
 	\State{Se depscacha la instrucción a esa unidad funcional}
 	\EndIf
 	\If{Finalizada la ejecución de la instrucción}
-	\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CDB} (\textbf{tag broadcast})}
+	\State{La unidad funcional pone el valor correspondiente al \textbf{tag} en el \textbf{CD} (\textbf{tag broadcast})}
 	\If{El archivo de registros está conectado al CDB}
 	\If{tag del Archivo de Registro $==$ tag broadcast}
 	\State{Registro = valor broadcast}
@@ -236,7 +237,7 @@ Las instrucciones modifican el estado del proceso solo cuando se sabe que todas 
 	\label{fig:shiftregister}
 \end{figure}
 
-Si la $i$-esima entrada contiene información valida entonces se pausa la instrucción. En el proximo ciclo, se rechequea si la entrada está libre y se realiza el movimiento.
+Si la $i$-ésima entrada contiene información valida entonces se pausa la instrucción. En el próximo ciclo, se re chequea si la entrada está libre y se realiza el movimiento.
 
 Para evitar que una instrucción más corta se complete antes que otra de mayor longitud (cuando este es el orden deseado) se rellenan con información invalida todas las entradas anteriores que no fueron reservadas. De esta forma, la nueva instrucción es pausada hasta el próximo ciclo de reloj.
 
@@ -260,8 +261,8 @@ En algunos casos, la dependencia entre instrucciones requiere el uso de valores 
 
 En este caso, si ocurre una excepción, se debe recorrer el history buffer para poder recuperar un estado preciso.
 
-\paragraph{Future File:} Otra solución es mantener dos arhicvos de registros. Uno que se actualice en el orden especificado por el programa (\textbf{Architectural File}). Y otro que se actualiza apenas se completa una instrucción (\textbf{Future File}).
+\paragraph{Future File:} Otra solución es mantener dos archivos de registros. Uno que se actualice en el orden especificado por el programa (\textbf{Architectural File}). Y otro que se actualiza apenas se completa una instrucción (\textbf{Future File}).
 
-Si ocurre una excepción simplemente se debe mostear el Arquitecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
+Si ocurre una excepción simplemente se debe mostear el Architecture File para conseguir un estado preciso. Sin embargo, hay que copiarlo al future file para restaurar el estado del sistema.
 
-\paragraph{Checkpointing:} Cuando se predice el resultado de una instruccion de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
+\paragraph{Checkpointing:} Cuando se predice el resultado de una instrucción de control, se guarda el estado del future file (\textbf{checkpoint}). Si al ejecutarla, la predicción resulta ser errónea entonces solo hay que copiar la información del checkpoint en el future file para recuperar el estado del sistema y comenzar de nuevo en la instrucción correcta.  
