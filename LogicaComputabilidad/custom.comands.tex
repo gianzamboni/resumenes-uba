@@ -1,0 +1,39 @@
+
+\newcommand{\dom}[1]{\text{dom}(#1)}
+
+\newcommand{\comp}[4]{\ensuremath{#1(#3_1(\xDots{x}{n}),\dots,#3_#2(\xDots{x}{n}))}}
+	
+	
+\newcommand{\resta}{\dot{-}}
+\newcommand{\imagen}[4]{
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=#1\textwidth]{#2}
+	\caption{#3}
+	\label{#4}
+\end{figure}
+}
+
+\tikzstyle{demoBox} = [
+draw=gray, very thick,
+rectangle split, rectangle split parts=2, rounded corners, inner sep=2.5mm, inner ysep=2mm,
+rectangle split part fill = {blue!40, blue!5}
+]
+
+\NewEnviron{demo}{%
+\begin{center}
+	\begin{tikzpicture}
+	\node [demoBox](box){%
+		\textbf{\scriptsize DEMOSTRACION}
+		\nodepart{two}
+		\begin{minipage}{0.85\textwidth}
+		\BODY
+		\begin{flushright}
+		$\blacksquare$
+		\end{flushright}
+	
+		\end{minipage}
+	};
+	\end{tikzpicture}
+\end{center}
+}

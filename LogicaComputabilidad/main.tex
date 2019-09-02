@@ -1,0 +1,427 @@
+\input{../document.setup}
+
+\title{Lógica y Computabilidad}
+\author{Gianfranco Zambonni}
+\input{../page.setup}
+
+\input{../general.commands}
+
+\input{custom.comands}
+
+\begin{document}
+	
+	\maketitle
+	\tableofcontents
+	\newpage
+	
+	\part{Computabilidad}
+	
+	\section{Máquina de Turing}
+	Una máquina de Turing está compuesta por:
+
+	\begin{itemize}
+		\item Una \textbf{cinta infinita}  dividida en celdas que contienen un símbolo de un alfabeto $\Sigma$. En esta materia, $\Sigma$ siempre contiene al símbolo $*$, que representa el blanco, y nunca contiene a $L$ ni a $R$, que son las etiquetas usadas para indicar al cabezal hacia que lado debe moverse.
+		\item El \textbf{cabezal} lee un símbolo y, dependiendo del estado de la máquina, puede escribir uno nuevo o moverse una posición a la derecha o una a la izquierda. Cuando completa una acción, cambia el estado de la máquina.
+		\item Una \textbf{tabla finita de instrucciones} que, dado un estado y el símbolo que lee el cabezal, indica que acción debe ser tomada y cual es el estado al que se tiene que pasar.
+	\end{itemize}
+
+	\subsection{Tabla de instrucciones}
+	Cada instrucción es una tupla $(q,s,a,q')\in Q\times\Sigma\times (\Sigma\cup \{L,R\}) \times Q$ tal que:
+	\begin{itemize}
+		\item $q,q'\in Q$ son estados de la máquina de turing. $q$ es el estado necesario para ejecutar la instrucción y $q'$ el estado en el que queda la máquina después de ejecutarla.
+		\item $s\in\Sigma$ es el símbolo que se tiene que leer cuando la máquina está en $q$ para que la instrucción sea ejecutada.
+		\item $a\in\Sigma\cup \{L,R\}$ es la acción a realizar. Puede ser escribir un símbolo del álfabeto $\Sigma$ o mover el cabezal hacia alguno de los lados.
+	\end{itemize}
+
+	Entonces, la tupla $(q,s,a,q')$ se interpreta como ``\textit{Si la máquina está en el estado $q$ leyendo en la cinta el símbolo $s$, entonces realiza la acción $a$ y pasa al estado $q'$}''.
+		
+	\subsection{Definición mátematica}
+	Una máquina de Turing $\mathcal{M}$ es una tupla $(\Sigma, Q, T, q_0, q_f)$ donde:
+	\begin{itemize}
+		\item $\Sigma$ es un conjunto finito de símbolos ($L,R\in\Sigma$ y $*\in\Sigma$)
+		\item $Q$ es un conjunto finito de \textbf{estados}, de los cuales dos son:
+		\begin{itemize}
+			\item el \textbf{estado inicial} $q_0$
+			\item y el \textbf{estado fina}l $q_f$. 
+		\end{itemize}
+		\item $T\subseteq Q\times\Sigma\times\Sigma$ es la \textbf{tabla de instrucciones}.
+	\end{itemize}
+
+	Hay dos tipos de máquinas de turing:
+	
+	\begin{itemize}
+		\item \textbf{Deterministicas:} Es cuando no hay dos instrucciones que tengan el mismo estado inicial y necesiten leer el mismo símbolo, es decir:
+		$$\nexists (q_1,s_1,a_1,q'_1), (q_2,s_2,a_2,q'_2) \in T \text{ tal que } q_1 = q_2~\land~s_1 = s_2$$
+		\item\textbf{No deterministicas:} Cuando no es deterministica, osea que cabe la posibilidad que se ejecuten más de una instrucción en un paso y la máquina este en dos o más estados simultáneamente. 
+		$$\exists (q_1,s_1,a_1,q'_1), (q_2,s_2,a_2,q'_2) \in T \text{ tal que } q_1 = q_2~\land~s_1 = s_2$$
+	\end{itemize}
+
+	\subsection{Representación de números y tuplas}
+	\subsubsection{Números naturales}
+	Sea $\sigma=\{*, 1\}$, representaremos a los números naturales en unario (como si usasemos palitos). La representación $\bar{x}$ de $x\in\nat$, consta de $x+1$ palitos.
+	
+	$$\bar{x} = \underbrace{1...1}_{x+1}$$
+	
+	\paragraph{Ejemplo:} El 0 es ``1'', el 1 es ``11``, el 2 es ``111'', etc.
+	
+	\subsubsection{Tuplas}
+	Las tuplas $(x_1,\dots,x_n)$ las representamos como una lista de (representaciones de ) $x_i$ separados por un blanco ($*$).
+	
+	$$*\bar{x_1}*\bar{x_2}*\dots*\bar{x_n}*$$
+	
+	\paragraph{Ejemplo:} La tupla (1,2) sería $*11*111*$
+	\subsection{Funciones parciales}
+	Sea $f:\nat^n\to\nat$, $f$ es una función parcial si está definida para algunos (tal vez ninguno; tal vez todos) sus argumentos. 
+	
+	\paragraph{Notación:}
+	\begin{itemize}
+		\item $f(x_1,\dots,x_n)\downarrow$: $f$ está definida para la tupla $(x_1,\dots,x_n)$ y, en este caso, $f(x_1,\dots,x_n)$ es un natural.
+		\item $f(x_1,\dots,x_n)\uparrow$: $f$ se indefine para la tupla $(x_1,\dots,x_n)$.
+	\end{itemize}
+
+	\paragraph{Dominio:} Conjunto de argumentos para los que $f$ está definida y se nota $\dom{f}$.
+	$$\dom{f} = \{(x_1,\dots,x_n) \text{ : } f(x_1,\dots,x_n)\downarrow\}$$ 
+	
+	\paragraph{Función Total:} $f$ es total si está definida para todos sus posibles argumentos:
+	$$\dom{f} = \nat^n$$
+	
+	
+	\subsubsection{Cómputo de funciones parciales en máquinas de Turing}
+	Una función parcial $f:\nat^n\to\nat$ es \textbf{turing computable} si existe una máquina de Turing deterministica $\mathcal{M}=(\Sigma, Q, T, q_0, q_f)$ con $\Sigma=\{*,1\}$ tal que cuando empieza en la configuración inicial, vale que:
+	
+	\begin{itemize}
+		\item Si $f(x_1,\dots, x_n)\downarrow$ entonces, siguiendo sus instrucciones en $T$, llega al estado $q_f$,
+		\item  Si $f(x_1,\dots, x_n)\uparrow$ nunca termina en el estado $q_f$
+	\end{itemize}
+	
+	\imagen{0.75}{imagenes/turing-initial-state}{Estado inicial de la máquina de turring}{fig::turing::initialState}
+
+	\imagen{0.3}{imagenes/turing-final-state}{Estado final de la máquina de turing}{fig::turing::finalState}
+	
+	\subsubsection{Poder de  cómputo}
+	
+	Sea $f:\nat^m\to\nat$ una función parcial. Son equivalentes:
+	\begin{enumerate}
+		\item $f$ es computable en Java
+		\item $f$ es computable en C
+		\item $f$ es computable en Haskell
+		\item $f$ es Turing computable.
+	\end{enumerate}
+	
+	\section{Funciones primitivas recursivas y clases PRC}
+	\subsection{Funciones iniciales}
+	\paragraph{Función calculable de manera efectiva:} Son funciones que podemos escribir combinando, de alguna manera, funciones más simples que sabemos que ya sabemos que son efectivas.
+	
+	La idea es que, dado un \textbf{conjunto inicial} de funciones, podamos combinarlas de ciertas formas para conseguir nuevas funciones que permitan realizar cálculos más complejos.
+	
+	\paragraph{Funciones iniciales:}
+	\begin{itemize}
+		\item $s(x) = x + 1$
+		\item $n(x) = 0$
+		\item \textbf{Proyecciones:} $u_i^n(x_1,\dots,x_n) = x_i$ para $i\in\{1,\dots,n\}$
+	\end{itemize}
+
+	\paragraph{Composición:} Sea $f:\nat^k\to\nat$ y $\xDots{g}{k}:\nat^n\to\nat$, entonces $h:\nat^n\to\nat$ se obtiene a partir de composición de $f$ y $\xDots{g}{k}$ por composición si:
+	
+	$$h(\xDots{x}{n}) = \comp{f}{k}{g}{n}$$
+	
+	En este contexto, una constante $k$ puede ser definida como:
+	\begin{align*}
+	h(t) &= s^{(k)}(n(t)) \\
+	\end{align*}
+	
+	\paragraph{Recursión primitiva:} $h:\nat^{n+1}\to\nat$ se obtiene a partir de $g\nat^{n+2}\to\nat$ y $f:\nat^n\to\nat$ por recursión primitiva si:
+	\begin{align*}
+		h(\xDots{x}{n}, 0) &= f(\xDots{x}{n}) \\
+		h(\xDots{x}{n}, t+1) &= g(h(\xDots{x}{n}, t), \xDots{x}{n}, t) \\
+	\end{align*}
+	
+	\subsection{Clases Primitive Recursive Closed (PRC)} 
+	
+	\paragraph{Función primitiva recursiva:} Función que se puede obtener a partir de las funciones iniciales por un número finito de aplicaciones de composición y recursión primitiva.
+	
+	\paragraph{Clase PRC:}	Una clase $\mathcal{C}$ de funciones totales es \textbf{PRC} si
+	\begin{itemize}
+		\item Las funciones iniciales están en $\mathcal{C}$.
+		\item Si una función $f$ se obtiene a partir de otras pertenecientes a $\mathcal{C}$ por medio de composición o recursión primitiva, entonces $f$ también está en $\mathcal{C}$.
+	\end{itemize}
+
+	\paragraph{Corolario:} La clase de funciones primitivas recursivas es una clase \textit{PRC}.
+	\paragraph{Teorema:} La clase de funciones totales Turing computables es una clase \textit{PRC}.
+		
+	\paragraph{Teorema:} Una función es p.r. si y solo si pertenece a toda clase \textit{PRC}.
+	
+	\begin{demo}
+		\begin{itemize}
+			\item[$\Leftarrow$)] Si una función $f$ pertenece a todas las clases PRC, en particular, pertenece a la clase de funciones primitiva recursivas. Por lo tanto $f$ es primitiva recursiva.
+			\item[$\Rightarrow$)] Sea $f$ una función primitiva recursiva y sea $\mathcal{C}$ una clase PRC. Como $f$ es p.r, hay una lista $\xDots{f}{n}$
+			tal que
+			\begin{itemize}
+				\item $f = f_n$
+				\item $f_i$ es inicial (luego está en $\mathcal{C}$) o se obtiene por composición o recursión primitiva a partir de funciones $f_j$ con $j < i$ (luego tambien está en $\mathcal{C}$)
+			\end{itemize}
+			Entonces todas las funcionesde la lista están en $\mathcal{C}$. En particular $f_n\in\mathcal{C}$.
+		\end{itemize}
+	\end{demo}
+	
+	\paragraph{Corolario:} La clase de funciones primitivas recursivas es la clase PRC más chica.
+	
+	\paragraph{Corolario:} Toda función p.r. es total y Turing computable
+	
+	\begin{demo}
+	Sabemos que la clase de funciones totales Turing computables es PRC. Por el teorema, anterior, si $f$ es p.r, entonces $f$ pertence a todas las clases PRC, en particular a la clase de funciones totales Turing computables.
+	\end{demo}
+
+\subsection{Funciones primitivas recursivas básicas:}
+\begin{itemize}
+	\item Todas las constantes $k$ están en todas las clases PRC. 
+	\begin{demo}
+		$$k = k(t) = s^{(k)}(n(t))$$
+	\end{demo}
+	\item $suma(x,y) = x + y$
+	\begin{demo}
+		\vspace*{-0.5cm}
+		\begin{align*}
+			suma(x,0) &= u_1^1(x)\\
+			suma(x, y+1) &= g(suma(x,y),x,y) = s(u_1^3(suma(x,y),x,y))
+		\end{align*}
+	\end{demo}
+	
+	\item $x\cdot y$
+	\item $x^y$
+	\item  $factorial(x) = x!$
+	
+	\item $x\resta y = \left\{\begin{tabular}{ll}
+	$x-y$ & si $x\geq y$ \\
+	0 & si no
+	\end{tabular}\right.$
+	\item $\alpha(x) = \left\{\begin{tabular}{ll}
+	1 & si $x=0$ \\
+	0 & si no
+	\end{tabular}\right.$
+\end{itemize}
+
+Para las demostraciones faltantes ir a 
+	\subsubsection{Predicados primitivos recursivos}
+	Los \textbf{predicados} son simplemente funciones que toman valores en $\{0,1\}$.
+	\begin{itemize}
+	\item 1 se interpreta como verdadero,
+	\item 0 se interpreta como falso
+	\end{itemize}
+	
+	Los predicados primitivos recursivos son aquellos representados por funciones primitivas recursivas en $\{0,1\}$.
+	
+
+	\subsubsection{Operadores lógicos}
+	
+	\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $p$ y $q$ son predicados en $\mathcal{C}$ entonces $\lnot p$, $p\land q$ y $p\lor q$ están en $\mathcal{C}$
+	
+	\begin{demo}
+	\begin{itemize}
+	\item $\lnot p = \alpha(p)$
+	\item $p\land q = p \cdot q$
+	\item $p \lor q = \lnot(\lnot p \land \lnot q)$ 
+	\end{itemize}
+	\end{demo}
+	
+	
+	\paragraph{Corolario:} Si $p$ y $q$ son predicados primitivos recursivos también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$.
+	
+	\paragraph{Corolario:} Si $p$ y $q$ son predicados totales Turing computables también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$
+	
+	\subsubsection{Definición por casos}
+	\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Sean $\xDots{g}{m},h:\nat^n\to\nat$ funciones en $\mathcal{C}$ y sean $\xDots{p}{m}:\nat^n\to\{0,1\}$ predicados mutuamente excluyentes en $\mathcal{C}$. La función:
+	
+	$$f(\xDots{x}{n}) = \left\{\begin{tabular}{ll}
+		$g_1(\xDots{x}{n})$ & si $p_1(\xDots{x}{n})$ \\
+	\vdots & \\
+$g_m(\xDots{x}{n})$ & si $p_m(\xDots{x}{n})$ \\
+	$h(\xDots{x}{n})$ & si no \\
+	\end{tabular}
+	\right.$$
+
+está en $\mathcal{C}$
+
+\begin{demo}
+	\vspace*{-0.5cm}
+\begin{align*}
+	f(\xDots{x}{n}) = &g_1(\xDots{x}{n})\cdot p_1(\xDots{x}{n}) + \dots \\ &+ g_m(\xDots{x}{n})\cdot p_m(\xDots{x}{n}) \\ &+ h(\xDots{x}{n})\cdot(\lnot p_1(\xDots{x}{n})\land\cdots\land \lnot p_m(\xDots{x}{n}))
+\end{align*}
+
+Si algún $p_i$ es verdadero, valdrá $1$ y el resto $0$ porque todos los predicados son mutuamente excluyentes. Al evaluar $f$, obtendremos $$f(\xDots{x}{n}) = g_i(\xDots{x}{n})*p_i(\xDots{x}{n}) = g_i(\xDots{x}{n})\cdot 1 = g_i(\xDots{x}{n})$$v321v
+
+Si todos los predicados son falsos, entonces todas las $g_i$ se multiplican por cero y, además vale la condición \textit{si no} que es la conjuncion de sus negaciones. Y $h$ es multiplicado por 1.
+\end{demo}
+
+\subsubsection{Sumatorias, productorias}\label{sec::primitivas::sumatoria}
+
+\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
+
+\begin{align*}
+	g(y,\xDots{x}{n}) &= \sum_{t=0}^{y} f(t,\xDots{x}{n})) \\
+	h(y,\xDots{x}{n}) &= \prod_{t=0}^{y} f(t,\xDots{x}{n})) \\
+\end{align*}
+
+\begin{demo}
+	\vspace*{-0.5cm}
+\begin{align*}
+	g(0,\xDots{x}{n}) &= f(0, \xDots{x}{n}) \\
+	g(t+1,\xDots{x}{n}) &= g(t, \xDots{x}{n}) + f(t+1, \xDots{x}{n})
+\end{align*}
+Para $h$ hay que hacer lo mismo pero multiplicando en vez de sumar.
+\end{demo}
+
+\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
+
+\begin{align*}
+	g(y,\xDots{x}{n}) &= \sum_{t=1}^{y} f(t,\xDots{x}{n})) \\
+	h(y,\xDots{x}{n}) &= \prod_{t=1}^{y} f(t,\xDots{x}{n})) \\
+\end{align*}
+
+La demostración es la misma que la anterios, pero los resultados de los casos bases valen $0$ y $1$, respectivamente.
+
+\subsubsection{Cuantificadores acotados}
+Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado:
+\begin{itemize}
+	\item[] $(\forall t)_{\leq y} p(t,\xDots{x}{n})$ es verdadero si y solo si:
+	\begin{itemize}
+		\item $p(0, \xDots{x}{n})$ es verdadero \textbf{y}
+		
+		\hspace*{1cm}\vdots
+		
+		\item $p(y, \xDots{x}{n})$ es verdadero 
+	\end{itemize}
+\item[] $(\exists t)_{\leq y} p(t,\xDots{x}{n})$ es verdadero si y solo si:
+\begin{itemize}
+	\item $p(0, \xDots{x}{n})$ es verdadero \textbf{o}
+	
+	\hspace*{1cm}\vdots
+	
+	\item $p(y, \xDots{x}{n})$ es verdadero 
+\end{itemize}
+De la misma manera se pueden definir el existencial y el para todo con $< y$ en vez de $\leq y$.
+\end{itemize}
+
+\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
+\begin{itemize}
+	\item[] $(\forall t)_{\leq y} p(t,\xDots{x}{n})$ 
+	\item[] $(\exists t)_{\leq y} p(t,\xDots{x}{n})$
+\end{itemize}
+
+\begin{demo}
+\begin{itemize}
+	\item[] $(\forall t)_{\leq y} p(t,\xDots{x}{n})$ si y solo si $\prod_{t=1}^{y} f(t,\xDots{x}{n})) = 1$
+	\item[] $(\exists t)_{\leq y} p(t,\xDots{x}{n})$ si y solo si $\sum_{t=1}^{y} f(t,\xDots{x}{n})) \neq 0$
+\end{itemize}
+Definimos los cuantificadores en función de la sumatoria, productoria y la comparación de igualdad que están en $\mathcal{C}$ (Ver Seccion \ref{sec::primitivas::sumatoria} y apéndice \ref{appendix::primitivas::igualdad}). Entonces el para todo y el existencial acotados por $\leq$ pertenece a $\mathcal{C}$.
+\end{demo}
+
+\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
+\begin{itemize}
+	\item[] $(\forall t)_{< y} p(t,\xDots{x}{n})$ 
+	\item[] $(\exists t)_{< y} p(t,\xDots{x}{n})$
+\end{itemize}
+
+\begin{demo}
+\begin{itemize}
+	\item[] $(\forall t)_{< y} p(t,\xDots{x}{n})$ si y solo si $(\forall t)_{\leq y} (t=y \lor p(t,\xDots{x}{n})$
+	\item[] $(\exists t)_{< y} p(t,\xDots{x}{n})$ si y solo si $(\forall t)_{\leq y} (t\neq y \land p(t,\xDots{x}{n})$
+\end{itemize}
+\end{demo}
+
+\subsubsection{Minimización acotada}
+$$
+\min\limits_{t\leq y} p(t,\xDots{x}{n})= \left\{
+\begin{tabular}{ll}
+mínimo $t\leq y$ tal que $p(t,\xDots{x}{n})$ es verdadero & si existe tal $t$ \\
+0 & si no
+\end{tabular}
+\right.
+$$
+
+\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado de una clase PRC $\mathcal{C}$. Entonces la función $\min\limits_{t\leq y} p(t,\xDots{x}{n})$ también están en $\mathcal{C}$
+
+\begin{demo}
+ $$\min\limits_{t\leq y} p(t,\xDots{x}{n}) = \sum_{u=0}^{y}\prod_{t=0}^{u}\alpha(p(t,\xDots{x}{n}))$$	
+\end{demo}
+
+\subsubsection{Codificación de tuplas}
+Definimos la función primitiva recursiva
+
+$$\langle x,y \rangle = 2^x(2\cdot y + 1) - 1$$
+
+\paragraph{Proposición:} Hay una única solución $(x,y)$ a la ecuación $\langle x,y \rangle = z$.
+	\begin{itemize}
+		\item $x$ es el máximo número tal que $2^x | (z+1)$
+		\item $y = (\frac{z+1}{2^x} - 1)/2$
+	\end{itemize}
+
+\paragraph{Observadores:} Sea $z = \langle x,y \rangle$:
+\begin{itemize}
+	\item $l(z) = x$
+	\item $r(z) = y$
+\end{itemize}
+
+\paragraph{Proposición:} Los observadores de pares son primitivas recursivas
+\begin{demo}
+	Como $x$ e $y$ son menores a $z +1$ tenemos que:
+	\begin{itemize}
+		\item $l(z) = \min\limits_{x\leq z} \left(\left(\exists y\right)_{\leq z}~ z = \left\langle x,y\right\rangle\right)$
+		\item $r(z) = \min\limits_{y\leq z} \left(\left(\exists x\right)_{\leq z}~ z = \left\langle x,y\right\rangle\right)$
+	\end{itemize}
+\end{demo}
+
+\subsubsection{Codificación de tuplas}
+El \textbf{número de Gödel} de la secuencia $\xDots{a}{n}$ es el número:
+$$[\xDots{a}{n}] = \prod_{i=1}^{n} p_i^{a_i}$$
+donde $p_i$ es el $i-$ésimo primo ($i\geq 1$)
+
+\paragraph{Teorema:} Si $\xDots{a}{n} = \xDots{b}{n}$ entonces $a_i = b_i$ para todo $i\in\{1,\dots,n\}$.
+
+\paragraph{Observación:} $[\xDots{a}{n}] = [\xDots{a}{n},0] = [\xDots{a}{n},0,0]= \dots$
+
+\paragraph{Observadores:} Sea $x=[\xDots{a}{n}]$:
+\begin{itemize}
+	\item $x[i] = a_i$
+	\item $|x| =$ longitud de $x$
+\end{itemize}
+
+\paragraph{Proposición:} Los observadores de secuencias son primitivas recursivas
+
+\begin{demo}
+	\begin{itemize}
+		\item $x[i] = \min\limits_{t\leq x}\left(\lnot\left(p_i^{t+1}|x\right)\right)$
+		\item $|x| = \min\limits_{i\leq x}\left(x[i]\neq 0 \land \left(\forall j\right)_{\leq x} \left(j\leq i \lor x[j] = 0\right)\right)$
+	\end{itemize}
+\end{demo}
+	\section{\red{Funciones S-Computables}}
+	
+	\section{\red{Funciones no computables y conjuntos c.e.}}
+	
+	\part{\red{Lógica}}
+	
+	\section{\red{Lógica Proposicional}}
+	
+	\section{\red{Sistemas deductivos para lógica propisicional}}
+	
+	\section{\red{Lógica de primer orden}}
+	
+	\section{\red{Completitud y compacidad para lógica de primer orden}}
+	
+\appendix
+\section{Operaciones primitivas recursivas} \label{appendix::primitivas}
+\subsection{Igualdad}\label{appendix::primitivas::igualdad}
+$x = y$
+\begin{demo}
+	$$igual(x,y) = \alpha(x \resta y)$$
+\end{demo}
+
+\subsection{Divisor}
+$y|x$ si y solo $y$ divide a $x$
+\begin{demo}
+	$$y|x \iff (\exists t)_{\leq x} y\cdot t = x $$
+\end{demo}
+
+\end{document}
+
+
