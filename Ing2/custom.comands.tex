@@ -4,6 +4,12 @@ rectangle split, rectangle split parts=2, rounded corners, inner sep=2.5mm, inne
 rectangle split part fill = {blue!40, blue!5}
 ]
 
+\newcommand{\charset}[2]{\llbracket #1 \rrbracket_{#2}}
+
+\newenvironment{scprooftree}
+{\leavevmode\hbox\bgroup}
+{\DisplayProof\egroup}
+
 \NewEnviron{definicion}[1]{%
 \begin{center}
 	\begin{tikzpicture}
