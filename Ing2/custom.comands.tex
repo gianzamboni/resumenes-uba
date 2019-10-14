@@ -1,0 +1,19 @@
+\tikzstyle{demoBox} = [
+draw=gray, very thick,
+rectangle split, rectangle split parts=2, rounded corners, inner sep=2.5mm, inner ysep=2mm,
+rectangle split part fill = {blue!40, blue!5}
+]
+
+\NewEnviron{definicion}[1]{%
+\begin{center}
+	\begin{tikzpicture}
+	\node [demoBox](box){%
+		\textbf{\scriptsize DEFINICIÓN: #1}
+		\nodepart{two}
+		\begin{minipage}{\textwidth}
+		\BODY
+		\end{minipage}
+	};
+	\end{tikzpicture}
+\end{center}
+}

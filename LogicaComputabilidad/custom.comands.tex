@@ -14,10 +14,14 @@
 \end{figure}
 }
 
+
+
+\usetikzlibrary{shapes.multipart}
+
 \tikzstyle{demoBox} = [
-draw=gray, very thick,
-rectangle split, rectangle split parts=2, rounded corners, inner sep=2.5mm, inner ysep=2mm,
-rectangle split part fill = {blue!40, blue!5}
+draw=blue!20, very thick,
+rectangle split, rectangle split parts=2, rounded corners, inner xsep=0.5cm,
+rectangle split part fill = {blue!20, blue!5}
 ]
 
 \NewEnviron{demo}{%
@@ -27,11 +31,11 @@ rectangle split part fill = {blue!40, blue!5}
 		\textbf{\scriptsize DEMOSTRACION}
 		\nodepart{two}
 		\begin{minipage}{0.85\textwidth}
+		\vspace*{0.25cm}
 		\BODY
 		\begin{flushright}
 		$\blacksquare$
 		\end{flushright}
-	
 		\end{minipage}
 	};
 	\end{tikzpicture}
