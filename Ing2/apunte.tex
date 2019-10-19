@@ -6,7 +6,7 @@
 
 \input{custom.comands}
 \title{Ingenieria I - Apuntes}
-
+\author{Gianfranco Zamboni y Fernando Frassia}
 \begin{document}
 	
 \maketitle
@@ -201,7 +201,7 @@ Cuando se debe separar un proceso en subprocesos, se lo puede hacer separandolos
 \texttt{ON     = (off -> OFF).}
 
 \end{minipage}
-\begin{minipage}{0.25\textwidth}
+\begin{minipage}{0.5\textwidth}
 	\includegraphics[scale=1]{imagenes/lts-switch}
 \end{minipage}
 \end{center}
@@ -231,7 +231,8 @@ El proceso \texttt{(x -> P | x -> Q)} describe una elección no determinística 
 \end{minipage}
 
 \vspace*{0.25cm}
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{1\textwidth}
+\centering
 	\includegraphics[scale=0.75]{imagenes/lts-moneda}
 \end{minipage}
 \end{center}
@@ -621,7 +622,7 @@ Para comprobar que una fórmula $P$ de la lógica temporal es satisfecha por una
 \end{center}
 
 \newpage
-\part{Lógica Computacional Árborea (Computacional Tree Lógic, CTL)}
+\part{Lógica Computacional Árborea (CTL)}
 \section{Sintaxis y semantica}
 A diferencia de LTL, que se concentra en una única traza, nos va a permitir describir propiedades sobre la totalidad de las trazas de un sistema. Dejamos de verlas como caminos disconexos para pasar a representarlas como arboles de ejecución.
 
@@ -653,6 +654,13 @@ Dado un árbol de cómputo infinito satisface una formula si su raíz $s_0$ lo h
     \item $s_0 \vDash p \text{ AU } q$ si y solo si para todo camino  $S$ de la forma $\{s_0,\dots\}$ vale que\\\hspace*{1cm} $(\exists i\geq 0)~(S[i] \vDash q~\land~(\forall~ 0\leq j\leq i)~S[j]\vDash p))$.
 \end{itemize}
 
+\subsubsection{Algunas equivalencias}
+\begin{itemize}
+\item AX $f~\equiv~\lnot$ EX $(\lnot f)$
+\item EF $f~\equiv$ E($true$ U $f$)
+\item AF $f~\equiv~\lnot$EG($\lnot f$)
+\item AG $f~\equiv~\lnot$ EF($\lnot f$)
+\end{itemize}
 \newpage
 \section{Verificación de propiedades y Model Checking}
 Dado una estructura de Kripke, deseamos determinar si su árbol de cómputo cumple con una fórmula $P$ de CTL. Para esto, debemos representar las fórmulas como conjuntos de estados
@@ -707,11 +715,206 @@ Es el mínimo conjunto $T\subseteq W$ que satisface
 Decimos que un modelo $M$ satisface $\phi$ ($M\vDash \phi$) si y solo si la raíz $s_0$ de su árbol computacional la satisface ($s_0 \in\charset{\phi}{M}$).
 
 \subsection{Algoritmo de punto fijo}
+
+\subsubsection{Los puntos fijos de un reticulado}
 \begin{definicion}{Punto fijo}
 Dada una función $f:D\to D$, $x\in D$ es un punto fijo de $f$, si y solo sí $f(x)=x$
 \end{definicion}
 
-\newpage
+\begin{definicion}{Función monótona}
+Una función $f:D\to D$ es monótona si y solo si para todo $x,y\in D$, $x\leq y \implies f(x) \leq f(y)$
+\end{definicion}
+
+
+\begin{definicion}{Reticulado}
+Un reticulado es un conjunto $S$ con una relación binaria $\mathcal{R}\subseteq S\times S$ (reflexiva, transitiva y antisimétrica) que define un orden parcial sobre sus elementos.
+
+La relación, además, define un único \textbf{supremo} y un único \textbf{ínfimo} para cada par $(a,b)\in R$, es decir, vale que $a > b$ ó $b < a$.
+
+En ingeniería notamos $a\lor b$ al supremo entre ambos valores y $a \land b$ al ínfimo.
+\end{definicion}
+
+\begin{definicion}{Reticulado completo}
+Un reticulado es completo si cumple que para todo subconjunto de $S$ existe un supremo y un ínfimo.
+\end{definicion}
+
+Nosotros vamos a trabajar con conjuntos reticulados de conjuntos . Así que vamos a probar los próximos teoremas sobre conjuntos de conjuntos. En nuestro caso, los operadores de ínfimo y supremos van a estar dados por la intersección y la unión, respectivamente.
+
+Por ejemplo, dado un conjunto de partes $P$, podemos definir su supremo como $ \bigcup\{ s | s \in P\} = P$ y su ínfimo como $\bigcap\{s | s \in P\} = \emptyset$.
+
+Para mostrar los siguientes teoremas vamos a asumir que $D$ es un conjunto de partes.
+\paragraph{Teorema 1:} Dado un reticulado completo $(D, \subseteq)$ y una función $f:D\to D$ monótona, entonces su mínimo punto fijo es $\bigcap\{ y | f(y) \subseteq y\}$
+
+\red{Notar que estamos definiendo $f$ como una función monótona sobre conjuntos. En la definición de más arriba, habría que cambiar $\leq$ por $\subseteq$}
+
+%\paragraph{Demostración:} Primero tenemos que ver que el conjunto $z = \bigcap\{ y | f(y) \subseteq y\}$ es punto fijo. Para esto tenemos que ver que $f(z) \subseteq z$ y que $f(z)\supseteq z$.
+%\begin{enumerate}
+%\item[$\subseteq)$] Sea $x\in D$ tal que $f(x) \subseteq x$, entonces:
+%\begin{enumerate}
+%\item $x \in \{ y | f(y) \subseteq y\}$. Y como $z$ resulta de la intersección de $x$ con otros conjuntos que cumplen lo mismo, vale que $z\subseteq x$.
+%\item  Además, como $f$ es monótona, $f(z) \subseteq f(x)$. Por lo que  $f(z) \subseteq f(x) \subseteq x$.
+%\item Como agarramos un elementos cualquiera del conjunto  $\{ y | f(y) \subseteq y\}$, lo que dijimos vale para cualquier elementos del mismo. Osea que $\forall~x\in \{ y | f(y) \subseteq y\}$ vale que $F(z)\subseteq x$. Luego $F(z) \subseteq \bigcap \{ y | f(y) \subseteq y\} = z$.
+%\end{enumerate} 
+%
+%\item[$\supseteq)$] Como $f(z) \subseteq z$ (por el paso anterior) y $f$ es monótona, tenemos $f(f(z)) \subseteq f(z)$. 
+%\begin{itemize}
+%\item Entonces, $f(z) \in \{ y | f(y) \subseteq y\}$.
+%\item Además, como dijimos en $(c)$, $z$ es subconjunto de todos los elementos de $f(z) \in \{ y | f(y) \subseteq y\}$. Osea que, particularmente, es subconjunto de $f(z)$. Luego $z\subseteq f(z)$.
+%\end{itemize}
+%\end{enumerate}
+%
+%Logramos mostrar que $f(z)\subseteq z$ y $z \subseteq f(z)$, entonces $f(z) = z$. Ahora falta demostrar que es un ínfimo, es decir que todos los otros puntos fijos de $f$ contienen a $z$
+%\begin{itemize}
+%\item Sea $x\in D$ tal que $f(x) = x$, entonces $f(x) \subseteq x$.
+%\item Luego, $x$ es un elemento del conjunto $\{ y | f(y) \subseteq y\}$, luego $z \subseteq x$
+%\end{itemize}
+
+\begin{definicion}{Función $\cup$-continua}
+Una función monótona $f:D\to D$ con $D$ finito es $\cup$-continua si dado un conjunto de conjuntos que cumples $p_1\subseteq p_2\subseteq\dots$ implica que $f(\bigcup_i p_i) = \bigcup f(p_i)$
+\end{definicion}
+
+\paragraph{Teorema 2:} Dado un reticulado completo $(D,\subseteq)$ y una función monótona $\cup$-continua \\ $f:D\to D$ entonces $\bigcup_i f^i(\emptyset) = f(\emptyset)\cup f(f(\emptyset)) \cup f(f(f(\emptyset)))\cup\dots$ es el mínimo punto fijo.
+
+\paragraph{Teorema 3:} Dado un reticulado completo $(D,\subseteq)$ y una función monótona $\cup$-continua \\ $f:D\to D$ entonces $\bigcup_i f^i(\emptyset) = f(\emptyset)\cup f(f(\emptyset)) \cup f(f(f(\emptyset)))\cup\dots$ es el mínimo punto fijo.
+
+\vspace*{0.5cm}
+Para máximo punto fijo, existen los mismos teoremas.
+\subsubsection{Operadores CTL definidos recursivamente}
+\begin{multicols}{2}
+\begin{itemize}
+
+\item AG $p$ = $p~\land$ AX AG $p$
+\item EG $p$ = $p~\land$ EX EG $p$
+\item AF $p$ = $p~\lor$  AX AF $p$
+\item EF $p$ = $p~\lor$  EX EF $p$
+\item $p$ AU $q$ = $q~\lor$ ($p~\land$ AX ($p$ AU $q$))
+\item $p$ EU $q$ = $q~\lor$ ($p~\land$ EX ($p$ AU $q$))
+
+\item $\charset{\text{AG } p}{} =\charset{p}{}~\cap~\charset{\text{AX AG }p}{}$
+\item $\charset{\text{EG } p}{} =\charset{p}{}~\cap~\charset{\text{EX EG }p}{}$
+\item $\charset{\text{AF } p}{} =\charset{p}{}~\cup~\charset{\text{AX AF }p}{}$
+\item $\charset{\text{EF } p}{} =\charset{p}{}~\cup~\charset{\text{EX EF }p}{}$
+\item $\charset{p\text{ AU } q}{} =\charset{q}{} \cup (\charset{p}{}~\cap~\charset{AX(p\text{ AU } q)}{})$
+\item $\charset{p\text{ EU } q}{} =\charset{q}{} \cup (\charset{p}{}~\cap~\charset{EX(p\text{ EU } q)}{})$
+
+\end{itemize}
+
+\end{multicols}
+
+\subsubsection{Operadores CTL como puntos fijos}
+Dado un modelo $M=\langle(S,R), L\rangle$, definimos las funciones $\cdot:2^S\to 2^S$ que dado un conjunto del conjunto de partes de $S$, nos devuelve los estados de ese conjunto que satisfacen la fórmula. 
+
+Notación usada en la clase: $$\underbrace{\text{AF } p}_{\ref{nombre}} = \overbrace{\lambda y.}^{\ref{parametro}} \underbrace{p}_{\ref{satisfaceP}}\overbrace{\lor }^{\ref{operacion}}\underbrace{\text{AX } y}_{\ref{llamada}}$$
+
+
+\begin{enumerate}[label={(}\arabic*{)}]
+\item\label{nombre} Nombre de la función, dada una fórmula $p$, vamos a crear una para cada operador CTL.
+\item\label{parametro} El parámetro de la función $y$ es un conjunto de estados. 
+\item\label{satisfaceP} Es el subconjunto de estados de $y$ que satisfacen $p$. 
+\item\label{operacion} Es una operación sobre conjuntos: $\lor$ es la unión y $\land$ es la intersección. 
+\item\label{llamada} Son los estados de $S$ que cumplen AX $y$ ó EX $y$, osea que:
+\begin{itemize}
+\item AX $y$ son todos los estados de $S$ tal que todas sus transiciones van a algún estado de $y$.
+\item EX $y$ son todos los estados de $S$ tal que alguna de sus transiciones va a algún estado de $y$.
+\end{itemize}
+\end{enumerate}
+
+\paragraph{Funciones para punto fijo:}
+\begin{itemize}
+\begin{multicols}{2}
+\item[] \textbf{Punto fijo mínimo}
+\begin{itemize}
+\item AF $p : \lambda y.~p~\lor$ AX $y$
+\item EF $p : \lambda y. ~p~\lor$ EX $y$
+\item $p$ AU $q: \lambda y.~ q \lor (p~\land$ AX $y$)
+\item $p$ EU $q: \lambda y.~ q \lor (p~\land$ EX $y$)
+\end{itemize}
+\columnbreak
+\item[] \textbf{Punto fijo máximo}
+\begin{itemize}
+\item $p$ AG $p: \lambda y. p \land$ AX $y$
+\item $p$ AG $p: \lambda y. p \land$ AX $y$
+\end{itemize}
+\vfill\null
+\end{multicols}
+\end{itemize}
+
+Siguiendo la idea de los teoremas de más arriba, para conseguir un punto fijo mínimo, debemos aplicar, iterativamente, la función al conjunto vacío hasta que se estabilize la solución.
+\begin{algorithmic}
+\State{$x \leftarrow \emptyset$}
+\While {$x \neq f(x)$}
+    \State $x \leftarrow f(x)$
+\EndWhile
+\end{algorithmic}
+Para los puntos fijos máximos, hacemos exactamente lo mismpo pero, en vez de partir desde el conjunto vacío, partimos desde $S$ (el conjunto de todos los estados).
+
+\subsection{Diagramas de Decisión Binarios (BDD, OBDD, ROBDD)}
+
+\paragraph{Árboles de decisión binarios (BDT):} son estructuras que pueden ser usados para representar y manipular fórmulas booleanas. La cantidad de nodos de un BDT es $2^n-1$, con $n$ la cantidad de variables propocisionales de la fórmula representada.
+
+\paragraph{Diagramas de decisión binaria (BDD):} Son una representación más compacta de los BDT. Elimina la representación redundante de variables booleanas y permite compartir subárboles iguales.
+
+Son representaciones canónicas, es decir, dada dos fórmulas semanticamente equivalentes, si damos un orden a sus variables y creamos sus BDD para cada una de ellas entonces, los BDD, serán iguales.
+
+\begin{figure}[h]
+\centering
+		\begin{forest} OBDD,
+			[$x_1$,
+				[$x_2$, edge label={node[midway,above left]{0}}, edge=ceroEdge
+					[$0$, edge label={node[midway,above left]{0}}, edge=ceroEdge]
+					[$1$, edge label={node[midway,above right]{1}}, edge=oneEdge]
+				]
+				[$x_2$,, edge label={node[midway,above right]{1}}, edge=oneEdge
+								[$0$, edge label={node[midway,above left]{0}}, edge=ceroEdge]
+								[$1$, edge label={node[midway,above right]{1}}, edge=oneEdge]
+							]
+			]
+		\end{forest}
+	\caption{Árbol de decisión binaria para $x_1 \land x_2$}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+	\includegraphics[scale=0.5]{imagenes/bdd}
+	\caption{Diagrama de decisión binaria para $x_1 \land x_2$}
+\end{figure}
+
+Para constuir un BDD a partir de una fórmula, debemos separarla en subfórmulas iterativamente hasta obtener sus propocisiones atómicas. Luego debemo crear los BDDs para cada una de ellas y e ir componiendolos hasta volver obtener la fórmula original
+
+\paragraph{Ejemplo:} Queremos conseguir el ROBDD de $(x_1\lor x_2)\land(\lnot x_1\lor \lnot x_2)$, la división de la fórmulas sería:
+
+\begin{center}
+	\begin{forest} tikzQtree,
+		[$(x_1\lor x_2)\land(\lnot x_1\lor \lnot x_2)$,
+			[$x_1\lor x_2$,
+				[$x_1$]
+				[$x_2$]
+			]
+			[$\lnot x_1\lor \lnot x_2$,
+				[$x_1$]
+				[$x_2$]
+			]
+		]
+	\end{forest}
+\end{center}
+
+Osea que, para empezar, debemos construir los OBDDs para $x_1$ y $x_2$:
+
+\begin{center}
+	\begin{forest} OBDD,
+		[$x_1$,
+			[$0$, edge label={node[midway,left]{0}}, edge=ceroEdge
+				[$x_1$]
+				[$x_2$]
+			]
+			[$\lnot x_1\lor \lnot x_2$,
+				[$x_1$]
+				[$x_2$]
+			]
+		]
+	\end{forest}
+\end{center}
+
 \part{Apéndices}
 \appendix
 \section{Diagramas de bloque}
@@ -737,7 +940,6 @@ Y el proceso $||$S que solo muestra ciertas acciones de la interacción, se repr
 	\includegraphics[scale=0.5]{imagenes/bloque-proceso-compuesto}
 	\caption{Proceso S conseguido a partir de la compocisión de los procesos ConversationsP y Q: $||$S = (P$||$Q) @ \{x,y\}}
 \end{figure}
-
 
 \end{document}
 
