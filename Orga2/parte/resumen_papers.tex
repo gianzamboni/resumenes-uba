@@ -1,5 +1,5 @@
 \part{Procesadores Intel}
-1\red{A partir de acá resumenes de  los papers. Faltan los que hablan del Intel Core 2.}
+\red{A partir de acá resumenes de  los papers. Faltan los que hablan del Intel Core 2.}
 \section{Netburst microarchitecture (Pentium 4 \cite{Sager01themicroarchitecture})}
 La microarquitectura de este procesador se puede separar en 4 grandes bloques: Front End, Out-of-order engine, Integer and Floating Point Execution Units and the memory subsytem.
 
@@ -498,14 +498,12 @@ Los procesadores Intel Core Duo utilizan un arquitectura de caché compartida pa
 \end{itemize}
 
 \subsection{Control de consumo energético}
-Para ahorrar perdida de energía (cosumo estático), se utilizan dos técnicas: Enhanced Sleep State Control y Dynamic Intel Smart Cache Sizing. Para controlar consumo de energía activa: Se utiliza una técnica basada en Intel SpeedStep technology (Sección \ref{sec::intel::enhancedSpeedStep::enhancedSpeedStep}).
+Para disminuir la perdida de energía (cosumo estático), se utilizan dos técnicas: Enhanced Sleep State Control y Dynamic Intel Smart Cache Sizing. Para controlar consumo de energía activa: Se utiliza una técnica basada en Intel SpeedStep technology (Sección \ref{sec::intel::enhancedSpeedStep::enhancedSpeedStep}).
 
-\paragraph{}\red{\textit{(Bueno, estoy apurado y necesito terminar antes del martes y ponerme a repasar. La traduccion y tratar de que quede bien fue)
-}}
 \subsubsection{Leakage power consumption}
-\paragraph{} The challenge of adding a second core on die while improving the overall power-consumption demands an improvement to the power states of the system in order to avoid power being wasted whenever a core is not active. We face two main problems: (1) since only a single power plane is used, it forces us to run all cores with the same voltage and frequency, and (2) the chip-set and the OS see both cores as a single entity that has the same state at the same time. Thus, the Intel Core Duo processor presents two separate views on the power state of the system, internally we manage the states of each core independently (per-core power state) ande externally we view the system as having a single, synchronized power state.
+\paragraph{} Agregar un segundo core en el chip, demanda una mejora en los estados de consumo del sistema para evitar que se desperdicie energía cuando alguno de los cores no está activo. Se encuentran dos problemas: (1) Utilizar un único circuito de consumo, nos fuerza a correr todos los cores con el mismo voltaje y la misma frequencia, y (2) el chip-set y el OS ven ambos cores como una entidad única con un único estado en cada momento. Por esto, el procesador Intel Core Duo implementa el sistema de estados como dos vistas separadas, internamente cada core maneja sus estados independientemente (per-core power state) y, externamente, el sistema ve un estado de consumo único sincronizado.
 
-There are five posible states:
+Hay cinco estados posibles:
 
 \begin{itemize}
 	\item \textbf{C0 - Active (per-core):} Power state is assumed to be in running mode.

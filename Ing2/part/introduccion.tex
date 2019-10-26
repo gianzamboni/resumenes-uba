@@ -1,0 +1,45 @@
+\section{Introduccion}
+\paragraph{Sistemas reactivos:} Sistemas que reaccionan a estímulos provenientes de su entorno. Nos referimos a los estímulos y reacciones como \textbf{eventos} o \textbf{acciones}.
+
+
+\subsection{Model Checking}
+El \textbf{model checking} es una técnica para verificar sistemas concurrentes con estados finitos. El procedimiento, normalmente usa una búsqueda exhaustiva sobre el espacio de los estados del sistema para determinar si una especificación es correcta o no. Si se tienen los recursos suficientes (de harwdware), entonces siempre termina con una respuesta que puede ser \textbf{si} ó \textbf{no}. Además, puede ser implementada con algoritmos razonablamente eficientes que puede ser corridos en máquinas promedio. 
+
+Aplicar la comprobación a un diseño consiste en varias tareas:
+
+\paragraph{Modelado:} Convertir el diseño en un formalismo aceptado por la herramienta de comprobación (En nuestro caso el FSP). En muchos casos, esto es solo una compilación. En otros, debido a limitaciones de tiempo y memoria, puede requerir el uso de ciertas abstracciones para eliminar detalles irrelevantes al problema que tratamos de resolver.
+
+
+\paragraph{Modelo:} Representación simplificada del mundo real que incluye solo aquellos aspectos del sistema que son relevantes al problema.
+
+\paragraph{Proceso:} Ejecución de un programa secuencial de un programa. El estado de un proceso, en cualquier momento del tiempo, consiste en los valores de variables explicitas (declaradas por el programador) y variables implicitas (program counter, registros de direcciones, etc). 
+
+Los modelos que vamos a usar ignora estos detalles de implementación y considera que un cambio de estado es producido por acciones  atómicas e indivisibles. Cada acción causa una transición desde el estado actual hacia el siguiente. El orden en el que ocurren estas acciones se determina mediante un \textbf{grafo de transiciones}.
+
+\paragraph{Especificación:} Es necesario declarar las propiedades que debe satisfacer el diseño. Esto se hace usando un formalismo lógico. En sistemas de hardware y software, es común usar \textbf{lógica temporal} con la cual se puede describir cómo un sistema evoluciona con el tiempo.
+
+Uno de las cuestiones más importantes de la especificación es la \textbf{completitud}. El model checking es una herramienta que nos permite determinar si un modelo del diseño satisface una especificación dada, pero es imposible determinar si ésta cumple con todas las propiedades que el sistema debería satisfacer.
+
+\paragraph{Verificación:} Idealmente, es automática. Sin embargo, un humano debe realizar un análisis de los resultados de la verificación. En caso de un resultado negativo, el usuario es provisto de una traza de error (\textbf{error trace}) que puede ser usado como contra ejemplo para la propiedad fallida. 
+
+Una corroboración de una propiedad puede fallar por varios motivos: 
+\begin{itemize}
+\item \textbf{Diseño incorrecto}: El sistema diseñado no refleja realmente el comportamiento deseado, por lo que debe ser modificado.
+\item \textbf{Modelo incorrecto}: El diseño es correcto, sin embargo, al escribirlo en el lenguaje de la herramienta, no se implementó correctamente.
+\item \textbf{Especificación incorrecta (\textit{Falso negativo}):} La propiedad que falló, en realidad, fue mal especificada y es correcto que no funcione para esos casos. Se debe revisar la especificación para que describa correctamente el comportamiento deseado.
+\end{itemize}
+
+\newpage
+\section{Programas y sistemas concurrentes}
+La mayoría de los sistemas complejos y tareas que ocurren en el mundo físico pueden ser divididos en conjuntos de actividades más simples. Las mismas, no ocurren secuencialmente, sino que se superponen en el tiempo y se realizan de manera concurrente. Lo mismo sucede con muchos de los programas ejecutados por una computadora.
+
+La ejecución de un programa (o subprograma) se denomina \textbf{proceso} y la ejecución de un programa concurrente consiste en múltiples procesos que se comunican entre sí para reflejar el comportamiento deseado según los eventos que le llegan. 
+
+Estructurar un programa de esta manera tiene varias ventajas:
+\begin{itemize}
+\item Simplifica el modelado de sistemas reactivos.
+\item La concurrencia puede ser usada para mejorar el tiempo de respuesta de una aplicación derivando tareas que consumen demasiado tiempo a otros procesos.
+\item La comunica
+ción entre procesos y la realización de tareas en paralelo, mejora el throughput de operaciones realizadas.
+\item Se puede aprovechar mejor, el hardware diseñado para realizar multi-tasking.
+\end{itemize} 
