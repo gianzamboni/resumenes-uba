@@ -4,10 +4,10 @@
 \author{Gianfranco Zambonni}
 \input{../page.setup}
 
-\input{../general.commands}
-
 \input{custom.comands}
-
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
 \begin{document}
 	
 	\maketitle
@@ -146,10 +146,17 @@
 		\item Si una función $f$ se obtiene a partir de otras pertenecientes a $\mathcal{C}$ por medio de composición o recursión primitiva, entonces $f$ también está en $\mathcal{C}$.
 	\end{itemize}
 
-	\paragraph{Corolario:} La clase de funciones primitivas recursivas es una clase \textit{PRC}.
-	\paragraph{Teorema:} La clase de funciones totales Turing computables es una clase \textit{PRC}.
-		
-	\paragraph{Teorema:} Una función es p.r. si y solo si pertenece a toda clase \textit{PRC}.
+	\begin{corolario}
+La clase de funciones primitivas recursivas es una clase \textit{PRC}.
+	\end{corolario}
+	
+	\begin{teorema}
+La clase de funciones totales Turing computables es una clase \textit{PRC}.
+	\end{teorema}
+	\newtheorem{prEsPrSiiEstaEnC}{Teorema}[section]
+	\begin{teorema}
+Una función es p.r. si y solo si pertenece a toda clase \textit{PRC}.
+	\end{teorema}
 	
 	\begin{demo}
 		\begin{itemize}
@@ -157,17 +164,24 @@
 			\item[$\Rightarrow$)] Sea $f$ una función primitiva recursiva y sea $\mathcal{C}$ una clase PRC. Como $f$ es p.r, hay una lista $\xDots{f}{n}$
 			tal que
 			\begin{itemize}
-				\item $f = f_n$
-				\item $f_i$ es inicial (luego está en $\mathcal{C}$) o se obtiene por composición o recursión primitiva a partir de funciones $f_j$ con $j < i$ (luego tambien está en $\mathcal{C}$)
+				\item $f = f_n$ y
+				\item $f_i$:
+				\begin{itemize}
+				\item es una función incial (por lo tanto es p.r y está en $\mathcal{C}$) ó
+				\item o se obtiene por composición o recursión primitiva a partir de funciones $f_j$ con $j < i$ (luego tambien está en $\mathcal{C}$
+				\end{itemize}
 			\end{itemize}
-			Entonces todas las funcionesde la lista están en $\mathcal{C}$. En particular $f_n\in\mathcal{C}$.
+			Osea que $f=f_n$ o es una función inicial (y por lo tanto está en $\mathcal{C}$) ó se obtiene por composición o recursión primitiva de algunas de las anteriores (que están en $\mathcal{C}$ y por lo tanto $f$ también lo está). Luego $f\in\mathcal{C}$
 		\end{itemize}
 	\end{demo}
+	\begin{corolario}
+La clase de funciones primitivas recursivas es la clase PRC más chica.
+	\end{corolario}
 	
-	\paragraph{Corolario:} La clase de funciones primitivas recursivas es la clase PRC más chica.
-	
-	\paragraph{Corolario:} Toda función p.r. es total y Turing computable
-	
+		\begin{corolario}
+Toda función p.r. es total y Turing computable
+		\end{corolario}
+		
 	\begin{demo}
 	Sabemos que la clase de funciones totales Turing computables es PRC. Por el teorema, anterior, si $f$ es p.r, entonces $f$ pertence a todas las clases PRC, en particular a la clase de funciones totales Turing computables.
 	\end{demo}
@@ -213,9 +227,10 @@ Para las demostraciones faltantes ir a
 	
 
 	\subsubsection{Operadores lógicos}
-	
-	\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $p$ y $q$ son predicados en $\mathcal{C}$ entonces $\lnot p$, $p\land q$ y $p\lor q$ están en $\mathcal{C}$
-	
+	\begin{teorema}
+	Sea $\mathcal{C}$ una clase PRC. Si $p$ y $q$ son predicados en $\mathcal{C}$ entonces $\lnot p$, $p\land q$ y $p\lor q$ están en $\mathcal{C}$
+	\end{teorema}
+
 	\begin{demo}
 	\begin{itemize}
 	\item $\lnot p = \alpha(p)$
@@ -224,13 +239,17 @@ Para las demostraciones faltantes ir a
 	\end{itemize}
 	\end{demo}
 	
+	\begin{corolario}
+	Si $p$ y $q$ son predicados primitivos recursivos también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$.
+	\end{corolario}
 	
-	\paragraph{Corolario:} Si $p$ y $q$ son predicados primitivos recursivos también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$.
-	
-	\paragraph{Corolario:} Si $p$ y $q$ son predicados totales Turing computables también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$
+	\begin{corolario}
+Si $p$ y $q$ son predicados totales Turing computables también lo son los predicados $\lnot p$, $p\lor q$ y $p\land q$
+		\end{corolario}
 	
 	\subsubsection{Definición por casos}
-	\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Sean $\xDots{g}{m},h:\nat^n\to\nat$ funciones en $\mathcal{C}$ y sean $\xDots{p}{m}:\nat^n\to\{0,1\}$ predicados mutuamente excluyentes en $\mathcal{C}$. La función:
+	\begin{teorema}
+Sea $\mathcal{C}$ una clase PRC. Sean $\xDots{g}{m},h:\nat^n\to\nat$ funciones en $\mathcal{C}$ y sean $\xDots{p}{m}:\nat^n\to\{0,1\}$ predicados mutuamente excluyentes en $\mathcal{C}$. La función:
 	
 	$$f(\xDots{x}{n}) = \left\{\begin{tabular}{ll}
 		$g_1(\xDots{x}{n})$ & si $p_1(\xDots{x}{n})$ \\
@@ -242,25 +261,29 @@ $g_m(\xDots{x}{n})$ & si $p_m(\xDots{x}{n})$ \\
 
 está en $\mathcal{C}$
 
+	\end{teorema}
 \begin{demo}
 	\vspace*{-0.5cm}
 \begin{align*}
 	f(\xDots{x}{n}) = &g_1(\xDots{x}{n})\cdot p_1(\xDots{x}{n}) + \dots \\ &+ g_m(\xDots{x}{n})\cdot p_m(\xDots{x}{n}) \\ &+ h(\xDots{x}{n})\cdot(\lnot p_1(\xDots{x}{n})\land\cdots\land \lnot p_m(\xDots{x}{n}))
 \end{align*}
 
-Si algún $p_i$ es verdadero, valdrá $1$ y el resto $0$ porque todos los predicados son mutuamente excluyentes. Al evaluar $f$, obtendremos $$f(\xDots{x}{n}) = g_i(\xDots{x}{n})*p_i(\xDots{x}{n}) = g_i(\xDots{x}{n})\cdot 1 = g_i(\xDots{x}{n})$$v321v
+Si algún $p_i$ es verdadero, valdrá $1$ y el resto $0$ porque todos los predicados son mutuamente excluyentes. Al evaluar $f$, obtendremos $$f(\xDots{x}{n}) = g_i(\xDots{x}{n})*p_i(\xDots{x}{n}) = g_i(\xDots{x}{n})\cdot 1 = g_i(\xDots{x}{n})$$
 
 Si todos los predicados son falsos, entonces todas las $g_i$ se multiplican por cero y, además vale la condición \textit{si no} que es la conjuncion de sus negaciones. Y $h$ es multiplicado por 1.
 \end{demo}
 
 \subsubsection{Sumatorias, productorias}\label{sec::primitivas::sumatoria}
 
-\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
+\begin{teorema}
+Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
 
 \begin{align*}
 	g(y,\xDots{x}{n}) &= \sum_{t=0}^{y} f(t,\xDots{x}{n})) \\
 	h(y,\xDots{x}{n}) &= \prod_{t=0}^{y} f(t,\xDots{x}{n})) \\
 \end{align*}
+
+\end{teorema}
 
 \begin{demo}
 	\vspace*{-0.5cm}
@@ -271,12 +294,15 @@ Si todos los predicados son falsos, entonces todas las $g_i$ se multiplican por 
 Para $h$ hay que hacer lo mismo pero multiplicando en vez de sumar.
 \end{demo}
 
-\paragraph{Teorema:} Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
+\begin{teorema}
+Sea $\mathcal{C}$ una clase PRC. Si $f:\nat^{n+1}\to\nat$ está en $\mathcal{C}$ entonces también están las funciones:
 
 \begin{align*}
 	g(y,\xDots{x}{n}) &= \sum_{t=1}^{y} f(t,\xDots{x}{n})) \\
 	h(y,\xDots{x}{n}) &= \prod_{t=1}^{y} f(t,\xDots{x}{n})) \\
 \end{align*}
+
+\end{teorema}
 
 La demostración es la misma que la anterios, pero los resultados de los casos bases valen $0$ y $1$, respectivamente.
 
@@ -301,12 +327,14 @@ Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado:
 \end{itemize}
 De la misma manera se pueden definir el existencial y el para todo con $< y$ en vez de $\leq y$.
 \end{itemize}
+\begin{teorema}
+ Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
 
-\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
 \begin{itemize}
 	\item[] $(\forall t)_{\leq y} p(t,\xDots{x}{n})$ 
 	\item[] $(\exists t)_{\leq y} p(t,\xDots{x}{n})$
 \end{itemize}
+\end{teorema}
 
 \begin{demo}
 \begin{itemize}
@@ -316,11 +344,14 @@ De la misma manera se pueden definir el existencial y el para todo con $< y$ en 
 Definimos los cuantificadores en función de la sumatoria, productoria y la comparación de igualdad que están en $\mathcal{C}$ (Ver Seccion \ref{sec::primitivas::sumatoria} y apéndice \ref{appendix::primitivas::igualdad}). Entonces el para todo y el existencial acotados por $\leq$ pertenece a $\mathcal{C}$.
 \end{demo}
 
-\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
+\begin{teorema}
+Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado perteneciente a una clase PRC $\mathcal{C}$. Entonces los siguientes predicados también están en $\mathcal{C}$:
 \begin{itemize}
 	\item[] $(\forall t)_{< y} p(t,\xDots{x}{n})$ 
 	\item[] $(\exists t)_{< y} p(t,\xDots{x}{n})$
 \end{itemize}
+
+\end{teorema}
 
 \begin{demo}
 \begin{itemize}
@@ -339,7 +370,9 @@ mínimo $t\leq y$ tal que $p(t,\xDots{x}{n})$ es verdadero & si existe tal $t$ \
 \right.
 $$
 
-\paragraph{Teorema:} Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado de una clase PRC $\mathcal{C}$. Entonces la función $\min\limits_{t\leq y} p(t,\xDots{x}{n})$ también están en $\mathcal{C}$
+\begin{teorema}
+Sean $p:\nat^{n+1}\to\{0,1\}$ un predicado de una clase PRC $\mathcal{C}$. Entonces la función $\min\limits_{t\leq y} p(t,\xDots{x}{n})$ también están en $\mathcal{C}$
+\end{teorema}
 
 \begin{demo}
  $$\min\limits_{t\leq y} p(t,\xDots{x}{n}) = \sum_{u=0}^{y}\prod_{t=0}^{u}\alpha(p(t,\xDots{x}{n}))$$	
@@ -376,7 +409,9 @@ El \textbf{número de Gödel} de la secuencia $\xDots{a}{n}$ es el número:
 $$[\xDots{a}{n}] = \prod_{i=1}^{n} p_i^{a_i}$$
 donde $p_i$ es el $i-$ésimo primo ($i\geq 1$)
 
-\paragraph{Teorema:} Si $\xDots{a}{n} = \xDots{b}{n}$ entonces $a_i = b_i$ para todo $i\in\{1,\dots,n\}$.
+\begin{teorema}
+Si $\xDots{a}{n} = \xDots{b}{n}$ entonces $a_i = b_i$ para todo $i\in\{1,\dots,n\}$.
+\end{teorema}
 
 \paragraph{Observación:} $[\xDots{a}{n}] = [\xDots{a}{n},0] = [\xDots{a}{n},0,0]= \dots$
 
@@ -408,19 +443,19 @@ donde $p_i$ es el $i-$ésimo primo ($i\geq 1$)
 	
 	\section{\red{Completitud y compacidad para lógica de primer orden}}
 	
-\appendix
-\section{Operaciones primitivas recursivas} \label{appendix::primitivas}
-\subsection{Igualdad}\label{appendix::primitivas::igualdad}
-$x = y$
-\begin{demo}
-	$$igual(x,y) = \alpha(x \resta y)$$
-\end{demo}
-
-\subsection{Divisor}
-$y|x$ si y solo $y$ divide a $x$
-\begin{demo}
-	$$y|x \iff (\exists t)_{\leq x} y\cdot t = x $$
-\end{demo}
+%\appendix
+%\section{Operaciones primitivas recursivas} \label{appendix::primitivas}
+%\subsection{Igualdad}\label{appendix::primitivas::igualdad}
+%$x = y$
+%\begin{demo}1
+%	$$igual(x,y) = \alpha(x \resta y)$$
+%\end{demo}
+%
+%\subsection{Divisor}
+%$y|x$ si y solo $y$ divide a $x$
+%\begin{demo}
+%	$$y|x \iff (\exists t)_{\leq x} y\cdot t = x $$
+%\end{demo}
 
 \end{document}
 
