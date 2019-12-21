@@ -101,13 +101,16 @@
 	\subsubsection{Poder de  cómputo}
 	
 	Sea $f:\nat^m\to\nat$ una función parcial. Son equivalentes:
+	\begin{multicols}{2}
 	\begin{enumerate}
-		\item $f$ es computable en Java
-		\item $f$ es computable en C
-		\item $f$ es computable en Haskell
-		\item $f$ es Turing computable.
-	\end{enumerate}
+	\item $f$ es computable en Java
+	\item $f$ es computable en C
+	\item $f$ es computable en Haskell
+	\item $f$ es Turing computable.
+\end{enumerate}
+	\end{multicols}
 	
+	\newpage
 	\section{Funciones primitivas recursivas y clases PRC}
 	\subsection{Funciones iniciales}
 	\paragraph{Función calculable de manera efectiva:} Son funciones que podemos escribir combinando, de alguna manera, funciones más simples que sabemos que ya sabemos que son efectivas.
@@ -168,7 +171,7 @@ Una función es p.r. si y solo si pertenece a toda clase \textit{PRC}.
 				\item $f_i$:
 				\begin{itemize}
 				\item es una función incial (por lo tanto es p.r y está en $\mathcal{C}$) ó
-				\item o se obtiene por composición o recursión primitiva a partir de funciones $f_j$ con $j < i$ (luego tambien está en $\mathcal{C}$
+				\item o se obtiene por composición o recursión primitiva a partir de funciones $f_j$ con $j < i$ (luego tambien está en $\mathcal{C}$)
 				\end{itemize}
 			\end{itemize}
 			Osea que $f=f_n$ o es una función inicial (y por lo tanto está en $\mathcal{C}$) ó se obtiene por composición o recursión primitiva de algunas de las anteriores (que están en $\mathcal{C}$ y por lo tanto $f$ también lo está). Luego $f\in\mathcal{C}$
@@ -186,36 +189,65 @@ Toda función p.r. es total y Turing computable
 	Sabemos que la clase de funciones totales Turing computables es PRC. Por el teorema, anterior, si $f$ es p.r, entonces $f$ pertence a todas las clases PRC, en particular a la clase de funciones totales Turing computables.
 	\end{demo}
 
-\subsection{Funciones primitivas recursivas básicas:}
+\subsection{Funciones primitivas recursivas básicas}
 \begin{itemize}
 	\item Todas las constantes $k$ están en todas las clases PRC. 
-	\begin{demo}
-		$$k = k(t) = s^{(k)}(n(t))$$
-	\end{demo}
+		\begin{itemize}
+			\item[] $k = k(t) = s^{(k)}(n(t))$
+		\end{itemize}
 	\item $suma(x,y) = x + y$
-	\begin{demo}
-		\vspace*{-0.5cm}
-		\begin{align*}
-			suma(x,0) &= u_1^1(x)\\
-			suma(x, y+1) &= g(suma(x,y),x,y) = s(u_1^3(suma(x,y),x,y))
-		\end{align*}
-	\end{demo}
 	
-	\item $x\cdot y$
-	\item $x^y$
-	\item  $factorial(x) = x!$
-	
-	\item $x\resta y = \left\{\begin{tabular}{ll}
-	$x-y$ & si $x\geq y$ \\
-	0 & si no
-	\end{tabular}\right.$
-	\item $\alpha(x) = \left\{\begin{tabular}{ll}
-	1 & si $x=0$ \\
-	0 & si no
-	\end{tabular}\right.$
+	\begin{tabular}{lll}
+	$suma(x,0)$ & $=$ & $u_1^1(x)$ \\
+	$suma(x, y+1)$ & $=$ & $g(suma(x,y),x,y)$ 
+	\\ &  &donde  $g(x_1, x_2,x_3) = s(u_1^3(x_1,x_2,x_3))$
+	\end{tabular}
+	\begin{multicols}{2}	
+			\item $x\cdot y$
+			
+			\begin{tabular}{lll}
+				$x \cdot 0$ & $=$ &$0 = n(x)$\\
+				$x \cdot (y+1)$ &$=$  & $g(x \cdot y,x,y) = x + (x\cdot y)$
+			\end{tabular}
+		
+			\item $x^y$
+			
+			\begin{tabular}{lll}
+				$x ^ 0$ &$=$& $1$\\
+				$x ^{y+1}$ &$=$ & $g(x^y,x,y)$ = $x \cdot x^y$
+			\end{tabular}
+			
+			\item  $factorial(x) = x!$
+			
+			\begin{tabular}{lll}
+				$0!$ & $=$ & $1 = s(n(x))$\\
+				$(x + 1)!$ & $=$ & $g(x!,x) = (x+1) \cdot x!$
+			\end{tabular}
+		
+			\item $x\resta y = \left\{\begin{tabular}{ll}
+			$x-y$ & si $x\geq y$ \\
+			0 & si no
+			\end{tabular}\right.$
+			
+						\begin{tabular}{lll}
+				$x \resta 0$ & $=$ & $x$\\
+				$x\resta (y+1)$ & $=$ & $g(x\resta y,x,y) = (x\resta y) \resta 1$
+			\end{tabular}
+			donde $x\resta 1$ es:
+			
+									\begin{tabular}{lll}
+				$0 \resta 1$ & $=$ & $0$\\
+				$(x+1)\resta 1$ & $=$ & $g(x\resta 1,x) = u_2^2(x\resta 1,x) = x$
+			\end{tabular}
+			\item $\alpha(x) = \left\{\begin{tabular}{ll}
+			1 & si $x=0$ \\
+			0 & si no
+			\end{tabular}\right.$
+		
+		\end{multicols}
+
 \end{itemize}
 
-Para las demostraciones faltantes ir a 
 	\subsubsection{Predicados primitivos recursivos}
 	Los \textbf{predicados} son simplemente funciones que toman valores en $\{0,1\}$.
 	\begin{itemize}
@@ -341,7 +373,7 @@ De la misma manera se pueden definir el existencial y el para todo con $< y$ en 
 	\item[] $(\forall t)_{\leq y} p(t,\xDots{x}{n})$ si y solo si $\prod_{t=1}^{y} f(t,\xDots{x}{n})) = 1$
 	\item[] $(\exists t)_{\leq y} p(t,\xDots{x}{n})$ si y solo si $\sum_{t=1}^{y} f(t,\xDots{x}{n})) \neq 0$
 \end{itemize}
-Definimos los cuantificadores en función de la sumatoria, productoria y la comparación de igualdad que están en $\mathcal{C}$ (Ver Seccion \ref{sec::primitivas::sumatoria} y apéndice \ref{appendix::primitivas::igualdad}). Entonces el para todo y el existencial acotados por $\leq$ pertenece a $\mathcal{C}$.
+Definimos los cuantificadores en función de la sumatoria, productoria y la comparación de igualdad que están en $\mathcal{C}$ (Ver Seccion \ref{sec::primitivas::sumatoria}). Entonces el para todo y el existencial acotados por $\leq$ pertenece a $\mathcal{C}$.
 \end{demo}
 
 \begin{teorema}
@@ -413,6 +445,8 @@ donde $p_i$ es el $i-$ésimo primo ($i\geq 1$)
 Si $\xDots{a}{n} = \xDots{b}{n}$ entonces $a_i = b_i$ para todo $i\in\{1,\dots,n\}$.
 \end{teorema}
 
+\paragraph{Observación:} La demostración del teorema se basa en que la factorización en primos de cualquier número es única.
+
 \paragraph{Observación:} $[\xDots{a}{n}] = [\xDots{a}{n},0] = [\xDots{a}{n},0,0]= \dots$
 
 \paragraph{Observadores:} Sea $x=[\xDots{a}{n}]$:
@@ -426,6 +460,10 @@ Si $\xDots{a}{n} = \xDots{b}{n}$ entonces $a_i = b_i$ para todo $i\in\{1,\dots,n
 \begin{demo}
 	\begin{itemize}
 		\item $x[i] = \min\limits_{t\leq x}\left(\lnot\left(p_i^{t+1}|x\right)\right)$
+			\begin{itemize}
+				\item [] Es el mínimo $t$ tal que $p_i^{t+1}$ no divide a $x$.
+				\item [] La función $y | x$
+			\end{itemize}
 		\item $|x| = \min\limits_{i\leq x}\left(x[i]\neq 0 \land \left(\forall j\right)_{\leq x} \left(j\leq i \lor x[j] = 0\right)\right)$
 	\end{itemize}
 \end{demo}
