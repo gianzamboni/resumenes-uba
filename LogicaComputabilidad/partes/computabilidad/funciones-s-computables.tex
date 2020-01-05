@@ -1,0 +1,547 @@
+\section{Funciones $\mathcal{S}$-Computables}
+	
+	\subsection{Sintaxis del lenguaje $\mathcal{S}$}
+	
+	En la materia usamos el lenguaje $\mathcal{S}$.
+	\begin{itemize}
+		\item Usaremos letras como variables cuyos valores serán números enteros no negativos. En particular:
+		\begin{itemize}
+			\item Las letras $X_1, X_2,\dots$ serán las \textbf{variables de entradas} de nuestro programa.
+			\item La letra $Y$, \textbf{variable de salida}. Siempre empieza inicializada en cero.
+			\item Las letras $Z_1,Z_2,\dots$, las \textbf{variables locales}. Siempre empiezan inicializadas en cero.
+		\end{itemize}
+	\item Un programa en $\mathcal{S}$ consistirá de una secuencia fínita de instrucciones. Tendremos de tres tipos:
+	
+	\begin{center}
+	\begin{tabularx}{0.9\textwidth}{p{0.21\textwidth} X}
+		Instrucción & Interpretación \\
+		\hline
+		$\sincr{V}$ & Incrementa en uno el valor de la variable $V$. \\
+		$\sdecr{V}$ & Decrementa en uno el valor de la variable $V$. Si $V$ es cero, no hace nada\\
+		$\sif{V}{L}$  & Si el valor de $V$ no es cero, entonces ejecuta la  instrucción con etiqueta $L$, sino sigue con la siguiente instrucción de la secuencia.
+	\end{tabularx}
+	\end{center}
+	\end{itemize}
+
+Un programa termina cuando se ejecuta la última instrucción o cuando se realiza un salto condicional a una etiqueta que no pertenece al programa
+	\paragraph{Macros:} Cuando programemos habrá secuencias de intrucciones que usaremos frecuentemente. A éstas, les podremos asignar una abreviación que podremos usar como pseudo instrucciónes.
+	
+	Cuando utilizemos macros, vamos a asumir que las etiquetas y variables usadas dentro de ellas se remplazan automáticamente por etiquetas y variables que no esté usando nuestro programa
+
+
+	\paragraph{Macro GOTO $\bm{L}$}: Nos permitirá realizar un salto sin la necesidad de una condición.
+\begin{center}
+	\begin{tabular}{ll}
+		GOTO $L$: &\\
+		& $\sincr{Z}$ \\
+		& $\sif{Z}{L}$ \\
+	\end{tabular}
+\end{center}
+\newpage
+\paragraph{Programa $\bm{Y\leftarrow X}$:} Asignar a $Y$ el valor de $X$.
+\begin{multicols}{2}
+\begin{center}
+	\begin{tabular}{ll}
+		$[A]$ & \sif{X}{B} \\
+		& \sgoto{C} \\
+		$[B]$ & \sdecr{X} \\
+		& \sincr{Y} \\
+		& \sincr{Z}{A} \\
+		& \sgoto{A} \\
+		$[C]$ & \sif{Z}{D} \\
+		& \sgoto{E} \\
+		$[D]$ & \sdecr{Z} \\
+		& \sincr{X} \\
+		& \sgoto{C} \\
+	\end{tabular}
+\end{center}
+	Si renombramos a $X$ e $Y$ por $V_1$ y $V$, respectivamente, conseguimos la macro asociada a este programa.
+\end{multicols}
+
+\setlength\columnsep{10pt}
+
+\subsubsection{Estado}
+\paragraph{Estado de un programa $\bm{P}$:} Es una lista de equaciones de la forma $V = m$ donde $V$ es una variable y $m$ un número. La lista, incluye  una de estas ecuaciones por cada variable que usa (no hay dos ecuaciones para la misma variable).
+
+\begin{multicols}{2}
+	\paragraph{Programa $\bm{P}$:}
+	\begin{center}
+	\begin{tabular}{ll}
+	$[A]$ & \sdecr{X} \\
+	& \sincr{Y} \\
+	& \sif{X}{A} \\	
+\end{tabular}
+
+	\end{center}
+\vfill\null
+\columnbreak
+\paragraph{Algunos estados de $\bm{P}$:}
+\begin{itemize}
+	\item $X = 3, Y = 1$
+	\item $X = 3, Y = 1, Z = 0$
+	\item $X = 3, Y = 1, Z = 8$ (si bien no es alcanzable, es un estado válido)
+\end{itemize}
+\end{multicols}
+
+\subsubsection{Descripción instantánea}
+\paragraph{Descripción instantánea (snapshot):} Sea $P$ un programa de longitud $n$. Dado un estado $\sigma$ de $P$ y un $i\in{1,\dots, n+1}$, el par $(i, \sigma)$ es una descripción instantanea de $P$ e indica el valor de sus variables antes de ejecutar la $i$-ésima instrucción. 
+
+\paragraph{Descripción terminal:} Si $i = n + 1$, entonces la descripción se llama \textbf{terminal}.
+
+\vspace*{5mm}
+Para una descripción $(i,\sigma)$, no terminal podemos definir su \textbf{sucesor} $(j, \tau)$ de la siguiente manera:
+
+Si la $i$-ésima instrucción es:
+\begin{itemize}
+	\item \sincr{V} entonces $j = i + 1$ y $\tau$ es $\sigma$ remplazando $V = m$ por $V = m+1$
+	\item \sdecr{V} entonces $j = i + 1$ y $\tau$ es $\sigma$ remplazando $V = m$ por $V = \max\{m-1, 0\}$
+	\item \sif{V}{L} entonces $\tau = \sigma$ y con $j$ pueden suceder dos cosas:
+	\begin{itemize}
+		\item Si $\sigma$ contiene la fórmula $V = 0$ entonces $j = i + 1$
+		\item Si no:
+		\begin{itemize}
+			\item Si existe una instrucción en $P$ con etiqueta $L$, entonces $$j =  \min\{k:k\text{-ésima instrucción de } P \text{ tiene etiqueta } L\}$$
+			\item Si no, $j = n + 1$	
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+Notar que podemos tenes más de una instrucción con la misma etiqueta. Sin embargo, nuestra definición de descripción instantanea, interpreta que un condicional siempre se refiere a la primera instrucción que la usa.
+
+\subsection{Funciones parciales computables}
+
+\subsubsection{Cómputo}
+\paragraph{Estado inicial:} Sea $P$ un programa del lenguaje $\mathcal{S}$ y $r_1,\dots, r_m$ números dados. Formamos el estado inicial $\sigma_1$ de $P$ con las ecuaciones $X_1 = r_1,~X_2=r_2,\dots,X_m = r_m, Y = 0$ y $V=0$ para cada variable $V$ que use el programa y no sean las ya mencionadas. Y $(1,\sigma_1)$ es la \textbf{descripción inicial}.
+
+En las definiciones que usaremos, un mismo programa $P$ puede servir para computar funciones de una variable, dos variables, etc. Esto depende de la cantidad de variables de entradas que especifiquemos. Si especificamos menos de las que deberíamos, el resto toma valor $0$. Si especificamos más, entonces el programa simplemente las ignorará.
+
+\paragraph{Computo de un programa $P$:} Dado un programa $P$ y una descripción inicial $d_1=(1,\sigma)$, un cómputo es una secuencia finita de descripciones $d_1,\dots,d_k$ tal que $d_k$ es una descripción terminal. Si esta secuencia existe, notamos $\Psi_P^{(m)}(r_1,\dots,r_m)$ al valor de $Y$ en $d_k$.
+
+En los casos en que la secuencia de instrucciones sea infinita (nunca lleguemos a un estado terminal si partimos desde $d_1$), diremos que $\Psi_P^{(m)}(r_1,\dots,r_m)$ está indefinido.
+
+\begin{align*}
+	\Psi_P^{(m)}(r_1,\dots,r_m) = \left\{
+	\begin{tabular}{ll}
+	el valor de Y & si existe un cómputo de $P$ desde $(1,\sigma_1)$ \\
+	$\uparrow$ & si no \\
+	\end{tabular}
+	\right.
+\end{align*}
+
+\subsubsection{Función parcial computable}
+Una función (parcial) $f:\nat^m\to\nat$ es $\bm{\mathcal{S}}$\textbf{-parcial computable} (o \textbf{parcial computable})si existe un programa $P$ tal que $$f(r_1,\dots,r_m) = \Psi_P^{(m)}(r_1,\dots,r_m) \text{ para todo }(r_1,\dots,r_m)\in\nat^m$$
+Esto quiere decir, que para $(r_1,\dots,r_m)$, ambos lados están definidos y tienen el mismo valor o ambos lados están indefinidos.
+
+\paragraph{Función $\mathcal{S}$-computable:} (o \textbf{computable}) si es parcial computable y total.
+
+\subsubsection{Minimización no acotada}
+
+Definimos la minimización no acotada como:
+
+$$\min_t p(t,x_1,\dots,x_n) =\left\{
+	\begin{tabular}{ll}
+	mínimo $t$ tal que $p(t,x_1,\dots,x_n) = 1$ & si existe tal $t$ \\
+	$\uparrow$ & si no
+	\end{tabular}
+	\right.$$
+	
+		\begin{teorema}\label{teorema::MinNoAcotadoEsComputable}
+Si $p:\nat^{n+1}\to\{0,1\}$ es un predicado computable entonces $\min\limits_t p(t,x_1,\dots,x_n)$ es parcial computable
+	\end{teorema}
+	
+	\begin{demo}[teorema::MinNoAcotadoEsComputable]
+		Si mostramos un programa que computa $\min\limits_t p(t,\xDots{x}{n})$, entonces queda probado el teorema. Ese programa es:
+		
+		\vspace*{5mm}
+		\begin{center}
+		\begin{tabular}{ll}
+	$[A]$ & $^*$IF $p(Y,\xDots{X}{n})$ GOTO $E$ \\
+	& \sincr{Y} \\
+	& GOTO $A$
+\end{tabular}
+		\end{center}
+	
+	\vspace*{5mm}
+	*Ver definición en el apéndice \ref{appendix::otrasMAcros::ifPredicado}
+	\end{demo}
+
+\subsubsection{Clausura por composición y recursión primitiva}
+
+\begin{teorema}\label{teorema::computableClausuraComposicion}
+Si $h:\nat^n\to\nat$ se obtiene a partir de las funciones (parciales) computables $f,\xDots{g}{k}$ por composición, osea tiene la siguiente forma:
+	$$h(\xDots{x}{n}) = f(g_1(\xDots{x}{n}),\dots,g_k(\xDots{x}{n}))$$
+entonces h es (parcial) computable.
+\end{teorema}
+
+\begin{demo}[teorema::computableClausuraComposicion]
+	Se puede  ver facilmente que el programa mostrado a continuación computa $h$. En el apéndice \ref{appendix::otrasMAcros::asignacionFunc}, se define la macro que nos permite asignar el resultado de una función a una variable.
+	
+	\begin{center}
+	\begin{tabular}{c}
+		$Z_1 \leftarrow g_1(\xDots{X}{n})$ \\
+		$\vdots$ \\
+		$Z_k \leftarrow g_k(\xDots{X}{n})$ \\
+		$Y \leftarrow f(\xDots{Z}{k})$\\
+	\end{tabular}
+\end{center}
+\end{demo}
+
+\begin{proposicion}
+	Si $f,\xDots{g}{k}$ son totales entonces $h$ es total.
+\end{proposicion}
+
+\begin{teorema}\label{teorema::clausuraPorRecursionPrimitiva}
+	Si h se obtiene a partir de g por recursión primitiva y g es computable entonces h es computable.
+\end{teorema}
+
+\begin{demo}[teorema::clausuraPorRecursionPrimitiva]
+	El siguiente programa computa $h$. La macro que asigna una constante y el programa que calcula X = 0 se pueden ver en el apéndice \ref{appendix::otrasMacros}. 
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			& $Y \leftarrow f(\xDots{X}{n})$ \\
+			$[A]$ & IF $X_{n+1} = 0$ GOTO $E$ \\
+			& $Y \leftarrow g(Z,Y,\xDots{X}{n})$ \\
+			& $\sincr{Z}$ \\
+			& $\sdecr{X_{n+1}}$ \\
+			& GOTO $A$
+		\end{tabular}
+	\end{center}
+\end{demo}
+
+\begin{proposicion}
+	Si g es total entonces h es total.
+\end{proposicion}
+
+\begin{teorema}\label{teorema::computablesEsPRC}
+	La clase de funciones computables es una clase PRC
+\end{teorema}
+
+\begin{demo}[computablesEsPRC]
+	Por los teorema \ref{teorema::computableClausuraComposicion} y \ref{teorema::clausuraPorRecursionPrimitiva}, la clase de funciones computables está cerrada por composición y recursión primitiva. Osea que solo nos falta ver que las funciones iniciales son computables:
+	\begin{itemize}
+		\item $s(x) = x + 1$ se computa con el programa:
+		\begin{center}
+			\begin{tabular}{l}
+			$Y \leftarrow X$\\
+			$\sincr{Y}$
+			\end{tabular}
+		\end{center} 
+		\item $n(x) = 0$ se computa con el programa vacio.
+		\item $u_i^n(\xDots{x}{n})$ se computa con el programa:
+		\begin{center}
+			$Y \leftarrow X_i$
+		\end{center}		
+	\end{itemize}
+\end{demo}
+
+\begin{corolario}
+	Toda función primitiva recursiva es computable.
+\end{corolario}
+
+\subsection{Codificación de programas en $\mathcal{S}$}\label{secc::codProgramas}
+
+Vamos a asociar cada programa $P$ el lenguaje $S$ con un número $\#(P)$ de tal manera que podamos recuparlo solo conociendo su número. Para esto:
+ 
+\begin{itemize}
+	\item Agregamos la instrucción $V \leftarrow V$ a $\mathcal{S}$ que no hace nada.
+	\item Le damos un órden a las variables: $Y~X_1~Z_1~X_2~Z_2~X_3~Z_3\dots$
+	\item Y hacemos los mismo para las etiquetas: $A_1~B_1~C_1~D_1~E_1~A_2~B_2~C_2~D_2~E_2~A_3$		
+\end{itemize}
+
+Escribimos $\#(V)$ y $\#(L)$ para indicar la posición en la lista de una variable o etiquetas dada. Por ejemplo: $\#(X_2) = 4$, $\#(E_1) = 5$
+
+Ahora, sea $I$ una instrucción etiquetada (o no) del lenguaje $S$, entonces la podemos representar con una tupla $\#(I) = \langle a,\langle b,c\rangle\rangle$ donde:
+
+\begin{enumerate}
+	\item Si $I$ tiene etiqueta $L$, entonces $a = \#(L)$. Si no $a = 0$.
+	\item Si $I$ es una instrucción del tipo:
+	\begin{itemize}
+		\item $V\leftarrow V$ entonces $b = 0$
+		\item $\sincr{V}$ entonces $b = 1$
+		\item $\sdecr{V}$ entonces $b = 2$
+		\item $\sif{V}{L}$ entonces $b = \#(L) + 2$
+	\end{itemize}
+	\item $c = \#(V) - 1$ siendo $V$ la variable usada en esa instrucción.
+\end{enumerate}
+
+Finalmente, sea $P$ un programa que consiste de las instrucciones $\xDots{I}{k}$, lo codificamos como una secuencia de instrucciones:
+
+$$\#(P) = [\#(I_1),\dots,\#(I_k)] - 1$$
+
+Recordemos que tanto las tuplas como las listas pueden ser representadas como números naturales y sus observadores son primitivos recursivos (Ver Secciones \ref{secc::codTuplas} y \ref{secc::codSecuencias}).
+
+
+Observemos que, por como habíamos definido las secuencias, pasaba que $[\xDots{a}{k}] = [\xDots{a}{k}, 0] = [\xDots{a}{k},0,0] = [\xDots{a}{k}, 0, 0,\dots]$. Ahora, $0 = \langle 0,\langle0,0 \rangle\rangle= Y \leftarrow Y$ por lo que cada $0$ agrega esta instrucción a un programa.
+
+Si bien los programas $[\xDots{a}{k}]$, $[\xDots{a}{k}, 0]$ y $[\xDots{a}{k}, 0, 0,\dots]$ son equivalentes, removemos esta ambigüedad pidiendo que ningún programa $\mathcal{S}$ puede terminar con la instrucción $Y\leftarrow Y$. Con esto, cada número representa a un único programa.
+
+\subsection{Teorema de Cantor}
+\begin{teorema}\label{teorema::cantor}
+	El conjunto de las funciones (totales) $\nat\to\nat$ no es numerable.
+\end{teorema}
+
+\begin{demo}[teorema::cantor]
+	Supongamos que el conjunto mencionado es numerable, entonces puedo enumerar todas las funciones de la siguiente forma: $f_0, f_1,f_2,\dots$.
+	
+	Sea $g:\nat\to\nat$ tal que $g(x) = f_x(x) + 1$. Como $g$ es una función de naturales en naturales, debería estar en la enumeración de funciones que hicimos más arriba. Por lo que $g = f_k$ para algún $k$.
+	
+	Sin embargo, $g(k) = f_k(k) + 1 \neq f_k(k)$ para todo $k$. Luego, $g$ no puede 	ser igual a ninguna de las funciones enumeradas. Absurdo ($f_0,f_1,\dots$ era una enumeración de \textbf{todas} las funciones $\nat\to\nat$)
+\end{demo}
+
+\subsection{El problema de la detención (Halting Problem)}
+Dado un programa $P$ tal que $\#(P) = y$, entonces HALT(x,y) es verdadero si $\Psi_P^{(1)}(x)$ está definido (osea si el programa termina y devuelve un resultado) y falso si $\Psi_P^{(1)}(x)$ está indefinido.
+
+\begin{align*}
+	\text{HALT}(x,y) = \left\{
+	\begin{tabular}{ll}
+		1 & si $\Psi_P^{(1)}(x)\downarrow$ \\
+		0 & si no \\  
+	\end{tabular}
+	\right.
+\end{align*}
+
+donde $P$ es el programa tal que $\#(P) = y$
+
+\begin{teorema}\label{teorema::haltNoComputable}
+	HALT(x,y) no es un predicado computable.
+\end{teorema}
+
+\begin{demo}[teorema::haltNoComputable]
+	Supongamos que HALT es computable, entonces podríamos construir el siguiente programa $P$:
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			$[A]$ & IF HALT($X$,$X$) GOTO $A$
+		\end{tabular}
+	\end{center}
+
+Es claro, que el cómputo de $P$ es:
+\begin{align*}
+\Psi_P^{(1)}(x) = \left\{
+\begin{tabular}{ll}
+$\uparrow$ & si HALT($x,x)$ \\
+0 & si $\lnot$ HALT($x,x$) \\
+\end{tabular}
+\right.
+\end{align*}
+
+Supongamos, ahora, que $\#(P) = e$. Entonces, para algún $x$, usando la definición de HALT nos queda que:
+
+$$ \text{HALT}(x,e) \iff \Psi_P^{(1)}(x)\downarrow \iff \Psi_P^{(1)}(x) = 0 \iff \lnot\text{HALT}(x,x)$$
+
+Si hacemos que $x = e$, entonces tenemos que $\text{HALT}(e,e) \iff  \lnot\text{HALT}(e,e)$. Pero esto es una contradicción.\qed
+\end{demo}
+
+Con esto podemos concluir que no existe un algoritmo que nos permita computar HALT$(x,y)$.
+
+\paragraph{Tesis de Church:} Todos las funciones computables sobre naturales, se pueden programar en $\mathcal{S}$.
+
+\paragraph{Diagonalización}
+Dado un conjunto de funciones, la idea es generar una función que debería pertenecer al conjunto pero es distintas a todas las funciones de ese conjunto y, por lo tanto, llegar a una contradicción.
+
+En el teorema de cantor (Teorema \ref{teorema::cantor}), usamos este método para concluir que había mas funciónes $\nat\to\nat$ que números naturales. Para esto, dimos un orden a la clase de funciones de este tipo y ordenamos sus valores de la siguiente forma:
+\begin{center}
+\begin{tabular}{cccc}
+	$f_0(0)$ & $f_0(1)$ & $f_0(0)$ & $\cdots$ \\
+	$f_1(0)$ & $f_1(1)$ & $f_1(0)$ & $\cdots$ \\
+	$f_2(0)$ & $f_2(1)$ & $f_2(0)$ & $\cdots$ \\
+\end{tabular}
+\end{center}
+
+Cuando definimos la nueva función que debería pertenecer a la enumeración propuesta, lo hacemos de tal manera que use los valores de la diagonal de esta matriz y sea distinto a todos ellos ($g(x) = f_x(x) + 1$).
+
+Como $g(x)$ usa todas las funciones enumeradas y es distintas a todas ellas, se llega a un absurdo.
+
+
+\subsection{Universalidad}
+Definimos la función $\Phi^{(n)}(\xDots{x}{n}, e)$ como la salida del programa $e$ con entrada $\xDots{x}{n}$, es decir $\Phi^{(n)}(\xDots{x}{n}, e) = \Psi_P^{(n)}(\xDots{x}{n})$ con $P$ tal que $\#(P) = e$.
+
+\begin{teorema}\label{teorema::phiEsParcialComputable}
+	Para cada $n > 0$ la función $\Phi^{(n)}$ es parcial computable.
+\end{teorema}
+
+\begin{demo}[teorema::phiEsParcialComputable]
+	Para demostrar esto vamos a construir el programa $U_n$ que computa $\Phi^{(n)}$.
+	\begin{multicols}{2}
+			\begin{tabular}{ll}
+				&$Z\leftarrow X_{n+1} +1$ \\
+				&$S \leftarrow \prod\limits_{i=1}^{n} (p_{2i})^{x_i}$ \\
+				&$K \leftarrow 1$\\
+				$[C]$ & IF $K = |Z| + 1 \lor K = 0$ GOTO $F$ \\
+				&$U \leftarrow r(Z[K])$ \\
+				&$P \leftarrow p_{r(U)+1}$\\
+				& IF $l(U) = 0$ GOTO $N$ \\
+				& IF $l(U) = 1$ GOTO $S$ \\
+				& IF $\lnot (P | S)$ GOTO $N$ \\
+				& IF $l(U) = 2$ GOTO $R$ \\
+				&$K \leftarrow \min\limits_{i\leq |Z|}(l(Z[i]) + 2 = l(U))$\\
+				& GOTO $C$ \\
+				$[R]$ & $S \leftarrow S$ div $P$ \\
+				& GOTO $N$ \\
+				$[S]$ & $S \leftarrow S\cdot P$ \\
+				& GOTO $N$ \\
+				$[N]$ & $K\leftarrow K + 1$ \\
+				& GOTO $C$ \\
+				$[F]$ & $Y \leftarrow S[1]$ \\
+			\end{tabular}
+		\vfill\null
+	\columnbreak
+	$Z$ es la lista de instucciones del programa.
+	
+	$S$ es la lista $[0,X_1,0,X_2,0,\dots]$ que codifica su estado inicial (según el orden de variables que habíamos definido en la sección \ref{secc::codProgramas}).
+	
+	$K$ es la próxima instrucción a ejecutar. 
+
+	El IF se fija si todavía hay instrucciones para ejecutar. Si no las hay, salta a la instrucción con etiqueta $F$. Si hay, se sigue en la siguiente instrucción.
+	
+	$U$ guarda el tipo y la variable de la $K$-ésima instrucción.
+	
+	$P$ es el primo asociado a la variable de esta instrucción.
+	
+	Si el tipo $l(U)$ de la instrucción es $V\leftarrow V$, entonces vamos a $N$. Si es una suma vamos a $S$. La condición $\lnot(P|S)$ comprueba si la variable mencionada por $U$ está en cero. Si lo está, vamos a $N$, sino nos fijamos que la instrucción sea, efectivamente, una resta. Si lo es, vamos a $R$, sino seguimos en la próxima instrucción.
+	\end{multicols}
+Si llegamos a la línea del mínimo, quiere decir que la instrucción era un salto condicional y, además, la variable era distinta de cero por lo quu hay que realizar el salto condicional. Aquí se computa la posición de la instrucción que se debe ejecutar a continuación. Y luego se vuelve a comenzar el ciclo.
+
+En las etiqueta $R$ y $S$ se produce la resta y suma, respectivamente, de la variable correspondiente y luego se salta a $N$.
+
+En $N$ se incrementa $K$ y se vuelve a comenzar el ciclo.
+
+Finalmente, en $F$ se asigna a $Y$ el valor $S[1]$.\qed
+\end{demo}
+
+A veces notaremos $$\Phi^{(n)}_e(\xDots{x}{n}) = \Phi^{(n)}(\xDots{x}{n},e)$$. Y omitiremos el supra-índice cuando $n=1$
+$$\Phi_e(x) = \Phi_e^{(1)}(x,e)$$
+
+
+\subsubsection{Step counter}
+
+Definimos el predicado STP de la siguiente manera:
+
+STP$^{(n)}(\xDots{x}{n}, e,t) \iff$ el programa $e$ con entrada termina en $t$ o menos pasos con la entrada $\xDots{x}{n} \iff$ hay un cómputo del programa $e$ de longitud $\leq t+1$, comenzando con la entrada $\xDots{x}{n}$
+
+\begin{teorema}
+	Para cada $n > 0$, el predicado STP$^{(n)}(\xDots{x}{n}, e, t)$ es primitivo recursivo.
+\end{teorema}
+
+\subsubsection{Snap}
+La función SNAP no devuelve la configuración instantánea del programa $e$ con entrada $\xDots{x}{n}$ en el paso $t$.
+
+SNAP$^{(n)}(\xDots{x}{n}, e,t) = \langle$ número de instrucción, lista representando el estado $\rangle$ 
+
+\begin{teorema}
+	Para cada $n > 0$, el predicado SNAP$^{(n)}(\xDots{x}{n}, e, t)$ es primitiva recursiva.
+\end{teorema}
+
+\subsubsection{Teorema de la forma normal}
+	\begin{teorema}\label{teorema::formaNormal}
+	Sea $f:\nat^N\to\nat$ una función parcial computable. Entonces existe un predicado primitivo recursivo $R:\nat^{n+1}\to\nat$ tal que $f(\xDots{x}{n}) = l(\min_z R(\xDots{x}{n},z))$.
+\end{teorema}
+\begin{demo}
+Sea $e$ el número de programa que computa $f(\xDots{x}{n })$. Vamos a probar que es verdadero usando el predicado:
+$$R(\xDots{x}{n}, z) = \text{STP}^{(n)}(\xDots{x}{n},e,r(z)) \land (l(z) = r(\text{SNAP}^{(n)}(\xDots{x}{n},e,r(z)))[1]$$
+Primero, supongamos que $f(\xDots{x}{n})\downarrow$. Entonces $\Phi_e^{(n)}(\xDots{x}{n})$ termina en una cantidad  $r(z)$ fínita de pasos.  y $\text{STP}^{(n)}(\xDots{x}{n},e,r(z))$ es verdadero. Además, $r(\text{SNAP}^{(n)}(\xDots{x}{n},e,r(z)))$ representa el estado final del programa por lo que tiene almacenado el valor final de la variable $Y$ en su primer posición.
+
+De esta forma, caracterizamos $z$ como la tupla que tiene, a la izquierda, el valor $f(\xDots{x}{n})$ y, a la derecha, la cantidad de pasos que hizo el programa $e$ para computar $f$ con esa entrada.
+
+Por otro lado, si $f(\xDots{x}{n})\uparrow$, entonces $\text{STP}^{(n)}(\xDots{x}{n},e,r(z))$ nunca es verdadero por lo que la función $\min$ se indefine (ya que nunca encuentra un $r(z)$ válido).
+\end{demo}
+
+A partir del teorema anterior, se derivan los siguientes:
+
+\begin{teorema}
+	Una función es \textbf{parcial computable} si se puede obtener a partir de las funciones iniciales por un número finito de aplicaciones de composición, recursión primitiva y \textbf{minimización}.
+\end{teorema}
+
+\begin{teorema}
+	Una función es \textbf{computable} si se puede obtener a partir de las funciones iniciales por un número finito de aplicaciones de composición, recursión primitiva y \textbf{minimización propia} (es decir, siempre existe al menos un valor t que hace verdadera la propiedad que se busca minimizar).
+\end{teorema}
+\subsubsection{Teorema del parámetro}
+
+\begin{teorema}\label{teorema::parametro}
+Para cada $n,m > 0$, hay una función primitiva recursiva inyectiva $S_n^m:\nat^{n+1}\to\nat$ tal que:
+$$\Phi_y^{(n+m)}(\xDots{x}{m},\xDots{u}{n}) = \Phi^{(m)}_{S^n_m(\xDots{u}{n},y)}(\xDots{x}{m})$$  
+\end{teorema}
+
+Supongamos que dado un número de un programa con número $y$ fijamos las variables $\xDots{u}{n}$. El teorema del parámetro nos dice que existe un programa con número $S^n_m(\xDots{u}{n},y)(\xDots{x}{m})$ que computa la función que toma como parámetros las $m$ variables restantes. Y, además, ese número se puede obtener de manera computable. 
+
+\begin{demo}[teorema::parametro]
+	Se hace por inducción, en la cantidad de parámetros fijados.
+	
+	\paragraph{Caso $n = 1$:} Necesitamos mostrar que $S_m^1(u,y)$ es una función primitiva recursiva tal que $\Phi^{(m+1)}(\xDots{x}{m},u,y) = \Phi^{(m)}(\xDots{x}{m},S_m^1(u,y))$
+	
+	Sea $P$ el programa tal que $\#(P) = y$, entonces el programa $Q$ tal que $\#(Q) = S_m^1(u,y)$ puede ser el program que primero asigna a $X_{m+1}$ el valor $u$ y luego ejecuta $P$.
+	
+	En el ápendice \ref{appendix::otrasMAcros::asignarConstante} se ve como asignar un valor cualquiera a una variable ejecuntando la instrucción $\sincr{X_{m+1}}$ la cantidad necesaria de veces.
+	
+	El número de esta instrucción es: $\langle 0,\langle 1, 2m+1\rangle\rangle = 16m + 10$. Por lo que hay que agregar $u$ este número a la lista de instrucciones $P$, entonces el número de $Q$ se podría computar de la siguiente forma:
+	$$S_m^1(u,y) = \left[
+	\left(\prod_{i=1}^{u}p_i\right)^{16m+10} \prod_{j=1}^{|y+1|}p_{u+j}^{(y+1)_j}\right] \resta 1$$
+	Lo que hace es asignar a los primeros $u$ primos, la instrucción mencionada y mover a $p_{u+1},p_{u+2},\dots$ las instrucciones de $P$. Además, $S_m^1$ es primitiva recursiva (es nuestra codificación de listas).
+
+	\paragraph{Caso inductivo (n = k  + 1):} Asumimos que el resultado vale para $n = k$. Primero aplicamos el mismo resultado que para el caso base y obtenemos que:
+		\end{demo}
+\begin{demoPart}[teorema::parametro]
+	$$\Phi_y^{(m + k + 1)}(\xDots{x}{m},\xDots{u}{k+1}) = \Phi_{S_{m+k}^1(u_{k+1},y)}^{(m + k)}(\xDots{x}{m},\xDots{u}{k})$$
+	
+	Nuestra hipotesis inductiva es que para cualquier programa existe una función primitiva recursiva $S_m^k$ que nos permite fijar los últimos $k$ parámetros de la entrada. En particular, existe para  el programa $S_{m+k}^1(u_{k+1}, y)$, entonces:
+	
+	$$\Phi_{S_{m+k}^1(u_{k+1},y)}^{(m + k)}(\xDots{x}{m},\xDots{u}{k}) = \Phi_{S_{m}^k(\xDots{u}{k},S_{m+k}^1(u_{k+1},y))}^{(m + k)}(\xDots{x}{m}) $$
+	
+	Luego podemos tomar la función primitiva recursiva $$S_m^{k+1}(\xDots{u}{k+1}, y) = S_{m}^k(\xDots{u}{k},S_{m+k}^1(u_{k+1},y))$$ \qed
+\end{demoPart}
+
+\subsubsection{Teorema de la recursión}
+En la demostración del Halting Problem (Teorema \ref{teorema::haltNoComputable}) construimos un programa $P$ que, cuando se ejecuta con su mismo número de programa, evidencia una contradicción. El fénomeno de un programa actuando sobre su propia descripción se conoce como \textit{auto-referencia}. El teorema de la recursión nos presenta una técnica para obtener programas \textit{auto-referentes}.	
+
+\begin{teorema}\label{teorema::recursion}
+	Si $g:\nat^{n+1}\to\nat$ es parcial computable, existe un $e$ tal que $\Phi_e^{(n)} = g(e,\xDots{x}{n})$
+\end{teorema}
+
+\begin{demo}[teorema::recursion]
+	Sea $S_n^1$ la función del Teorema del parámetro:
+	$$\Phi_y^{(n+1)}(\xDots{x}{n},u) = \phi_{S_n^1(u,y)}^{(n)}(\xDots{x}{n})$$
+	Consideremos la función parcial computable $$h(\xDots{x}{n}, v) = g(S_n^1(v,v),\xDots{x}{n})$$ y sea $z$ el número de un programa que computa $h$, entonces or el teorema del parámetro tenemos que $\Phi_z^{(n+1)}(\xDots{x}{n}, v) = \Phi_{S_n^1(v,z)}^{(n)}(\xDots{x}{n})$.
+	
+	Si fijamos $v = z$, entonces $$\Phi_{S_n^1(v,z)}^{(n)}(\xDots{x}{n}) = \Phi_{S_n^1(z,z)}^{(n)}(\xDots{x}{n}) = g(S_n^1(z,z),\xDots{x}{n})$$
+	
+	Finalmente, podemos remplazar $e = S_n^1(z,z)$ en la formula anterior:
+	
+	$$\Phi_{e}^{(n)}(\xDots{x}{n}) = g(e,\xDots{x}{n})$$\qed
+\end{demo}
+
+\begin{corolario}\label{corolario::infintosERecursion}
+	Si $g:\nat^{n+1}\to\nat$ es parcial computable, existen \textbf{infinitos} e tal que $$\Phi_e^{(n)}(\xDots{x}{n}) = g(e,\xDots{x}{n})$$
+\end{corolario}
+
+\begin{demo}[corolario::infintosERecursion]
+	Si, dada una función (parcialmente) computable, hay infinitos programas que la pueden computar. En particular, vale para la función $h$ de la demostración anterior. Por ejemplo, como $z$ es el número de un programa que computa $h$ y le agregamos la instrucciónes $\sincr{Y}$ y $\sdecr{Y}$ al principio, entonces obtenemos un programa equivalente con distinto número que también la computa. Podemos agregar este par de instrucciones la cantidad de veces que queramos y, cada vez, obtendremos un número diferente. \qed
+\end{demo}
+\subsubsection{Teorema del punto fijo}
+Un \textbf{quine} es un programa que cuando se ejecuta, devuelve como salida el mismo programa. Osea si $P$ es un quine tal que $\#(P) = e$, entonces $\Phi_e(x) = e$.
+
+\begin{proposicion}
+	Hay infinitos $e$ tal que $\Phi_e(x) = e$
+\end{proposicion}
+
+\begin{demo}
+	La demostración sale directamente de aplicar el teorema de la recursión sobre $g:\nat^2\to\nat$, $g(z,x) = z$. Por el teorema de la recursión sabemos que existen infinitos programas con número $e$ tal que $\Phi_e(x) = g(e,x) = e$. \qed
+\end{demo}
+
+\begin{proposicion}
+	Sea $h$ una función parcial computable, hay infinitos $e$ tal que $\Phi_e(x) = h(e)$
+\end{proposicion}
+\begin{demo}
+	Si consideramos $g:\nat^2\to\nat$, $g(z,x) = h(z)$. Por el teorema de la recursión sabemos que existen infinitos programas con número $e$ tal que $\Phi_e(x) = g(e,x) = h(e)$.
+\end{demo}
+
+\begin{teorema}
+	Si $f:\nat\to\nat$ es computable, existe un $e$ tal que $\Phi_{f(e)} = \Phi(e)$
+\end{teorema}
+
+\begin{demo}
+	Considerar la función $g:\nat^2\to\nat$, $g(z,x) = \Phi_{f(z)}(x)$
+	
+	Aplicando el Teorema de la Recursión, existe un $e$ tal que para todo $x$:
+	$$\Phi_e(x) = g(e,x) = \Phi_{f(e)}(x)$$ \qed
+\end{demo}

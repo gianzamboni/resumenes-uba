@@ -1,0 +1,142 @@
+\section{Otras funciones primitivas recursivas:}\label{appendix::funcpr}
+\begin{multicols}{2}
+\subsection{Division}
+$y$ div $y = \min\limits_{t \leq x} x*(t+1) > y $
+
+\subsection{Divisor}
+$x | y = (\exists t)_{\leq y}~x*t = y $
+
+\subsection{$i$-ésimo primo}
+$p_0 = 2$
+
+$p_{t+1} = \min\limits_{k \leq p_t!+1}(k > p_t \land \text{esPrimo}(p_k)$
+\end{multicols}
+\section{Otras Macros} \label{appendix::otrasMacros}
+\setlength\columnsep{10pt}
+
+\subsection{$V \leftarrow 0$}\label{appendix::otrasMAcros::resetVariable}
+\begin{multicols}{2}
+	\begin{center}
+	\begin{tabular}{ll}
+	$[A]$ & $\sdecr{V}$ \\
+	& $\sif{V}{A}$
+\end{tabular}
+
+	\end{center}
+	
+	\columnbreak
+La macro resta uno a $V$ hasta que sea cero.
+\end{multicols}
+
+\subsection{$V \leftarrow k$}\label{appendix::otrasMAcros::asignarConstante}
+\begin{multicols}{2}
+	\begin{center}
+	\begin{tabular}{l}
+	$V \leftarrow 0$ \\
+	$\sincr{V}$ \\
+	$\sincr{V}$ \\
+	$\vdots$ \\
+	$\sincr{V}$ \\
+\end{tabular}
+	\end{center}
+	
+	\columnbreak
+	La macro asigna cero a $V$ y luego la incrementa en uno $k$ veces.
+\end{multicols}
+
+\subsection{$x = 0$}
+\begin{multicols}{2}
+	\begin{center}
+		\begin{tabular}{l}
+			\sif{X}{E}\\
+			\sincr{Y} \\
+		\end{tabular}
+	\end{center}
+
+\columnbreak
+Este programa recibe $X$ como parámetro. Devuelve $1$ si $X$ es igual a cero y devuelve $0$ si no.
+\end{multicols}
+\subsection{$V \leftarrow f(V_1,...,V_n)$}\label{appendix::otrasMAcros::asignacionFunc}
+
+Dada $f$ una función parcialmente computable queremos asignar a $V$ el resultado de pasarle como parámetro las variables $V_1,\dots,V_n$.
+	
+Como $f$ es parcial computable, sabemos que existe un programa $P$ tal que $f(x_1,\dots,x_n) = \Psi_P^{(m)}(x_1,\dots,x_n)$. Asumamos que $P$ usa las variables $X_1,\dots, X_m$, $Z_1,\dots,Z_k$ e $Y$, además de las etiquetas $E, A_1,\dots,A_l$. 
+
+Además, supongamos que para cada instrucción de la forma $\sif{V}{A_i}$, la etiqueta referenciada se encuentra dentro del programa $P$, por lo que la única etiqueta de \textit{salida} es $E$.
+
+Entonces, si tenemos un programa $P_0$ en el que queremos almacenar el resultado de una función, solo hace falta renombrar las variables y etiquetas usadas por $P$ a variables y etiquetas que no hayan sido usadas por $P_0$. 
+
+Sea $m$ un número lo suficientemente grande como para que las variables y etiquetas que remplazamos no estén usadas por $P_0$ entonces, podemos hacer los siguientes remplazos: $Y \to Z_m$, $X_i \to Z_{m + i + 1}$, $Z_i = Z_{m + n + 1 + i}$ y $A_i \to A_{m + i}$.
+
+\begin{multicols}{2}
+\begin{center}
+\begin{tabular}{ll}
+	&$Z_m \leftarrow 0$ \\
+	&$Z_{m+1} \leftarrow V_1$ \\
+	&$Z_{m+2} \leftarrow V_2$ \\
+	&$\vdots$ \\
+	&$Z_{m+n} \leftarrow V_n$ \\
+	&$Z_{m+n+1} \leftarrow 0$ \\
+	&$\vdots$ \\
+	&$Z_{m+n+k} \leftarrow 0$ \\
+	&$P$ \\
+	$[E_m]$ & $W\leftarrow Z_m$ \\ 
+\end{tabular}
+\end{center}
+
+\columnbreak
+Primero \textit{inicializamos} las variables de $P$. $Z_{m}$ es donde el programa $P$ (con los remplazos) va a guardar su resultado y $Z_{m+1}$ a $Z_{m+n}$ son las variables que remplazaron a los parámetros y $Z_{m+n+1}$ a $Z_{m+n+k}$ las variables locales. Además, de los remplazos de las etiquetas $A_i$ dentro de $P$, remplazamos $E$ por $E_m$.
+
+De esta forma, cuando $P$ termina tanto porque se acabó la lista de instrucciones o porque hizo un salto a $E_m$ asignamos el valor de $Z_m$ a $W$.
+\end{multicols}
+Si quisieramos ejecutar $P$ dentro de un loop, cada vez que termine va a dejar los valores de la última ejecución en las variables que use. Por esta razón es necesario realizar la \textit{inicialización}.
+
+
+\subsection{IF ${p(\xDots{V}{n})}$ GOTO $L$}\label{appendix::otrasMAcros::ifPredicado}
+\begin{multicols}{2}
+\begin{tabular}{ll}
+	& $Z \leftarrow p(\xDots{V}{n})$ \\
+	& $\sif{Z}{L}$
+\end{tabular}
+
+\columnbreak
+Usando la macro definida en \ref{appendix::otrasMAcros::asignacionFunc}, asignamos a una variable $Z$ el resultado de ejecutar el predicado $p$ con $\xDots{V}{n}$ como variables de entrada. Luego ejecutamos la instrucción IF.
+\end{multicols}
+
+%\subsection{Igualdad}\label{appendix::primitivas::igualdad}
+%$x = y$
+%\begin{demo}1
+%	$$igual(x,y) = \alpha(x \resta y)$$
+%\end{demo}
+%
+%\subsection{Divisor}
+%$y|x$ si y solo $y$ divide a $x$
+%\begin{demo}
+%	$$y|x \iff (\exists t)_{\leq x} y\cdot t = x $$
+%\end{demo}
+
+\section{Otras definiciones}
+\subsection{La función de Ackerman}
+Es una función que no es primitiva recursiva.
+\begin{align*}
+	A(x,y,z) = \left\{
+	\begin{tabular}{ll}
+		$y + z$ & si $x=0$ \\
+		$0$ & si $x = 1$ y $z = 0$ \\
+		$1$ & si $x = 2$ y $z = 0$ \\
+		$y$ & si $x > 2$ y $z = 0$ \\
+		$A(x-1, y, A(x,y,z-1))$ & si $x,z > 0$
+	\end{tabular}
+	\right.
+\end{align*}
+
+\subsubsection{Versión de Robinson $\&$ Peter}
+\begin{align*}
+B(m,n) = \left\{
+\begin{tabular}{ll}
+$n + 1$ & si $m=0$ \\
+$B(m-1,1)$ & si $m > 0$ y $n = 0$ \\
+$B(m-1,B(m,n-1))$ & si $m > 0$ y $n > 0$ \\
+\end{tabular}
+\right.
+\end{align*}

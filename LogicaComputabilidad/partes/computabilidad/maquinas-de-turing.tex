@@ -1,0 +1,94 @@
+	\section{Máquina de Turing}
+	Una máquina de Turing está compuesta por:
+
+	\begin{itemize}
+		\item Una \textbf{cinta infinita}  dividida en celdas que contienen un símbolo de un alfabeto $\Sigma$. En esta materia, $\Sigma$ siempre contiene al símbolo $*$, que representa el blanco, y nunca contiene a $L$ ni a $R$, que son las etiquetas usadas para indicar al cabezal hacia que lado debe moverse.
+		\item El \textbf{cabezal} lee un símbolo y, dependiendo del estado de la máquina, puede escribir uno nuevo o moverse una posición a la derecha o una a la izquierda. Cuando completa una acción, cambia el estado de la máquina.
+		\item Una \textbf{tabla finita de instrucciones} que, dado un estado y el símbolo que lee el cabezal, indica que acción debe ser tomada y cual es el estado al que se tiene que pasar.
+	\end{itemize}
+
+	\subsection{Tabla de instrucciones}
+	Cada instrucción es una tupla $(q,s,a,q')\in Q\times\Sigma\times (\Sigma\cup \{L,R\}) \times Q$ tal que:
+	\begin{itemize}
+		\item $q,q'\in Q$ son estados de la máquina de turing. $q$ es el estado necesario para ejecutar la instrucción y $q'$ el estado en el que queda la máquina después de ejecutarla.
+		\item $s\in\Sigma$ es el símbolo que se tiene que leer cuando la máquina está en $q$ para que la instrucción sea ejecutada.
+		\item $a\in\Sigma\cup \{L,R\}$ es la acción a realizar. Puede ser escribir un símbolo del álfabeto $\Sigma$ o mover el cabezal hacia alguno de los lados.
+	\end{itemize}
+
+	Entonces, la tupla $(q,s,a,q')$ se interpreta como ``\textit{Si la máquina está en el estado $q$ leyendo en la cinta el símbolo $s$, entonces realiza la acción $a$ y pasa al estado $q'$}''.
+		
+	\subsection{Definición mátematica}
+	Una máquina de Turing $\mathcal{M}$ es una tupla $(\Sigma, Q, T, q_0, q_f)$ donde:
+	\begin{itemize}
+		\item $\Sigma$ es un conjunto finito de símbolos ($L,R\in\Sigma$ y $*\in\Sigma$)
+		\item $Q$ es un conjunto finito de \textbf{estados}, de los cuales dos son:
+		\begin{itemize}
+			\item el \textbf{estado inicial} $q_0$
+			\item y el \textbf{estado fina}l $q_f$. 
+		\end{itemize}
+		\item $T\subseteq Q\times\Sigma\times\Sigma$ es la \textbf{tabla de instrucciones}.
+	\end{itemize}
+
+	Hay dos tipos de máquinas de turing:
+	
+	\begin{itemize}
+		\item \textbf{Deterministicas:} Es cuando no hay dos instrucciones que tengan el mismo estado inicial y necesiten leer el mismo símbolo, es decir:
+		$$\nexists (q_1,s_1,a_1,q'_1), (q_2,s_2,a_2,q'_2) \in T \text{ tal que } q_1 = q_2~\land~s_1 = s_2$$
+		\item\textbf{No deterministicas:} Cuando no es deterministica, osea que cabe la posibilidad que se ejecuten más de una instrucción en un paso y la máquina este en dos o más estados simultáneamente. 
+		$$\exists (q_1,s_1,a_1,q'_1), (q_2,s_2,a_2,q'_2) \in T \text{ tal que } q_1 = q_2~\land~s_1 = s_2$$
+	\end{itemize}
+
+	\subsection{Representación de números y tuplas}
+	\subsubsection{Números naturales}
+	Sea $\sigma=\{*, 1\}$, representaremos a los números naturales en unario (como si usasemos palitos). La representación $\bar{x}$ de $x\in\nat$, consta de $x+1$ palitos.
+	
+	$$\bar{x} = \underbrace{1...1}_{x+1}$$
+	
+	\paragraph{Ejemplo:} El 0 es ``1'', el 1 es ``11``, el 2 es ``111'', etc.
+	
+	\subsubsection{Tuplas}
+	Las tuplas $(x_1,\dots,x_n)$ las representamos como una lista de (representaciones de ) $x_i$ separados por un blanco ($*$).
+	
+	$$*\bar{x_1}*\bar{x_2}*\dots*\bar{x_n}*$$
+	
+	\paragraph{Ejemplo:} La tupla (1,2) sería $*11*111*$
+	\subsection{Funciones parciales}
+	Sea $f:\nat^n\to\nat$, $f$ es una función parcial si está definida para algunos (tal vez ninguno; tal vez todos) sus argumentos. 
+	
+	\paragraph{Notación:}
+	\begin{itemize}
+		\item $f(x_1,\dots,x_n)\downarrow$: $f$ está definida para la tupla $(x_1,\dots,x_n)$ y, en este caso, $f(x_1,\dots,x_n)$ es un natural.
+		\item $f(x_1,\dots,x_n)\uparrow$: $f$ se indefine para la tupla $(x_1,\dots,x_n)$.
+	\end{itemize}
+
+	\paragraph{Dominio:} Conjunto de argumentos para los que $f$ está definida y se nota $\dom{f}$.
+	$$\dom{f} = \{(x_1,\dots,x_n) \text{ : } f(x_1,\dots,x_n)\downarrow\}$$ 
+	
+	\paragraph{Función Total:} $f$ es total si está definida para todos sus posibles argumentos:
+	$$\dom{f} = \nat^n$$
+	
+	
+	\subsubsection{Cómputo de funciones parciales en máquinas de Turing}
+	Una función parcial $f:\nat^n\to\nat$ es \textbf{turing computable} si existe una máquina de Turing deterministica $\mathcal{M}=(\Sigma, Q, T, q_0, q_f)$ con $\Sigma=\{*,1\}$ tal que cuando empieza en la configuración inicial, vale que:
+	
+	\begin{itemize}
+		\item Si $f(x_1,\dots, x_n)\downarrow$ entonces, siguiendo sus instrucciones en $T$, llega al estado $q_f$,
+		\item  Si $f(x_1,\dots, x_n)\uparrow$ nunca termina en el estado $q_f$
+	\end{itemize}
+	
+	\imagen{0.75}{imagenes/turing-initial-state}{Estado inicial de la máquina de turring}{fig::turing::initialState}
+
+	\imagen{0.3}{imagenes/turing-final-state}{Estado final de la máquina de turing}{fig::turing::finalState}
+	
+	\subsubsection{Poder de  cómputo}
+	
+	Sea $f:\nat^m\to\nat$ una función parcial. Son equivalentes:
+	\begin{multicols}{2}
+	\begin{enumerate}
+	\item $f$ es computable en Java
+	\item $f$ es computable en C
+	\item $f$ es computable en Haskell
+	\item $f$ es Turing computable.
+\end{enumerate}
+	\end{multicols}
+	

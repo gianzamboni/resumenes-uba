@@ -8,6 +8,12 @@
 	
 	
 \newcommand{\resta}{\dot{-}}
+
+\newcommand{\sincr}[1]{\ensuremath{#1 \leftarrow #1 + 1}}
+\newcommand{\sdecr}[1]{\ensuremath{#1 \leftarrow #1 - 1}}
+\newcommand{\sif}[2]{\ensuremath{\text{IF }#1 \neq 0 \text{ GOTO } #2}}
+\newcommand{\sgoto}[1]{\ensuremath{\text{GOTO } #1}}
+
 \newcommand{\imagen}[4]{
 \begin{figure}[ht]
 	\centering
@@ -27,20 +33,46 @@ rectangle split, rectangle split parts=2, rounded corners, inner xsep=0.5cm,
 rectangle split part fill = {blue!20, blue!5}
 ]
 
-\NewEnviron{demo}{%
+\tikzstyle{demoPart} = [
+draw=blue!20, very thick,
+rounded corners, inner xsep=0.5cm,
+fill = blue!5
+]
+%\newcommand{\qed}{\begin{flushright}
+%		$\blacksquare$
+%\end{flushright}}
+
+\NewEnviron{demo}[1][]{%
 \begin{center}
 	\begin{tikzpicture}
 	\node [demoBox](box){%
-		\textbf{\scriptsize DEMOSTRACION}
+		\textbf{\scriptsize 
+			DEMOSTRACIÓN}
 		\nodepart{two}
-		\begin{minipage}{0.85\textwidth}
-		\vspace*{0.25cm}
+		\begin{minipage}{\textwidth}
+		\vspace*{0.1cm}
 		\BODY
-		\begin{flushright}
-		$\blacksquare$
-		\end{flushright}
 		\end{minipage}
 	};
 	\end{tikzpicture}
 \end{center}
 }
+
+\NewEnviron{demoPart}[1][]{%
+	\begin{center}
+		\begin{tikzpicture}
+		\node [demoPart](box){%
+			\begin{minipage}{\textwidth}
+			\vspace*{0.1cm}
+			\BODY
+			\end{minipage}
+		};
+		\end{tikzpicture}
+	\end{center}
+}
+
+\newcommand*{\theadc}[1]{\multicolumn{1}{|c|}{\bfseries #1}}
+\newcommand*{\thead}[1]{\multicolumn{1}{c}{\bfseries #1}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+
