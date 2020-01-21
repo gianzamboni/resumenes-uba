@@ -1,1 +1,287 @@
-\section{\red{Conjuntos computables enumerables}}
+\section{Conjuntos computables enumerables}
+
+\paragraph{Función caractersitica:} Dado un conjunto $A$, su función característica es un predicado que nos indica si un elemento pertenece o no al mismo, osea es de la forma:
+
+$$A(x) = \left\{
+\begin{tabular}{ll}
+1 & si $x\in A$ \\
+0 & si no
+\end{tabular}
+\right.$$
+
+\vspace*{1mm}
+
+\paragraph{Conjunto computable:} Un conjunto $A$ es computable si su función característica lo es.
+
+\begin{teorema}
+	Sean $A$, $B$ conjuntos de una clase PRC $\mathcal{C}$. Entonces $A\cup B$, $A \cap B$ y $\bar{A}$ están en $\mathcal{C}$
+\end{teorema}
+
+\paragraph{Conjunto computablemente enumerable:} Un conjunto $A$ es computablemente enumerable (c.e.) cuando existe una función parcial $g:\nat\to\nat$ tal que
+$$A = \{ x~:~g(x)\downarrow\} = \text{dom} (g)$$
+
+Osea $A$ es el conjunto de valores que hacen que $g$ termine. Esto quiere decir que podremos decidir algoritmicamente (corriendo el programa que computa $g$) si un elemento pertenece a $A$ (si $g$ termina entonces pertenece). Sin embargo, como $g$ no está definida para los elementos que no pertenecen, si le pasamos uno de estos valores, el programa nunca terminará. Los algoritmos que computan $g$ se llaman algoritmos de \textbf{semi-decisión}.
+
+\paragraph{Conjunto co-c.e.:} $A$ es co-c.e. si $\bar{A}$ es c.e.
+
+\begin{teorema}\label{teorema::AcomputableEsCE}
+	Si A es computable entonces $A$ es c.e.
+\end{teorema}
+
+\begin{demo}[hoa]
+	Como $A$ es computable, su función carácterisitica $f$ es computable. Sea $P_A$ el programa que computa $f$. Y sea $Q$ el siguiente programa:
+	\begin{center}
+	\begin{tabular}{ll}
+		$[C]$ & IF $P_A(X) = 0$ GOTO $C$
+	\end{tabular}
+\end{center}
+Entonces, el computo de $Q$ es:
+$$\Psi_Q(x) =\left\{
+	\begin{tabular}{ll}
+	$0$ & si $x\in A$ \\
+	$\uparrow$ & si no \\
+	\end{tabular}
+\right.$$ 
+y por lo tanto, podemos escribir $A = \{ x~:\Psi_Q(x)\downarrow\}$ \qed
+\end{demo}
+
+\begin{teorema}
+	Si $A$ y $B$ son c.e. entonces $A\cup B$ y $A\cap B$ tambien son c.e.
+\end{teorema}
+
+\begin{demo}
+ Como $A$ y $B$ son c.e, existen dos funciones $f$ y $g$ tal que: 
+  $$ f(x)\downarrow \text{ si y solo si } x \in A \hspace{0.5cm}\text{y}\hspace{0.5cm} g(x)\downarrow \text{ si y solo si } x \in B$$
+\end{demo}
+\begin{demoPart}
+Sean $P$ y $Q$ los programas de semi-decisión que computan $f$ y $g$ y números $p$ y $q$, respectivamente, vamos a armar programas que computen $A\cap B$ y $A\cup B$:
+
+ \paragraph{$\bm{A \cap B}:$} Definimos el programa $R$:
+ \begin{center}
+ 	\begin{tabular}{l}
+ 		$Y\leftarrow\Phi_p(x)$ \\
+ 		$Y\leftarrow\Phi_q(x)$ \\
+ 	\end{tabular}
+ \end{center}
+$R$ ejecuta los programas $P$ y $Q$ para el valor $x$, si alguno se indefine entonces $R$ se indefine. Tenemos que $\Psi_R(x)\downarrow$ si y solo si $\Phi_P(x)\downarrow$ y $\Phi_Q(x)\downarrow$. Nos queda que $A \cap B = \{  x~:~\Psi_R(x)\downarrow\}$, entonces $A\cap B$ es c.e. .
+
+ \paragraph{$\bm{A \cup B}:$} Sea el programa $R'$:
+\begin{center}
+	\begin{tabular}{ll}
+		$[C]$ & IF STP$^{(1)}(X,p,T) = 1$ GOTO $E$ \\
+&		IF STP$^{(1)}(X, q, T) = 1$ GOTO $E$\\
+& \sincr{T} \\
+& GOTO $C$
+	\end{tabular}
+\end{center}
+$R'$ irá incrementando $T$ hasta que alguno de los dos programas termine. Notemos que es necesario usar STP e ir ejecutando ambos programas de a poco. Si $x$ no pertenece a ningún conjunto, ambos programas se indefinen y $R'$ nunca encontrará un $T$ que lo haga parar. Si $x$ pertenece a uno solo de los conjuntos, digamos a $A$, entonces $R'$ incrementará $T$ hasta que $P$ termine y terminará, sin importar que $Q$ no haya terminado en $T$ pasos. Luego el cómputo de $R'$ es tal que $\Psi_{R'}(x)\downarrow$ si y solo si $\Phi_Q(x)\downarrow$ ó $\Phi_P(x)\downarrow$ y podemos usarla para enumerar los elementos de $A\cup B$. \qed
+\end{demoPart}
+
+\begin{teorema}
+	A es computable si y solo si A y $\bar{A}$ son c.e.
+\end{teorema}
+
+\begin{demo}
+	\paragraph{$\bm{\Rightarrow})$} Por el teorema \ref{teorema::AcomputableEsCE}, $A$ es c.e. Además, como $A$ es computable sabemos que $\bar{A}$ también lo és (si $f$ es la función carácterística de $A$, entonces $g(x) = 1 - f(x)$ es la función característica de $\bar{A}$ y $g$ es computable). Luego $\bar{A}$ también es c.e.
+		\paragraph{$\bm{\Leftarrow}$)} Supongamos que $A$ y $\bar{A}$ son c.e. Entonces existen dos funciones $f$ y $g$ tal que:
+	$$A = \{ x~:~f(x)\downarrow\}\hspace*{0.5cm}\text{y}\hspace*{0.5cm} \bar{A} =\{x~:~g(x)\downarrow\}$$
+	Sean $P$ y $Q$ los programas de semi-decisión que computan $f$ y $g$ y números $p$ y $q$, respectivamente. Vamos a definir un programa $R$ que nos permita computar la función caracterísita de $A$:
+
+\begin{center}
+	\begin{tabular}{ll}
+		$[C]$ & IF STP$^{(n)}(X,p, T) = 1$ GOTO $F$ \\
+		& IF STP$^{(n)}(X,q, T) = 1$ GOTO $E$ \\
+		& $T\leftarrow T + 1$ \\
+		& GOTO $C$ \\
+		$[F]$ & $Y\leftarrow 1$
+	\end{tabular}
+\end{center} 
+$R$ está definido para todo $x$ ya que debe pertenecer si o si a alguno de los dos conjuntos.	
+\end{demo}
+	\begin{demoPart}
+ 
+ Si $x\in A$, entonces $P$ termina y se ejecuta la instrucción con etiqueta $F$. Si $x\in\bar{A}$ entonces $Q$ termina y termina el programa dejando $Y$ en cero. Luego, $\Psi_R(x) = 1$ si $x\in A$ y $\Psi_R(x) = 0$ si no, por lo que  $\Psi_R$ nos permite computar el conjunto $A$. \qed
+\end{demoPart}
+
+\subsection{Teorema de la enumeración}
+
+\paragraph{Notación:} Notamos $W_n$ al conjunto que contiene todos los elementos del dominio del programa $P$ tal que $\#(P) = n$. Ose $W_n = \{ x~:~\Phi_n(x)\downarrow\}$
+
+\begin{teorema}\label{teorema::enumeracion}
+Un conjunto $A$ es c.e. si y solo si existe un n tal que $A = W_n$
+\end{teorema}
+
+\paragraph{Definición:} $K = \{ n~:~n\in W_n\}$ osea son todos los números de programas auto-referentes que están definidos para si mismos. 
+
+$$ n \in K \iff n \in W_n \iff \Phi_n(n)\downarrow \iff \text{HALT}(n,n)$$
+
+\begin{teorema}
+	$K$ es c.e pero no computable.
+\end{teorema}
+
+\begin{demo}
+	Por el teorema \ref{teorema::phiEsParcialComputable}, tenemos que $\phi_n$ es parcial computable.Veamos que $\bar{K}$ no es c.e.
+	
+	Supongamos que $K$ es computable, entonces $\bar{K}$ tambien lo es. Por el teorema de la numeración (\ref{teorema::enumeracion}) existe un número de programa $e$ tal que $\bar{K} = W_e$. Vamos a analizar los siguientes dos casos:
+	
+	\begin{itemize}
+		\item Si $e \in \bar{K} \Rightarrow e \in W_e \Rightarrow e \in K$. Lo que es absurdo ya que solo puede pertenecer a alguno de los dos.
+		\item Si $e \notin \bar{K} \Rightarrow e \notin W_e \Rightarrow e \notin K$. Tambien es absurdo, pues $e$ debe pertenecer a alguno de los dos.
+	\end{itemize}
+	
+	Luego, $\bar{K}$ no es c.e. y, por lo tanto, $K$ no es computable.
+\end{demo}
+
+\begin{teorema}\label{teorema::chamuyo}
+	Si $A$ es un c.e., existe un predicado p.r. $R:\nat^2\to\nat$ tal que $A=\{ x~:~(\exists t)~R(x,t)\}$ 
+\end{teorema}
+
+\begin{demo}
+	Como $A$ es c.e, existe un número de programa $e$ tal que $W_e$, es decir $A = \{ x~:~\Phi_e(x)\downarrow\}$.
+	
+	Entonces $x\in A$ cuando en algún tiempo $t$, el programa $e$ con entrada $x$ termina, es decir:
+	$$A=\{ x~:~(\exists t)~\underbrace{\text{STP}^{(1)}(x,e,t)}_{R(x,t)}\}$$\qed
+\end{demo}
+
+\newpage
+\begin{teorema}\label{teorema::ExisteFQEnumeraA}
+	Sea $A\neq\emptyset$ es c.e., existe una función p.r. $f:\nat\to\nat$ tal que $A = \{ f(0), f(1), f(2),\dots\}$, osea que enumera los elementos de $A$.
+\end{teorema}
+
+\begin{demo}
+	Por el teorema anterior (\ref{teorema::chamuyo}), $A = \{ x ~:~(\exists t) R(x,t)\}$ donde $R$ es un predicado primitivo recursivo. Sea $a \in A$, vamos a definir $f$ como:
+	$$f(u) = \left\{\begin{tabular}{ll}
+	$l(u)$ & si $R(l(u),r(u)$ \\
+	a & si no \\
+	\end{tabular}\right.$$
+	
+	Entonces $f$ es primitiva recursiva (por $R$ lo es). Tenemos que probar dos cosas:
+	\begin{itemize}
+		\item Si $x\in A$, entonces está en la imagen de $f$.
+	 $$x\in A \Rightarrow (\exists t)~R(x,t) \Rightarrow f(\langle x, t\rangle) = x$$
+		\item $f$ solo devuelve elementos de $A$.
+		
+		Sea $x$ tal que $f(u) = x$ para algún $u$. Entonces $x = a$ (y $a\in A$) o bien $u$ es de la forma $u = \langle x,t\rangle$ y vale $R(x,t)$ por lo que $x\in A$.
+	\end{itemize}
+
+Luego, $f$ es una función que nos permite enumerar $A$ \textit{(repitiendo elementos y sin ningún orden en particular)}. \qed
+\end{demo}
+
+\begin{teorema}\label{teorema::AEsDomFPr}
+	Si $f:\nat\to\nat$ es parcial computable, $A=\{f(x)~:~f(x)\downarrow\}$ es c.e.
+\end{teorema}
+
+\begin{demo}
+	Sea $p$ el número del programa que computa $f$, debemos definir un programa $Q$ que termine si le pasamos un elemento de $A$ y se indefina sinó:
+	\begin{multicols}{2}
+	\begin{tabular}{ll}
+	$[A]$ & IF STP$^{(1)}(Z,p,T) = 0$ GOTO $B$ \\&
+	IF $\Phi_p(Z) = X$ GOTO $E$ \\
+	$[B]$ & $Z \leftarrow Z + 1$ \\
+	& IF $Z \leq T$ GOTO $A$ \\
+	&$T \leftarrow T + 1$ \\
+	&$Z\leftarrow 0$ \\
+	& GOTO $A$.
+\end{tabular}
+
+\columnbreak
+Dado un valor $X$, $Q$ busca un valor $Z$ tal que $f(Z) = X$. Para esto va recorriendo cada valor posible y testea el programa durante $T$ pasos. 
+
+Si el programa terminó en esa cantdidad de pasos y si el resultado es el que queriamos entonces termina. Si no, sigue con el proximo valor de $Z$ con el que hay que probar.
+	\end{multicols}
+
+Notemos que $Z$ se reinicia cada vez que alcanza $T$, esto es una forma inteligente de probar todos los pares $\langle Z, T\rangle$ y asegurarnos de que el programa va a terminar para las entradas para los que debe hacerlos.
+
+Tanto el dominio de $f$, como los valores que puede tomar el tiempo de ejecución son infinitos. Si intentasemos reccorrer todos los valores del dominio antes de aumentar la cantidad de pasos que debe hacer $P$ entonces el programa no terminaría para ningún $X$. 
+\end{demo}
+\begin{demoPart}
+Si quisieramos recorrer primero todos los tiempos posibles, antes de cambiar $Z$, el programa aumentaría $Z$ hasta encontrar un $Z_0$ para el que $P$ se indefine y nunca terminaría para cualquier $X$ tal que $f(Z) = X$ y $Z > 0$. 
+
+Luego, si el programa termina en $T$ o menos pasos con entrada $Z$ y $\Phi_P(Z) = X$, termina y $\Psi_Q(X)\downarrow$ y podemos escribir $A = \{ x~:~\Psi_Q(x)\downarrow\}$. Luego $A$ es c.e.\qed
+\end{demoPart}
+
+\begin{teorema}
+	Si $A\neq\emptyset$, son equivalentes:
+	\begin{enumerate}
+		\item $A$ es c.e.
+		\item $A$ es el rango (dominio) de una función primitiva recursiva.
+		\item $A$ es el rango (dominio) de una función computable.
+		\item $A$ es el rango (dominio) de una función parcial computable
+	\end{enumerate}
+\end{teorema}
+
+\begin{demo}
+	\paragraph{$\bm{(1 \Rightarrow 2)}$:} Por Teorema \ref{teorema::ExisteFQEnumeraA}
+	\paragraph{$\bm{(2 \Rightarrow 3 \Rightarrow 4)}$:} Trivial
+	\paragraph{$\bm{(4 \Rightarrow 1)}$:}Por Teorema \ref{teorema::AEsDomFPr}\qed
+\end{demo}
+
+\subsection{Teorema de Rice}
+
+\paragraph{Conjunto de índices:} $A\subseteq\nat$ es un conjunto de índices si existe una clase de funciones $\nat\to\nat$ parciales computables $\mathcal{C}$ tal que $A = \{ x~:~\Phi_x \in \mathcal{C}\}$
+
+\begin{teorema}
+	Si $A$ es un conjunto de índices tal que $\emptyset \neq A \neq \nat$ entonces $A$ no es computable.
+\end{teorema}
+
+\begin{demo}
+	Supongamos una clase $\mathcal{C}$ de funciones $\nat\to\nat$ parciales computables tal $A = \{ x~:~\Phi_x \in \mathcal{C}\}$ es computable. Sean $f$ y $g$ funciones parciales computables tal que $f\in\mathcal{C}$ y $g\notin\mathcal{C}$. Definimos la función parcial computable $h:\nat^2\to\nat$ de la siguiente forma:
+	$$h(t,x) = \left\{\begin{tabular}{ll}
+	$g(x)$ & si $t\in A$ \\
+	$f(x)$ & si no
+	\end{tabular}\right.$$
+	
+	Por el teorema de la recursión (\ref{teorema::recursion}), existe un número de programa $e$ tal que $\Phi_e(x) = h(e,x)$. Veamos los siguientes casos:
+	\begin{itemize}
+		\item Si $e \in A \Rightarrow \Phi_e = g \Rightarrow \Phi_e \notin \mathcal{C}$ (pues $g\notin\mathcal{C}$) $\Rightarrow e\notin A$. Absurdo.
+		\item Si $e\notin A \Rightarrow \Phi_e = f \Rightarrow \Phi_e \in \mathcal{C} \Rightarrow e \in A$. Absurdo.
+	\end{itemize}
+
+Luego, $A$ no es computable.\qed
+\end{demo}
+
+Este teorema nos da una fuente de conjuntos no computables:
+\begin{itemize}
+	\item $\{ x~:~\Phi_x$ es total$\}$
+	\item $\{ x~:~\Phi_x$ es creciente $\}$
+	\item $\{ x~:~\Phi_x$ tiene dominio infinito$\}$
+	\item $\{ x~:~\Phi_x$ es primitiva recursiva $\}$
+\end{itemize}
+
+Además, $Tot = \{ x~:~\Phi_x$ no es total $\}$ y $\overline{Tot}$ no son computables, ni c.e.:
+
+\begin{demo}
+	\paragraph{$\bm{Tot}$ no es c.e:} Supongamos que lo es. Entonces existe $f$ computable tal que $Tot = \{ f(0), f(1),\dots\}$ (Teorema \ref{teorema::ExisteFQEnumeraA}). Osea $f$ enumera los elementos de $Tot$
+	
+	Sea $e$ el número de un programa tal que $\Phi_e(x) = \Phi_{f(x)}(x) + 1$. Como todos los elementos de la imagen de $f$ computan funciones totales, $\Phi_e$ es total ($\Phi_e \in Tot$). Osea que existe $u$ tal que $f(u) = e$ (pues $f$ enumeraba los elementos de $Tot$).
+	
+	Luego, $\Phi_{f(u)}(x) = \Phi_e(x) = \Phi_{f(x)}(x) + 1$. Esto genera un absurdo si le pasamos $x = u$ como parámetro. Luego $Tot$ no es c.e.
+	
+	\paragraph{$\bm{\overline{Tot}}$ no es c.e:} Supongamos que lo es, por el teorema \ref{teorema::enumeracion} existe un programa $e$ tal que $\overline{Tot} =$ dom $\Phi_d$. Sea $P$ el siguiente programa:
+	\begin{center}
+		\begin{tabular}{ll}
+			$[C]$ & IF STP$^{(1)}(X,d,T) = 1$ GOTO $E$ \\
+			& $T \leftarrow T + 1$ \\
+			& GOTO $C$
+		\end{tabular}
+	\end{center}
+
+	Entonces el computo de $P$:
+	$$\Psi_P^{(2)}(x,y) = g(x,y) = \left\{
+		\begin{tabular}{ll}
+		$\uparrow$ & si $\Phi_x$ es total \\
+		$0$ & si no.
+		\end{tabular}
+	\right\}$$
+	
+	Por el teorema de la recursión (\ref{teorema::recursion}), existe un $d$ tal que $$\Phi_d(y) = g(d,y) = \left\{
+	\begin{tabular}{ll}
+	$\uparrow$ & si $\phi_d$ es total \\
+	$0$ & si no
+	\end{tabular}
+	\right.$$.
+	
+	La contradicción es clara, pues estamos pidiendo que $\phi_d$ se indefina si es total y que sea total si no lo es (lo que es absurdo).
+	
+	Luego $\overline{Tot}$ no es c.e.
+\end{demo} 

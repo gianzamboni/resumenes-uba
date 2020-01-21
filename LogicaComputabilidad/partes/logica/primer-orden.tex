@@ -1,0 +1,614 @@
+\section{Lógica de primer orden}
+Hay muchos tipos de inferencias lógicas que no pueden ser justificados usando solo las bases de la lógica propocisional, por ejemplo:
+
+\begin{itemize}
+	\item Todos los humanos son seres racionales.
+	\item Algunos animales son humanos.
+	\item Por lo tanto, algunos animales son seres racionales.
+\end{itemize}
+
+La correctitud de estas inferencias resta, no solo en el significado de los conectivos lógicos, sino en el significado de expresiones como ''algunos", ''todos" y otras expresiones lingüísticas.
+
+Para poder describir este tipo de sentencias agregamos, a los símbolos que ya venimos usando, el símbolo $\forall$ de \textbf{cuantificación universal}: $(\forall x) P(x)$ se leerá "La propiedad $P$ es verdadera para todos los valores de $x$.
+
+Osea que los símbolos lógicos de nuestros lenguajes van a ser: $x,~',~\forall,~\lnot,~\to,~($ y $)$.
+
+Además, usaremos los siguientes conjuntos de símbolos:
+\begin{itemize}
+	\item[] Usaremos $x, x', x'',\dots$ para nombrar \textbf{variables}.
+	\item Un cojunto $\mathcal{C}$ de símbolos de constantes, es decir que representarán las constantes de nuestro lenguaje.
+	\item Un cojunto $\mathcal{F}$ de símbolos funciones.
+	\item Un cojunto $\mathcal{P}$ de símbolos de predicados.
+\end{itemize}
+
+Tanto $\mathcal{C}$ como $\mathcal{F}$ pueden ser vacíos, sin embargo, como nuestro objetivo es poder describir propiedades de nuestro sistema, no permitiremos que $\mathcal{P}$ lo sea.
+
+\paragraph{Lenguaje de primer orden:} Un lenguaje $\mathcal{L}$ de primer orden va a estar definido por $\mathcal{L} = \mathcal{C}\cup\mathcal{F}\cup\mathcal{P}$ o sea es un conjunto de símbolos de constantes, de funciones y de predicados.
+
+\paragraph{Término:} Dado un lenguaje $\mathcal{L}$, definimos sus de la siguiente manera:
+
+\begin{itemize}
+	\item Toda variable es un término.
+	\item Todo símbolo de constante de $\mathcal{L}$ es un término.
+	\item Si $f$ es un símbolo de función $n$-ádico de $\mathcal{L}$ y $\xDots{t}{n}$ son términos de $\mathcal{L}$, entonces $f(\xDots{t}{n})$ es un término de $\mathcal{L}$.
+	\item Nada más es un término de $\mathcal{L}$
+\end{itemize}
+
+Llamaremos TERM($\mathcal{L}$) al conjunto de términos del lenguaje $\mathcal{L}$.
+
+\paragraph{Término cerrado:} Es un término que no tiene variables.
+
+\paragraph{Fórmulas:} Dado un lenguaje $\mathcal{L}$, definimos sus fórmulas de la siguiente manera:
+
+\begin{itemize}
+	\item Si $P$ es un símbolo de predicado $n$-ádico de $\mathcal{L}$ y $\xDots{t}{n}$ son términos de $\mathcal{L}$, entonces $P(\xDots{t}{n})$ es una \textbf{fórmula atómica} de $\mathcal{L}$
+	\item Si $\varphi$ es una fórmula de $\mathcal{L}$ entonces $\lnot\varphi$ es una fórmula de $\mathcal{L}$.
+	\item Si $\varphi$ y $\psi$ son fórmulas de $\mathcal{L}$ entonces $(\varphi\to\psi)$ es una fórmula de $\mathcal{L}$.
+	\item Si $\varphi$ es una fórmula de $\mathcal{L}$ y $x$ un variable entonces $(\forall x)\varphi$ es una fórmula de $\mathcal{L}$.
+	\item Nada más es una fórmula de $\mathcal{L}$.
+\end{itemize}
+
+Llamaremos FORM($\mathcal{L}$) al conjunto de fórmulas de $\mathcal{L}$.
+
+\paragraph{Convenciones de notación:} Usaremos:
+\begin{itemize}
+	\item letras minúsculas para variables, símbolos constantes y símbolos de funciones.
+	\item letras mayúsculas para predicados.
+	\item $(\exists x)\varphi$ en lugar de $\lnot(\forall x) \lnot\varphi$
+	\item $(\varphi \lor \psi)$ en lugar de $(\lnot\varphi\rightarrow\psi)$.
+	\item $(\varphi \land \psi)$ en lugar de $\lnot(\varphi\rightarrow\lnot\psi)$
+	\item $\varphi$ en lugar de $(\varphi)$
+\end{itemize}
+
+\paragraph{Variables libres y ligadas:} Una aparición de una variable $x$ es una fórmula está \textbf{ligada} si está dentro del alcance de un cuantificador. En caso contrario dicha aparición estarpá \textbf{libre}.
+
+Si todas sus apariciones en una fórmula están libres, entonces la variable está libre. Si todas sus apariciones están ligadas, entonces está ligada.
+
+\paragraph{Sentencia:} Es una fórmula tal que todas sus variables son ligadas.
+
+\subsection{Interpretación de un lenguaje}
+Hasta ahora, definimos los símbolos de un lenguaje y como formar sus términos y fórmulas. Ahora, debemos asiganarle un significado a cada uno de esos símbolos.
+\paragraph{$\mathcal{L}$-estructura (o interpretación de $\mathcal{L}$):} Una $\mathcal{L}$-estructura (o interpretación) $\mathcal{A}$ de un lenguaje $\mathcal{L} = \mathbf{C}\cup\mathcal{F}\cup\mathcal{P}$ consiste en:
+
+\begin{itemize}
+	\item Un conjunto no vacío $A$ llamado el \textbf{dominio} o \textbf{universo} de la interpretación.
+	\item Para cada símbolo de constante $c\in\mathcal{C}$, una asignación de un elemento fijo $c_\mathcal{A} \in A$
+	\item Para cada símbolo de función $n$-aria $f\in\mathcal{F}$, una función $f_\mathcal{A}:A^n\to A$
+	\item Para cada símbolo de predicado $n$-ario $P\in\mathcal{P}$, una relación $P_\mathcal{A}\subset A^n$ de tal forma que $P_\mathcal{A}$ contenga a los elementos que la hacen verdadera.
+\end{itemize}
+
+Las funciones $f_\mathcal{A}$ y predicados $P_\mathcal{A}$ son siempre totales.
+
+Dada tal interpretación, se considera que las variables pueden tomar cualquier valor del dominio.
+
+\paragraph{Ejemplo de interpretación:} Sea $\mathcal{L} = \mathcal{C}\cup\mathcal{F}\cup\mathcal{P}$ con $\mathcal{C}=\{c,d\}$, $\mathcal{F}=\{f,g\}$, $\mathcal{P}=\{P\}$. Si $f$ unaria, $g$ binaria y $P$ binario, una posible interpretación $\mathcal{A}$ es:
+\begin{multicols}{2}
+\begin{itemize}
+	\item[] $A = \mathbb{Z}$
+	\item[] $c_\mathcal{A} = 0$
+	\item[] $d_\mathcal{A} = 1$
+	\item[] $f_\mathcal{A}(x) = -x$
+	\item[] $g_\mathcal{A}(x,y) = x + y$
+	\item[] $P_\mathcal{A}$ sii x divide a y.
+\end{itemize}
+\end{multicols}
+
+
+\paragraph{Valuaciones:} Sea $\mathcal{A}$ una $\mathcal{L}$-estructura con dominio $A$. Definimos una \textbf{valuación} para $\mathcal{A}$ como una función $v~:$ VAR $\to A$  que asigna un valor de $A$ a una variable del lenguaje. 
+
+Por ejemplo, la valuación $v(x = a)$ que asigna el valor $a\in A$ a $x$ se define de la siguiente manera:
+
+$$v(x=a)(y) = \left\{
+\begin{tabular}{ll}
+$v(y)$ & si $x\neq y$ \\
+$a$ & si $x = y$
+\end{tabular}
+\right.$$
+
+Además, podemos definir $\tilde{v}:$ TERM($\mathcal{L})\to A$ como una extensión de $v$ que nos permite interpretar un término del lenguaje:
+
+\begin{itemize}
+	\item Si $t = x$ es una variable entonces $\tilde{v}(t) = v(x)$
+	\item Si $t = c$ es una constante entonces $\tilde{v}(t) = c_\mathcal{A}$
+	\item Si $t = f(\xDots{t}{n})$ es una función entonces $\tilde{v}(c) = f_\mathcal{A}(\tilde{v}(t_1),\dots,\tilde{v}(t_n))$
+\end{itemize} 
+
+\paragraph{Interpretación de una fórmula}
+Sea $\mathcal{A}$ una $\mathcal{L}$-estructura con dominnio $A$ y $v$ una valuación de $\mathcal{A}$. Vamos a definir cuado una fórmula $\varphi$ del lenguaje $\mathcal{L}$ es verdadera en $\mathcal{A}$ bajo la evaluación $v$ ($\mathcal{A}\vDash\varphi[v]$):
+
+\begin{enumerate}
+	\item $\mathcal{A}\vDash P(t_1,\xDots{t}{n})[v]$ si y solo si $(\tilde{v}(t_1),\dots,\tilde{v}(t_n)) \in P_\mathcal{A}$.
+	\item $\mathcal{A}\vDash\lnot\psi[v]$ si y solo si $\mathcal{A}\nvDash\psi[v]$
+	\item $\mathcal{A}\vDash(\forall x)\psi[v]$ si y solo si $\mathcal{A}\vDash\psi[v(x = a)]$ para cualquier $a\in A$.
+	\item $\mathcal{A}\vDash(\psi\lor\rho)[v]$ si y solo si $\mathcal{A}\vDash\psi[v]$ o $\mathcal{A}\vDash\rho[v]$.
+	\item $\mathcal{A}\vDash(\psi\land\rho)[v]$ si y solo si $\mathcal{A}\vDash\psi[v]$ y $\mathcal{A}\vDash\rho[v]$.
+	\item $\mathcal{A}\vDash(\exists x)\psi[v]$ si y solo si hay algún $a\in A$ tal que $\mathcal{A}\vDash\psi[v(x = a)]$.
+\end{enumerate}
+
+\subsection{Satisfacibilidad y Validez}
+Sea $\varphi$ una fórmula del lenguaje $\mathcal{L}$:
+\begin{itemize}
+	\item $\varphi$ es \textbf{satisfacible} si existe una $\mathcal{L}$-estructura $\mathcal{A}$ y una valuación $v$ tal que $\mathcal{A}\vDash\varphi[v]$.
+	
+	\item $\varphi$ es \textbf{verdadera (o válida) en una $\mathcal{L}$-estructura $\mathcal{A}$} ($\mathcal{A}\vDash\varphi$) si $\mathcal{A}\vDash\varphi[v]$ para toda valuación $v$. En este caso decimos que $\mathcal{A}$ es un modelo de $\varphi$.
+	
+	\item $\varphi$ es \textbf{universalmente válida} ($\vDash\varphi$) si $\mathcal{A}\vdash\varphi[v]$ para toda $\mathcal{L}$-estructura $\mathcal{A}$ y toda evaluación $v$ de $\mathcal{A}$.
+\end{itemize} 
+
+\begin{proposicion}
+	Una fórmula $\varphi$ es \textbf{universalmente válida} si y solo si $\lnot\varphi$ es insatisfacible (no existe ninguna $\mathcal{L}$-estructura $\mathcal{A}$, ni ninguna evaluación $v$ tal que $\mathcal{A}\vDash\varphi[v]$)
+\end{proposicion}
+
+\paragraph{Notación:} 	Sea $\Gamma\in$ FORMS$(\mathcal{L})$ y $\mathcal{A}$ una $\mathcal{L}$-estructura, notamos $\mathcal{A}\vDash\Gamma[v]$ cuando $\mathcal{A}\vDash\psi[v]$ para toda fórmula $\psi\in\Gamma$.
+
+\paragraph{Consecuencia semántica:} Sea $\Gamma\subseteq$ FORM$(\mathcal{L})$ y $\varphi\in$ FORM$(\mathcal{L})$, entonces $\varphi$ es \textbf{consecuencia semántica} de $\Gamma$ ($\Gamma\vDash\varphi$) si para toda $\mathcal{L}$-estructura $\mathcal{A}$ y  toda valuación $v$ de $\mathcal{A}$, vale:
+
+$$\mathcal{A}\vDash\Gamma[v] \Rightarrow \mathcal{A}\vDash\varphi[v]$$
+
+\paragraph{Lenguajes con igualdad:} $\mathcal{L}$ es un \textbf{lenguaje con igualdad} si tiene un símbolo proposicional binario especial ($=$) que sólo se interpreta como la igualdad.
+
+\subsubsection{Lema de la sustitución}
+
+\paragraph{Remplazo de variables libres por términos:} Sea $\mathcal{L}$ un lenguaje fijo, $\varphi\in$ FORM($\mathcal{L}$), $t\in$TERM($\mathcal{L}$) y $x\in$VAR entonces: $\bm{\varphi[x/t]}$ es la fórmula obtenida a partir de $varphi$ sustituyendo todas las apariciones libres de la variable $x$ por $t$.
+
+\paragraph{Variable remplazable por un término:} Sea $t\in$TERM($\mathcal{L}$) y $x\in$VAR y $\varphi\in$ FORM($\mathcal{L}$). Decimos que $x$ es \textbf{remplazable} por $t$ en $\varphi$ cuando:
+\begin{itemize}
+	\item $t$ es un término cerrado (no tiene variables) ó
+	\item $t$ tiene variables pero ninguna de ellas queda ligada por un cuantificador en el remplazo $\varphi[x/t]$.
+\end{itemize}
+
+\paragraph{Ejemplo:} Sea $\varphi=(\forall y)(((\forall x)P(x))\to P(x))$, notemos que el primer $P(x)$ tiene ligada $x$ al cuantificador mientras que en el segundo está libre. Entonces:
+\begin{itemize}
+	\item $x$ es remplazable por $z$: $\varphi[x/z] = (\forall y)(((\forall x)P(x))\to P(\red{z}))$
+	\item $x$ es remplazable por $f(x,z)$: $\varphi[x/f(x,z)] = (\forall y)(((\forall x)P(x))\to P(\red{f(x,z)}))$
+	\item $x$ no es remplazable por $f(x,y)$ porque $y$ está ligada al primer cuantificador y si hacemos la sustitución $\varphi[x/f(x,y)] = \red{(\forall y)}(((\forall x)P(x))\to P(\red{f(x,y)}))$, entonces el $y$ que pasamos como parámetro a $f$ queda atrapado por el primero cuantificador.
+\end{itemize}
+
+\begin{lema}\label{lema::sustitucion}
+	Si x es remplazable por t en $\varphi$ entonces $\mathcal{A}\vDash(\varphi[x/t])[v]$ si y solo si $\mathcal{A}\vDash\varphi[v(x=\tilde{v}(t))]$
+	
+	Osea si $\mathcal{A}$ satisface $\varphi$ con la valuación que asigna a $x$ el valor $t$.
+\end{lema}
+
+\begin{demo}
+	Lo vamos a hacer por inducción en la complejidad de $\varphi$:
+	
+	\paragraph{Caso base (fórmula atómica):} Sea $\varphi = P(u)$ con $u$ un término del lenguaje. Entonces $\mathcal{A}\vDash P(u[x/t])$ $\iff$ $\tilde{v}(u[x/t])\in P_\mathcal{A}$ $\iff$ $v(x=\tilde{v}(t))(u)\in P_\mathcal{A}$ $\iff$ $\mathcal{A}\vDash\varphi[v(=\tilde{v}(t))]$
+	
+	\paragraph{Caso $\bm{\varphi = \lnot\psi}$ y $\bm{\varphi=\psi\to\rho}$:} Trivial.
+	
+	\paragraph{Caso $\bm{\varphi = (\forall y) \psi}$:} Queremos ver que $\mathcal{A}\vDash(\varphi[x/t])[v]$ si y solo si $\mathcal{A}\vDash\varphi[v(x=\tilde{v}(t))]$
+	\begin{itemize}
+		\item Supongamos que $x$ no aparece libre en $\varphi$. Entonces $v$ y $v[x=v(t)]$ coinciden en todas las variables que aparecen libres en $\varphi$. Además, $\varphi=\varphi[x/t$]. Es trivial ver que vale el lema.
+		\item Ahora supongamos $x$ aparece libre en $\varphi$, entonces $x$ aparece libre en $\psi$. Como $x$ es remplazable por $t$, la variable $y$ no aparece en $t$ (porque sino no la variable quedaría atrapada por el cuantificador). Luego para todo $d\in A$, $w(t) = v(y=d)(t)$ (no importa que valor le asignemos a $y$, el valor de $t$ no va a cambiar). Y como $x\neq y$, $\varphi[x/t] = ((\forall y)\psi)[x/t] = (\forall y)(\psi[x/t])$.
+\begin{align*}
+\mathcal{A}\vDash\varphi[x/t][v] &\text{ sii para todo }d\in A,~\mathcal{A}\vDash\psi[x/t][v(y = d)] \\ 
+&\text{ sii para todo }d\in A,~ \mathcal{A}\vDash\psi[v(y=d)(x = v(y=d)(t))]  \\
+& \text{sii para todo }d\in A,~ \mathcal{A}\vDash\psi[v(y=d)(x = v(t))] \\
+& \text{sii para todo }d\in A,~ \mathcal{A}\vDash\psi[v(x = v(t))(y=d)] \\
+& \text{sii }\mathcal{A}\vDash\varphi[v(x = v(t))] \\
+\end{align*}
+	\end{itemize}\qed
+\end{demo}
+
+\subsection{Mecanismo deductivo SQ}
+Dado un lenguaje $\mathcal{L}$, sean $\varphi,\psi,\rho\in$FORM($\mathcal{L}$), $x\in$VAR, $t\in$TERM($\mathcal{L}$), tendremos como axiomas:
+
+\begin{itemize}
+	\item[\textbf{SQ1}] $\varphi\to(\psi\to\varphi)$
+	\item[\textbf{SQ2}] $(\varphi\to(\psi\to\rho))\to((\varphi\to\psi)\to(\varphi\to\rho))$
+	\item[\textbf{SQ3}] $(\lnot\varphi\to\lnot\psi)\to(\psi\to\varphi)$
+	\item[\textbf{SQ4}] $(\forall x)\varphi\to\varphi[x/t]$ si $x$ es remplazable por $t$ en $\varphi$.
+	\item[\textbf{SQ5}] $\varphi\to(\forall x)\varphi$ si $x$ no aparece libre en $\varphi$.
+	\item[\textbf{SQ6}] $(\forall x)(\varphi\to\psi)\to((\forall x)\varphi \to(\forall x)\psi$.
+	\item[\textbf{SQ7}] Si $\varphi$ es una axioma entonces $(\forall x)\varphi$ también es un axioma.
+\end{itemize}
+
+Además, seguimos pudiendo usar el \textbf{modus ponens} como regla de inferencia:
+\begin{itemize}
+	\item[\textbf{MP}] Sean $\varphi,\psi\in$FORM($\mathcal{L}$). $\psi$ es una consecuencia inmediata de $\varphi\to\psi$ y $\psi$.
+\end{itemize}
+
+\subsubsection{Consecuencia sintáctica, demostraciones, teoremas y teorías}
+Sea un lenguaje $\mathcal{L}$, $\Gamma\subseteq$FORM($\mathcal{L}$) y $\varphi\in$FORM($\mathcal{L}$).
+\paragraph{Demostración:} Una demostración de $\varphi$ en SQ es una cadena finita y no vacía $\xDots{\varphi}{n}$ de fórmulas de $\mathcal{L}$ tal que $\varphi_n = \varphi$ y
+\begin{itemize}
+	\item $\varphi_i$ es un axioma ó
+	\item $\varphi_i$ es una consecuencia inmediata de $\varphi_k$ y $\varphi_l$ con $k,l < i$.
+\end{itemize}
+
+\paragraph{Teorema ($\bm{\vdash\varphi}$):} Es una fórmula $\varphi$ para la que existe una demostración en SP. 
+
+\paragraph{Consecuencia sintáctica ($\bm{\Gamma\vdash\varphi}$):} $\varphi$ es una consecuencia sintáctica de $\Gamma$ si existe una cadena finita y no vacía $\xDots{\varphi}{n}$ de fórmulas de $\mathcal{L}$ tal que $\varphi_n = \varphi$ y
+\begin{itemize}
+	\item $\varphi_i$ es un axioma ó
+	\item $\varphi_i\in\Gamma$ ó
+	\item $\varphi_i$ es una consecuencia inmediata de $\varphi_k$ y $\varphi_l$ con $k,l < i$.
+\end{itemize}
+
+Aquí $\xDots{\varphi}{n}$ se llama \textbf{derivacíón} de $\varphi$ a partir de $\Gamma$, $\Gamma$ se llama \textbf{teoría} y decimos que $\varphi$ es un \textbf{teorema de la teoría} $\Gamma$.
+
+\begin{teorema}\label{teorema::correctitudSQ}
+	El sistema SQ es correcto. Es decir que si $\Gamma\vdash\varphi$ entonces $\Gamma\vDash\varphi$
+\end{teorema}
+
+\begin{teorema}\label{teorema::consistenciaSQ}
+	El sistema SQ es consistente. Es decir que no existe $\varphi\in$FORM($\mathcal{L}$) tal que $\vdash\varphi$ y $\vdash\lnot\varphi$.
+\end{teorema}
+
+\begin{teorema}
+	Si $\Gamma\cup\{\varphi\}\vdash\psi$ entonces $\Gamma\vdash\varphi\to\psi$
+\end{teorema}
+
+
+\paragraph{Conjunto consistente:} $\Gamma\subseteq$FORM($\mathcal{L}$) es consistente si no existe $\varphi\in$FORM($\mathcal{L}$) tal que $\Gamma\vdash\varphi$ y $\Gamma\vdash\lnot\varphi$.
+
+\begin{proposicion}
+	Sea $\Gamma\subseteq$FORM($\mathcal{L}$) y $\varphi\in$FORM($\mathcal{L}$)
+	\begin{itemize}
+		\item $\Gamma\cup\{\varphi\}$ es incosistente si y solo si $\Gamma\vdash\lnot\varphi$
+		\item $\Gamma\cup\{\lnot\varphi\}$ es incosistente si y solo si $\Gamma\vdash\varphi$
+	\end{itemize}
+\end{proposicion}
+
+\begin{teorema}
+	Si $\Gamma$ es satisfacible entonces $\Gamma$ es consistente.
+\end{teorema}
+
+\begin{teorema}
+	Si $\Gamma$ es inconsistente, entonces existe un subconjunto finito de $\Gamma$ que es inconsistente.
+\end{teorema}
+
+\paragraph{Instancia de esquema tautológico:} Sea $\varphi(\xDots{p}{n})$ una tautológia de $P$ con variables proposicionales $\xDots{p}{n}$. Sean $\xDots{\psi}{n}$ fórmulas cualesquiera de primer orden, notamos $\varphi(\xDots{\psi}{n})$ a la fórmula que se obtiene de remplazar $p_i$ por $\psi_i$ y la llamos \textbf{instancia de un esquema tautológico}.
+
+\begin{proposicion}
+	Si $\varphi$ es una instancia de un esquema tautológico entonces $\vdash\varphi$.
+\end{proposicion}
+
+\paragraph{Variantes alfabéticas} Una fórmula $\varphi'$ es una variante alfabética de $\varphi$ si $\varphi'$ se puede obtener a partir de $\varphi$ renombrando sus variables. Por ejemplo:
+$$\varphi = x\neq 0\to(\exists y) x = S(y) \hspace*{2cm}\varphi'=x\neq 0\to(\exists w) x = S(w)$$
+
+\begin{lema}
+	Sea $\varphi\in$FORM($\mathcal{L}$). Dados $x\in$VAR y $t\in$TERM($\mathcal{L}$) podemos encontrar $\varphi'$ (variante alfabética de $\varphi$) tal que:
+	\begin{itemize}
+		\item $\{\varphi\}\vdash\varphi'$ y $\{\varphi'\}\vdash\varphi$
+	\item $x$ es remplazable por $t$ en $\varphi'$
+	\end{itemize}
+\end{lema}
+
+\subsubsection{Teorema de la generalización (TG)}
+\begin{teorema}
+	Si $\Gamma\vdash\varphi$ y $x$ no aparece libre en ninguna fórmula de $\Gamma$, entonces $\Gamma\vdash(\forall x)\varphi$
+\end{teorema}
+
+\begin{demo}
+	Vamos a demostrarlo por inducción en la longitud de la derivación de $\psi$ a partir de $\Gamma$.
+	
+	Sea $\psi$, $\Gamma$ y $x$ tal que $\Gamma\vdash\psi$ y $x$ no aparece libre en ninguna fórmula de $\Gamma$, si $\xDots{\psi}{n}$ es una derivación de $\psi$:
+	
+	\paragraph{Caso base ($n = 1$):} Queremos ver que $\Gamma\vdash(\forall x)\psi$. Tenemos dos posibilidades:
+	\begin{itemize}
+		\item $\psi$ es un axioma de SQ $\overset{SQ7}{\Rightarrow} \vdash (\forall x)\psi \Rightarrow \Gamma\vdash(\forall x)\psi$
+		\item $\psi\in\Gamma$. Por SQ5, como $x$ no aparece libre en $\psi$, sabemos que $\vdash\psi\to(\forall x)\psi$.
+		
+		Luego, usando modus ponens con $\Gamma\vdash\psi$ y $\vdash\psi\to(\forall x)\psi$, obtenemos que $\Gamma\vdash(\forall x)\psi$.
+	\end{itemize}
+\end{demo}
+\begin{demoPart}
+	\paragraph{Paso inductivo:} Nuestra hipotesis inductiva es que para toda fórmula $\psi$ tal $\Gamma\vdash\psi$ tiene una derivación de longitud $ m < n$, vale que $\Gamma\vdash(\forall x)\psi$ para toda $x$ que no aprece libre en ninguna fórmula de $\Gamma$. 
+	
+	Si $\varphi$ es un axioma de SQ ó $\varphi\in\Gamma$ es lo mismo que en el caso base.
+	
+	Si $\varphi$ se obtiene por modus ponens de $\varphi_i$ y $\varphi_j$ con $i,j < n$. Supongamos que $\varphi_j = \varphi_i\to\varphi$:
+	\begin{itemize}
+		\item Como $i < n$, vale la hipotesis inductiva y $\Gamma\vdash(\forall x)\varphi_i$
+		\item Como $j < n$, vale la hipotesis inductiva y $\Gamma\vdash(\forall x)(\varphi_i\to\varphi)$
+	\end{itemize}
+
+Por SQ6, $\vdash(\forall x)(\varphi_i\to\varphi)\to((\forall x)\varphi_i\to(\forall x)\varphi)$. Luego, usando modus ponensdos veces, obtenemos $\Gamma\vdash(\forall x)\varphi$.
+\end{demoPart}
+
+\subsubsection{Teorema de generalización en constantes (TGC)}
+\begin{teorema}\label{teorema::tgc}
+	Supongamos que $\Gamma\vdash\varphi$ y $c$ es un símbolo de constante que no aparece en $\Gamma$. Entonces exite una variable $x$ que no aprece en $\varphi$ tal que $\Gamma\vdash(\forall x)(\varphi[c/x])$. Más aún, hay una derivación de $(\forall x)(\varphi[c/x])$ a partir de $\Gamma$ en donce $c$ no aparece.
+\end{teorema}
+\begin{demo}
+	\paragraph{IDEA DE LA DEMOSTRACION:} Sea $\xDots{\varphi}{n}$ una derivación de $\varphi$ a partir de $\Gamma$. Sea $x$ la primer variable que no aparece en ninguna de las $\varphi_i$:
+	\begin{enumerate}
+		\item Demostrar por inducción en $n$ que $\varphi_1[c/x],\dots,\varphi_n[c/x]$ es una derivación de $\varphi[c/x]$ a partir de $\Gamma$ y luego que no contiene al símbolo de constante $c$.
+		\item Hay un $\Delta\subseteq\Gamma$ finito tal que $\Gamma\vdash\varphi[c/x]$ con derivación que no usa $c$ y tal que $x$ no aparece libre en ninguna fórmula de $\Delta$.
+		\item Por el teorema de la generalización, $\Delta\vdash(\forall x)(\varphi[c/x])$ con derivación que no usa $c$\qed
+	\end{enumerate}
+\end{demo}
+
+\begin{corolario}\label{corolario::tgc}
+	Supongamos que $\Gamma\vdash\varphi[z/c]$ y $c$ es un símbolo de constante que no aparece en $\Gamma$ ni en $\varphi$. Entonces $\Gamma\vdash(\forall z)\varphi$. Más aún, hay una derivación de $(\forall z)\varphi$ a partir de $\Gamma$ en donde $c$ no aparece.
+\end{corolario}
+
+\begin{demo}
+	Por TGC (\ref{teorema::tgc}), existe un $x$ que no aparece en $\varphi[z/c]$ tal que $\Gamma\vdash(\forall x)(\varphi[z/c][c/x])$ y $c$ no aparece en la derivación de esta fórmula.
+	
+	Como $c$ no aparece en $\varphi$, $\varphi[z/c][c/x] = \varphi[z/x]$, entonces $\Gamma\vdash(\forall x)(\varphi[z/x])$.
+	
+	Sabemos que $\vdash(\forall x)(\varphi[z/x])\to(\forall z)\varphi$, entonces por modus ponens obtenemos $\Gamma\vdash(\forall z)\varphi$.\qed	
+\end{demo}
+
+\subsubsection{Lenguajes con igualdad}
+Dado un lenguaje $\mathcal{L}$ con igualdad, debemos considerar el sistema deductivo SQ$^=$ que extiene a SQ con los siguientes axiomas:
+
+\begin{itemize}
+	\item[\textbf{SQ}$\bm{^=1}$] $x = x$
+	\item[\textbf{SQ}$\bm{^=2}$] $x = y\to(\varphi\to\psi)$ donde $\varphi$ es atómica y $\psi$ se obtiene de $\varphi$ remplazando $x$ por $y$ en cero o más lugares.
+\end{itemize}
+
+Se puede probar que SQ$^=$ es consistente y que si hay una derivación de $\varphi$ en SQ$^=$ entonces $\varphi$ es verdadera en toda $\mathcal{L}$-estructura en donde el $=$ se interpreta como igualdad.
+
+\subsection{Consistencia implica satisfacibilidad}
+
+\begin{teorema}
+	Sea $\Gamma\subseteq$FORM($\mathcal{L}$) consistente y  $\mathcal{C}$ un conjunto de nuevas constantes que no aparecen en $\mathcal{L}$. Si $\mathcal{L}'=\mathcal{L}\cup\mathcal{C}$ entonces $\Gamma$ es consistente en el lenguaje $\mathcal{L}'$.
+\end{teorema}
+
+\begin{demo}
+	Supongamos que $\Gamma$ es inconsistente en el nuevo lenguaje $\mathcal{L}'$. Entonces existe $\varphi\in$FORMS($\mathcal{L}$) tal que $\Gamma\vdash\varphi$ y $\Gamma\vdash\lnot\varphi$.
+	
+	Luego, existen dos derivaciones finitas que usan fórmulas en FORM$(\mathcal{L}')$ que terminan en $\varphi$ y $\lnot\varphi$.
+	
+	Por TGC (teorema \ref{teorem::tgc}), cada constante nueva utilizada puede remplazarse por una variable nueva. Luego obtenemos dos derivaciones: $\Gamma\vdash\varphi[\xDots{c}{n}/\xDots{x}{n}]$ y $\Gamma\vdash\lnot\varphi[\xDots{c}{n}/\xDots{x}{n}]$ en el lenguaje original $\mathcal{L}$. Entonces $\Gamma$ era inconsistente en $\mathcal{L}$, lo que es absurdo.
+\end{demo}
+	
+\paragraph{Téstigo:} Sea $\Gamma\subseteq$FORM($\mathcal{L}$) consistente y  $\mathcal{C}$ un conjunto de nuevas constantes que no aparecen en $\mathcal{L}$ y $\mathcal{L}' = \mathcal{L}\cup\mathcal{C}$. Sea $\langle\varphi_1,x_1\rangle,\langle\varphi_2,x_2\rangle,\dots$ una enumeración de FORM($\mathcal{L}$)$\times$VAR, un \textbf{testigo} es una fórmula de la siguiente forma:
+
+$$\theta_n = \lnot(\forall x_n)\varphi_n\to\lnot(\varphi_n[x_n/c_n])$$
+
+donde $c_n$ es la primera constante de $\mathcal{C}$ que no aparece en $\varphi_n$ y no aparece en $\xDots{\theta}{ n-1}$. 
+
+Este tipo de fórmulas son llamadas \textbf{testigos} porque si ocurre $\lnot(\forall x)\varphi$ entonces hay una constante $c$ que atestigua que $\varphi$ no vale para todo $x$. 
+
+Llamaremos $\Theta = \{\theta_1,\theta_2,\dots\}$ al conjunto de  todos los testigos.
+
+\begin{teorema}
+	Sea $\Gamma\subseteq$FORM($\mathcal{L}$) consistente y  $\mathcal{C}$ un conjunto de nuevas constantes que no aparecen en $\mathcal{L}$ y $\mathcal{L}' = \mathcal{L}\cup\mathcal{C}$. Entonces $\Gamma\cup\Theta\subseteq$FORM($\mathcal{L}'$) es consistente.
+\end{teorema}
+
+\begin{demo}
+	Supongamos que $\Gamma\cup\Theta$ es inconsistente, entonces debe existir $i$ tal que $\Gamma\cup\{\xDots{\theta}{i+1}\}$ es inconsistente.
+	
+	Sea $n$ el mínimo $i$ para el que pasa esto, entones \red{$\Gamma\cup\{\xDots{\theta}{n}\}$ es consistente}.
+	
+	Luego $\Gamma\cup\{\xDots{\theta}{n}\}\vdash\lnot\theta_{n+1}$, osea  $\Gamma\cup\{\xDots{\theta}{n}\}\vdash\lnot(\lnot(\forall x)\varphi\to\lnot(\varphi[x/c]))$ donde $c$ no aparece en ningun $\theta_k$ con $k \leq n$.
+\end{demo}
+\begin{demoPart}
+	\begin{align*}
+		\lnot\theta_{n+1} &= \lnot(\lnot(\forall x)\varphi\to\lnot(\varphi[x/c]))
+		= \lnot(\lnot(\lnot(\forall x)\varphi)\lor\lnot(\varphi[x/c]))
+		=  \lnot((\forall x)\varphi)\lor\lnot(\varphi[x/c])) \\
+		& = \lnot(\forall x)\varphi)\land\lnot\lnot(\varphi[x/c])) = \lnot(\forall x)\varphi\land (\varphi[x/c]))\\
+	\end{align*}
+Luego, $\lnot\theta_{n+1}\to\lnot(\forall x)\varphi$ y $\lnot\theta_{n+1}\to(\varphi[x/c])$ son instancias de esquemas tautológicos y, por lo tanto:
+\begin{enumerate}
+	\item $\vdash\lnot\theta_{n+1}\to\lnot(\forall x)\varphi\overset{MP}{\Rightarrow} \Gamma\cup\{\xDots{\theta}{n}\}\vdash\lnot(\forall x)\varphi$
+	\item $\vdash\lnot\theta_{n+1}\to(\varphi[x/c])\overset{MP}{\Rightarrow} \Gamma\cup\{\xDots{\theta}{n}\}\vdash\varphi[x/c]$. 
+\end{enumerate} 
+Como $c$ no aparece en $\Gamma\cup\{\xDots{\theta}{n}\}$, por $(2)$ y el corolario \ref{corolario::tgc} vale que $\Gamma\cup\{\xDots{\theta}{n}\}\vdash(\forall x)\varphi$. Esto contradice $(1)$. Luego \red{$\Gamma\cup\{\xDots{\theta}{n}\}$ es inconsistente}. Absurdo.
+\end{demoPart}
+
+\subsubsection{Lema de Lindenbaum para $\Gamma\cup\Theta$}
+\begin{teorema}
+	Sean $\Gamma$ y $\Theta$ como en los teoremas anteriores. Existe un conjunto $\Delta$ que contiene $\Gamma\cup\Theta$ tal que $\Delta$ es maximal consistente.
+\end{teorema}
+
+La demostración de este lema es igual que la del lema de Lindebaum para el caso proposicional.
+
+\subsubsection{Satisfacibilidad de un model canónico}
+\paragraph{Modelo canónico:} Sea $\mathcal{L}' = \mathcal{L} \cup \mathcal{C}$, un modelo canónico es una $\mathcal{L}$-estrucutra $\mathcal{A}$ tal que:
+\begin{itemize}
+	\item $A=$TERM$(\mathcal{L}')$
+	\item Para cada símbolo de función $n$-aria $f\in\mathcal{L}'$, $f_\mathcal{A}(\xDots{t}{n}) = f(\xDots{t}{n})\in A$
+	\item Para cada símbolo de constante $c\in\mathcal{L}'$, $c_\mathcal{A} = c \in A$
+	\item Si $\Delta$ es un conjunto maximal consistente, entonces:  $(\xDots{t}{n})\in P^\mathcal{A}$ si y solo si $P(\xDots{t}{n})\in\Delta$,
+\end{itemize}
+
+Y definimos la evaluación $v:$VAR$\to$TERM($\mathcal{L}'$) como: $v(x) = x$
+
+\begin{lema}
+	Para todo $t\in$TERM($\mathcal{L}'$), $\bar{v}(t) = t$
+\end{lema}
+
+\begin{lema}\label{lema::paso4}
+	Para toda $\varphi\in$FORM($\mathcal{L}'$), $\mathcal{A}\vDash\varphi[v]$ si y solo si $\varphi\in\Delta$
+\end{lema}
+
+\begin{demo}
+	Por indcucción en la longitud de la fórmula:
+	
+	\paragraph{Caso base $\varphi = P(\xDots{t}{n})$:} $\varphi$ es una fórmula atómica. $\mathcal{A}\vDash P(\xDots{t}{n})[v]$ sii $(\bar{v}(t_1),\dots,\bar{v}(t_n)\in P^\mathcal{A}$ sii $(\xDots{t}{n})\in P^\mathcal{A}$ (pues $\bar{v}(t) = t$) sii $P(\xDots{t}{n})\in\Delta$
+\end{demo}
+\begin{demoPart}
+	\paragraph{Hipotesis inductiva:} Para toda fórmula $\psi$ de menos longitud que $\varphi$ vale que $\mathcal{A}\vDash\psi[v]$ sii $\psi\in\Delta$
+
+\vspace*{0.25cm}
+	\paragraph{Caso $\varphi = \lnot\psi$:} $\mathcal{A}\vDash\varphi[v]$ sii $\mathcal{A}\nvDash\varphi[v]$ sii (por hipotesis inductiva) $\psi\notin\Delta$ sii $\lnot\psi\in\Delta$ (pues $\Delta$ es maximal consistente). 
+
+\vspace*{0.25cm}
+	\paragraph{Caso $\varphi = \psi\to\rho$:}
+	\begin{itemize}
+		\item[$\bm{\Rightarrow})$] $\mathcal{A}\vDash\varphi[v] \iff \mathcal{A}\nvDash\psi[v]$ o  $\mathcal{A}\nvDash\rho[v]$, por hipotesis inductiva esto pasa sii $\psi\notin\Delta$  ó \\ $\rho\in\Delta \iff \lnot\psi\in\Delta$ ó $\rho\in\Delta$ (porque $\Delta$ es maximal consistente) $\Rightarrow \Delta\vdash\psi\to\rho \Rightarrow \psi\to\rho\in\Delta$.
+		\item[$\bm{\Leftarrow})$] $\varphi\in\Delta\Rightarrow\psi\notin\Delta$ ó ($\psi\Delta$ y $\Delta\vdash\rho$) $\Rightarrow \psi\notin\Delta$ ó ($\psi\in\Delta$ y $\rho\in\Delta$) $\Rightarrow\psi\notin\Delta$ ó $\rho\in\Delta\iff \mathcal{A}\nvDash\psi[v]$ ó $\mathcal{A}\vdash\rho[v]$ (esto vale por hipotesis inductiva) $\iff \mathcal{A}\vDash\psi\to\rho[v]$
+	\end{itemize}
+	\paragraph{Caso $(\forall x)\psi$:} 
+	\begin{itemize}
+		\item[$\bm{\Rightarrow})$] Supongamos que $\mathcal{A}\vDash(\forall x)\psi[v]$. Entonces, para todo $t\in A$, $\mathcal{A}\vDash\psi[v(x = t)]$, en particular $\mathcal{A}\vDash\psi[v(x = c)]$ para $c\in\mathcal{C}$. 
+		
+		Por definición de $v$, $\mathcal{A}\vDash\psi[v(x = \bar{v}(c))]$ y, por el lema de sustitución (\ref{lema::sustitucion}) $\mathcal{A}\vDash(\psi[x/c])[v]$.
+		
+		Luego, por hipotesis inductiva \red{$(\psi[x/c])[v]\in\Delta$}.
+		
+		Sea $\theta = \lnot(\forall x)\psi\to\lnot(\psi[x/c])\in\Theta$, el testigo agregado par la fórmula $\psi$. Para que $\theta$ sea verdadera tiene que valer que $\lnot(\forall x)\psi\notin\Delta$ (si estuviese, entonces el consecuente tambien debería pertenecer pero esto es absurdo, pues $(\psi[x/c])[v]\in\Delta$).
+		\begin{center}
+			\begin{minipage}{0.8\textwidth}
+			Supongamos que $\lnot(\forall x)\psi\in\Delta$, entonces $\Delta\vdash\lnot(\forall x)\psi$. Además, como $\Theta\subseteq\Delta$, $\theta\in\Delta$ por lo que $\Delta\vdash\theta$. Por Modus Ponens entre $\theta$ y $\lnot(\forall x)\psi$, tenemos que $\Delta\vdash\lnot(\psi[x/c])$. Luego \red{$\lnot(\psi[x/c])\in\Delta$}. Absurdo, habiamos demostrado que $\psi[x/c]\in\Delta$.
+		\end{minipage}
+	\end{center}
+Luego $(\forall x)\psi\in\Delta$
+\item[$\bm{\Leftarrow})$]Supongamos que $\mathcal{A}\nvDash(\forall x)\psi[v]$. Entonces, existe $t\in A$, $\mathcal{A}\nvDash\psi[v(x = t)]$. Sea $\psi'$ una variate alfabética de $\psi$ tal que $x$ sea remplazable por $t$ en $\psi'$, $\mathcal{A}\nvDash\psi'[v(x = t)]$.
+
+
+Como $\bar{v}(t) = t$, $\mathcal{A}\nvDash\psi'[v(x = \bar{v}(t))]$ y, por el lema de sustitución (\ref{lema::sustitucion}) $\mathcal{A}\nvDash(\psi'[x/t])[v]$.
+
+Luego, por hipotesis inductiva \red{$(\psi'[x/t])[v]\notin\Delta$}.
+
+Tenemos que ver que $(\forall x)\psi\notin\Delta$, (sino no valdría $\theta$). 
+\begin{center}
+	\begin{minipage}{0.8\textwidth}
+		Supongamos que $(\forall x)\psi'\in\Delta$, entonces $\Delta\vdash(\forall x)\psi'$. Por \textbf{SQ4}, sabemos que $\vdash(\forall x)\varphi'\to\varphi'[x/t]$. Luego, por modus ponens podemos concluir que $\Delta\vdash\varphi[x/t]$ y \red{$\varphi'[x/t]\in\Delta$}. Lo que es absurdo.
+	\end{minipage}
+\end{center}
+
+Luego, $(\forall x)\psi'\notin\Delta$ y, por equivalencia de variantes alfabéticas $(\forall x)\psi\notin\Delta$ 
+\end{itemize}\qed
+\end{demoPart}
+
+\subsubsection{Satisfacibilidad de un lenguaje $\mathcal{L}$ cualqiera}
+\begin{teorema}
+	Sea $\Gamma\subseteq$FORM($\mathcal{L}$) consistente. Entonces existe una $L$-estructura $\mathcal{B}$ y una evaluación $v$ de $\mathcal{B}$ tal que $\mathcal{B}\vDash\varphi[v]$ para toda $\varphi\in\Gamma$	
+\end{teorema}
+
+\begin{demo}
+	Dado un lenguaje $\mathcal{L}$ y su módelo cánonico $\mathcal{A}$, definimos $\mathcal{B}$ como el modelo que restringe $\mathcal{A}$ a $\mathcal{L}$.
+	
+	Del lema \ref{lema::paso4}, sabemos que para toda fórmula $\varphi\in$FORM($\mathcal{L'}$), $\mathcal{A}\vDash\varphi$ sii  $\varphi\in\Delta$. Como $\Gamma\subseteq\Delta$, si $\varphi\in\Gamma$, tenemos que $\mathcal{A}\vdash\varphi[v]$ sii $\mathcal{B}\vDash\varphi[v]$.
+	
+	Luego, encontramos la $L$-estructura $\mathcal{B}$ y una evaluación $v$ de $\mathcal{B}$ tal que $\mathcal{B}\vDash\varphi[v]$ para toda $\varphi\in\Gamma$.
+	
+	Entonces podemos concluir que $\Gamma$ es satisfacible.
+
+\end{demo}
+
+\subsubsection{Teorema de Löwenheim-Skolem}
+\begin{corolario}
+	$\Gamma$ es consistente sii $\Gamma$ es satisfacible
+\end{corolario}
+
+\begin{teorema}
+	Sea $\mathcal{L}$ un lenguaje numerable y sin igualdad. Si $\Gamma\subseteq$FORM($\mathcal{L}$) es satisfacible, es satisfacible en un modelo infinito numerable.	
+\end{teorema}
+
+\begin{teorema}
+	Sea $\mathcal{L}$ un lenguaje numerable con igualdad. Si $\Gamma\subseteq$FORM($\mathcal{L}$) es satisfacible, es satisfacible en un modelo finito o infinito numerable.	
+\end{teorema}
+
+\begin{teorema}
+	Sea $\mathcal{L}$ un lenguaje numerable y $\Gamma\subseteq$FORM($\mathcal{L}$) tiene modelo infinito entonces tiene modelo de cualquier cardinalidad.	
+\end{teorema}
+
+\subsection{Completitud y compacidad}
+
+\begin{teorema}
+	Si $\Gamma\vDash\varphi$ entonces $\Gamma\vdash\varphi$
+\end{teorema}
+
+\begin{corolario}
+	$\Gamma\vDash\varphi$ sii $\Gamma\vdash\varphi$
+\end{corolario}
+
+\begin{teorema}\label{teorema::compacidad}
+	Sea $\Gamma\subseteq$FORM($\mathcal{L}$). Si todo subconjunto finito $\Delta$ de $\Gamma$ ($\Delta\subseteq\Gamma$) es satisfacible, entonces $\Gamma$ es satisfacible.
+\end{teorema}
+
+\begin{teorema}
+	Si $\Gamma$ tiene modelos arbitrariamente grandes, tiene modelo infinito.
+\end{teorema}
+
+\begin{demo}
+	Definimos (en un lenguaje con solo la igualdad) las siguientes fórmulas:
+	\begin{align*}
+		\varphi_2 &= (\exists x)(\exists y) x\neq y \\
+		\varphi_3 &= (\exists x)(\exists y)(\exists z) (x\neq y \land x \neq z \land y\neq z)\\
+		&\vdots \\
+	\varphi_n &= \text{''hay al menos n elementos''} \\
+	\end{align*}
+	\end{demo}
+\begin{demoPart}
+	Si un lenguaje cumple todas las fórmulas $\xDots{\varphi}{n}$, quiere decir que tiene $n$ elementos distintos.
+
+	Ahora, supongamos que $\Gamma$ tiene modelos arbitrariamente grandes, entonces todo subconjunto finito de $\Gamma\cup\{\varphi_i~|~i\geq 2\}$ tiene modelo, osea es satisfacible.
+	
+	Luego, por el teorema de la compacidad (\ref{teorema::compacidad}),  $\Gamma\cup\{\varphi_i~|~i\geq 2\}$ es satisfacible por lo que existe un modelo $\mathcal{M}$ que lo satisface. Notemoas que $\{\varphi_i~|~i\geq 2\}$ que como el modelo satisface todas las formulas con $i\geq 2$, tiene infinitos elementos distintos. Luego $\mathcal{M}$	 tiene que ser infinito.
+\end{demoPart}
+
+\begin{proposicion} $\mathcal{A}$ es infinito sii $\mathcal{A}\vDash\{\varphi_i~|~i\geq 2\}$
+\end{proposicion}
+
+\subsection{Indecidibilidad de primer orden}
+Vamos a demostrar que el problema de decidir si una fórmula puede ser derivada o no, no es computable.
+
+Para esto vamos a armar un lenguaje y una interpretación que nos permitan traducir facilmente una fórmula en un programa de una máquina de turing y vicevers.
+
+\paragraph{El lenguaje:}
+Sea $\mathcal{L}$ el siguiente lenguaje:
+\begin{itemize}
+	\item $\epsilon$ es el único símbolo de constante.
+	\item $1$ y $*$ son símbolos de funciones unarias.
+	\item Sea $E = \{q_0,q_f,p,q,r,\dots\}$ un conjunto infinito de estados de una máquina de turing, entonces los símbolos de relación son: $R_{q_0},R_{q_f},R_p,R_q, R_r,\dots$
+\end{itemize}
+
+Si $t$ es un término de $\mathcal{L}$, vamos a notar:
+\begin{itemize}
+	\item $1(t)$ como $1t$
+	\item $*(t)$ como $*t$
+\end{itemize}
+
+\paragraph{La interpretación:} Dada una máquina de Turing $\mathcal{M} =(\Sigma,Q,T,q_0,q_f)$ y una entrada $w\in\{1\}^+$ (string de unos). Vamos a definir una interpretación $\mathcal{A}_{M,w}$ de la siguiente forma:
+
+\begin{itemize}
+	\item El universo $A_{M,w} = \{1,*\}$ son las cadenas finitas formadas por los carácteres $1$ y $*$
+	\item $\epsilon_\mathcal{A}$ es la cadena vacía.
+	\item Las funciones $1_\mathcal{A}:A\to A$ y $*_\mathcal{A}:A\to A$, agregar el respectivo caracter adelante de un string ($1_\mathcal{A}(*11*1) = 1*11*1$).
+	\item Para cada estado $q\in Q$, $(R_q)_\mathcal{A}(x,y)$ es verdadero sii la máquina $M$ con entrada $w$ llega al estado $q$ con $x$ escrito en orden inverso y a continuación $y$ y la cabeza de $M$ apunta al primer carácter de $y$.
+\end{itemize} 
+
+\paragraph{La fórmula programa:} Debemos definir una fórmula lógica que nos permita describir la máquina de turing mencionda:
+
+\begin{itemize}
+	\item $\varphi_= R_{q_0}(1\dots1\epsilon, \epsilon)$ indica que se puede alcanzar el estado inicial. $\mathcal{A}\vDash\varphi_0$
+	\item $\varphi_f = (\exists x)(\exists y) R_{q_f}(x,y)$ indica que el estado final es alcanzable. $\mathcal{A}\vDash\varphi_f$ sii $M(w)\downarrow$ (si la máquina términa cuando se le pasa $w$ como entrada)
+	\item Para cada instrucción $I\in T$ generamos una fórmula $\psi_I$ que describe las transiciones realizadas.
+\end{itemize}
+
+Entonces definimos la \textbf{fórmula programa} como:
+$$\varphi_{M,w} = (\varphi_0\land\bigwedge_{i\in T}\psi_I)\to\varphi_f$$
+
+\begin{proposicion}
+$\mathcal{A}\vDash\varphi_{M,w}$ sii $M(w)\downarrow$
+\end{proposicion}
+
+\begin{demo}
+	Sabemos que $\mathcal{A}\vDash\varphi_0$ y que $\mathcal{A}\vDash\varphi_f$ sii $M(w)\downarrow$. Tambien que $\mathcal{A}\vDash\psi_I$ para $I\in T$.
+	
+	Luego $\mathcal{A}\vDash\varphi_{M,w}$ sii $\mathcal{A}\vDash\varphi_f$ sii $M(w)\downarrow$
+\end{demo}
+
+\begin{teorema}
+	$\vdash\varphi_{M,w}$ sii $M(w)\downarrow$
+\end{teorema}
+
+\begin{demo}
+	\paragraph{$\bm{(\Rightarrow)}$} Si $\vdash\varphi_{M,w}$ entonces $\vDash\varphi_{M,w}$, es decir, $\varphi_{M,w}$ es veradera en toda interpreación. En particular, $\mathcal{A}\vDash\varphi_{M,w}$. Luego $M(w)\downarrow$.
+	
+	\paragraph{$\bm{(\Leftarrow)}$} Idea. Si $M(w)\downarrow$ entonces existe un computo de $M(w)$. Entonces dada una configuración inicial, solo falta escribir la secuencia de configuraciones que realiza $M$ hasta llegar al estado final. Como el estado inicial, el final y cada una de las transiciones utilizadas se corresponden directamente con una de las fórmulas descriptas más arribas, entonces, el cómputo nos sirve como demostración $\varphi_{M,w}$.\qed
+\end{demo}
+
+\begin{teorema}
+	Sea $\psi\in$FORM($\mathcal{L}$). El problema de decidir si $\vdash\psi$ o $\nvdash\psi$ no es computable.
+\end{teorema}
+
+\begin{demo}
+	Supongamos que hay un programa que dada $\psi\in$FORM($\mathcal{L}$) devuelve verdadero sii $\vdash\psi$
+	
+	Entonces habría un procedimiento para decidir si $M(w)\downarrow$ ó $M(w)\uparrow$:
+	\begin{enumerate}
+		\item Construir $\varphi_{M,w}$
+		\item Si $\vdash\varphi_{M,w}$ entonces $M(w)\downarrow$; si no $M(w)\uparrow$.
+	\end{enumerate}\qed
+\end{demo}

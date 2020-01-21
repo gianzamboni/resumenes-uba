@@ -162,7 +162,7 @@ Si $p:\nat^{n+1}\to\{0,1\}$ es un predicado computable entonces $\min\limits_t p
 		\end{center}
 	
 	\vspace*{5mm}
-	*Ver definición en el apéndice \ref{appendix::otrasMAcros::ifPredicado}
+	*Ver definición en el apéndice \ref{appendix::otrasMAcros::ifPredicado}\qed
 	\end{demo}
 
 \subsubsection{Clausura por composición y recursión primitiva}
@@ -183,7 +183,7 @@ entonces h es (parcial) computable.
 		$Z_k \leftarrow g_k(\xDots{X}{n})$ \\
 		$Y \leftarrow f(\xDots{Z}{k})$\\
 	\end{tabular}
-\end{center}
+\end{center}\qed
 \end{demo}
 
 \begin{proposicion}
@@ -206,7 +206,7 @@ entonces h es (parcial) computable.
 			& $\sdecr{X_{n+1}}$ \\
 			& GOTO $A$
 		\end{tabular}
-	\end{center}
+	\end{center}\qed
 \end{demo}
 
 \begin{proposicion}
@@ -232,7 +232,7 @@ entonces h es (parcial) computable.
 		\begin{center}
 			$Y \leftarrow X_i$
 		\end{center}		
-	\end{itemize}
+	\end{itemize}\qed
 \end{demo}
 
 \begin{corolario}
@@ -286,7 +286,7 @@ Si bien los programas $[\xDots{a}{k}]$, $[\xDots{a}{k}, 0]$ y $[\xDots{a}{k}, 0,
 	
 	Sea $g:\nat\to\nat$ tal que $g(x) = f_x(x) + 1$. Como $g$ es una función de naturales en naturales, debería estar en la enumeración de funciones que hicimos más arriba. Por lo que $g = f_k$ para algún $k$.
 	
-	Sin embargo, $g(k) = f_k(k) + 1 \neq f_k(k)$ para todo $k$. Luego, $g$ no puede 	ser igual a ninguna de las funciones enumeradas. Absurdo ($f_0,f_1,\dots$ era una enumeración de \textbf{todas} las funciones $\nat\to\nat$)
+	Sin embargo, $g(k) = f_k(k) + 1 \neq f_k(k)$ para todo $k$. Luego, $g$ no puede 	ser igual a ninguna de las funciones enumeradas. Absurdo ($f_0,f_1,\dots$ era una enumeración de \textbf{todas} las funciones $\nat\to\nat$)\qed
 \end{demo}
 
 \subsection{El problema de la detención (Halting Problem)}
@@ -402,13 +402,15 @@ Definimos la función $\Phi^{(n)}(\xDots{x}{n}, e)$ como la salida del programa 
 	Si el tipo $l(U)$ de la instrucción es $V\leftarrow V$, entonces vamos a $N$. Si es una suma vamos a $S$. La condición $\lnot(P|S)$ comprueba si la variable mencionada por $U$ está en cero. Si lo está, vamos a $N$, sino nos fijamos que la instrucción sea, efectivamente, una resta. Si lo es, vamos a $R$, sino seguimos en la próxima instrucción.
 	\end{multicols}
 Si llegamos a la línea del mínimo, quiere decir que la instrucción era un salto condicional y, además, la variable era distinta de cero por lo quu hay que realizar el salto condicional. Aquí se computa la posición de la instrucción que se debe ejecutar a continuación. Y luego se vuelve a comenzar el ciclo.
+\end{demo}
+\begin{demoPart}
 
 En las etiqueta $R$ y $S$ se produce la resta y suma, respectivamente, de la variable correspondiente y luego se salta a $N$.
 
 En $N$ se incrementa $K$ y se vuelve a comenzar el ciclo.
 
 Finalmente, en $F$ se asigna a $Y$ el valor $S[1]$.\qed
-\end{demo}
+\end{demoPart}
 
 A veces notaremos $$\Phi^{(n)}_e(\xDots{x}{n}) = \Phi^{(n)}(\xDots{x}{n},e)$$. Y omitiremos el supra-índice cuando $n=1$
 $$\Phi_e(x) = \Phi_e^{(1)}(x,e)$$
@@ -441,11 +443,12 @@ SNAP$^{(n)}(\xDots{x}{n}, e,t) = \langle$ número de instrucción, lista represe
 Sea $e$ el número de programa que computa $f(\xDots{x}{n })$. Vamos a probar que es verdadero usando el predicado:
 $$R(\xDots{x}{n}, z) = \text{STP}^{(n)}(\xDots{x}{n},e,r(z)) \land (l(z) = r(\text{SNAP}^{(n)}(\xDots{x}{n},e,r(z)))[1]$$
 Primero, supongamos que $f(\xDots{x}{n})\downarrow$. Entonces $\Phi_e^{(n)}(\xDots{x}{n})$ termina en una cantidad  $r(z)$ fínita de pasos.  y $\text{STP}^{(n)}(\xDots{x}{n},e,r(z))$ es verdadero. Además, $r(\text{SNAP}^{(n)}(\xDots{x}{n},e,r(z)))$ representa el estado final del programa por lo que tiene almacenado el valor final de la variable $Y$ en su primer posición.
-
+\end{demo}
+\begin{demoPart}
 De esta forma, caracterizamos $z$ como la tupla que tiene, a la izquierda, el valor $f(\xDots{x}{n})$ y, a la derecha, la cantidad de pasos que hizo el programa $e$ para computar $f$ con esa entrada.
 
-Por otro lado, si $f(\xDots{x}{n})\uparrow$, entonces $\text{STP}^{(n)}(\xDots{x}{n},e,r(z))$ nunca es verdadero por lo que la función $\min$ se indefine (ya que nunca encuentra un $r(z)$ válido).
-\end{demo}
+Por otro lado, si $f(\xDots{x}{n})\uparrow$, entonces $\text{STP}^{(n)}(\xDots{x}{n},e,r(z))$ nunca es verdadero por lo que la función $\min$ se indefine (ya que nunca encuentra un $r(z)$ válido).\qed
+\end{demoPart}
 
 A partir del teorema anterior, se derivan los siguientes:
 
@@ -477,11 +480,11 @@ Supongamos que dado un número de un programa con número $y$ fijamos las variab
 	El número de esta instrucción es: $\langle 0,\langle 1, 2m+1\rangle\rangle = 16m + 10$. Por lo que hay que agregar $u$ este número a la lista de instrucciones $P$, entonces el número de $Q$ se podría computar de la siguiente forma:
 	$$S_m^1(u,y) = \left[
 	\left(\prod_{i=1}^{u}p_i\right)^{16m+10} \prod_{j=1}^{|y+1|}p_{u+j}^{(y+1)_j}\right] \resta 1$$
-	Lo que hace es asignar a los primeros $u$ primos, la instrucción mencionada y mover a $p_{u+1},p_{u+2},\dots$ las instrucciones de $P$. Además, $S_m^1$ es primitiva recursiva (es nuestra codificación de listas).
-
-	\paragraph{Caso inductivo (n = k  + 1):} Asumimos que el resultado vale para $n = k$. Primero aplicamos el mismo resultado que para el caso base y obtenemos que:
 		\end{demo}
 \begin{demoPart}[teorema::parametro]
+	Lo que hace esta fución asignar a los primeros $u$ primos, la instrucción mencionada y mover a $p_{u+1},p_{u+2},\dots$ las instrucciones de $P$. Además, $S_m^1$ es primitiva recursiva (es nuestra codificación de listas).
+
+	\paragraph{Caso inductivo (n = k  + 1):} Asumimos que el resultado vale para $n = k$. Primero aplicamos el mismo resultado que para el caso base y obtenemos que:
 	$$\Phi_y^{(m + k + 1)}(\xDots{x}{m},\xDots{u}{k+1}) = \Phi_{S_{m+k}^1(u_{k+1},y)}^{(m + k)}(\xDots{x}{m},\xDots{u}{k})$$
 	
 	Nuestra hipotesis inductiva es que para cualquier programa existe una función primitiva recursiva $S_m^k$ que nos permite fijar los últimos $k$ parámetros de la entrada. En particular, existe para  el programa $S_{m+k}^1(u_{k+1}, y)$, entonces:
@@ -502,13 +505,16 @@ En la demostración del Halting Problem (Teorema \ref{teorema::haltNoComputable}
 	Sea $S_n^1$ la función del Teorema del parámetro:
 	$$\Phi_y^{(n+1)}(\xDots{x}{n},u) = \phi_{S_n^1(u,y)}^{(n)}(\xDots{x}{n})$$
 	Consideremos la función parcial computable $$h(\xDots{x}{n}, v) = g(S_n^1(v,v),\xDots{x}{n})$$ y sea $z$ el número de un programa que computa $h$, entonces or el teorema del parámetro tenemos que $\Phi_z^{(n+1)}(\xDots{x}{n}, v) = \Phi_{S_n^1(v,z)}^{(n)}(\xDots{x}{n})$.
-	
-	Si fijamos $v = z$, entonces $$\Phi_{S_n^1(v,z)}^{(n)}(\xDots{x}{n}) = \Phi_{S_n^1(z,z)}^{(n)}(\xDots{x}{n}) = g(S_n^1(z,z),\xDots{x}{n})$$
-	
+
+	Si fijamos $v = z$, entonces\\
+\end{demo}
+\begin{demoPart}
+ $$\Phi_{S_n^1(v,z)}^{(n)}(\xDots{x}{n}) = \Phi_{S_n^1(z,z)}^{(n)}(\xDots{x}{n}) = g(S_n^1(z,z),\xDots{x}{n})$$
+
 	Finalmente, podemos remplazar $e = S_n^1(z,z)$ en la formula anterior:
 	
 	$$\Phi_{e}^{(n)}(\xDots{x}{n}) = g(e,\xDots{x}{n})$$\qed
-\end{demo}
+\end{demoPart}
 
 \begin{corolario}\label{corolario::infintosERecursion}
 	Si $g:\nat^{n+1}\to\nat$ es parcial computable, existen \textbf{infinitos} e tal que $$\Phi_e^{(n)}(\xDots{x}{n}) = g(e,\xDots{x}{n})$$
@@ -532,10 +538,10 @@ Un \textbf{quine} es un programa que cuando se ejecuta, devuelve como salida el 
 	Sea $h$ una función parcial computable, hay infinitos $e$ tal que $\Phi_e(x) = h(e)$
 \end{proposicion}
 \begin{demo}
-	Si consideramos $g:\nat^2\to\nat$, $g(z,x) = h(z)$. Por el teorema de la recursión sabemos que existen infinitos programas con número $e$ tal que $\Phi_e(x) = g(e,x) = h(e)$.
+	Si consideramos $g:\nat^2\to\nat$, $g(z,x) = h(z)$. Por el teorema de la recursión sabemos que existen infinitos programas con número $e$ tal que $\Phi_e(x) = g(e,x) = h(e)$.\qed
 \end{demo}
 
-\begin{teorema}
+\begin{teorema}\label{teorema::ePhiFe}
 	Si $f:\nat\to\nat$ es computable, existe un $e$ tal que $\Phi_{f(e)} = \Phi(e)$
 \end{teorema}
 

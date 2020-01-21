@@ -1,5 +1,15 @@
-\newcommand{\red}[1]{{\color{red}#1}}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
 
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\green}[1]{{\color{darkgreen}#1}}
+
+\newcommand{\spuno}[2]{\red{#1}\rightarrow(\blue{#2}\rightarrow \red{#1})}
+
+\newcommand{\spdos}[3]{(\red{#1}\rightarrow(\blue{#2}\rightarrow\green{#3}))\rightarrow((\red{#1}\rightarrow\blue{#2})\rightarrow(\red{#1}\rightarrow\green{#3}))}
+
+\newcommand{\sptres}[2]{(\lnot\red{#1}\rightarrow\lnot\blue{#2})\rightarrow(\blue{#2}\rightarrow\red{#1})}
+	
 \newcommand{\nat}{\ensuremath{\mathbb{N}}}
 \newcommand{\dom}[1]{\text{dom}(#1)}
 \newcommand{\xDots}[2]{\ensuremath{#1_1,\dots, #1_{#2}}}

@@ -1,0 +1,406 @@
+	\section{Lógica Proposicional (Lenguaje $P$)}
+	Vamos a definir un lenguaje formal $P$ que nos permitirá evitar las imprecisiones y ambigüedades de un lenguaje natural. Para esto, vamos a definir:
+	
+	\begin{itemize}
+		\item Un conjunto de símbolos con los que vamos a poder escribir las oraciones del lenguaje: $\lnot,~\rightarrow,~(,~),~p, '$
+		
+		Vamos a llamar símbolos proposicionales a los $p',~p'',~p''',\dots$. Estos símbolos son lo que tienen una traducción directa al lenguaje natural y los llamaremos \textbf{variables propocision}.
+\item Un conjunto de reglas que nos permitirán escribir sentencias \textit{gramaticalmente correctas} (que llamaremos \textbf{fórmulas bien formadas}):
+		\begin{enumerate}
+			\item Todo símbolo proposicional es una fórmula.
+			\item Si $\varphi$ es una fórmula entonces $\lnot\varphi$ es una fórmula.
+			\item Si $\varphi$ y $\psi$ son fórmulas entonces $(\varphi \rightarrow \psi)$ es una fórmula.
+			\item Nada más es una fórmula.
+		\end{enumerate}
+	\end{itemize}
+
+Muchas veces para mejorar la legibilidad de las fórmulas, escribiremos:
+
+\begin{itemize}
+	\item $q$ por $p'$, $r$ por $p''$, $s$ por $p'''$, etc.
+	\item $(\varphi \lor \psi)$ en lugar de $(\lnot\varphi\rightarrow\psi)$.
+	\item $(\varphi \land \psi)$ en lugar de $\lnot(\varphi\rightarrow\lnot\psi)$
+	\item $\varphi$ en lugar de $(\varphi)$
+\end{itemize}
+
+\paragraph{PROP:} Es el conjunto de todos los símbolos proposicionales.
+
+\paragraph{FORM:} Es el conjunto de todas las formulas.
+
+\paragraph{Interpretación (ó valuación):} (o \textbf{valuación}) Es una función $v~:$ PROP $\to\{0,1\}$ que nos indica el valor de verdad de una variable proposicional. La usaremos para decidir si una fórmula es verdadera o no:
+
+Sea $\varphi \in$ FORM (es una fórmula) y $v$ una evaluación, definimos la función ($\vDash$) de la siguiente manera:
+\begin{enumerate}
+	\item Sea $p\in$ PROP, $v\vDash p$ si y solo si $v(p) = 1$
+	\item $v \vDash \lnot\varphi$ si y solo si $v \nvDash\varphi$
+	\item $v \nvDash (\varphi\rightarrow\psi)$ si $v \nvDash\varphi$ ó $v\vDash\psi$
+\end{enumerate}
+
+Y lo leeremos de la siguiente manera:
+\begin{itemize}
+	\item Si $v \vDash \varphi$ leeremos ``$\varphi$ es veradera para $v$".
+	\item $v \nvDash\varphi$ leeremos  ``$\varphi$ es falsa para $v$".
+\end{itemize}
+
+\subsection{Tautologías}
+\paragraph{Tautología:} Es una fórmula $\varphi$ que es verdad para tod	a evaluación $v$. Escribimos $\vDash \phi$ cuando sucede esto.
+
+\begin{proposicion}
+	Sea $\varphi\in$ FORM y sean $v$ y $w$ dos evaluaciones tal que $v(p) = w(p)$ para toda variable propocisional que aparece en $\varphi$. Entonces $v\vDash\varphi$ si y solo si $s\vDash\varphi$
+\end{proposicion}
+
+\paragraph{Notación:} Vamos a notar $V = \langle v(p_1),...,v(p_n) \rangle$, es decir a la $n$-upla que contiene en la $i$-ésima posición el valor en la evaluación $v$ de la $i$-ésima variable propocisional.
+
+\paragraph{Método de decisión:} Es un método que nos permite saber si una fórmula $\varphi$ es tautología o no.
+
+Supongamos que $\varphi$ tiene variables proposicionales $\xDots{p}{n}$. Sea $\mathcal{P}(\{\xDots{p}{n}\}) = \{V_1,\dots,V_{2^n}\}$ el conjunto de partes de las variables proposicionales. Vamos a definir, para $i\in\{1,\dots,2^n\}$, las siguientes valuaciones:
+
+$$v_i(p) = \left\{
+\begin{tabular}{ll}
+1 & si $p\in V_i$ \\
+0 & si no
+\end{tabular}
+\right.$$
+
+Osea definimos $2^n$ evaluaciones que en conjunto cubren todas las posibles combinaciones de valores para las propocisiones. Por lo tanto, podemos asegurar que $\varphi$ es una tautología si y solo si $v_i\vDash\varphi$ para todo $i\in\{1,\dots,2^n\}$.
+
+\subsection{Consecuencia semántica y conjuntos satisfacibles}
+
+\paragraph{Conjunto de fórmulas satisfacible:} Dado un conjunto de fórmulas $\Gamma \subseteq$ FORMS, decimos que es satisfacible si existe una evaluación $v$ tal que $v\vDash\varphi$ para todo $\varphi\in\Gamma$ y notamos $v \vDash \Gamma$.
+
+\paragraph{Consecuencia semántica:} Sea $\Gamma\subseteq$ FORM y $\varphi\in$ FORM entonces $\varphi$ es consecuencia semántica de $\Gamma$ ($\Gamma\vDash\varphi$) si para toda interpretación $v$	 vale que: $v \vDash \Gamma$ entonces $v\vDash\varphi$.
+
+\paragraph{Propiedades:} Sea $\varphi\in$ FORM y $\Gamma,\Delta\subseteq$ FORM entonces valen las siguientes afirmaciones:
+
+	\begin{itemize}
+\begin{multicols}{2}
+
+		\item $\emptyset\vDash\varphi$ si y solo si $\vDash\varphi$ ($\varphi$ es una tautología)
+		\item  Si $\vDash\varphi$ entonces $\Gamma\vDash \varphi$
+		\item $\{\varphi\}\vDash \varphi$
+		\item si $\Gamma\subseteq\Delta$ y $\Gamma\vDash\varphi$ entonces $\Delta\vDash\varphi$
+\end{multicols}
+
+		\item Si $\Gamma\vDash\varphi$ y $\Gamma\vDash(\varphi \rightarrow \psi)$ entonces $\Gamma\vDash\psi$
+\end{itemize}
+
+\subsection{Mecanimos deductivo $SP$}
+Vamos a definir un conjunto de axiomas y reglas que nos permitirán inferir y demostrar el valor de verdad de una fórmula proposicional.
+
+\paragraph{Axiomas:} Sean $\varphi,\psi,\rho\in$ FORM:
+\begin{itemize}
+	\item[\textbf{SP1}] $\spuno{\varphi}{\psi}$
+	\item[\textbf{SP2}] $\spdos{\varphi}{\psi}{\rho}$
+	\item[\textbf{SP3}]$\sptres{\varphi}{\psi}$  
+\end{itemize}
+
+\paragraph{Regla de inferencia:}
+\begin{itemize}
+	\item[MP] Sean $\varphi,\psi\in$ FORM. $\psi$ es una consecuencia inmediata de $\phi\rightarrow\psi$ y $\phi$. Osea que si valen $\phi\rightarrow\psi$ y $\phi$, entonces valoe $\psi$.
+\end{itemize}
+
+\paragraph{Demostración:} Una demostración de $\varphi$ en $SP$ es una cadena de fórmulas del leguaje proposicional  $P$ finita y no vacía ($\varphi_1\dots\varphi_n$) tal que:
+\begin{itemize}
+	\item $\varphi_n = \varphi$ (termina con la fórmula que queremos demostrar).
+	\item $\varphi_i$ es un axioma ó
+	\item $\varphi_i$ es una consecuencia inmediata de $\varphi_k$ y $\varphi_l$ con $k,l < i$.
+\end{itemize}
+
+\paragraph{Teorema:} Es una fórmula para la cual existe una demostración. Usaremos la notación $\vdash\varphi$ para indicar $\varphi$ es un teorema.
+
+\subsubsection{Consecuencia sintáctica}
+Sea $\Gamma\subseteq$ FORM y $\varphi\in$ FORM, entonces $\varphi$ es una \textbf{consecuencia sintáctica} de $\Gamma$ si existe una cadena de fórmulas del leguaje proposicional  $P$ finita y no vacía ($\varphi_1\dots\varphi_n$) tal que:
+\begin{itemize}
+	\item $\varphi_n = \varphi$ (termina con la fórmula que queremos demostrar).
+	\item $\varphi_i$ es una axioma ó
+	\item $\varphi_i\in\Gamma$ ó
+	\item $\varphi_i$ es una consecuencia inmediata de $\varphi_k$ y $ \varphi_l$ con $k,l < i$.
+\end{itemize}
+
+En este caso, la secuencia $\varphi_1\dots\varphi_n$ se llama \textbf{derivación} de $\varphi$ a partir de $\Gamma$ y $\Gamma$ se llama \textbf{teoría}. 
+
+Además, cuando exista una derivación de $\phi$ a partir de $\Gamma$ diremos quer $\varphi$ es un \textbf{teorema de la teoría} $\Gamma$ y notamos $\Gamma\vdash\varphi$.
+
+\subsubsection{Correctitud de SP}
+
+\begin{teorema}\label{teorema::correctitud}
+	Si $\Gamma\vdash\varphi$ entonces $\Gamma\vDash\varphi$. Osea, si $\varphi$ es un teorema de la teoría $\Gamma$, entonces $\varphi$ es válido en toda interpretación de $\Gamma$.
+\end{teorema}
+
+
+\begin{demo}
+	Supongamos que $\Gamma\vdash\varphi$. Es decir, existe una cadena finita y no vacía $\xDots{\varphi}{n}$ de fórmulas de $P$ tal que:
+\begin{itemize}
+	\item $\varphi_n = \varphi$ (termina con la fórmula que queremos demostrar).
+	\item $\varphi_i$ es una axioma ó
+	\item $\varphi_i\in\Gamma$ ó
+	\item $\varphi_i$ es una consecuencia inmediata de $\varphi_k$ y $\varphi_l$ con $k,l < i$.
+\end{itemize}
+
+Vamos a mostrar por inducción en $n$ (la longitud de la demostración) que $\Gamma\vDash\varphi$.
+
+\paragraph{Caso base ($n = 1$):} Sea $v$ una evaluación tal que $v\vDash\Gamma$, queremos ver que $v\vDash\varphi$. Y esto es verdad porque, al ser la demostración de longitud uno, solo tenemos dos posibilades: $\varphi$ es un axioma de $SP$ ó $\varphi\in\Gamma$.
+
+\paragraph{Paso inductivo ($n \Rightarrow n+1$):} Sea $v$ una evaluación tal que $v\vDash\Gamma$, suponemos que $v\vDash\varphi_n$ (satisface todas las fórmulas que tienen una demostración de longitud $\leq n$). Queremos ver que, dada una derivación de $n+1$ fórmulas $\varphi_1,\dots,\varphi_n = \varphi$ , $v\vDash\varphi$.
+
+En este caso tenemos tres posibilidades:
+\begin{itemize}
+	\item Si $\varphi$ es un axioma de $SP$ ó $\varphi\in\Gamma$ entonces es trivial.
+	\item Si $\varphi$ es consecuencia inmediata de $\varphi_i$ y $\varphi_j = \varphi_i \rightarrow \varphi$ (con $i,j\leq n)$, por HI tenemos que $v\vDash\varphi_i$ y $v\vDash\varphi_j$. Entonces necesariamente $v\vDash\varphi$.
+\end{itemize}\qed
+\end{demo}
+
+\subsection{Conjuntos y sistemas consistentes}
+
+\paragraph{Conjunto consistente:} Un conjunto de fórmulas $\Gamma\subseteq$ FORM es cosistente si no existe $\varphi\in$ FORM tal que $\Gamma\vdash\varphi$ y $\Gamma\vdash\lnot\varphi$.
+
+\paragraph{Sistema consistente:} Un sistema $S$ es consistentes si no existe $\varphi\in$ FORM tal que $\vdash_S \varphi$ y $\vdash_S\lnot\varphi$
+
+\begin{teorema}
+	El sitema SP es consistente.
+\end{teorema}
+\begin{demo}
+	Sea $v$ cualquier valuación, por el teorema de correctitud (\ref{teorema::correctitud}), vale que:
+	$$\vdash\varphi \Rightarrow v\vDash\varphi \Rightarrow v\nvDash\lnot\varphi \Rightarrow \nvdash\lnot\varphi$$ 
+	
+	Luego, no puede pasar que $\varphi$ y $\lnot\varphi$ sean teoremas.\qed
+\end{demo}
+
+\paragraph{Propiedades:} Sean $\varphi,\psi\in$ FORM y $\Gamma,\Delta\subseteq$ FORM entonces valen las siguientes afirmaciones:
+
+\begin{itemize}
+	\begin{multicols}{2}
+		
+		\item $\emptyset\vdash\varphi$ si y solo si $\vdash\varphi$ ($\varphi$ es teorema)
+		\item  Si $\vdash\varphi$ entonces $\Gamma\vdash \varphi$
+		\item $\{\varphi\}\vdash \varphi$
+		\item si $\Gamma\subseteq\Delta$ y $\Gamma\vdash\varphi$ entonces $\Delta\vdash\varphi$
+	\end{multicols}
+	
+	\item Si $\Gamma\vdash\varphi$ y $\Gamma\vdash(\varphi \rightarrow \psi)$ entonces $\Gamma\vdash\psi$
+\end{itemize}
+
+\subsubsection{Teorema de la deducción}
+\begin{teorema}\label{teorema::deduccion}
+	Si $\Gamma\cup\{\varphi\}\vdash\psi$ entonces $\Gamma\vdash\varphi\rightarrow\psi$ 
+\end{teorema}
+
+\begin{demo}
+	Supongamos que $\xDots{\varphi}{n}$ es una derivación de $\psi$ a partir de $\Gamma\cup\{\varphi\}$, vamos a demostrar el teorema por inducción:
+
+	\paragraph{Caso base (n = 1):} La derivación es una sola fórmula $\varphi_1 = \psi$, queremos ver que $\Gamma\vdash\varphi\rightarrow\psi$.
+	\begin{itemize}
+		\item Si $\psi$ es una axioma de $SP$:
+		\begin{enumerate}
+			\item $\psi$ puede ser derivado pues es un axioma.
+			\item $\spuno{\psi}{\varphi}$ por $SP1$.
+			\item Por MP con $1$ y $2$, $\varphi\rightarrow\psi$
+		\end{enumerate}
+	Luego, $\vdash\varphi\rightarrow\psi$ ($\varphi\rightarrow\psi$ es un teorema del sistema), es decir, que se puede derivar a partir de cualquier conjunto $\Gamma$ de fórmulas.
+	\item Si $\psi\in\Gamma$, entonces:
+\begin{enumerate}
+	\item $\psi$ se puede derivar por pertenecer a $\Gamma$.
+	\item $\spuno{\psi}{\varphi}$ por $SP1$.
+	\item Por MP con $1$ y $2$, $\varphi\rightarrow\psi$
+\end{enumerate}
+		Luego, $\Gamma\vdash\varphi\rightarrow\psi$.
+		\end{itemize}
+			\end{demo}
+	\begin{demoPart}[]
+		\begin{itemize}
+		\item $\varphi = \psi$ entonces tenemos que ver existe una derivación para $\psi\rightarrow\psi$:
+		\begin{enumerate}
+			\item $\spuno{\psi}{(\psi\to\psi)}$ por SP1.
+			\item $\spdos{\psi}{(\psi\to\psi)}{\psi}$ por SP2.
+			\item $(\red{\psi}\to\blue{(\psi\to\psi)})\to(\red{\psi}\to\green{\psi})$ por MP entre $1$ y $2$.
+			\item $\spuno{\psi}{\psi}$ por SP1.
+			\item $\blue{\psi}\to\red{\psi}$ por MP entre $3$ y $4$.
+		\end{enumerate}
+	Luego $\vdash \psi\to\psi$, ($\psi\to\psi$ es un teorema) y, por lo tanto es derivable a partir de  $\Gamma$.
+	\end{itemize}
+
+\paragraph{Caso inductivo ($n\Rightarrow n+1$)}: Suponemos que para toda derivación de alguna fórmula $\psi'$ a partir de $\Gamma\cup\{\varphi\}$ de longitud $< n$ tenemos que $\Gamma\vdash\varphi\to\psi'$. Queremos ver que $\Gamma\vdash\varphi\to\psi$:
+
+\begin{itemize}
+	\item Si $\psi$ es una axioma de $SP$, $\psi\in\Gamma$ ó $\psi = \varphi$, hay que hacer lo mismo que en el caso base.
+	\item Si $\psi$ se infiere por MP de $\varphi_i$ y $\varphi_j$ con $i,j < n$ supongamos, sin perdida de generalidad, que $\varphi_j = \varphi_i\to\psi$.
+	\begin{enumerate}
+		\item Como $\Gamma\cup\{\varphi\}\vdash\varphi_i$ y la derivación tiene longitud $ < n$, por hipotesis inductiva sabemos que $\Gamma\vdash\varphi\to\varphi_i$. 
+		\item Idem para $\varphi_j$. $\Gamma\vdash\varphi\to\varphi_j$, osea que $\Gamma\vdash\varphi\to(\varphi_i\to\psi)$.
+		\item Por SP2 tenemos que: $\spdos{\varphi}{\varphi_i}{\psi}$	
+		
+		\item Por MP entre $3$ y $2$ obtenemos: $(\red{\varphi}\to\blue{\varphi_i})\to(\red{\varphi}\to\green{\psi})$
+		
+		\item Y por MP entre $4$ y $1$ obtenemos: 
+		$\red{\varphi}\to\green{\psi}$
+	\end{enumerate}
+Luego $\Gamma\vdash\varphi\to\psi$.\qed
+\end{itemize}
+\end{demoPart}
+
+\subsubsection{Conjuntos consistentes}
+\begin{proposicion}\label{proposicion::inconsistentes}
+	Sean $\Gamma\subseteq$ FORM y $\varphi\in$ FORM:
+	\begin{enumerate}
+		\item $\Gamma\cup\{\lnot\varphi\}$ es inconsistente si y solo si $\Gamma\vdash\varphi$.		
+		\item $\Gamma\cup\{\varphi\}$ es inconsistente si y solo si $\Gamma\vdash\lnot\varphi$.
+	\end{enumerate}
+\end{proposicion}
+
+\begin{demo}
+	\paragraph{$\bm{(\Leftarrow)}$} Si $\Gamma\vdash\varphi$, entonces $\Gamma\cup\{\lnot\varphi\}$ es inconsistente trivialmente. Pues $\Gamma\cup\{\lnot\varphi\}\vdash\varphi$ y \\ $\Gamma\cup\{\lnot\varphi\}\vdash\lnot\varphi$.
+	
+	\paragraph{$\bm{(\Rightarrow):}$} Supongamos que $\Gamma$ es inconsistente, entonces existe una fórmula $\psi$ tal que $\Gamma\cup\{\lnot\varphi\}\vdash\psi$ y $\Gamma\cup\{\lnot\varphi\}\vdash\lnot\psi$.
+	
+	Por el teorema de la deducción (\ref{teorema::deduccion}) tenemos que $\Gamma\vdash\lnot\varphi\to\psi$ y $\Gamma\vdash\lnot\varphi\to\lnot\psi$
+	
+	\red{NO ME SALIÓ $--->$ } Se puede ver que $\vdash (\lnot\varphi\to\psi)\to((\lnot\varphi\to\lnot\psi)\to\varphi)$
+
+	Luego, por MP 2 veces tenemos que $\Gamma\vdash\varphi$. \qed
+\end{demo}
+
+\begin{teorema}\label{teorema::SatisfacibleEsConsistente}
+	Si $\Gamma\subseteq$ FORM es satisfacible entonces $\Gamma$ es consistente.
+\end{teorema}
+
+\begin{demo}
+Sea $v$ una valuación tal que $v\vDash\Gamma$, supongamos que $\Gamma$ es inconsistente. Entonces existe una fórmula $\psi$ tal que $\Gamma\vdash\psi$ y $\Gamma\vdash\lnot\psi$.
+
+Por correctitud de SP (teorema \ref{teorema::correctitud}), $\Gamma\vDash\psi$ y $\Gamma\vDash\lnot\psi$ entonces: $v\vDash\psi$ y $v\vDash\lnot\psi$. Esto es absurdo, pues $v$ estaría asignando dos valores de verdad a la misma fórmula y entonces no sería una función.
+\end{demo}
+
+\paragraph{Conjunto maximal consistente:} $\Gamma\subseteq$ FORM es maximal consistente (m.c.) en SP si:
+\begin{itemize}
+	\item $\Gamma$ es consistente.
+	\item para toda fórmula $\varphi$:
+	\begin{itemize}
+		\item $\varphi\in\Gamma$ ó
+		\item existe $\psi$ tal que $\Gamma\cup\{\varphi\}\vdash\psi$ y $\Gamma\cup\{\varphi\}\vdash\lnot\psi$ 
+	\end{itemize}
+\end{itemize}
+
+\paragraph{Lema de Lindenbaum:} 
+
+\begin{lema}\label{lema::lindebaum}
+\textit{Si $\Gamma\subseteq$ FORM es consistente, existe $\Gamma'$ m.c. tal que $\Gamma\subseteq\Gamma'$}.
+\end{lema}
+\begin{demo}
+	Sea $\varphi_1,\varphi_2,\dots$ una enumarición de todas la fórmulas, vamos a definir la siguiente sucesión:
+	\begin{itemize}
+		\item $\Gamma_0 = \Gamma$
+		\item $\Gamma_{n+1} =\left\{
+		\begin{tabular}{ll}
+			$\Gamma_n\cup\{\varphi_{n+1}\}$ & si $\Gamma_n\cup\{\varphi_{n+1}\}$ es consistente \\
+			$\Gamma_n$ & si no
+		\end{tabular}
+		\right. $
+		\item $\Gamma' = \bigcup_{i \geq 0} \Gamma_i$
+	\end{itemize}
+
+Es claro que $\Gamma\subseteq\Gamma'$, veamos que $\Gamma'$ es maximal consistente:
+
+\paragraph{$\bm{\Gamma'}$ es consistente:} Supongamos que no, entonces existe $\psi$ tal que $\Gamma'\vdash\psi$ y $\Gamma'\vdash\lnot\psi$, entonces existen dos derivaciones que usan las fórmulas $\{\lambda_1,\dots,\lambda_k\}\subseteq\Gamma'$ para ambas fórmulas. 
+\end{demo}
+\begin{demoPart}
+Esto quiere decir que hubo un paso $j$ de la sucesión en la que se agregó la fórmula $\varphi_{j}$ al $\Gamma_{j-1}$ y $\Gamma_j \vdash \psi$ y $\Gamma_j \vdash\lnot\psi$. Pero esto es absurdo ya que, por como definimos la sucessión de $\Gamma$s, solo hubiesemos agregado la fórmula si se mantiene la consistencia.
+
+\paragraph{$\bm{\Gamma'}$ es maximal:} Supongamos que $\varphi\notin\Gamma'$. Entonces debe existir $n$ tal que $\varphi_{n+1} = \varphi$ y $\varphi_{n+1}\notin\Gamma_{n+1}$ (porque $\Gamma_{n} \cup\{\varphi_{n+1}\}$ sería inconsistente). Luego, como $\Gamma_{n} \subseteq \Gamma'$, si queremos agregarle $\varphi$ lo haremos inconsistente. \qed
+\end{demoPart}
+
+\begin{proposicion}
+	Si $\Gamma'$ es m.c. entonces paratoda $\varphi\in$ FORM pueden pasar dos cosas:
+	\begin{itemize}
+		\item o bien $\varphi\in\Gamma'$
+		\item o bien $\lnot\varphi\in\Gamma'$
+	\end{itemize}
+\end{proposicion}
+
+\begin{demo}
+	Es claro que las dos ($\varphi$ y $\lnot\varphi$) no pueden estar al mismo en $\Gamma'$ porque sería inconsistente. Vamos a probar que por lo menos hay una de ellas.
+	
+	Supongamos que ninguna está. Como $\Gamma$ es maximal entonces:
+	\begin{itemize}
+		\item $\Gamma'\cup\{\phi\}$ es inconsistente entonces $\Gamma'\vdash\lnot\varphi$
+		\item $\Gamma'\cup\{\lnot\varphi\}$ es inconsistente entonces $\Gamma'\vdash\varphi$
+	\end{itemize}
+	Osea que $\Gamma'\vdash\lnot\varphi$ y $\Gamma'\vdash\varphi$ por lo que es inconsistente. Esto es absurdo ya que $\Gamma'$ es maximal consistente.
+\end{demo}
+
+\begin{teorema}
+	Si $\Gamma\subseteq$ FORM es consistente entonces $\Gamma$ es satisfacible.
+\end{teorema}
+
+\begin{demo}
+	Sea $\Gamma$ consistente, y $\Gamma'$ un conjunto maximal consistente que contenga a $\Gamma$.
+	
+	Sea $v$ una evaluación tal que $v(p) = 1$ si y solo si $p\in\Gamma'$. Vamos a demostar por inducción en la  \textbf{complejidad} de $\varphi$ (cantidad de $\lnot$ ó $\to$ que aparecen $\varphi$) la siguiente propiedad:
+	$$v\vDash\varphi \text{ si y solo si } \varphi\in\Gamma'$$
+	Si esto es verdad, entonces, como $\Gamma\subseteq\Gamma'$, $v\vDash\Gamma$ trivialmente.
+	\paragraph{Caso base:} $\varphi=p$. Es trivial por definición de $v$.
+	\paragraph{Paso inductivo:} Supongamos que $v\vDash\varphi$ sii $\varphi\in\Gamma'$ para toda $\varphi$ de complejidad $< m$. Sea $\varphi$ de complejidad $m$, tenemos dos casos:
+
+	\begin{itemize}
+		\item $\varphi=\lnot\psi$ 
+		\begin{itemize}
+			\item[$(\Rightarrow)$] $v\vDash\varphi\Rightarrow v\nvDash\psi\overset{HI}{\Rightarrow} \psi\notin\Gamma' \Rightarrow \lnot\psi\in\Gamma' \Rightarrow \varphi\in\Gamma'$
+						\item[$(\Leftarrow)$] $\varphi \in\Gamma' \Rightarrow \psi\notin\Gamma'\overset{HI}{\Rightarrow} v\nvDash\psi \Rightarrow v\vDash\lnot\psi\Rightarrow v\vDash\psi$
+		\end{itemize}
+	\end{itemize}
+		\end{demo}
+\begin{demoPart}
+\begin{itemize}
+		\item $\varphi=\psi\to\rho$
+				\begin{itemize}
+			\item[$(\Rightarrow)$] $v\vDash\varphi\Rightarrow v\vDash(\psi\to\rho)\Rightarrow v\nvDash\psi$ o $v\vDash\rho$
+			\begin{itemize}
+				\item Si $v\nvDash\psi\overset{HI}{\Rightarrow}\psi\notin\Gamma'\Rightarrow \Gamma'\vdash\lnot\psi$
+				
+				Sabemos que $\vdash\lnot\psi\to(\psi\to\rho)$ entonces por modus ponens $\Gamma'\vdash\psi\to\rho$, por lo que $\psi\to\rho\in\Gamma'$.
+				
+				\item Si $v\vDash\rho\overset{HI}{\Rightarrow}\rho\in\Gamma'\Rightarrow\Gamma'\vdash\rho$.
+				
+				Por SP1 sabemos que $\vdash\rho\to(\psi\to\rho)$ entonces por MP tenemos que $\Gamma'\vdash\psi\to\rho$. Luego $\psi\to\rho\in\Gamma'$.
+			\end{itemize}
+		\item[$\bm{(\Leftarrow)}$] $\varphi\in\Gamma'$, supongamos que $v\nvDash\varphi\Rightarrow\Rightarrow v\vDash\psi$ y $v\nvDash\rho\overset{HI}{\Rightarrow}\psi\in\Gamma'$ y $\rho\notin\Gamma'\Rightarrow \psi\in\Gamma'$ y $\lnot\rho\in\Gamma' \Rightarrow \Gamma'\vdash\psi$ y $\Gamma'\vdash\lnot\rho$.
+		
+		Sabemos que $\vdash\psi\to(\lnot\rho\to\lnot(\psi\to\rho))$. Aplicando dos veces MP nos queda $\Gamma'\vdash\lnot(\psi\to\rho)$, por loque $\lnot\psi\to\rho)\in\Gamma'$, luego $\varphi= \psi\to\rho\notin\Gamma'$. Absurdo. \qed 
+		\end{itemize}
+	\end{itemize}
+\end{demoPart}
+
+\paragraph{Teorema de la completitud fuerte}
+
+\begin{corolario}\label{corolario::ConsistenteSiiSatisfacible}
+	$\Gamma$ es consistente si y solo si $\Gamma$ es satisfacible.
+\end{corolario}
+
+Esto se deduce directamente de combinar los teoremas  \ref{teorema::SatisfacibleEsConsistente} y el lema \ref{lema::lindebaum}.
+
+\begin{teorema}
+	Si $\Gamma\vDash\varphi$ entonces $\Gamma\vdash\varphi$
+\end{teorema}
+
+\begin{demo}
+	Supongamos que $\Gamma\vDash\varphi$, entonces $\Gamma\cup\{\lnot\varphi\}$ es insatisfacible y, por lo tanto, inconsistente (Corolario \ref{corolario::ConsistenteSiiSatisfacible}).
+	
+	Luego, por propocisión \ref{proposicion::inconsistentes} tenemos que, como $\Gamma\cup\{\lnot\varphi\}$ es inconsistente, vale que $\Gamma\vdash\varphi$. \qed
+\end{demo}
+
+\begin{corolario}
+	$\Gamma\vdash\varphi$ si y solo si $\Gamma\vDash\varphi$
+\end{corolario}
+
+\begin{corolario}
+	$\vdash\varphi$ si y solo si $\vDash\varphi$  ($\varphi$ es un teorema de SP si y solo si es tautología)
+\end{corolario}
+
+\paragraph{Teorema de compacidad}
+\begin{teorema}
+	Sea $\Gamma\subseteq$ FORM. Si todo subconjunto finito de $\Gamma$ es satisfacible entonces $\Gamma$ es satisfacible.
+\end{teorema}
+
+\begin{demo}
+	Lo demostramos por contraposicin. Supongamos que $\Gamma$ es insatisfacible, tenemos que ver que es imposible que se cumpla el antecedente. Osea que $\Gamma$ debe tener algún subcojunto fínito que es insatisfacible.
+	\end{demo}\begin{demoPart}
+	Como $\Gamma$ es insatisfacible entonces es inconsistente. Osea que existe una fórmula $\psi$ tal que $\Gamma\vdash\psi$ y $\Gamma\vdash\lnot\psi$ en una cantidad finita de pasos. Esto quiere decir que existe un subconjunto finito $\Delta\subseteq\Gamma$ que contiene a las derivaciones de ambas fórmulas y, por lo tanto, $\Delta\vdash\psi$ y $\Delta\vdash\lnot\psi$ (es inconsistente e insatifacible).
+\end{demoPart}

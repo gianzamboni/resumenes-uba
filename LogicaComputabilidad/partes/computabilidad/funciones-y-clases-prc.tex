@@ -352,7 +352,7 @@ Los observadores de pares son primitivas recursivas
 	\begin{itemize}
 		\item $l(z) = \min\limits_{x\leq z} \left(\left(\exists y\right)_{\leq z}~ z = \left\langle x,y\right\rangle\right)$
 		\item $r(z) = \min\limits_{y\leq z} \left(\left(\exists x\right)_{\leq z}~ z = \left\langle x,y\right\rangle\right)$
-	\end{itemize}
+	\end{itemize}\qed
 \end{demo}
 
 \subsubsection{Codificación de secuencias}\label{secc::codSecuencias}
@@ -385,5 +385,5 @@ Los observadores de secuencias son primitivas recursivas
 				\item [] Es el mínimo $t$ tal que $p_i^{t+1}$ no divide a $x$. La función $p_i$ que nos devuelve el $i$-ésimo primo es primitiva recursiva y el predicado de divisibilidad son primitivos recursivos (Ver apéndice \ref{appendix::funcpr})
 			\end{itemize}
 		\item $|x| = \min\limits_{i\leq x}\left(x[i]\neq 0 \land \left(\forall j\right)_{\leq x} \left(j\leq i \lor x[j] = 0\right)\right)$
-	\end{itemize}
+	\end{itemize}\qed
 \end{demo}
