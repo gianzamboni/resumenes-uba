@@ -171,12 +171,18 @@ El algoritmo de Tomasulo crea un scheduling dinámico que permite ejecutar instr
 
 \paragraph{Register Renaming:} El primer ítem se logra asignando a cada registro un alias. Para eliminar los WAR y WAW hazards, se utiliza una tabla llamada \textbf{Register Alias Table} que asocia un tag con cada operando de una operación.
 
-\paragraph{Register Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que estén listas para ser ejecutadas. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
+\paragraph{Reservation Station (RS):} Una vez realizado el renombre se le asigna, a la instrucción, un RS. Un RS es un subsistema de hardware compuesto de bancos de registros internos que se encarga de mantener las instrucciones en espera hasta que estén listas para ser ejecutadas. Éste chequea constantemente por la disponibilidad de los operandos de la instrucción. Para cada uno de ellos cuyo valor no esté disponible, el RS, guarda el \textit{tag} que se le asignó en el paso anterior.
 
 Cada vez que una unidad de ejecución pone disponible un operando, transmite el \textbf{tag} asociado al mismo junto con su valor a todas las RS. Cuando una instrucción tiene todos sus operandos disponible, el RS espera a que la unidad funcional asociada a ella esté libre y luego la despacha.
 
 \paragraph{Common Data Bus}: Es un datapath que cruza la salida de las unidades funcionales y atraviesa las RS, los Floating Point Buffers, los Floating Points Registers y el Floating Point Operations Stack. Se usa para realizar el broadcast de los resultados al finalizar cada operación.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{imagenes/tomasulo_architecture}
+	\caption{FPU de IBM/360 con la mejora de Tomasulo}
+	\label{fig:shiftregister}
+\end{figure}
 \paragraph{Pseudocodigo:}
 Cada Registro contiene un tag que indica el último escritor en el registro.
 

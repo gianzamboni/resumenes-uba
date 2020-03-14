@@ -103,12 +103,6 @@ Para implementar estas memorias se debe agregar un controlador que se encarga de
 \subsubsection{Mapeo directo}
 Se divide, a la memoria en $2^j - 1$ paginas. Y cada página en $n$ bloques.
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.75\textwidth]{imagenes/cache-mapeo-directo}
-	\caption{Mapeo directo}
-	\label{fig:direct-mapping}
-\end{figure}
 \begin{itemize}
 	\item Los primeros $j$ bits de la dirección identifican la página a la que pertenece la línea.
 	\item Los siguientes $n$, el set que les corresponde en la caché.
@@ -126,6 +120,13 @@ Para  buscar una dirección de memoria, en este tipo de caché:
 		\item Sino, se trae de memoria un bloque de tamaño del set y remplaza el set actual por ese.
 	\end{itemize}
 \end{itemize}
+\begin{minipage}{\textwidth}
+	\centering
+\includegraphics[width=\textwidth]{imagenes/cache-mapeo-directo}
+
+Mapeo directo
+	
+\end{minipage}
 
 \subsubsection{Totalmente asociativa}
 Un bloque de memoria puede ser cargado en cualquier línea de la cache. Para determinar si un bloque se encuentra en la cache, se debe examinar el tag de todas las líneas para encontrar un match. Cuando la caché esta llena, se utiliza un algoritmo (generalmente least recently used - LRU)) para decidir que bloque remplazar.
@@ -134,17 +135,18 @@ Un bloque de memoria puede ser cargado en cualquier línea de la cache. Para det
 Otros algoritmos de remplazo son FIFO (Firt In- First out, remplaza el bloque mas viejo) o LFU (Least frequently used, remplaza el bloque menos referenciado).
 
 \subsubsection{Asociativa de dos vías}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.75\textwidth]{imagenes/cache-asociativo-vias}
-	\caption{Asociativo por 2 vías}
-`	\label{fig:asociativo-mapping}
-\end{figure}
 
 Es una combinación de las dos anteriores. La cache se divide en dos y a un bloque le corresponde un set especifico. Sin embargo, dentro de ese set puede ser copiado en cualquiera de las dos mitades. Cuando hay que remplazar un bloque, se utiliza un LRU para decidir cual mitad usar.
 
+\begin{minipage}{\textwidth}
+	\centering
+		\includegraphics[width=\textwidth]{imagenes/cache-asociativo-vias}
+	
+	Asociativo por 2 vías
+	\label{fig:asociativo-mapping}
+\end{minipage}
 
-\subsection{Operación de escritura (Coherencia de caché)}
+\subsection{Operación de escritura}
 
 Cuando modificamos un valor, sería ideal que el cambio se vea reflejado tanto en la caché como en memoria principal. Si esto no pasa, entonces diremos que las memorias son inconsistentes/incoherentes.
 
@@ -212,7 +214,7 @@ En este protocolo, un bloque de memoria en la caché puede estar en cuatro estad
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.5\textwidth]{imagenes/mesi-state-graph}
-	\caption{Diagrama de estados de MESI}
+	\caption{Diagrama de estados de MESI. Cada nodo es un posible estado de un bloque de memoria. Supongmoas que vemos el proceso desde una caché. Las señales con prejifo ``P'' son las señales generadas por la misma (como lo ve la caché en la que estamos parados). Las señales con prefijo ``B'' es como actuán las demás cachés cuando ven la señal emitida por la caché en la que estamos parados. }
 	\label{fig:mesiDiagram}
 \end{figure}
 
@@ -224,16 +226,16 @@ En este protocolo, un bloque de memoria en la caché puede estar en cuatro estad
 \end{itemize}
 
 \paragraph{Lectura de un bloque:}
-Supongamos que el procesador necesita leer un bloque de memoria, entonces produce un processor read (\textbf{PR}):
+Supongamos que el procesador necesita leer un bloque de memoria, entonces produce una señal de tipo processor read (\textbf{PR}):
 \begin{itemize}
 	\item Si el bloque esta en caché (\textbf{Modified}, \textbf{Exclusive} o \textbf{Shared}), se resuelve el pedido.
 	\item Si el bloque es \textbf{Invalid} entonces se genera un busRead (\textbf{BR}) y todas las cachés responden con una señal indicando si tienen o no una copia del valor pedido:
 	\begin{itemize}
 		\item Si no está en ninguna otra caché, se lo carga en modo \textbf{Exclusive} desde memoria principal.
-		\item Si lo tiene alguna otra, se copia el bloque en modo \textbf{shared} después de haber tomado las medidas necesarias para mantener la consistencia. Si la otra caché lo tiene:
+		\item Si lo tiene alguna otra, se copia el bloque en modo \textbf{Shared} después de haber tomado las medidas necesarias para mantener la consistencia. Si la otra caché tiene el bloque:
 		\begin{itemize}
 			\item En modo \textbf{Exclusive}, se lo pasa a estado \textbf{Shared}.
-			\item En modo \textbf{Modified}, se copian a memoria principal los cambios realizados y se lo pasa a \textbf{Shared}
+			\item En modo \textbf{Modified}, se copian a memoria principal los cambios realizados y se lo pasa a \textbf{Shared}.
 			\item En modo \textbf{Shared}, no se hace nada.
 		\end{itemize}
 	\end{itemize}
@@ -243,16 +245,27 @@ Supongamos que el procesador necesita leer un bloque de memoria, entonces produc
 
 \begin{itemize}
 	\item Si el dato está en caché en modo \textbf{Modified} o \textbf{Exclusive}, genera un processor write (\textbf{PW}) y se modifica la caché. En el segundo caso, se pasa al estado \textbf{Modified}.
-	\item Si está en \textbf{Invalid} ó \textbf{Shared}:
+	\item Si el bloque está en modo \textbf{Invalid} ó \textbf{Shared}:
 	\begin{itemize}
-		\item Genera un Processor Request For Ownership (\textbf{PRFO}), pasa el bloque a estado \textbf{Exlusive} y todas las otras cachés invaliden sus copias.
+		\item Genera un Processor Request For Ownership (\textbf{PRFO}). Esto hace que su copia pase al estado \textbf{Exlusive} y la copia en todas las otras cachés pase a modo \textbf{Invalid}.
 		\item Luego, genera el proccesor write (\textbf{PW}), realiza las modificaciones y pasa el bloque a \textbf{Modified}
 	\end{itemize}
 \end{itemize}
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.5\textwidth]{imagenes/mesi-implementation}
-	\caption{Implementación de MESI en un SMP}
-	\label{fig:mesiDiagram}
-\end{figure}
+\begin{minipage}{\textwidth}	\centering
+	\includegraphics[width=0.75\textwidth]{imagenes/mesi-implementation}
+
+	Implementación de MESI en un SMP
+	\label{fig:mesiImplementation}
+\end{minipage}
+
+\subsubsection{Protocolo MESIF}
+Este protocolo es una modificación de MESI desarrollada por Intel para arquitecturas de memoria no uniformes. Consiste de los 4 estados de MESI más un nuevo estado llamado \textbf{Forward} (F).
+
+Este nuevo estado es una forma especializada de estado Shared e indica que esa caché fue designada para responder cualquier pedido de la línea correspondiente. El protocolo asegura que, si hay una caché que tiene la linea en estado \textbf{Shared} entonces hay por lo menos una caché que la tiene en estado \textbf{Forward}.
+
+En los sitemas que emplean el protocolo MESI, el pedido de una linea que está en estado Shared en múltiples cachés es atendido de manera ineficiente. Puede ser respondido por la (lenta) memoria principal ó todas las cachés que la contienen pueden bombardear a la caché solicitante con respuestas redundantes.
+
+En un sistema que hace uso de MESIF, el pedido de una linea será atendido solo por la caché que la contiene en estado \textbf{Forward}. Esto permite que la caché que hizo el request reciba una única copia a gran velocidad, evitando congestiones en el bus.
+
+Como en el protocolo MESI, una caché puede descartar una línea en estado \textbf{Shared} ó \textbf{Forward} de manera unilateral, sin avisar al resto. Es posible que haya copias de una línea que estén estado \textbf{Shared} y ninguna esté en estado \textbf{Forward}. Para minimizar esta posibilidad, cuando una caché envía su copia de la línea, esta pasa a estado \textbf{Shared} y la caché que la recibe la guarda en estado \textbf{Forward}.
