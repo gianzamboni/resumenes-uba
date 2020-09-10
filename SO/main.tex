@@ -5,279 +5,457 @@
 
 \addbibresource{bibliography.bib}
 
+\input{custom.commands.tex}
 \title{Sistemas Operativos - Apuntes para final}
 \author{Gianfranco Zamboni}
 
 \input{../page.setup}
-
-\newcommand{\red}[1]{{\color{red}#1}}  			% Rojo, duh (?)
-
 \begin{document}
 	\maketitle
 	\tableofcontents
 
 \newpage
 \section{Introducción}
+Un sistema informático tiene cuatro componentes:
 
-Un sistema operativo es un intermedario entre los elementos de hardware y los programas de un usuario. Tiene que manejar la contención y la concurrencia tratando de lograr un buen rendimiento.
+\begin{itemize}
+	\item El hardware (CPU, memoría y dispositivos de entrada salida) proveen los recursos básicos del sistema.
+	\item Las aplicaciones definen la forma en que estos recursos va a ser usados para resolver los problemas del usuario.
+	\item El sistema operativo controla el hardware y coordina su uso entre las distintas aplicaciones de los usuarios.
+\end{itemize}
 
-Sus elementos básicos son:
+\subsection{El sistema operativo}
+Un sistema operativo provee un entorno de ejecución de programas. Para esto tiene ciertos componentes que difieren de sistema en sistema pero que entre lo más comunes se encuentran:
+
 \begin{itemize}
 	\item \textbf{Drivers:} Programas manejan los detalles de bajo nivel relacionados con la operación de los distintos dispositivos.
-	\item \textbf{Núcleo}: (o Kernel) Es el sistema operativo, propiamente dicho. Se encarga de las tareas fundamentales y contiene los diversos subsitemas que iremos viendo a lo largo de la materia.
-\end{itemize}
-\begin{itemize}
-	\item \textbf{Interprete de comandos:} (o Shell) Un programa que le permite al usuario interactuar con el sistema operativo.
-
-	\item \textbf{Procesos:} Son todos los programas en ejecución junto con su espacio de memoria asociado y otros atributos.
-	
-	
+	\item \textbf{Núcleo}: (o Kernel) Es el sistema operativo, propiamente dicho. Se encarga de las tareas fundamentales y contiene los diversos sub-sistemas que iremos viendo a lo largo de la materia.
 	\item\textbf{Sistema de archivos}: Forma de organizar los datos en el disco para gestionar su acceso, permisos, etc.
 	\begin{itemize}
 			\item \textbf{Archivo:} Secuencia de bits con un nombre y una serie de atributos que indican permisos.
 			\begin{itemize}
-				\item\textbf{Binario del sistema}: Son archivos que no forman parte del kernel pero suelen llevar a cabo tareas muy importantes o prooveer las utilidades básicas del sistema.
+				\item\textbf{Binario del sistema}: Son archivos que no forman parte del kernel pero suelen llevar a cabo tareas muy importantes o proveer las utilidades básicas del sistema.
 				\item \textbf{Archivos de configuración:} Son archivos especiales con información que el sistema operativo necesita para funcionar.
 			\end{itemize}
-		
+
 		\item \textbf{Directorio}: Colección de archivos y directorios que contiene un nombre y se organiza jerárquicamente.
 		\begin{itemize}
 			\item\textbf{Directorios del sistema}: Son directorios donde el propio SO guarda archivos que necesita para su funcionamiento.
 		\end{itemize}
 		\item \textbf{Dispositivo virtual}: Abstracción de un dispositivo físico bajo la forma, en general, de un archivo de manera tal que se pueda abrir, leer, escribir, etc.
-		
-		\item \textbf{Usuario}: La representación, dentro del propio Sistema Operativo, de las personas qo entidades que pueden usarlo. Sirve principalmente como una forma de aislar infromación entre distintos usuarios reales y de establecer limitaciones.
-		
+
+		\item \textbf{Usuario}: La representación, dentro del propio Sistema Operativo, de las personas qo entidades que pueden usarlo. Sirve principalmente como una forma de aislar información entre distintos usuarios reales y de establecer limitaciones.
+
 		\item \textbf{Grupo}: Una colección de usuarios
-	\end{itemize}	
+	\end{itemize}
 \end{itemize}
 
-\red{Manejo básico de un shell Unix}
+\paragraph{Systems calls (Syscalls):} Son rutinas que proveen una interfaz a los servicios disponibles en el sistema. Generalmente, son rutinas escritas en C/C++ y llamarlas implican un cambio de contexto y privilegios del proceso a ser ejecutado. Algunos de estos servicios son:
+\begin{itemize}
+	\item Creación y control de procesos.
+	\item Pipes.
+	\item Señales
+	\item Operaciones de archivos y directorios
+	\item Excepciones
+	\item Errores del bus
+	\item Biblioteca C
+\end{itemize}
+
 \section{Procesos y API}
-En este modelo, todo software que puede ser ejecutado (incluso el mismo SO) es organizado en procesos. Los procesos son instancias de un programa en ejecución, incluyen program counter (PC), registros, variables, archivos abiertos por el proceso y cualquier dato necesario para que el SO pueda ejecutarlo.
 
-A cada proceso se le asigna un \textbf{process Id} (o pid)
+\paragraph{Proceso:} Es un programa en ejecución y todas las estructuras que debe mantener el sistema para su correcto funcionamiento. Entre ellas, los valores de los registros, el program counter, el stack del proceso, el área de memoria en la que se cargan las instrucciónes a  ejecutar (el programa propiamente dicho) y el área de datos (contiene variables globales) y un heap de memoria (que es donde reserva memoria dinámica).
 
-Cuando el CPU tiene un solo núcleo y se necesitan ejecutar varios procesos al mismo tiempo, se simula el multitasking haciendo correr de manera consecutiva cada proceso por un intervalo corto de tiempo. Esto es, dado un intervalo de tiempo (quantum), un proceso es ejecutado durante 1 quantum, luego se realiza un cambio de de contexto y se pasa al siguiente proceso.
+\subsection{Creación y control de un proceso}
+\subsubsection{Creación de un proceso}
 
+Durante su ejecución, un proceso puede crear nuevos procesos. En este caso llamamos \textbf{proceso padre} al proceso que crea nuevos procesos y \textbf{procesos hijos} a los procesos creados. Además, cada proceso hijo podrá crear otros procesos, formando así un \textbf{árbol} de procesos.
 
-\subsection{Cambio de contexto (Cotext Swith)}
-\begin{enumerate}
-\item Se guarda el program counter (PC), registros, stack pointer (SP), recursos en uso y estado del proceso [etc] actual en la tabla de procesos.
-\item Se carga el program counter del vector de interrupciones que fue asignado al scheduler.
-\item Se carga los datos del scheduler (los mismo que en el primer paso).
-\item El scheduler decide a que proceso le toca y devuelve el process id de este.
-\item Se cargan los datos del próximo proceso a ejecutar.
+En la mayoría de los sistemas operativos, se asigna a cada proceso un identificador numérico único llamado \textbf{process id} o \textbf{pid} que sirve como índice para poder acceder a varios de sus atributos.
 
-\end{enumerate}
+El nuevo proceso hijo creado necesitara de ciertos recursos para poder llevar a cabo su objetivo. Estos recursos podrán ser obtenidos directamente del sistema operativo o estar restringidos a los recursos del proceso padre.
 
-### El Process Control Block (PCB)
-Para implementar el modelo de procesos, el sistema operativo mantiene una tabla de procesos (PT) con una entrada por proceso, cada una de estas entradas es un PCB y contiene información sobre el estado del proceso, el PC, el SP, el estado de los archivos que tiene abiertos, la información de scheduling y cualquier otra información que sea considerada necesaria por el SO para que, si el proceso es interrumpido, cuando vuelva a ser su turno pueda seguir corriendo como si nada hubiese pasado.
+Cuando un proceso crea un nuevo proceso (\texttt{fork()}) hay dos posibilidades:
 
-### System calls (syscalls)
-La forma más frecuente, para un proceso, de comunicarse con el SO son las sycalls. Los syscalls son rutinas escritas en lenguajes de bajo nivel que permiten hacer uso de los servicios habilitados por el sistema. Por lo general, para hacer un syscall, se pasa el número correspondiente a la syscall que se desea hacer al registro indicado por el sistema operativo (en Linux el registro `rax`). Después se ejecuta una interrupción del tipo **TRAP** que cambia de modo usuario a modo kernel y luego se ejecuta el handler correspondiente. Por último, se vuelve a modo usuario y, si es posible, se retorna el control al proceso con el PC aumentado en uno.
+\begin{itemize}
+	\item El padre y su hijo continúan ejecutando concurrentemente.
+	\item El padre espera a que alguno o todos sus hijos terminen para seguir ejecutando (\texttt{wait()}).
+\end{itemize}
 
-Las syscalls se diferencian de las llamadas a funciones de librería, en que ejecutan código provisto por el kernel en modo kernel cuando las otras se ejecutan con los privilegios del proceso que la llamó .
+Además, el nuevo proceso puede ser un duplicado de su padre o cargar un nuevo programa (\texttt{exec()})
 
-Las syscalls pueden ser agrupadas en seis grandes categorias:
-* **De control de procesos**
+\begin{center}
+	\includegraphics[width=0.9\textwidth]{imagenes/process_creation.png}
+	\end{center}
 
-Crean, borran o modifican el estado y/o los atributos de un proceso.
-* **De administración de archivos**
+\subsubsection{Terminación}
+Un proceso termina cuando ejecuta su última instrucción y pide al sistema operativo que lo borre usando la syscall \texttt{exit()}. En este momento, el proceso envía el código de estado con el que terminó a su padre y el sistema operativo libera todo los recursos que le había asignado.
 
-Crean, borran, abren, cierran, leen o modifican archivos.
-* **De administración de dispositivos**
+La terminación puede ocurrir por varios motivos. Un proceso puede causar la terminación de otro usando las syscalls adecuadas (usualmente, esto puede hacerlo solo el proceso padre).
 
-Permiten, a los procesos, usar los recursos del sistema (los recursos pueden ser pensados como dispositivos físicos o virtuales)
-* **De mantenimiento de información**
+\subsubsection{Un poco más sobre las syscalls mencionadas}
+\begin{itemize}
+	\item \texttt{pid\_t fork()}: Crea un nuevo proceso. En el caso del creador se retorna el PID del hijo. En el caso del hijo, retorna 0.
+	\item \texttt{int\ execve(const char* filename, char* const argv[], char* const envp[] )}: \\ Sustituye la imagen de memoria del programa por la del programa ubicado en filename.
+	\item \texttt{pid\_t forkv()}: Crea un hijo sin copiar la memoria del padre, el hijo tiene que hacer \texttt{exec}.
 
-Permiten acceder a información del sistema (fecha, hora, nombre del SO, archivos y otros atributos)
-* **De Comunicación**
+	Un proceso creado con esta syscall comienza con sus páginas de memoria apuntando a las mismas que las de su padre. Recién cuando alguno escriba en memoria, se hace la copia. Esto se llama \textbf{Copy-On-Write}.
 
-Permiten que dos o mas procesos y/o dispositivos intercambien información (pasándose mensajes o a través de memoria compartida).
+	\item \texttt{pid\_t wait(int* status)}: Bloquea al padre hasta que algún hijo termine o hasta que alcance el status indicado.
+	\item \texttt{pid\_t waitpid(pid\_t pid, int* status)}: Igual al anterior pero espera a que el hijo con PID \texttt{pid} llegue a ese status.
+	\item \texttt{void exit(int status)}: Finaliza el proceso actual.
+	\item \texttt{clone(...)}: Crea un nuevo proceso. El hijo comparte parte del contexto con el padre. Es usado en la implementación de threads.
+\end{itemize}
 
-### Estados de un proceso
-#### New
+\paragraph{Fork Bomb:} Un proceso crea infinitos hijos.
+\subsection{Estados de un proceso}
+Durante su ejecución, un proceso va modificando su estado acorde al siguiente diagrama:
 
-Cuando el proceso es recién creado. En Linux, la única syscall que permite crear un nuevo proceso es `fork`. Esta, crea un clon exacto del proceso que llamó a la syscall.
+\begin{center}
+	\vspace*{0.5cm}
+	\includegraphics[width=0.9\textwidth]{imagenes/estados-proceso.png}
+\end{center}
 
-#### Terminated
+\begin{itemize}
+	\item \textbf{Nuevo (New):} El proceso se está creando.
+	\item \textbf{Listo (Ready):} El proceso está listo para ser ejecutado.
+	\item \textbf{Bloqueado (Waiting):} El proceso está esperando a que ocurra algo (por ejemplo a que se complete una operación de entrada salida)
+	\item \textbf{Ejecutando (Running):} El proceso se está ejecutando.
+	\item \textbf{Terminado (Terminated):} El procesó termino de ejecutarse.
+\end{itemize}
 
-Cuando el proceso terminó de ejecutarse. Esto se puede deber a varios motivos:
-* Porque terminó lo que debía hacer.
-* Porque hubo algún error durante la ejecución.
-* Otro proceso lo obligó a terminar.
+Es importante notar que solo un proceso puede estar \textbf{ejecutando} en un instante de tiempo de dado. Sin embargo, muchos procesos pueden estar bloqueados o listos simultáneamente.
 
-#### Ready
+\subsection{Process Control Block (PCB)}
+Cada proceso está representado, en el sistema operativo, por un Process Control Block o Task Control Block. El mismo contiene información asociada a cada proceso, entre ellas:
+\begin{itemize}
+	\item El estado del proceso
+	\item El program counter (la dirección de memoría de la próxima instrucción a ser ejecutada)
+	\item Los registros del CPU,
+	\item Información de Scheduling, como puede ser prioridad de ejecución
+	\item Información de manejo de memoria, como las direcciones de los directorios de paginas o las tablas de segmentación.
+	\item Estadísticas de uso del sistema
+	\item Información de E/S (que dispositivos está usando, lista de archivos abiertos, etc)
+\end{itemize}
 
-Cuando el proceso está listo para ser ejecutado pero no hay recursos disponibles para que esto ocurra.
-#### Running
+\subsection{Scheduler}
+\paragraph{Multiprocesador:} Un equipo con más de un procesador.
+\paragraph{Multiprogramación:} La capacidad de un SO de tener varios procesos en ejecución.
+\paragraph{Multiprocesamiento:} Se refiere al tipo de procesamiento que sucede en los multiprocesadores.
+\paragraph{Multitarea:} Es una forma especial de multiprogramación, donde la conmutación entre procesos se hace de manera tan rápida que da la sensación de que varios programas están corriendo en simultáneo.
+\paragraph{Multithreaded:} Son procesos en los cuales hay varios \textit{mini procesos} corriendo en paralelo (de manera real o ficticia).
 
-Cuando el proceso está siendo ejecutado
-#### Waiting/Blocked
+\subsubsection{Context Switching}
+Una interrupción hace que el sistema operativo cambie la tarea de una CPU y corra un rutina del kernel. Cuando esto ocurre, el sistema, debe guardar el \textbf{contexto} del proceso que se está ejecutando para poder retornar a la ejecución del mismo cuando termine de atenderla. Este contexto es el PCB del proceso.
 
-El proceso no se puede ejecutar porque esta esperando algún evento externo a éste ocurra. (Por ejemplo esperando una operación de I/O).
+\vspace*{0.5cm}
+\begin{center}
+	\includegraphics[width=0.625\textwidth]{imagenes/context-switch.png}
 
-### Transiciones entre estados
-![State_Graph](https://github.com/Gian150/talleres-so/blob/master/wiki_documents/state_graph.png)
+\end{center}
 
-### Jerarquía de procesos
-En algunos sistemas, cuando un proceso crea otro proceso, el proceso padre y el proceso hijo son asociados de alguna forma. El proceso hijo puede, a su vez, crear mas procesos. En Linux, un proceso, todos sus hijos y cualquier proceso que desciendan de estos forman un grupo de procesos.
+	\subsubsection{Colas de procesos}
+Una de las características de los sistemas operativos actuales es que nos permiten correr varias aplicaciones a la vez, sin embargo solo un proceso puede estar ejecutando en la CPU. Para darnos la sensación de simultaneidad, el SO hace lo que se llama \textbf{preemption}.
 
-Cuando el sistema empieza (en Linux), se lanza un proceso `init` que lee en un archivo cuantas terminales debe haber y luego se "_forkea_" en un nuevo proceso por cada terminal. Estos procesos esperan a que algún usuario se loguee, si el login es exitoso, la terminal ejecuta una shell para aceptar comandos. Y estos comandos podrían generar más procesos. Así, todos los procesos del sistema pertenecen al mismo árbol con raíz `init`.
+\paragraph{Preemption:} A cada proceso le asigna un \textbf{quantum} o una cantidad de tiempo durante la cual es ejecutado. Una vez que transcurrido ese tiempo, se guarda el contexto del proceso en memoria y se carga el contexto del próximo proceso a ejecutar.
 
-Para ver como funciona el `fork` en linux, ver [Ejercicio 1](https://github.com/Gian150/talleres-so/wiki/Ejercicio-1-(Taller-Ptrace)) del taller de Ptrace.
+El objetivo de la multiprogramación es intercambiar las tareas que se ejecutan en la CPU lo suficientemente rápido como para que el usuario pueda interactuar con dada programa como si estuviesen ejecutándose simultáneamente.Para esto existe un proceso especial llamado \textbf{Scheduler} que selecciona el próximo proceso que debe ser ejecutado.
 
-## Parte 2: Comunicación entre procesos
-Hay dos tipos de procesos: 
-* independientes
-* cooperativos
+El mismo dispone de varias colas de procesos en los que se encuentran los PCB de los procesos en ejecución. Los PCB se van encolando y desencolando de cada cola dependiendo del estado de cada proceso.
 
-Un proceso _independiente_ no afecta ni es afectado por otro proceso, uno _cooperativo_ puede afectar o ser afectado por otros procesos.
+\vspace*{0.5cm}
+\begin{center}
+	\includegraphics[width=0.8\textwidth]{imagenes/process_queues.png}
+\end{center}
 
-Los procesos cooperativos requieren un mecanismo de comunicación de interprocesos (IPC) que les permita intercambiar información. Algunas razones para permitir que procesos se comuniquen son:
-* Compartir información
-* Aumentar velocidad de computo de ciertas tareas que puedan ser divididas en subtareas que se puedan ejecutar en paralelo
-* Modularizar un proceso y separar sus funcionalidades
-Hay dos tipos fundamentales de modelos de IPC: **memoria compartida** y **transmisión de mensajes**.
+\subsection{Inter Process Communication (IPC)}
+Los procesos que se están ejecutando concurrentemente en el sistema operativa pueden ser \textbf{procesos independientes} o \textbf{cooperativos}.
 
-### Memoria compartida
-Cuando se usa memoria compartida, es necesario establecer la región de memoria que debe ser compartida y para que procesos este área será habilitada. El tipo de información y donde esta información se guarda es definida por los procesos y no por el sistema operativo. Y, además, los mismos procesos son los que se encargan de asegurar que no están escribiendo la misma dirección de memoria simultáneamente.
+\paragraph{Procesos independiente:} Es un proceso que no puede afectar o ser afectado por otros procesos ejecuntandose en el sistema operativo.
 
-### Transmisión de mensajes
-La transmisión de mensajes provee una forma para que dos o mas procesos se comuniquen entre ellos sin la necesidad de compartir memoria. Si dos sistemas _P_ y _Q_
-quieren comunicarse debe existir un link de comunicación entre ambos procesos. Este link puede ser logrado de distintas formas y con distintos métodos.
+\paragraph{Procesos cooperativos:} Son procesos que no son independientes (pueden afectar o ser afectados por otros procesos).
 
-La transmisión de mensajes es particularmente útil en sistemas distribuidos donde los procesos que necesitan comunicarse pueden estar siendo ejecutados en distintas computadoras conectadas a una red.
+Los procesos cooperativos requieres de un mecanismo de comunicación que les permita intercambiar datos e información. Hay dos modelos fundamentales para hacer esto: \textbf{memoria compartida} y \textbf{Pasaje de mensajes}.
 
-#### Comunicación directa o indirecta
-*  **Comunicación Directa Simétrica**: El proceso que quiere enviar el mensaje debe especificar al proceso destinatario y el proceso destinatario debe indicar cuál es el proceso que le debe mandar el mensaje
-*  **Comunicación Directa Asimétrica**: El proceso que quiere enviar el mensaje debe espicificar el destinatario pero el destinatario puede aceptar mensajes de cualquier proceso.
-* **Comunicación indirecta**
-Los mensajes son enviados a un _mailbox_. Un _mailbox_ es un contenedor de mensajes al que ciertos procesos pueden enviar mensajes y del que ciertos procesos puede recibir mensajes._
+En el modelo de memoria compartida, se establece un área de memoría que es compartida entre procesos. Los procesos pueden intercambiar información leyendo y escribiendo en este área.
 
-#### Sincronización
-El intercambio de mensajes puede ser sincronizado (bloqueante) o asíncrono(no bloqueante). 
-* **Envío bloqueante**: El proceso que envía es bloqueado hasta que el mensaje halla sido recibido.
-* **Envío no bloqueante**: El proceso envía el mensaje y sigue con su ejecución.
-* **Recepción bloqueante**: El proceso se bloquea hasta que le llegue un mensaje.
-* **Recepción no bloqueante**: El proceso recibe un mensaje válido o no recibe nada pero sigue ejecutándose.
+En el modelo de pasaje de mensajes, la comunicación se realiza a través de mensajes entre los procesos cooperativos.
 
-## Parte 3: Anexo Taller IPC (Inter-Process Comunication)
-(Ver [Taller IPC](https://github.com/Gian150/talleres-so/wiki/Taller-IPC))
+\subsubsection{Pasaje de mensaje}
+Los mensajes proveen a los procesos un mecanismo que permite que los procesos se comuniquen entre si y sincronicen sus acciones. Un sistema que permite el pasaje de mensajes provee al menos dos operaciones:
+\begin{center}
+	\texttt{send(message)}\hspace*{1cm}\texttt{receive(message)}
+\end{center}
 
+Los mensajes pueden tener una longitud fija o variable. La primera opción es más fácil de implementar pero hace que la programación de tareas sea mas tediosa. Los mensajes de longitud variable necesitan un sistema más complejo pero permite más agilidad a la hora de programar tareas.
 
-Estados de un proceso
-Introducción al scheduler
-E/S bloqueante / no bloqueante
-IPC
+Si un proceso $P$ y $Q$ se quieren comunicar, entonces debe existir un \textbf{link de comunicación} entre ellos. Para crear este link, se deben tener en cuenta el tipo de comunicación que se desea ofrecer:
+\begin{itemize}
+	\item \textbf{Direccionamiento}
+	\begin{itemize}
+		\item \textbf{Conexión directa:} Cada proceso debe explicitar el nombre del proceso destinatario/receptor:
+		\begin{itemize}
+			\item \texttt{send(P, message)} - Envía un mensaje al proceso $P$
+			\item \texttt{receive(Q, message)} - Recibe un mensaje del proceso $Q$
+		\end{itemize}
 
+		En este caso, el link de comunicación se establece automáticamente entre cada par de procesos que quiere comunicarse. Y cada proceso sabe la identidad del otro.
+
+		\item \textbf{Comunicación indirecta:} Los mensajes son enviados a buzones (\textbf{mailboxes}) o puertos (\textbf{puertos}). Cada buzón tiene un identificador único. Un proceso puede comunicarse con otro a través de varios buzones.
+		\begin{itemize}
+			\item \texttt{send(A, message)} - Envía un mensaje al buzón $A$
+			\item \texttt{receive(A, message)} - Recibe un mensaje del buzón $A$
+		\end{itemize}
+
+		En este esquema, un link se establece entre dos procesos solo si comparten un buzón. Además un link puede estar asociado a varios pares de procesos e incluso puede haber varios links entre dos mismos procesos.
+
+	\end{itemize}
+	\item \textbf{Sincronización:} El pasaje de mensajes puede ser bloqueante (síncrono) o no bloqueante (asíncrono):
+	\begin{itemize}
+		\item \textbf{Envío bloqueante:} El proceso que envía un mensaje espera a que el mismo sea recibido por su destinatario.
+		\item \textbf{Envío no bloqueante:} El proceso envía el mensaje y sigue su ejecución.
+		\item \textbf{Recepción bloqueante:} El proceso se bloquea hasta que recibe un mensaje.
+		\item\textbf{Recepción no bloqueante:} El receptor recibe un mensaje válido o null.
+	\end{itemize}
+	\item Buffering: Los mensajes intercambiados entre procesos deben almacenarse en una cola temporal. Estas colas pueden ser de tres tipo:
+	\begin{itemize}
+		\item\textbf{Capacidad Cero:} El link no puede tener mensajes en espera. El remitente debe bloquearse hasta que el mensaje sea recibido.
+		\item \textbf{Capacidad acotada:} La cola tiene una capacidad finita $n$ por lo que puede haber a lo sumo $n$ en espera. Si la cola no está llena se puede enviar un mensaje, sino el remitente debe bloquearse hasta que se que haya espacio disponible.
+		\item \textbf{Capacidad infinita:} El remitente nunca se bloquea.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{\red{Pipes}}
+
+\subsection{E/S bloqueante / no bloqueante}
+	Cundo un proceso necesita escribir o leer información de algún dispositivo necesita realizar operaciones de \textbf{entrada/salida}
+
+	Estas operaciones son muy lentas por lo que quedarse bloqueado es un desperdicio de tiempo.
+
+	\paragraph{Busy Waiting:} El proceso no hace nada pero no libera el CPU. Se gastan ciclos de procesamiento en hacer nada.
+
+	Para evitar esto se utilizan algunas técnicas que permiten al SO operativo seguir ejecutando mientras espera la respuesta de los dispositivos:
+
+	\begin{itemize}
+		\item \textbf{Polling}: El proceso libera la CPU per todavía recibe un quantum que desperdicia hasta que la E/S esté terminada.
+		\item \textbf{Interrupciones:} Esto permite la multiprogramación. El SO no le otorgá más quantum al proceso hasta que su E/S esté lista. El hardware comunica esto mediante una interrupción que hace que el proceso se despierte.
+	\end{itemize}
+
+	\subsection{Manejo básico de un shell Unix}
+\subsubsection{File descriptors:}
+	En Unix, cada proceso se crea con una tabla que le permite identificar cuales son los archivos que tiene abiertos. Cada índice es un \textbf{file descriptors} que usa el Kernel para saber como leer/escribir datos en los distintos archivos (en Unix, el teclado y la pantalla se modelan como archivos).
+	
+	Además, cada proceso hereda de su proceso padre tres archivos abiertos que ocupan los file descriptors 0, 1 y 3 y representan la entrada estándar (\textbf{stdin}), la salida estandar (\textbf{stdout}) y el error estandar (\textbf{stderr}), respectivamente.
+	
+	Linux provee de dos llamadas al sistema que nos permiten leer/escribir a un archivo usando su file descriptor \texttt{fd}:
+	
+	\begin{center}
+		\texttt{ssize\_t read(int fd, void *buf, size\_t count)}
+
+		\texttt{ssize\_t write(int fd, const void *buf, size\_t count);}
+	\end{center}
+	
+Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribir y \texttt{count} la cantidad de bytes que hay escribir/leer.
+
+\subsubsection{Comandos de consola}
+\begin{itemize}
+	\item \texttt{echo} escribe lo que le pasemos como parámetro en su \textbf{stdout}.
+	\begin{center}
+		\texttt{echo "Esto es un mensaje"}
+	\end{center}
+	\item \texttt{>} Se le indica a la consola que el \textbf{stdout} se redirija a un archivo:
+	\begin{center}
+		\texttt{echo "Esto es un mensaje" > mensaje.txt}
+	\end{center}
+	\item \texttt{|} Redirige el \textbf{stdout} de un proceso hacia el \textbf{stdin} de otro:
+	
+	\begin{center}
+		\texttt{echo "Esto es un mensaje" | wc -c}
+	\end{center}
+
+	En este caso, el primer proceso ejecuta el comando \texttt{echo} que imprime en \textbf{stdout} el mensaje \texttt{"Esto es un mensaje"}. El segundo proceso recibe por \textbf{stdin} lo que se escribió en el \textbf{stdout} del proceso que ejecutó \texttt{echo}
+\end{itemize}
+
+\newpage
+	
 \section{Scheduling}
+	\subsection{Objetivos de la política de scheduling}
+	\begin{itemize}
+		\item La política de scheduling es una de las principales huellas del sistema operativo.
+		\item 
+	\end{itemize}
+	\subsection{\red{Scheduling con y sin desalojo}}
+	% TODO
+	\subsection{\red{Políticas de scheduling}}
+	% TODO
+	\subsection{\red{Scheduling para tiempo real y para SMP}}
+	% TODO
 
-Objetivos de la política de scheduling
-Scheduling con y sin desalojo
-Políticas de scheduling
-Scheduling para tiempo real y para SMP
+\section{\red{Sincronización entre procesos}}
+	\subsection{\red{Contención}}
+	% TODO
+	\subsection{\red{Condiciones de carrera}}
+	% TODO
+	\subsection{\red{Secciones críticas}}
+	% TODO
+	\subsection{\red{TestAndSet}}
+	% TODO
+	\subsection{\red{Busy waiting / sleep}}
+	% TODO
+	\subsection{\red{Productor - Consumidor}}
+	% TODO
+	\subsection{\red{Semáforos}}
+	% TODO
+	\subsection{\red{Introducción a deadlock}}
+	% TODO
+	\subsection{\red{Monitores}}
+	% TODO
+	\subsection{\red{Variables de condición}}
+	% TODO
 
-\section{Sincronización entre procesos}
+\section{\red{Programación concurrente}}
+	\subsection{\red{Algoritmos wait-free}}
+	% TODO
+	\subsection{\red{Algoritmos lock-free}}
+	% TODO
+	\subsection{\red{CAS}}
+	% TODO
+	\subsection{\red{ABA}}
+	% TODO
+	\subsection{\red{Programación de multicores}}
+	% TODO
+	\subsection{\red{Invalidación de caché}}
+	% TODO
+	\subsection{\red{Reorden de instrucciones}}
+	% TODO
 
-Contención
-Condiciones de carrera
-Secciones críticas
-TestAndSet
-Busy waiting / sleep
-Productor - Consumidor
-Semáforos
-Introducción a deadlock
-Monitores
-Variables de condición
+\section{\red{Administración de memoria}}
+	\subsection{\red{Segmentación}}
+	% TODO
+	\subsection{\red{Paginación}}
+	% TODO
+	\subsection{\red{Swapping}}
+	% TODO
+	\subsection{\red{MMU}}
+	% TODO
+	\subsection{\red{Memoria virtual}}
+	% TODO
+	\subsection{\red{Copy-on-write}}
+	% TODO
+	\subsection{\red{Algoritmos de reemplazo de páginas}}
+	% TODO
+\section{\red{Administración de entrada/salida}}
+	\subsection{\red{Polling, interrupciones, DMA}}
+	% TODO
+	\subsection{\red{Almacenamiento secundario}}
+	% TODO
+	\subsection{\red{Drivers}}
+	% TODO
+	\subsection{\red{Políticas de scheduling de E/S a disco}}
+	% TODO
+	\subsection{\red{Gestión del disco (formateo, booteo, bloques dañados)}}
+	% TODO
+	\subsection{\red{RAID}}
+	% TODO
+	\subsection{\red{Copias de seguridad}}
+	% TODO
+	\subsection{\red{Spooling}}
+	% TODO
+	\subsection{\red{Clocks}}
+	% TODO
 
-\section{Programación Concurrente}
+\section{\red{Sistemas de archivos}}
+	\subsection{\red{Responsabilidades del FS}}
+	% TODO
+	\subsection{\red{Punto de montaje}}
+	% TODO
+	\subsection{\red{Representación de archivos}}
+	% TODO
+	\subsection{\red{Manejo del espacio libre}}
+	% TODO
+	\subsection{\red{FAT, inodos}}
+	% TODO
+	\subsection{\red{Atributos}}
+	% TODO
+	\subsection{\red{Directorios}}
+	% TODO
+	\subsection{\red{Caché}}
+	% TODO
+	\subsection{\red{Consistencia, journaling}}
+	% TODO
+	\subsection{\red{Características avanzadas}}
+	% TODO
+	\subsection{\red{NFS, VFS}}
+	% TODO
 
-Algoritmos wait-free
-Algoritmos lock-free
-CAS
-ABA
-Programación de multicores
-Invalidación de caché
-Reorden de instrucciones
+\section{\red{Protección y seguridad}}
+	\subsection{\red{Conceptos de protección y seguridad}}
+	% TODO
+	\subsection{\red{Matrices de permisos}}
+	% TODO
+	\subsection{\red{MAC vs. DAC}}
+	% TODO
+	\subsection{\red{Autenticación, autorización y auditoría}}
+	% TODO
+	\subsection{\red{Funciones de hash de una vía}}
+	% TODO
+	\subsection{\red{Encriptación simétrica}}
+	% TODO
+	\subsection{\red{RSA}}
+	% TODO
+	\subsection{\red{Privilegios de procesos}}
+	% TODO
+	\subsection{\red{Buffer overflows}}
+	% TODO
+	\subsection{\red{Inyección de parámetros}}
+	% TODO
+	\subsection{\red{Condiciones de carrera}}
+	% TODO
+	\subsection{\red{Sandboxes}}
+	% TODO
+	\subsection{\red{Principios generale de seguridad}}
+	% TODO
 
-\section{Adminitración de memoria}
+\section{\red{Sistemas distribuidos}}
+	\subsection{\red{Taxonomía de Flynn}}
+	% TODO
+	\subsection{\red{Arquitecturas de HW y SW para sistemas distribuidos}}
+	% TODO
+	\subsection{\red{RPC}}
+	% TODO
+	\subsection{\red{Threads}}
+	% TODO
+	\subsection{\red{Pasaje de mensajes}}
+	% TODO
+	\subsection{\red{Orden parcial entre eventos}}
+	% TODO
+	\subsection{\red{Livelock}}
+	% TODO
+	\subsection{\red{Acuerdo bizantino}}
+	% TODO
+	\subsection{\red{Intuición de safety, liveness, fairness}}
+	% TODO
+	\subsection{{Algoritmo del banquero}}
+	% TODO
+	\subsection{\red{Panadería de Lamport}}
+	% TODO
+	\subsection{\red{Modelos de fallas y métricas de complejidad}}
 
-Segmentación
-Paginación
-Swapping
-MMU
-Memoria virtual
-Copy-on-write
-Algoritmos de reemplazo de páginas
+	% TODO
+	\subsection{\red{Exclusión mutua y locks distribuidos}}
+	% TODO
+	\subsection{\red{Elección de líder}}
+	% TODO
+	\subsection{\red{Instantánea global consistente}}
+	% TODO
+	\subsection{\red{2PC}}
+	% TODO
 
-\section{Adminitración de entrada/salida}
-
-Polling, interrupciones, DMA
-Almacenamiento secundario
-Drivers
-Políticas de scheduling de E/S a disco
-Gestión del disco (formateo, booteo, bloques dañados)
-RAID
-Copias de seguridad
-Spooling
-Clocks
-
-\section{Sistema de archivos}
-
-Responsabilidades del FS
-Punto de montaje
-Representación de archivos
-Manejo del espacio libre
-FAT, inodos
-Atributos
-Directorios
-Caché
-Consistencia, journaling
-Características avanzadas
-NFS, VFS
-
-\section{Protección y seguridad}
-
-Conceptos de protección y seguridad
-Matrices de permisos
-MAC vs. DAC
-Autenticación, autorización y auditoría
-Funciones de hash de una vía
-Encriptación simétrica
-RSA
-Privilegios de procesos
-Buffer overflows
-Inyección de parámetros
-Condiciones de carrera
-Sandboxes
-Principios generale de seguridad
-
-\section{Sistemas distribuidos}
-
-Taxonomía de Flynn
-Arquitecturas de HW y SW para sistemas distribuidos
-RPC
-Threads
-Pasaje de mensajes
-Orden parcial entre eventos
-Livelock
-Acuerdo bizantino
-Intuición de safety, liveness, fairness
-Algoritmo del banquero
-Panadería de Lamport
-Modelos de fallas y métricas de complejidad
-Exclusión mutua y locks distribuidos
-Elección de líder
-Instantánea global consistente
-2PC
-
-\section{Conceptosavanzados}
-
-Virtualización
-Contenedores
-Cloud computing
-
+\section{\red{Conceptos avanzados}}
+	\subsection{\red{Virtualización}}
+	% TODO
+	\subsection{\red{Contenedores}}
+	% TODO
+	\subsection{\red{Cloud computing}}
+	% TODO
 \end{document}
 
