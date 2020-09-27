@@ -1,10 +1,5 @@
 \input{../document.setup}
 
-\usepackage[style=nature,intitle=true,sorting=none]{biblatex}
-
-
-\addbibresource{bibliography.bib}
-
 \input{custom.commands.tex}
 \title{Sistemas Operativos - Apuntes para final}
 \author{Gianfranco Zamboni}
@@ -13,7 +8,7 @@
 \begin{document}
 	\maketitle
 	\tableofcontents
-
+	
 \newpage
 \section{Introducción}
 Un sistema informático tiene cuatro componentes:
@@ -224,6 +219,12 @@ Si un proceso $P$ y $Q$ se quieren comunicar, entonces debe existir un \textbf{l
 	\end{itemize}
 \end{itemize}
 
+\subsubsection{Sockets}
+Los sockets son los extremos de una comunicación que usan dos procesos para comunicarse a través de una red. Cada socket está identificado por una dirección IP y un número de puerto. 	
+
+En general, se usa una arquitecutra cliente-servidor: El servidor espera a que un cliente haga un pedido y, una vez que lo recibe, acepta la conexión del socket del cliente para completar la conexión. El número del socket del servidor, en general, va a ser menor o igual a 1024. Estos puerstos son los puertos conocidos (\textit{well known ports}) e implementan
+
+Cuando el proceso cliente inicia la conexión, la computadora que lo está ejecutando le asigna un puerto arbitrario cuyo número es mayor a 1024.
 \subsubsection{\red{Pipes}}
 
 \subsection{E/S bloqueante / no bloqueante}
