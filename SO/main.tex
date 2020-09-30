@@ -225,7 +225,20 @@ Los sockets son los extremos de una comunicación que usan dos procesos para com
 En general, se usa una arquitecutra cliente-servidor: El servidor espera a que un cliente haga un pedido y, una vez que lo recibe, acepta la conexión del socket del cliente para completar la conexión. El número del socket del servidor, en general, va a ser menor o igual a 1024. Estos puerstos son los puertos conocidos (\textit{well known ports}) e implementan
 
 Cuando el proceso cliente inicia la conexión, la computadora que lo está ejecutando le asigna un puerto arbitrario cuyo número es mayor a 1024.
-\subsubsection{\red{Pipes}}
+\subsubsection{Pipes}
+Un \textbf{pipe} es un canal que provee una de las formas más simples de comunicación entre dos procesos aunque tienen sus limitaciones. Al implementar un pite, se debe tener ciertas consideraciones: 
+\begin{enumerate}
+	\item ¿El pipe permite comunicación bidireccional o unidireccional?
+	\item Si es bidireccional, es \textbf{half-duplex} (para mandar información se debe esperar a que el otro extremo del pipe termina de hacerlo) o \textbf{full-duplex} (la información puede viajar de un lado a otro y viceversa simultaneamente).
+	\item ¿Debe existir alguna relación entre los procesos que se están comunicando (por ejemplo, padre-hijo)?
+	\item ¿Los procesos se van a poder comunicar dentro de una red o tienen que estar en la misma maquina?
+\end{enumerate}
+
+\paragraph{Ordinary pipes:} Permiten que dos procesos se comuniquen en modo servidor-consumidor: El servidor escribe en un extremo del pipe (extremo de escritura) y el consumidor lee desde el otro extremo (extremo de lectura). Estos pipes son unidireccionales. Si se necesita una comunicación bidireccional se debe crear otro pipe que permita mandar datos en la otra dirección.
+
+Este tipo de pipes requieren que los procesos que se comunican tengan una relación padre-hijo y dejan de existir una vez que la comunicación termina.
+
+\paragraph{Named pipes:} Proveen comunicación bidireccional y no necesitan que los procesos estén relacionados. Una vez que es establecido, varios procesos pueden usarlo para comunicarse y continuan existiendo incluso después de que las comunicaciones hayan finalizado.
 
 \subsection{E/S bloqueante / no bloqueante}
 	Cundo un proceso necesita escribir o leer información de algún dispositivo necesita realizar operaciones de \textbf{entrada/salida}
@@ -261,33 +274,74 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 \begin{itemize}
 	\item \texttt{echo} escribe lo que le pasemos como parámetro en su \textbf{stdout}.
 	\begin{center}
-		\texttt{echo "Esto es un mensaje"}
-	\end{center}
+		\texttt{echo ``Esto es un mensaj''}	\end{center}
 	\item \texttt{>} Se le indica a la consola que el \textbf{stdout} se redirija a un archivo:
 	\begin{center}
-		\texttt{echo "Esto es un mensaje" > mensaje.txt}
+		\texttt{echo ``Esto es un mensaje'' > mensaje.txt}
 	\end{center}
 	\item \texttt{|} Redirige el \textbf{stdout} de un proceso hacia el \textbf{stdin} de otro:
 	
 	\begin{center}
-		\texttt{echo "Esto es un mensaje" | wc -c}
+		\texttt{echo ``Esto es un mensaje'' | wc -c}
 	\end{center}
 
-	En este caso, el primer proceso ejecuta el comando \texttt{echo} que imprime en \textbf{stdout} el mensaje \texttt{"Esto es un mensaje"}. El segundo proceso recibe por \textbf{stdin} lo que se escribió en el \textbf{stdout} del proceso que ejecutó \texttt{echo}
+	En este caso, el primer proceso ejecuta el comando \texttt{echo} que imprime en \textbf{stdout} el mensaje \texttt{``Esto es un mensaje''}. El segundo proceso recibe por \textbf{stdin} lo que se escribió en el \textbf{stdout} del proceso que ejecutó \texttt{echo}
 \end{itemize}
-
+  
 \newpage
 	
-\section{Scheduling}
+\section{Scheduling} 
+	En sistemas con un único procesados, solo se puede correr de a un proceso por vez. Uno de los objetivos de la multiprogramación es que todo el tiempo se esté ejecutando un proceso para maximizar el uso de CPU.
+	
+	Cada vez que el CPU entra en estado IDLE, el sistema debe seleccionar alguno de los procesos que estén listos para ser ejecutados. El proceso de selección es llevado a cabo por el \textbf{scheduler} usando la que se llama \textbf{cola de ejecución}.
+	
 	\subsection{Objetivos de la política de scheduling}
+	Diferentes algoritmos de schedulling tienen diferentes propiedades y la elección de los mismos depende de las situación particular del sistema. Por lo general, un algoritmo de schedulling busca optimizar alguna combinación de las siguientes propiedades:
+	
 	\begin{itemize}
-		\item La política de scheduling es una de las principales huellas del sistema operativo.
-		\item 
+		\item \textbf{Eficiencia}: Maximizar la cantida de tiempo que el CPU esté ocupadp.
+		\item \textbf{Rendimiento (Throughput)}: Maximizar el número de procesos terminados por unidad de tiempo.
+		\item \textbf{Tiempo de ejecución (Turnaround time)}: Minimizar el tiempo total que le toma a un proceso ejecutar completamente (el intervalo de tiempo desde que el proceso se crea hasta que temina, incluye tiempo de esperas en la cola de procesos).
+		\item \textbf{Ecuanimidad (F airness)}: Que Cada proceso reciba una dosis ``justa" de CPU (para alguna definición de justicia).
+		\item \textbf{Carga del sistema (Waiting time)}: Minimizar la cantidad de tiempo que un proceso esté en la cola de espera.
+		\item \textbf{Tiempo de respuesta (Response time)}: Minimizar el tiempo para que un proceso empieze a dar resultados.
+		\item \textbf{Latencia}: Minimizar el tiempo requerido para que un proceso comienze a dar resultados.
+		
+		\item \textbf{Liberación de recursos:} Hacer que terminen cuanto antes los procesos que tiene reservados más recursos.
 	\end{itemize}
-	\subsection{\red{Scheduling con y sin desalojo}}
-	% TODO
-	\subsection{\red{Políticas de scheduling}}
-	% TODO
+	Muchos de estos objetivos son contradictorios. Si los usuarios del sistema son heterogéneos, pueden tener distintos intereses por lo que cada política de scheduling debe buscar maximizar una función objetivo que es una combinación de estas metas tratando de impactar lo menos posible en el resto.
+	
+	\subsection{Scheduling con y sin desalojo}
+	
+	El sistema puede tomar decisiones de scheduling en alguna de las siguientes situaciones:
+	\begin{enumerate}
+		\item Cuando un proceso pasa de estado \textit{Ejecutando} al estado de espera (por ejemplo cuando hace un request de entrada salida)
+		\item Cuando pasa de \textit{Ejecutando} a \textit{Listo}
+		\item Cuando pasa de \textit{Esparando} a \text{Listo}
+		\item Cuando termina.
+	\end{enumerate}
+
+	\paragraph{Scheduling sin desalojo:} Se da cuando las decisiones de scheduling solo toman lugar en las situaciones $1$ y $4$, es decir se espera a que el proceso haya terminado o esté inactivo. Tiene como desventaja que si un proceso muy largo toma control del procesador se puede generar un cuello de botella.
+	
+	\paragraph{Scheduling sin desalojo:} Tambien conocido como \textbf{coperativo} o \textbf{nonpremptive}, se da cuando las decisiones de scheduling solo toman lugar en las situaciones $1$ y $4$, es decir se espera a que el proceso haya terminado o esté inactivo. Tiene como desventaja que si un proceso muy largo toma control del procesador se puede generar un cuello de botella y otros procesos mas cortos tardarían demasiado en ser ejecutados.
+	
+	\paragraph{Scheduling con desalojo:} Tambien llamado scheduling \textit{apropiativo} o \textit{preempitve}, se vale de la interrupción del clock para decidir si el proceso actual debe seguir ejecutando o le toca a otro. No da garantías de continuidad a los procesos.
+	
+	Por lo general se usa una combinación de los dos tipos de scheduling para decidir las políticas adecuadas.
+
+	\subsection{Políticas de scheduling}
+	\subsubsection{First In/First Out (FIFO)}
+	El algoritmo FIFO (también conocido como First Come, First Served) es una de las políticas de scheduling más simples. Los process control block (PCB) se ubican en una cola, el próximo proceso a ejecutar es el que está en la cabeza. Cuando un proceso está listo para ser ejecutado se lo encola al final.
+	
+	Por un lado, es simple de implementar. Por otro, el tiempo de espera promedio de un proceso es bastante largo. Si llega un proceso que requiera mucho tiempo de CPU, tapona todos los demás, esto se llama \textbf{convoy effect}.
+	
+	\subsubsection{\red{Round Robin}}
+	\subsubsection{\red{Multiples colas}}
+	\subsubsection{Shortest Job First (SJF)}
+	Este algoritmo asocia cada proceso con su duración y ejecuta primero aquellos que duran menos. Está ideado para sistemas donde predominan los trabajos batch y está orientado a maximizar el throughput.
+	
+	Si los procesos ejecutados tienen un comportamiento regular, se puede usa el historial de ejecución para predecir los tiempos ejecución de los procesos actuales. Sin embargo, en sistemas con proceso heterogeneos no es posible saber cuanto tiempo de ejecución va a necesitar cada uno por lo que no es posible implementar este algoritmo.
+
 	\subsection{\red{Scheduling para tiempo real y para SMP}}
 	% TODO
 
