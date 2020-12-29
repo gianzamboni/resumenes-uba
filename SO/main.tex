@@ -302,7 +302,7 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 		\item \textbf{Eficiencia}: Maximizar la cantida de tiempo que el CPU esté ocupadp.
 		\item \textbf{Rendimiento (Throughput)}: Maximizar el número de procesos terminados por unidad de tiempo.
 		\item \textbf{Tiempo de ejecución (Turnaround time)}: Minimizar el tiempo total que le toma a un proceso ejecutar completamente (el intervalo de tiempo desde que el proceso se crea hasta que temina, incluye tiempo de esperas en la cola de procesos).
-		\item \textbf{Ecuanimidad (F airness)}: Que Cada proceso reciba una dosis ``justa" de CPU (para alguna definición de justicia).
+		\item \textbf{Ecuanimidad (Fairness)}: Que Cada proceso reciba una dosis ``justa" de CPU (para alguna definición de justicia).
 		\item \textbf{Carga del sistema (Waiting time)}: Minimizar la cantidad de tiempo que un proceso esté en la cola de espera.
 		\item \textbf{Tiempo de respuesta (Response time)}: Minimizar el tiempo para que un proceso empieze a dar resultados.
 		\item \textbf{Latencia}: Minimizar el tiempo requerido para que un proceso comienze a dar resultados.
@@ -333,19 +333,31 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 	\subsubsection{First In/First Out (FIFO)}
 	El algoritmo FIFO (también conocido como First Come, First Served) es una de las políticas de scheduling más simples. Los process control block (PCB) se ubican en una cola, el próximo proceso a ejecutar es el que está en la cabeza. Cuando un proceso está listo para ser ejecutado se lo encola al final.
 	
-	Por un lado, es simple de implementar. Por otro, el tiempo de espera promedio de un proceso es bastante largo. Si llega un proceso que requiera mucho tiempo de CPU, tapona todos los demás, esto se llama \textbf{convoy effect}.
+	Por un lado, es simple de implementar. Por otro, el tiempo de espera promedio de un proceso es bastante largo y hay que tener en cuenta que es un algoritmo sin delajo. Si llega un proceso que requiera mucho tiempo de CPU, tapona todos los demás, esto se llama \textbf{convoy effect}.
 	
-	\subsubsection{\red{Round Robin}}
-	\subsubsection{\red{Multiples colas}}
 	\subsubsection{Shortest Job First (SJF)}
 	Este algoritmo asocia cada proceso con su duración y ejecuta primero aquellos que duran menos. Está ideado para sistemas donde predominan los trabajos batch y está orientado a maximizar el throughput.
 	
-	Si los procesos ejecutados tienen un comportamiento regular, se puede usa el historial de ejecución para predecir los tiempos ejecución de los procesos actuales. Sin embargo, en sistemas con proceso heterogeneos no es posible saber cuanto tiempo de ejecución va a necesitar cada uno por lo que no es posible implementar este algoritmo.
+	Si los procesos ejecutados tienen un comportamiento regular, se puede usa el historial de ejecución para predecir los tiempos ejecución de los procesos actuales. Sin embargo, en sistemas con procesos heterogéneos no es posible saber cuanto tiempo de ejecución va a necesitar cada uno por lo que no es posible implementar este algoritmo.
+	
+	\subsubsection{Round Robin}
+	Este algoritmo está especialmente diseñado para sistemas de tiempo compartido (varios procesos deben usar el cpu al mismo tiempo). Se comporta de manera similar al FIFO, solo que se agrega desalojo para permitir al sistema ejecutar otros procesos.
+	
+	Para esto se define una pequeña unidad de tiempo llamada \textbf{quantum} durante la cual puede correr cada proceso. Si la ráfaga de procesamiento (CPU Burst) de un proceso es mas chico que el quantum, entonces el mismo la liberará y el scheduler eligirá el siguiente proceso a ejecutar.
+	
+	Si el CPU Burst toma más de un quantum, entonces se enviará una interrupción al sistema. Éste desalojará el proceso, cambiará el contexto y el proceso que se estaba ejecuntando se pondrá al final de la cola de ejecución.
+	
+	El rendimiento de este tipo de algoritmos depende del tamaño del quantum. Por un lado, si el quantum es demasiado largo, la política de Round Robind termina siendo una FIFO. Por el otro, si el quantum es extremadamente pequeño se pueden producir una gran cantidad de cambios de contexto, por lo que una gran parte del tiempo del CPU sería gastado solo en esto.
+	
+	En general, se debe elegir el quantum de tal manera que la mayoria de los procesos termine su CPU Burst durante el mismo pero no tan largo como para que sea un FIFO.
+	
+	\subsubsection{Multiples colas}
+	Otra idea, es serparar los procesos en distintas colas de acuerdo a la duración de su CPU Burst. Cada cola tendrá mas prioridad sobre la otra. Si un proceso toma demasiado tiempo, entonces se lo mueve a una cola con una prioridad menor. 
+	
+	Este esquema, da mayor prioridad a los procesos interacticos y aquellos procesos que estén esperando demasiado tiempo pueden ser movidos a colas de mayor prioridad para evitar starvation.
+	
+\section{Sincronización entre procesos}
 
-	\subsection{\red{Scheduling para tiempo real y para SMP}}
-	% TODO
-
-\section{\red{Sincronización entre procesos}}
 	\subsection{\red{Contención}}
 	% TODO
 	\subsection{\red{Condiciones de carrera}}
