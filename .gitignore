@@ -7,3 +7,6 @@
 *.synctex.gz
 *.toc
 *.xml
+*/_minted-main
+*/cache
+*/.kile

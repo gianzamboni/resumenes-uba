@@ -7,6 +7,8 @@ draw=blue!20, very thick,
 rectangle split, rectangle split parts=2, rounded corners, inner xsep=0.5cm,
 rectangle split part fill = {blue!20, blue!5}
 ]
+
+
 \NewEnviron{nota}[1][]{%
 
 \begin{center}
@@ -23,3 +25,7 @@ rectangle split part fill = {blue!20, blue!5}
 	\end{tikzpicture}
 \end{center}
 }
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash\hsize=#1\hsize}X}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash\hsize=#1\hsize}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash\hsize=#1\hsize}X}

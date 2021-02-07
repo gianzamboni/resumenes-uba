@@ -4,13 +4,14 @@
 \title{Sistemas Operativos - Apuntes para final}
 \author{Gianfranco Zamboni}
 
+\usemintedstyle[cpp]{bordeland, tabsize=2}
 \input{../page.setup}
 \begin{document}
 	\maketitle
 	\tableofcontents
 	
 \newpage
-\section{Introducción}
+\section{Introducción}\label{intro}
 Un sistema informático tiene cuatro componentes:
 
 \begin{itemize}
@@ -19,7 +20,7 @@ Un sistema informático tiene cuatro componentes:
 	\item El sistema operativo controla el hardware y coordina su uso entre las distintas aplicaciones de los usuarios.
 \end{itemize}
 
-\subsection{El sistema operativo}
+\subsection{El sistema operativo}\label{intro::sis_op}
 Un sistema operativo provee un entorno de ejecución de programas. Para esto tiene ciertos componentes que difieren de sistema en sistema pero que entre lo más comunes se encuentran:
 
 \begin{itemize}
@@ -56,8 +57,8 @@ Un sistema operativo provee un entorno de ejecución de programas. Para esto tie
 	\item Biblioteca C
 \end{itemize}
 
+\newpage
 \section{Procesos y API}
-
 \paragraph{Proceso:} Es un programa en ejecución y todas las estructuras que debe mantener el sistema para su correcto funcionamiento. Entre ellas, los valores de los registros, el program counter, el stack del proceso, el área de memoria en la que se cargan las instrucciónes a  ejecutar (el programa propiamente dicho) y el área de datos (contiene variables globales) y un heap de memoria (que es donde reserva memoria dinámica).
 
 \subsection{Creación y control de un proceso}
@@ -102,7 +103,7 @@ La terminación puede ocurrir por varios motivos. Un proceso puede causar la ter
 \end{itemize}
 
 \paragraph{Fork Bomb:} Un proceso crea infinitos hijos.
-\subsection{Estados de un proceso}
+\subsection{Estados de un proceso}\label{procesos::estados}
 Durante su ejecución, un proceso va modificando su estado acorde al siguiente diagrama:
 
 \begin{center}
@@ -120,7 +121,7 @@ Durante su ejecución, un proceso va modificando su estado acorde al siguiente d
 
 Es importante notar que solo un proceso puede estar \textbf{ejecutando} en un instante de tiempo de dado. Sin embargo, muchos procesos pueden estar bloqueados o listos simultáneamente.
 
-\subsection{Process Control Block (PCB)}
+\subsection{Process Control Block (PCB)}\label{process::pcb}
 Cada proceso está representado, en el sistema operativo, por un Process Control Block o Task Control Block. El mismo contiene información asociada a cada proceso, entre ellas:
 \begin{itemize}
 	\item El estado del proceso
@@ -321,7 +322,9 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 		\item Cuando termina.
 	\end{enumerate}
 
-	\paragraph{Scheduling sin desalojo:} Se da cuando las decisiones de scheduling solo toman lugar en las situaciones $1$ y $4$, es decir se espera a que el proceso haya terminado o esté inactivo. Tiene como desventaja que si un proceso muy largo toma control del procesador se puede generar un cuello de botella.
+	\paragraph{Scheduling sin desalojo:} Se da cuando las decisiones de scheduling solo toman lugar en las situaciones $1$ y $4$, es decir se espera a que el proceso haya terminado o esté inactivo. Tiene como desventaja que si un proceso muy largo toma control del procesador se puede generar un cuello de botella y, dependiendo de como se elijan los procesos, starvation.
+	
+	\paragraph{Starvation (Bloqueo indefinido)}: Un proceso sufre de starvation cuando está listo para ser ejecutado pero la CPU nunca le asigna clocks de reloj en lo que ejecutar.
 	
 	\paragraph{Scheduling sin desalojo:} Tambien conocido como \textbf{coperativo} o \textbf{nonpremptive}, se da cuando las decisiones de scheduling solo toman lugar en las situaciones $1$ y $4$, es decir se espera a que el proceso haya terminado o esté inactivo. Tiene como desventaja que si un proceso muy largo toma control del procesador se puede generar un cuello de botella y otros procesos mas cortos tardarían demasiado en ser ejecutados.
 	
@@ -354,30 +357,330 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 	\subsubsection{Multiples colas}
 	Otra idea, es serparar los procesos en distintas colas de acuerdo a la duración de su CPU Burst. Cada cola tendrá mas prioridad sobre la otra. Si un proceso toma demasiado tiempo, entonces se lo mueve a una cola con una prioridad menor. 
 	
-	Este esquema, da mayor prioridad a los procesos interacticos y aquellos procesos que estén esperando demasiado tiempo pueden ser movidos a colas de mayor prioridad para evitar starvation.
-	
-\section{Sincronización entre procesos}
+	Este esquema, da mayor prioridad a los procesos interactivos y aquellos procesos que estén esperando demasiado tiempo pueden ser movidos a colas de mayor prioridad para evitar starvation.
 
-	\subsection{\red{Contención}}
-	% TODO
-	\subsection{\red{Condiciones de carrera}}
-	% TODO
-	\subsection{\red{Secciones críticas}}
-	% TODO
-	\subsection{\red{TestAndSet}}
-	% TODO
-	\subsection{\red{Busy waiting / sleep}}
-	% TODO
-	\subsection{\red{Productor - Consumidor}}
-	% TODO
-	\subsection{\red{Semáforos}}
-	% TODO
-	\subsection{\red{Introducción a deadlock}}
-	% TODO
-	\subsection{\red{Monitores}}
-	% TODO
-	\subsection{\red{Variables de condición}}
-	% TODO
+\newpage
+\section{Sincronización entre procesos (Memoria compartida)}
+Normalmente, los sistemas operativos tratan de prevenir que un proceso acceda a la memoria de otro. Sin embargo, si dos o mas procesos deciden remover esta restricción pueden definir una región de memoria mediante la cual podrán intercambiar información. En este caso, los mismos procesos son los responsables de asegurar que no escriben simultáneamente en esta región.
+
+\paragraph{Contención y concurrencia:} Ocurre cuando uno o más procesos tratan de acceder al mismo recurso de manera simultánea. Esto puede causar que algunas secuencias de ejecución terminen con resultados erróneos.
+
+\subsection{Modelo Productor-Consumidor}
+Uno de los paradigmas clásicos de procesos cooperativos con este tipo de intercomunicación es el de \textbf{productor-consumidor}. En este esquema, un proceso \textbf{productor} debe producir información que va a ser consumida por un proceso \textbf{consumidor}.
+
+Una de las soluciones a este problema, es definir un buffer en una región de memoria compartida entre ambos procesos en la cual el productor pueda encolar elementos mientras que el consumidor los desencola. Ambos procesos deben estar sincronizados de tal manera que el consumidor no trate de desencolar elementos si la cola está vacía.
+
+Se pueden usar dos tipos de buffers para implementar esta solución:
+\begin{itemize}
+	\item \textbf{Unbounded buffer} (buffer infinito): No posee límites de espacio. El consumidor tiene que esperar a que el buffer tenga algo y el productro siempre puede agregarle elementos.
+	\item \textbf{Bounded buffer} (buffer limitado): Tiene un tamaño fijo. Si está vacío, el consumidor debe esperar a que haya algo. Si está lleno, el productor debe esperar a que se haya consumido por lo menos un elemento antes de agregar otro.
+\end{itemize}
+
+Vamos a concentrarnos, en una solución con buffer limitado:
+
+\vspace*{0.25cm}
+\begin{center}
+		\textbf{Zona de memoria compartida}
+	\begin{minted}[tabsize=28]{cpp}
+	buffer in[BUFFER_SIZE];
+	int cant = 0;
+	\end{minted}
+\end{center}
+\setlength{\columnseprule}{0.4pt}
+\noindent\rule{\textwidth}{0.4pt}
+\begin{multicols}{2}
+	\begin{center}
+	\textbf{Proceso productor}
+
+	\begin{minted}[tabsize=2]{cpp}
+	while(true){
+		while(counter == BUFFER_SIZE) {};
+		in.push(item);
+		counter++;
+	}
+	\end{minted}
+\columnbreak
+\textbf{Proceso consumidor}
+	\begin{minted}[tabsize=2]{cpp}
+	while(true){
+		while(counter == 0) {};
+		item = pop(in);
+		counter--;
+	}
+	\end{minted}
+	\end{center}
+\end{multicols}
+\setlength{\columnseprule}{0pt}
+
+\subsubsection{Condiciones de carrera (race conditions)}
+En el ejemplo anterior, si bien el código para cada proceso puede parecer correcto, puede haber errores si ambos se ejecutan de manera concurrente. Supongamos que las lineas \mintinline{cpp}{counter++} y \mintinline{cpp}{counter--} tienen la siguiente forma en lenguaje maquina:
+\begin{center}
+	\begin{minipage}{0.8\textwidth}
+\begin{multicols}{2}
+	\noindent\mintinline{cpp}{counter++}:
+	\begin{minted}{cpp}
+		register1 = counter;
+		register1 = register+1;
+		counter = register1	
+	\end{minted}
+	
+	\noindent\mintinline{cpp}{counter--}:
+	\begin{minted}{cpp}
+		register2 = counter;
+		register2 = register2-1;
+		counter = register2;
+	\end{minted}
+\end{multicols}
+\end{minipage}
+
+\end{center}
+
+Supongamos que el valor inicial de \texttt{counter} es 5, el proceso productor agrega un elemento al buffer, el consumidor quita el primer elemento encolado y ambos procesos ejecutan \texttt{counter++} y \texttt{counter--} de manera concurrente, entonces una posible secuencia de ejecución de estas instrucciones podria ser:
+
+%\vspace*{0.5cm}
+\begin{center}
+\begin{tabularx}{0.8\textwidth}{|L{1.3}|L{1.3}|C{0.4}|}
+	\hline 
+	\textbf{Productor} & \textbf{Consumidor} & \textbf{\texttt{counter}} \\
+	\hline
+	& & 5 \\
+	\hline
+	\texttt{register1 = counter} & & 5 \\
+	\hline
+	\texttt{register1 = register + 1} &  & 5 \\
+	\hline
+	 & \texttt{register2 = counter}  & 5 \\
+ 	\hline
+	 &  \texttt{register2 = register - 1} & 5 \\
+  	\hline
+	 \texttt{counter = register1} &  & 6 \\
+   	\hline
+	& \texttt{counter = register2} & 4 \\
+	\hline
+	\end{tabularx}
+\end{center}
+
+En este caso, el consumidor comienza a modificar la variable \texttt{counter} antes de que el productor guarde el valor correspondiente en memoria y no se "entera" que un nuevo elemento fue agregado a la cola (por lo que todavía habría 5 elementos en ella). Entonces se genera una inconsistencia entre el valor de \texttt{counter} y la cantidad elementos en el buffer.
+
+Este tipo de situaciones se llama \textbf{race condition}: Se da cuando varios procesos pueden acceder y modificar la misma variable de manera concurrente y el valor final de ésta depende del orden particular en el que se hayan realizado los accesos a la misma.
+
+\subsection{Secciones críticas}
+La idea es que cada proceso que se esté ejecutando en el sistema tenga un segmento de código, llamado \textbf{sección crítica}) que solo se puede ejecutar cuando ningún otor proceso esté en ella. Es decir, no puede haber mas de un proceso ejecutando su sección crítica al mismo tiempo. Para poder implementar esto, por lo general, se divide el código del segmento en tres partes:
+\begin{enumerate}
+	\item \textbf{Entry section:} En donde el proceso pide permiso para acceder a la sección crítica.
+	\item \textbf{Critical section:} La zona crítica per se, en la que se puede manejar la memoria compartida
+	\item \textbf{Exit section:} Donde el proceso avisa al sistema que dejó de realizar operaciones críticas.
+\end{enumerate}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\textwidth]{imagenes/structura-seccion-ciritca}
+	\caption{Estructura general de un proceso que implementa sección crítica}
+	\label{fig:structura-seccion-ciritca}
+\end{figure}
+
+Una buena implementación de esta método debe sastifacer los siguientes requerimientos:
+\begin{enumerate}
+	\item \textbf{Exclusión mutua}: Si un proceso está ejecutando su sección crítica,
+	 entonces ningún otro debe estar ejecutando la suya.
+ 	\item \textbf{Progreso}: Si un proceso necesita entrar a su sección crítica, entonces se le dará permiso para hacerlo en algún momento.
+	\item \textbf{Bounded waiting (espera acotada/no bloqueante	)}: Si un proceso $P$ pide entrar a la sección crítica, entonces hay un límite en la cantidad de veces que se la mayor prioridad a otros procesos sobre $P$.
+\end{enumerate}
+\subsubsection{Instrucción TestAndSet}
+Los sistemas opertivos modernos proveen una instrucción de hardware especial que nos permite testear y/o modificar una palabra de manera \textbf{atómica}, es decir como unidad no interrumpible de ejecución. Cuando se utiliza, el sistema no ejecuta ninguna otra instrucción hasta que ésta haya terminado. Para abstraernos, de sistemas operativos espécificos, llamemos esta instrucción \texttt{testAndSet()}, la misma toma como paramétro una variable booleana que se va a setear en \mintinline{cpp}{true} y va devolver el valor anterior:
+
+\begin{center}
+	\begin{minipage}{0.5\textwidth}
+		\begin{minted}[tabsize=2]{cpp}
+bool testAndSet(bool* source) {
+	bool result = *source;
+	*source = true;
+	return result;
+}
+		\end{minted}
+	\end{minipage}
+\end{center}
+
+En este caso, un sistema de procesos que utilice esta instrucción podría tener una variable booleana compartida llamada \textbf{lock} que controlaria el acceso a la secciónes criticas de cada proceso, si \mintinline{cpp}{lock == false} entonces es posible entrar, si es \mintinline{cpp}{true} el proceso debe esperar:
+
+\begin{minted}[tabsize=2]{cpp}
+		bool lock;
+		
+		void main() {
+			while(true) {
+				...
+				while(testAndSet(&lock)) {};
+		
+				/* Sección crítica */
+		
+				lock = false;
+				...
+			}	
+		}
+\end{minted}
+
+\subsubsection{Mutex Lock o SpinLock (busy waiting)} 
+La solución basada en hardware presentada en la sección anterior, generalmente es inaccesible a los programadores. Por esta razón, los sistemas operativos diseñan herramientas básicas para implementar secciones críticas: La más simple de ellas es el \textbf{mutex lock}. El mismo contiene de una variable booleana \texttt{avaliable} que indica si el lock está disponible o no y provee dos funciones: 
+
+\begin{itemize}
+\item \texttt{acquire()}: Permite a un proceso adquirir el lock y bloquear otros procesos el acceso a su sección crítica. Si un proceso llama a esta función y el lock ya estaba tomado, el proceso queda en espera hasta que el lock se libere.
+
+\begin{minted}[tabsize=2]{cpp}
+	void aquire() {
+		while(!avaliable) {}; // Busy wait
+		avaliable = false;	
+	}
+\end{minted}
+\item \texttt{release()}: Libera el lock para que los procesos bloqueados puedan continuar con su ejecución.
+\begin{minted}[tabsize=2]{cpp}
+	void release() {
+		avaliable = true;	
+	}
+\end{minted}
+\end{itemize}
+
+Ambas funciones deben ejecutarse de manera atómica por lo que generalmente son implementadas usando la instrucción de hardware \texttt{testAndSet()}. La principal desventaja es que requiere de \textbf{busy waiting} (mientras un proceso está su sección crítica, cualquier proceso que llame a \texttt{aquire()}) debe ciclar continuamente hasta que el lock se libere. Esto es un problema en los sistemas de multiprogramación, donde los ciclos de CPU son compartidos entre varios procesos.
+
+\subsection{Semáforos}
+Un semáforo \texttt{S} es una estructura que contiene una variable entera \texttt{value} y una lista \texttt{list} de procesos a las que se puede acceder mediante dos operaciones atómicas:
+\begin{itemize}
+	\item \texttt{wait()}: Cuando un proceso llama a esta operación, si \texttt{S.value} es negativo entonces debe esperar. Sin embargo, en vez de hacer busy waiting, el proceso se bloquea (entra en estado \texttt{waiting}, ver sección \ref{procesos::estados}) y se encola en \texttt{S.list}. Luego, el control es transferido al scheduler que selecciona otro proceso para ejecutar.
+\begin{minted}[tabsize=2]{cpp}
+	void wait(S) {
+		S.value--;
+		if(S.value < 0) {
+			agregar este proceso a S.list;
+			block();
+		}
+	}
+\end{minted}
+	\item \texttt{signal()}: Cuando un proceso termina de ejecutar su sección crítica, llama a esta operación que indica al semáforo que puede despertar alguno de los procesos en espera. Para esto, se quita algun proceso de la lista y se lo pasa a estado \texttt{ready} para que que el scheduler lo vuelva a tener en cuenta.
+	\begin{minted}[tabsize=2]{cpp}
+		void signal() {
+			S.value++
+			if(S.value <= 0) {
+				quitar proceso P de S.list;
+				wakeup(P);
+			}	
+		}
+	\end{minted}
+\end{itemize}
+
+Este tipo de semáforos está pensado para administrar la asignación de recursos (de los cuales se tiene una o más instancias) del sistema.
+
+La lista de procesos en espera puede ser implmentada por un campo \texttt{link} en cada process control block (sección \ref{process::pcb}) y la lista de procesos del semáforo en realidad es una lista punteros a PCBs.
+
+%\paragraph{Estructura básica de un proceso con testAndSet()}: Dado un sistema compuesto de $n$ procesos, una posible implementación de secciones críticas que cumplan los tres requirimientos mencionados es la siguiente:
+%
+%\vspace*{0.25cm}
+%\textbf{Zona de memoria compartida}
+%	\begin{minted}[tabsize=2]{cpp}
+%		buffer waiting[n] = { 0 }; // n = cantidad de procesos
+%		bool lock = 0;
+%		int  next_process = 0;
+%	\end{minted}
+%
+%\textbf{Proceso número $i$:}
+%\begin{minted}[tabsize=2]{cpp}
+%		while(true){
+%			...	
+%			waiting[i] = true;
+%
+%			while(waiting[i] && testAndSet(&lock)) {}
+%			waiting[i] = 0;
+%			/* sección crítica */		
+%			next_process = next(i);
+%			lock = false;
+%			...
+%		}
+%	\end{minted}
+%
+%Donde \texttt{next(i)} calcula cual es el índice del próximo proceso que debe entrar en la sección crítica de la siguiente forma:
+%
+%\begin{minted}[tabsize=2]{cpp}
+%	int next(int actual_process) {
+%		// Buscamos el proximo proceso que este esperando para entrar en 
+%		// la sección crítica
+%		next = (i + 1) % n;
+%		while (next != actual && !waiting[next]) next = (next + 1) % n;
+%	
+%		// Si no encontré ninguno, entonces no hay nadie esperando 
+%		// y libero el lock, sino le doy permiso a que ejecute la sección critica 
+%		// al proceso que encontré
+%		if(next == actual) lock = false;
+%		else waiting[next] = false;
+%	}
+%\end{minted}
+
+\subsubsection{Deadlock}
+La implementación de semáforos puede resultar en una situación donde dos o más procesos se pueden quedar esperando por un evento que solo puede ser causado por otro proceso en espera.  Cuando esto sucede, se dice que estos procesos están en \textbf{deadlock}.
+
+Decimos que un conjunto de procesos está en estado de deadlock cuando cada proceso del conjunto está esperando por un evento que solo puede causado por otro proceso de ese conjunto.
+
+\paragraph{Ejemplo:} Supongamos que tenemos dos procesos $P_0$ y $P_1$ que hacen uso de los semáforos binarios $S$ y $Q$ y se produce la siguiente secuencia de comandos:
+
+\begin{center}
+\begin{tabularx}{0.8\textwidth}{|C{0.5}|C{0.5}|L{2}|}
+	\hline 
+	\textbf{$P_0$} & \textbf{$P_1$} & Efecto \\
+	\hline
+	& & Ambos semáforos comienzan habilitados \\
+	\hline
+	\texttt{wait(S)} & & $P_0$ continua ejecución y reserva $S$\\
+	\hline
+	 & \texttt{wait(Q)} & $P_1$ continua ejecución y reserva $Q$ \\
+	\hline
+	\texttt{wait(Q)}  & & $P_0$ se suspende hasta que $P_1$ libere $Q$ \\	
+	\hline
+	 & \texttt{wait(S)} &  $P_1$ se suspende hasta que $P_0$ libere $S$\\	
+	\hline
+\end{tabularx}
+ \end{center}
+Al final de la secuencia, ambos procesos están suspendidos porque uno necesita un recurso que tiene en el otro y el sistema entra en deadlock.
+
+\subsubsection{Condiciones de coffman}
+Un sistema puede entrar en deadlock si se cumplen las siguientes condiciones de manera simultanea:
+
+\begin{enumerate}
+	\item\textbf{Mutual exclusion}: Hay al menos un recurso que no puede ser compartido. Es decir, es recurso no puede estar asignado a mas de un proceso al mismo tiempo.
+	\item \textbf{Hold and Wait}: Un proceso debe tener asigado al menos un recurso y estar esperando por otro que está asignado a otro proceso.
+	\item \textbf{No preemption}: El sistema no implementa un mecanismo que le permita quitarle los recursos a los procesos.
+	\item \textbf{Circular wait}: Existe un conjunto de procesos \{$P_0,\dots,P_n$\} tal que $P_i$ espera un recurso que está asignado a $P_{i+1}$ y $P_n$ espera un recurso que está asignado a $P_0$.
+\end{enumerate}
+
+\subsubsection{Monitores y variables de condición}
+Aunque los semáforos proveen un mecanismo conveniente y efectivo para realizar la sincronización de proceso, usarlos incorrectamente puede conllevar a errores dificiles de detectar, ya que estos pueden ocurrir en una secuencia de ejecución particular.
+
+Para resolver estos errores, se dasorrollo un tipo abstracto de dato llamado \textbf{monitor} que contiene un conjunto de operaciones que ya aseguran mutual exclusion. El monitor declara variables locales que definen su estado junto con las funciones que operan esas variables (y son la única forma de accederlas).
+
+\begin{minted}[tabsize=2]{cpp}
+Monitor M {
+	/** Declaración de variables compartidas **/
+	var x;
+	var y;
+	var z;
+	
+	/** operaciones sobre esas variables **/
+	function op1(...) { ... }
+	function op2(...) { ... }
+	function op3(...) { ... }
+	function constructor(...) { ... }
+}
+\end{minted}
+
+La implementación del monitor debe asegurar que nunca hay más de un proceso activo dentro del mismo. De esta forma, el programador no debe preocuparse por los requerimientos de sincronización. Sin embargo, la construcción presentada no alcanza para modelar algunos mecanismos de sincronización, por lo que se agrega los mismos lo que se llama \textbf{variables de condición}.
+
+La únicas operaciones invocadas en una variable de condición son \texttt{signal()} y \texttt{wait()}. \texttt{wait()} suspende el proceso hasta que otro proceso llame al \texttt{signal()}. Si no hay procesos esperando, entonces \texttt{signal()} no tiene efecto. Este tipo de variables se puede implementar con semáforos. 
+
+Supongamos que definimos una variable de condición $c1$ sobre el monitor $M$ y que un proceso $P$ invoca $c1.signal()$. Si existe un proceso $Q$ suspendido asociado a $c1$ entonces $Q$ debería poder ingresar al monitor, sin embargo, $P$ sigue estando dentro del mismo. Tenemos dos posibilidades:
+
+\begin{enumerate}
+	\item \textbf{Signal and wait:} $P$ se pausa y espera a que $Q$ salga del monitor o espera a que se cumpla otra condición.
+	\item \textbf{Signal and continue:} $Q$ espera a que $P$ deje el monitor o espera a que se cumpla otra condición.
+\end{enumerate}
+
+Por un lado, tiene sentido dejar que $P$ siga ejecutandose dentro del monitor. Por otro, si permitimos esto, puede llegar a pasar que para el momento en el que $Q$ sea activado, la condición lógica que estaba esperando deje de valer. En muchos casos, lo que se hace es hacer que la ultima instrucción que se ejecuta dentro del monitor sea un \texttt{signal()}. De esta manera, $P$ deja la sección crítica, puede seguir su ejecución y $Q$ puede entrar en su propia sección.
+
+
 
 \section{\red{Programación concurrente}}
 	\subsection{\red{Algoritmos wait-free}}
