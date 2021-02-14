@@ -637,7 +637,7 @@ Decimos que un conjunto de procesos está en estado de deadlock cuando cada proc
  \end{center}
 Al final de la secuencia, ambos procesos están suspendidos porque uno necesita un recurso que tiene en el otro y el sistema entra en deadlock.
 
-\subsubsection{Condiciones de coffman}
+\subsubsection{Condiciones de Coffman}
 Un sistema puede entrar en deadlock si se cumplen las siguientes condiciones de manera simultanea:
 
 \begin{enumerate}
@@ -680,7 +680,75 @@ Supongamos que definimos una variable de condición $c1$ sobre el monitor $M$ y 
 
 Por un lado, tiene sentido dejar que $P$ siga ejecutandose dentro del monitor. Por otro, si permitimos esto, puede llegar a pasar que para el momento en el que $Q$ sea activado, la condición lógica que estaba esperando deje de valer. En muchos casos, lo que se hace es hacer que la ultima instrucción que se ejecuta dentro del monitor sea un \texttt{signal()}. De esta manera, $P$ deja la sección crítica, puede seguir su ejecución y $Q$ puede entrar en su propia sección.
 
+\subsection{Correctitud de sistemas concurrentes}
+\subsubsection{Modelo del proceso}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{imagenes/modelo_proceso}
+	\caption{Modelo de un proceso según Lynch}
+	\label{fig:modeloproceso}
+\end{figure}
+
+Un proceso está definido por un aútomata finito con cuatro estados:
+\begin{itemize}
+	\item \textbf{REM} es el estado en el que se encuentra cuando no está ejecutando en su sección crítica
+	\item \textbf{TRY} es el estado en el que se encuentra  cuando está ejecutando los chequeos necesarios para saber si puede entrar en su sección
+	\item \textbf{CRIT} es cuando está ejecuntando su sección crítica
+	\item \textbf{EXIT} cuando está ejecutando los pasos necesarios para salir correctamente de la sección crítica.
+\end{itemize}
+
+\paragraph{Ejecución:} Es una secuencia de estados $\tau = \tau_0 \overset{l_1}{\rightarrow} \tau_1 \overset{l_2}{\rightarrow}\dots$ donde cada $\tau_i$ es un posible estado del sistema y $l_i$ el nombre de la transición utilizada para hacer el pasaje de estados.
+
+\paragraph{Operadores temporales:} Para hablar de propiedades relacionadas con el tiempo se agregan dos operadores a la lógica clásica. Si $p$ es un predicado lógico, entonces:
+\begin{itemize}
+	\item$\square p$: Siempre vale $p$
+	\item$\diamondsuit p$: En algun momento en el futuro va a valer $p$
+\end{itemize}
+\vspace*{.5cm}
+Una de las dificultades para demostrar correctitud sobre 
+programas concurrentes es que tiene infinitas posibles ejecuciones. Por lo que la noción de \textit{correcto} deja de ser únivoca y pasa a transformarse en comprobar que el sistema cumple ciertas propiedades que en conjunto deben asegurar el comportamiento deseado. Hay tres tipos de propiedades que podemos plantear: 
+
+\begin{itemize}
+	\item \textbf{Propiedades de Safety:} Aseguran que no ocurren cosas malas. Son propiedades tales que si no se cumplen entonces existe una ejecución finita del sistema en las que ocurre el evento no deseado. Por ejemplo:
+	\begin{itemize}
+		\item No hay deadlocks
+		\item La función $f$ nunca a devolver null
+	\end{itemize}
+	La idea es enon
+	\item \textbf{Propiedades de Liveness (Progreso):} Aseguran que, en algún momento, van a ocurrir cosas buenas. Por ejemplo:
+	\begin{itemize}
+		\item Si se presiona el botón de stop, el tren frena.
+		\item Cada vez que el sistema recibe un estímulo, el sistema responde en $X$ tiempo.
+	\end{itemize}
+	\item \textbf{Propiedades de Fairness:} Los procesos ejecutandose en el sistema reciben su turno con infinita frecuencia. Es decir, los procesos que componen el sistema se ejecuntan regularmente y no son postergados para siempre.
+	
+	En general, se asume que el sistema estudiado cumple este tipo de propiedades para poder demostrar las propiedades de liveness.
+\end{itemize}
+
+\subsubsection{Formalización de algunas propiedades}
+
+\paragraph{FAIRNESS:} Para toda ejecución $\tau$ y todo proceso $i$, si $i$ puede hacer una transición $l_i$ en una cantidad infinita de estados de $\tau$ entonces existe un $k$ tal que $\tau(i)\overset{l_i}{\rightarrow}\tau_{k+1}$. Es decir, que si un proceso puede pasar de un estado a otro, entonces en algún momento lo va a hacer.
+
+\paragraph{Exlusión mutua:} Para toda ejecución $\tau$ y estado $\tau_k$, no puede haber más de un proceso $i$ tal que $\tau_k(i) = CRIT$
+
+$$\text{EXCL} \equiv \#CRIT \leq 1$$
+
+\paragraph{Progreso:} Para toda ejecución $\tau$, si en $\tau_k$ hay un proceso $i$ en $TRY$ y ningún otro proceso se encuentra en $CRIT$ entonces $\exists$ un momento $k' > k$ tal que $\tau_{k'}(i) = CRIT$.
+
+$$\text{LOCK-FREEDOM} \equiv \square(\#TRY \geq 1 \land \#CRIT = 0 \Rightarrow \diamondsuit~\#CRIT > 0)$$
+
+\paragraph{Progreso global dependiente (no hay deadlock):} Para toda ejecución $\tau$, si para todo proceso que esté en estado $CRIT$ en el momento $k$, en algun momento $k'$ pasa a $REM$ entonces, va a valer que todo proceso $i'$ tal que $\tau_{k'}(i) = TRY$ va entrar en su sección crítica en algun momento $k'' > k'$.
+
+\begin{itemize}
+\item IN(i) $\equiv i \in TRY \Rightarrow \diamondsuit ~i\in CRIT$
+\item OUT(i) $\equiv i \in CRIT \Rightarrow \diamondsuit~ i\in REM$
+\item STARVATION-FREEDOM $\equiv \forall i.~\square~ OUT(i) \Rightarrow \forall j.~\square ~IN(j)$	
+\end{itemize}
+
+\paragraph{Progreso global absoluto (WAIT-FREEDOM):} Para toda ejecución $\tau$, estado $\tau_{k}$ y proceso $i$, si $\tau_{k}(i) = TRY$ entones existe $k' > k$ tal que $\tau_{k'} = CRIT$
+
+$$\text{WAIT-FREEDOM}\equiv\forall i.~\square~ IN(i)$$
 
 \section{\red{Programación concurrente}}
 	\subsection{\red{Algoritmos wait-free}}
