@@ -4,6 +4,11 @@
 \title{Sistemas Operativos - Apuntes para final}
 \author{Gianfranco Zamboni}
 
+\usepackage[backend=biber,style=chem-acs,sorting=none]{biblatex}
+\nocite{*}
+
+\addbibresource{bibliography.bib}
+
 \usemintedstyle[cpp]{bordeland, tabsize=2}
 \input{../page.setup}
 \begin{document}
@@ -57,7 +62,10 @@ Un sistema operativo provee un entorno de ejecución de programas. Para esto tie
 	\item Biblioteca C
 \end{itemize}
 
+\printbibliography[keyword=intro, title=Bibliografía]
+
 \newpage
+\part{Procesos y Scedulling}
 \section{Procesos y API}
 \paragraph{Proceso:} Es un programa en ejecución y todas las estructuras que debe mantener el sistema para su correcto funcionamiento. Entre ellas, los valores de los registros, el program counter, el stack del proceso, el área de memoria en la que se cargan las instrucciónes a  ejecutar (el programa propiamente dicho) y el área de datos (contiene variables globales) y un heap de memoria (que es donde reserva memoria dinámica).
 
@@ -288,7 +296,8 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 
 	En este caso, el primer proceso ejecuta el comando \texttt{echo} que imprime en \textbf{stdout} el mensaje \texttt{``Esto es un mensaje''}. El segundo proceso recibe por \textbf{stdin} lo que se escribió en el \textbf{stdout} del proceso que ejecutó \texttt{echo}
 \end{itemize}
-  
+\printbibliography[keyword=procesos,title=Bibliografía]
+
 \newpage
 	
 \section{Scheduling} 
@@ -360,11 +369,15 @@ Aquí \texttt{buf} es un puntero a donde se almacenan los datos a leer o escribi
 	Este esquema, da mayor prioridad a los procesos interactivos y aquellos procesos que estén esperando demasiado tiempo pueden ser movidos a colas de mayor prioridad para evitar starvation.
 
 \newpage
-\section{Sincronización entre procesos (Memoria compartida)}
 Normalmente, los sistemas operativos tratan de prevenir que un proceso acceda a la memoria de otro. Sin embargo, si dos o mas procesos deciden remover esta restricción pueden definir una región de memoria mediante la cual podrán intercambiar información. En este caso, los mismos procesos son los responsables de asegurar que no escriben simultáneamente en esta región.
 
 \paragraph{Contención y concurrencia:} Ocurre cuando uno o más procesos tratan de acceder al mismo recurso de manera simultánea. Esto puede causar que algunas secuencias de ejecución terminen con resultados erróneos.
 
+\printbibliography[keyword=scheduling,title=Bibliografía]
+
+\newpage
+\part{Sincronización entre procesos con memoria compartida}
+\section{Sincronización bloqueante}
 \subsection{Modelo Productor-Consumidor}
 Uno de los paradigmas clásicos de procesos cooperativos con este tipo de intercomunicación es el de \textbf{productor-consumidor}. En este esquema, un proceso \textbf{productor} debe producir información que va a ser consumida por un proceso \textbf{consumidor}.
 
@@ -517,6 +530,17 @@ En este caso, un sistema de procesos que utilice esta instrucción podría tener
 			}	
 		}
 \end{minted}
+
+\subsubsection{Instrucción CompareAndSwap}\label{compareAndSwap}
+Es una instrucción primitiva ofrecida por varios porcesadores que toma 3 argumentos: una dirección de memoria, un valore esperado y un valor que se debe escribir en esa posición si se encuentra el valor esperado:
+
+		\begin{minted}[tabsize=2]{cpp}
+bool testAndSet(int* value, int expected, int new_value) {
+	int temp = *value;
+	if(*value == expected) *value = new_value
+	return temp;
+}
+		\end{minted}
 
 \subsubsection{Mutex Lock o SpinLock (busy waiting)} 
 La solución basada en hardware presentada en la sección anterior, generalmente es inaccesible a los programadores. Por esta razón, los sistemas operativos diseñan herramientas básicas para implementar secciones críticas: La más simple de ellas es el \textbf{mutex lock}. El mismo contiene de una variable booleana \texttt{avaliable} que indica si el lock está disponible o no y provee dos funciones: 
@@ -728,7 +752,7 @@ programas concurrentes es que tiene infinitas posibles ejecuciones. Por lo que l
 	En general, se asume que el sistema estudiado cumple este tipo de propiedades para poder demostrar las propiedades de liveness.
 \end{itemize}
 
-\subsubsection{Formalización de algunas propiedades}
+\subsubsection{Formalización de algunas propiedades}\label{sincro::form}
 
 \paragraph{Fairness:} Para toda ejecución $\tau$ y todo proceso $i$, si $i$ puede hacer una transición $l_i$ en una cantidad infinita de estados de $\tau$ entonces existe un $k$ tal que $\tau(i)\overset{l_i}{\rightarrow}\tau_{k+1}$. Es decir, que si un proceso puede pasar de un estado a otro, entonces en algún momento lo va a hacer.
 
@@ -740,7 +764,7 @@ programas concurrentes es que tiene infinitas posibles ejecuciones. Por lo que l
 
 %$$\text{LOCK-FREEDOM} \equiv \square(\#TRY \geq 1 \land \#CRIT = 0 \Rightarrow \diamondsuit~\#CRIT > 0)$$
 
-\paragraph{Progreso global dependiente (no hay deadlock):} Para toda ejecución $\tau$, si para todo proceso que esté en estado $CRIT$ en el momento $k$, en algun momento $k'$ pasa a $REM$ entonces, va a valer que todo proceso $i'$ tal que $\tau_{k'}(i) = TRY$ va entrar en su sección crítica en algun momento $k'' > k'$.
+\paragraph{Progreso global dependiente (deadlock-free):} Para toda ejecución $\tau$, si para todo proceso que esté en estado $CRIT$ en el momento $k$, en algun momento $k'$ pasa a $REM$ entonces, va a valer que todo proceso $i'$ tal que $\tau_{k'}(i) = TRY$ va entrar en su sección crítica en algun momento $k'' > k'$.
 
 %\begin{itemize}
 %\item IN(i) $\equiv i \in TRY \Rightarrow \diamondsuit ~i\in CRIT$
@@ -751,38 +775,57 @@ programas concurrentes es que tiene infinitas posibles ejecuciones. Por lo que l
 \paragraph{Progreso global absoluto (WAIT-FREEDOM):} Para toda ejecución $\tau$, estado $\tau_{k}$ y proceso $i$, si $\tau_{k}(i) = TRY$ entones existe $k' > k$ tal que $\tau_{k'} = CRIT$
 
 %$$\text{WAIT-FREEDOM}\equiv\forall i.~\square~ IN(i)$$
+\printbibliography[keyword=sincro,title=Bibliografía]
 
-\section{\red{Programación concurrente}}
-	\subsection{\red{Algoritmos wait-free}}
-	% TODO
-	\subsection{\red{Algoritmos lock-free}}
-	% TODO
-	\subsection{\red{CAS}}
-	% TODO
-	\subsection{\red{ABA}}
-	% TODO
+\newpage
+\section{Programación concurrente (no bloqueante)}
+Todos los métodos de sincronización vistos hasta ahora son métodos \textbf{bloquantes} porque un delay inesperado en alguno de los threads puede bloquear el progreso de otros threads. Este tipo de delays es común en multiprocesadores en los que suelene ocurrir cache misses, page faults, cambios de contexto, etc.
+
+\subsection{Algoritmos wait-free y lock-free}
+\paragraph{Wait-Free Algorithm:} Un método es \textit{wait-free} si garantiza que termina en una cantidad finita de pasos cada que es llamado. Si la cantidad de pasos es acotada, entonces se lo llama \textit{bounded wait-free}. Este tipo de algoritmos aseguran la condición de progreso no bloqueante (el delay en un thread, no neceseriamente bloquea la ejecución de otros threads.)
+
+\paragraph{Population-oblivious Algorithm:} Un algoritmo \textit{wait-free} cuyo rendimiento no depende de la cantidad de threads activos.
+
+\paragraph{Wait-Free Object:} Un objeto tal que todos sus métodos son \textit{wait-free}
+
+\paragraph{Lock-Free Algorithms:} Algoritmos que garantizan que, infinitamente amenudo, alguna llamada a un método termina en un número finito de pasos. 
+
+Esta condición es más débil que la condición de \textit{wait-free}, por lo que cualquier algoritmo \textit{wait-free} es un algoritmo \textit{lock-free} pero no vale la vice versa. Los últimos admiten la posibilidad de que algunos threads sufran de inanición.
+
+\paragraph{Obstruction-Free Algorithm:} Son métodos que terminan en una cantidad finita de pasos si se ejecutan de manera aislada. Este tipo de métodos, obliga a pausar todos los threads que comparten el objeto/región de memoria que va a ser modificado.
+
+\vspace*{0.5cm}
+Todos los tipos de algoritmos mencionados en esta sección anterior garantizan que la computación realiza progreso como un todo, independiente de como el sistema maneja los threads.
+
+\subsection{Problema ABA}
+Supongamos que tenemos tres threads ($A$, $B$ y $C$) que operan sobre una cola implementada con algoritmos \textit{wait-free}. Y se produce la siguiente situación:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{imagenes/aba-problem}
+	\caption{Problema ABA}
+	\label{fig:aba-problem}
+\end{figure}
+
+\begin{enumerate}
+	\item El thread $A$ necesita deseconlar el primer elemento de la cola. Lee el valor almacenado en \texttt{head} y  observa que la cabeza es el nodo $a$ y que el siguiente nodo es $b$. Entonces se prepara para hacer la llamada \texttt{compareAndSwap(\&head, a, b)} (ver sección \ref{compareAndSwap}) pero es desalojado.
+	\item Los thread $B$ y $C$ desencolan los nodos $a$ y $b$. y vuelven a encolar el nodo $a$, entonces en la cabeza queda el nodo $a$ y $c$ como el nodo siguiente.
+	\item El thread $A$ ejecuta la llamada  \texttt{compareAndSwap(\&head, a, b)}. En este caso, $head = a$ por lo que la condición de la instrucción se cumple y $A$ termina remplazando $a$ por $b$. Dejando incosistente la cola.
+\end{enumerate}
+
+Este tipo de situaciones se da a menudo en algoritmos que usan memoria dinámica y operaciones de sincronización  condicionales. Usualmente, una referencia que está por ser modificada por \texttt{compareAndSwap} cambia de $a$ a $b$ y vuelve a ser $a$ por lo que la instrucción termina exitosamente a pesar que la estructura cambió y ya no tiene el efecto deseado.
+
+Una forma facil de resolver este problema es agregar a cada referencia atómica una estampa única que permite definir si el valor fue cambiado o no en el interval de tiempo entre que se llamo a la función y efectivamente se ejecuta.
+
 	\subsection{\red{Programación de multicores}}
 	% TODO
 	\subsection{\red{Invalidación de caché}}
 	% TODO
 	\subsection{\red{Reorden de instrucciones}}
 	% TODO
+	
+\printbibliography[keyword=progConcurr,title=Bibliografía]
 
-\section{\red{Administración de memoria}}
-	\subsection{\red{Segmentación}}
-	% TODO
-	\subsection{\red{Paginación}}
-	% TODO
-	\subsection{\red{Swapping}}
-	% TODO
-	\subsection{\red{MMU}}
-	% TODO
-	\subsection{\red{Memoria virtual}}
-	% TODO
-	\subsection{\red{Copy-on-write}}
-	% TODO
-	\subsection{\red{Algoritmos de reemplazo de páginas}}
-	% TODO
 \section{\red{Administración de entrada/salida}}
 	\subsection{\red{Polling, interrupciones, DMA}}
 	% TODO
@@ -897,5 +940,6 @@ programas concurrentes es que tiene infinitas posibles ejecuciones. Por lo que l
 	% TODO
 	\subsection{\red{Cloud computing}}
 	% TODO
+	
 \end{document}
 
