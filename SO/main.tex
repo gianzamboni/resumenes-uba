@@ -65,7 +65,6 @@ Un sistema operativo provee un entorno de ejecución de programas. Para esto tie
 \printbibliography[keyword=intro, title=Bibliografía]
 
 \newpage
-\part{Procesos y Scedulling}
 \section{Procesos y API}
 \paragraph{Proceso:} Es un programa en ejecución y todas las estructuras que debe mantener el sistema para su correcto funcionamiento. Entre ellas, los valores de los registros, el program counter, el stack del proceso, el área de memoria en la que se cargan las instrucciónes a  ejecutar (el programa propiamente dicho) y el área de datos (contiene variables globales) y un heap de memoria (que es donde reserva memoria dinámica).
 
@@ -376,8 +375,7 @@ Normalmente, los sistemas operativos tratan de prevenir que un proceso acceda a 
 \printbibliography[keyword=scheduling,title=Bibliografía]
 
 \newpage
-\part{Sincronización entre procesos con memoria compartida}
-\section{Sincronización bloqueante}
+\section{Sincronización de procesos (Memoria compartida)}
 \subsection{Modelo Productor-Consumidor}
 Uno de los paradigmas clásicos de procesos cooperativos con este tipo de intercomunicación es el de \textbf{productor-consumidor}. En este esquema, un proceso \textbf{productor} debe producir información que va a ser consumida por un proceso \textbf{consumidor}.
 
@@ -817,14 +815,19 @@ Este tipo de situaciones se da a menudo en algoritmos que usan memoria dinámica
 
 Una forma facil de resolver este problema es agregar a cada referencia atómica una estampa única que permite definir si el valor fue cambiado o no en el interval de tiempo entre que se llamo a la función y efectivamente se ejecuta.
 
-	\subsection{\red{Programación de multicores}}
-	% TODO
-	\subsection{\red{Invalidación de caché}}
-	% TODO
-	\subsection{\red{Reorden de instrucciones}}
-	% TODO
-	
 \printbibliography[keyword=progConcurr,title=Bibliografía]
+
+\newpage
+\section{Administración de memoria}
+\subsection{\red{Segmentación}}
+\subsection{\red{Paginación}}
+\subsection{\red{Swapping}}
+\subsection{\red{MMU}}
+\subsection{\red{Memoria virtual}}
+\subsection{\red{Copy-on-write}}
+\subsection{\red{Algoritmos de reemplazo de páginas}}
+
+\printbibliography[keyword=adminMemoria, title=Bibliografía]
 
 \section{\red{Administración de entrada/salida}}
 	\subsection{\red{Polling, interrupciones, DMA}}
