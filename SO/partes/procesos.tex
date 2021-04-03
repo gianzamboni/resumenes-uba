@@ -200,7 +200,7 @@ Este tipo de pipes requieren que los procesos que se comunican tengan una relaci
 \subsubsection{File descriptors:}
 	En Unix, cada proceso se crea con una tabla que le permite identificar cuales son los archivos que tiene abiertos. Cada índice es un \textbf{file descriptors} que usa el Kernel para saber como leer/escribir datos en los distintos archivos (en Unix, el teclado y la pantalla se modelan como archivos).
 	
-	Además, cada proceso hereda de su proceso padre tres archivos abiertos que ocupan los file descriptors 0, 1 y 3 y representan la entrada estándar (\textbf{stdin}), la salida estandar (\textbf{stdout}) y el error estandar (\textbf{stderr}), respectivamente.
+	Además, cada proceso hereda de su proceso padre tres archivos abiertos que ocupan los file descriptors 0, 1 y 2 y representan la entrada estándar (\textbf{stdin}), la salida estandar (\textbf{stdout}) y el error estandar (\textbf{stderr}), respectivamente.
 	
 	Linux provee de dos llamadas al sistema que nos permiten leer/escribir a un archivo usando su file descriptor \texttt{fd}:
 	
