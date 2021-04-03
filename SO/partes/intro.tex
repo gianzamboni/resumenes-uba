@@ -1,0 +1,47 @@
+\section{Introducción}\label{intro}
+Un sistema informático tiene cuatro componentes:
+
+\begin{itemize}
+	\item El hardware (CPU, memoría y dispositivos de entrada salida) proveen los recursos básicos del sistema.
+	\item Las aplicaciones definen la forma en que estos recursos va a ser usados para resolver los problemas del usuario.
+	\item El sistema operativo controla el hardware y coordina su uso entre las distintas aplicaciones de los usuarios.
+\end{itemize}
+
+\subsection{El sistema operativo}\label{intro::sis_op}
+Un sistema operativo provee un entorno de ejecución de programas. Para esto tiene ciertos componentes que difieren de sistema en sistema pero que entre lo más comunes se encuentran:
+
+\begin{itemize}
+	\item \textbf{Drivers:} Programas manejan los detalles de bajo nivel relacionados con la operación de los distintos dispositivos.
+	\item \textbf{Núcleo}: (o Kernel) Es el sistema operativo, propiamente dicho. Se encarga de las tareas fundamentales y contiene los diversos sub-sistemas que iremos viendo a lo largo de la materia.
+	\item\textbf{Sistema de archivos}: Forma de organizar los datos en el disco para gestionar su acceso, permisos, etc.
+	\begin{itemize}
+		\item \textbf{Archivo:} Secuencia de bits con un nombre y una serie de atributos que indican permisos.
+		\begin{itemize}
+			\item\textbf{Binario del sistema}: Son archivos que no forman parte del kernel pero suelen llevar a cabo tareas muy importantes o proveer las utilidades básicas del sistema.
+			\item \textbf{Archivos de configuración:} Son archivos especiales con información que el sistema operativo necesita para funcionar.
+		\end{itemize}
+		
+		\item \textbf{Directorio}: Colección de archivos y directorios que contiene un nombre y se organiza jerárquicamente.
+		\begin{itemize}
+			\item\textbf{Directorios del sistema}: Son directorios donde el propio SO guarda archivos que necesita para su funcionamiento.
+		\end{itemize}
+		\item \textbf{Dispositivo virtual}: Abstracción de un dispositivo físico bajo la forma, en general, de un archivo de manera tal que se pueda abrir, leer, escribir, etc.
+		
+		\item \textbf{Usuario}: La representación, dentro del propio Sistema Operativo, de las personas qo entidades que pueden usarlo. Sirve principalmente como una forma de aislar información entre distintos usuarios reales y de establecer limitaciones.
+		
+		\item \textbf{Grupo}: Una colección de usuarios
+	\end{itemize}
+\end{itemize}
+
+\paragraph{Systems calls (Syscalls):} Son rutinas que proveen una interfaz a los servicios disponibles en el sistema. Generalmente, son rutinas escritas en C/C++ y llamarlas implican un cambio de contexto y privilegios del proceso a ser ejecutado. Algunos de estos servicios son:
+\begin{itemize}
+	\item Creación y control de procesos.
+	\item Pipes.
+	\item Señales
+	\item Operaciones de archivos y directorios
+	\item Excepciones
+	\item Errores del bus
+	\item Biblioteca C
+\end{itemize}
+
+\printbibliography[keyword=intro, title=Bibliografía]
