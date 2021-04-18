@@ -2,7 +2,7 @@
 	author = "",
 	year = "2019",
 	title = "Sistemas operativos - Clases Teóricas",
-	keywords={intro, sincro}
+	keywords={intro,sincro,drivers}
 }
 
 @book{silberchatz,
@@ -48,6 +48,20 @@
 	chapter= {7. Deadlock, Sección 2},
 	keywords={sincro},
 	pages={317-322}
+}
+
+@inbook {silberchatz.10,
+	crossref={silberchatz},
+	chapter= {10. Mass Storage Structure},
+	keywords={discos},
+	pages={467-502}
+}
+
+@inbook {silberchatz.13,
+	crossref={silberchatz},
+	chapter= {10. I/O Systems},
+	keywords={drivers},
+	pages={467-502}
 }
 
 @book{herlihy,
@@ -135,4 +149,10 @@
 	keywords={segmentacion},
 	crossref={tanenbaum},
 	pages={235-237}
+}
+
+@misc{wikipedia.writeAmplification,
+	title={Write amplification},
+	howpublished={\url{https://en.wikipedia.org/wiki/Write_amplification}},
+	keywords={discos}
 }
