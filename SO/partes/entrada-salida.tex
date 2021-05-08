@@ -210,18 +210,126 @@ Por lo general, junto con estos esquemas se agrega un disco de respuesto que no 
 \printbibliography[keyword=discos, title=Bibliografía]
 
 \newpage
-\section{\red{Sistemas de archivos}}
-\subsection{\red{Responsabilidades del FS}}
-% TODO
-\subsection{\red{Punto de montaje}}
-% TODO
-\subsection{\red{Representación de archivos}}
-% TODO
-\subsection{\red{Manejo del espacio libre}}
-% TODO
+\section{Sistemas de archivos}
+El sistema de archivos (filesystem) es el módulo del kernel que se encarga de organizar la información de manera lógica. Es decir, se encarga de estructurar la información guardad en cada archivo y de como ordenarlos en su conjunto.
+
+\subsection{Archivos}
+Un archivo es un mecanismo de abstracción que provee una forma de guardar información en el disco. Nos permiten abstraer los detalles del método usado guardar la información deseada y como funciona el disco.
+
+Cada archivo es identificado por un nombre que puede consistir en dos partes separadas por un punto. La segunda parte se conoce como la \textbf{extensión} del archivo y usualmente indica como está estructurado internamente. Sin embargo, el nombre (junto con la extensión) solo das a los usuarios una forma de distinguir fácilmente el tipo de contenido guardado en el mismo. Para el sistema operativo, el archivo es simplemente una secuencia de bytes sin sentido.
+
+Esto nos da la máxima flexibilidad posible, ya que un usuario puede poner lo que quiera en sus archivos, de la forma que mejor le parezca. El sistema operativo no ofrece ninguna ayuda pero tampoco estorba.
+
+Por lo general, los sistemas operativos soportan varios tipos de archivos. En los sistemas UNIX podemos distinguir los siguientes: 
+\begin{itemize}
+	\item Los \textbf{archivos regulares} son los archivos que contienen la información del usuario.
+	\item Los archivos de \textbf{directorios} son los archivos que usa el sistema para mantener la estructura del filesystem.
+	\item Los archivos de carácter especial (\textbf{character special files}) son usados para modelar dispositivos de entradas/salida como terminales, impresoras y redes.
+	\item Los archivos especiales de bloques \textbf{Block Special Files} son usados para modelrar discos.
+\end{itemize}
+
+\subsubsection{Atributos}\label{atributos-archivos}
+Cuando un usuario guarda un archivo, el filesystem, además de asociar el nombre con los datos correspondientes almacena varios atributos que le permitirán operar al sistema en el futuro. Estos atributos son conocidos como los \textbf{metadatos} del archivo y son almacenados en las estructuras de directorio.
+
+Algunos ejemplos de metadatos son:
+\begin{itemize}
+	\item \textbf{Flags de protección:} Indican que operaciones podrá realizar cada usuario o grupo de usuarios sobre el archivo.
+	\item \textbf{Tamaños}: El tamaño actual del achivo y, si está definido, el tamaño máximo permitido.
+	\item \textbf{Propietario}: Un identificador del usuario que creó el archivo
+	\item \textbf{Fechas de creación, modificación y acceso}
+	\item\textbf{Bits de archivado}: Indica si hay alguna copia e seguridad del archivo.
+	\item \textbf{Tipo de archivo}: Si es regular, directorio, representa algun dispositivo, etc.
+	\item \textbf{Conteo de referencias}
+	\item \textbf{CRC}
+\end{itemize}
+
+\subsection{Estructuras de directorios}
+\paragraph{Volumen:} Una partición de un dispositivo, un dispositivo entero o un varios dispositivos que participan en un RAID que contienen un sistema de archivos. Cada volumen puede ser pensado como un disco virtual y es capaz de contener uno o más sistemas operativos. 
+
+Cada volumen, además de contener un filesystem debe almacenar la información sobre los archivos que contiene el sistema. Una de las formas más simples de mantener esta información es en una tabla llamada  \textbf{directorio del dispositivo} o \textbf{tabla de contenidos del volumen}. La misma puede ser vista como una tabla que traduce nombres de archivos en sus entradas de directorio correspondientes (es decir, a punteros que indican donde están los metadatos del mismo).
+
+Hoy en día, la mayoría de los sistemas operativos utiliza directorios estructurados en forma de árbol. Los mismos establecen una jerarquía de directorios que permiten al usuario crear sus propios subdirectorios y organizar sus archivos como mejor le parezca. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\textwidth]{imagenes/directorio-arbol}
+	\label{fig:directorio-arbol}
+\end{figure}
+
+
+\subsubsection{Directorios de grafos áciclico (DAG)}
+Consideremos dos porgramadores que están trabajando en el mismo projecto. Los archivos asociados con ese proyecto son guardados en un subidrectorio, separandolos así de otros projectos y archivos de cada uno de los programadores.
+
+Un directorio con estructura de gráfo acíclico es una generalización a uso de un árbol que permite que se compartan archivos y directorios.
+
+En este esquema, el mismo archivo o subdirectorio puede estar en dos directorios distintos de manera simultánea. Entonces se dice que ese archivo/subdirectorio es \textbf{compartido}. Es importante notar, que un archivo compartido no es lo mismo que tener dos copias del mismo archivo. Con dos copias, si un programador cambia su copia, el otro no verá los cambio en la suya. Con un archivo compartido, los cambios hechos por una persona son inmediatamente visibles por el otro.
+
+En sistemas UNIX, este tipo los archivos y subdirectorios compartidos se crean agregando una nueva entrada de directorio al sistema llamado \textbf{link simbólico} que apunta al archivo o subdirectorio en cuestión.
+
+Cuando se hace una referencia a un archivo, buscamos en el directorio. Si la entrada del directorio está marcada como link, entonces debemos resolverlo usando el nombre real del archivo al que apunta.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\textwidth]{imagenes/directorio-dag}
+	\label{fig:directorio-dag}
+\end{figure}
+
+\subsection{Punto de montaje}
+Así como hay que abrir un archivo antes de usarlo, un sistema de archivo debe ser \textbf{montado}. Mas específicamente, la estructura de directorio del sistema operativo se construye a partir de múltiples volumenes que deben ser montados para que estén disponibles al usuario.
+
+El proceso de montaje es simple. Primero, se envia al sistema operativo el nombre del dispositivo y un \textbf{punto de montaje} (la ubicación dentro de la estructura de archivos a través de la cual el usuario podrá acceder al sistema de archivos). Algunos sistemas operativos tambien requieren el tipo de filesystem que va a ser montado, mientras que otros analizan la estructura del dispositivo para determinarlo. Por lo general, el punto de montaje es una directorio vacío.
+
+Luego, el sistema operativo verifica que el dispositivo contiene un sistema de archivos válido y luego marca el punto de montaje como forma de acceso al mismo. Este esquema permite al usuario recorrer de manera uniforme diferentes sistemas de archivos.
+
+\subsection{Representación de archivos}
+El sistema de archivos maneja toda la metadata (atributos - ver \ref{atributos-archivos}) relacionada con los archivos y las estructuras de los directorios. Esta información está almacenada en bloques de control de archivos (file-control block).
+
+\subsubsection{Representacion continua}
+Una de las formas más fáciles de almacenar los archivos es guardandolos en bloques continuos en el disco. En este caso, los file-systems tienen que almacenar su file-control block la dirección del primer bloque y la cantidad de bloques ocupados por el archivo. Sin embargo, es un problema encontrar el espacio necesario para cada uno de ellos, es difícil saber cuanto espacio necesitara en el futuro atributos-archivos y produce fragmentación externa.
+
+\subsubsection{Representacion como lista enlazada}
+Soluciona todos los problemas de la representación continua. En este esquema, cada archivo es una lista enlazada de bloques de disco. El directorio contiene un puntero al primer y último bloque del archivo.
+
+Para crear un archivo nuevo, simplemente creamos una entrada nueva en el directorio con sus punteros en \texttt{null}. Una escritura en el disco, hace que el sistema de manejo de memoria libre encuentre un bloque vacío.
+
+Sin embargo, el mayor problema con esta representación es que el acceso aleatorio es ineficiente.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\textwidth]{imagenes/file-lista-enlazada}
+	\caption{Archivo como lista enlazada}
+	\label{fig:file-lista-enlazada}
+\end{figure}
+
+Una variación importante de este que esquema, es el uso de \textbf{file-allocation-table (FAT)}. En esta variación, se reserva una sección del disco para contener una tabla que indica, para cada bloque, cual es su siguiente y los bloques no usados son marcados con un símbolo especial. 
+
+Entonces el problema de encontrar un bloque vacío se reduce a buscar en esta tabla el valor especial, sin embargo no es un esquema escalable ya que la misma puede llegar a ocupar mucho espacios y requerir varios movimientos de la cabeza del disco para leer un solo archivo (en el peor de los casos, un movimiento para leer la FAT y otro para leer el bloque por cada bloque del archivo).
+
+\subsubsection{Indexación (inodos)}
+Cada archivo tiene su propio bloque de indices. La $i$-ésima entrada en este bloque apunta al $i$-ésimo bloque del archivo. Cuando el archivo es creado, todos los punteros del bloque son inicializados en $null$ y se van modificando a medida que el archivo va creciendo.
+
+Para permitir archivos que necesiten mas bloques que los que puede apuntar el bloque indice se pueden usar distintos esquemas:
+
+\paragraph{Lista enlazada:} Los bloques de una archivo están definidos por una lista enlazada de bloques de índices.
+
+\paragraph{Indice multinivel:} Se comienza con un bloque de indices cuyos punteros apuntan a un segundo bloque de índices que apuntan a los bloques del archivo.
+
+\paragraph{Combinación de los ultimos dos:} Es lo que hace linux. Los file-control blocks (inodos), contienen los atributos, una lista de punteros que apuntan directamente a bloques del archivo (\textbf{direct blocks})(permiten acceder a archivos pequeños), luego un puntero a un bloque llamado \textbf{single indirect block} que apunta a una lista de \textbf{direct blocks}, luego otro puntero a un \textbf{double indirect block} y por último un puntero a un \textbf{triple indirect block}. Cada uno agregando un nivel más de indirección a los bloques del archivo
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\textwidth]{imagenes/inodos}
+		\caption{}
+		\label{fig:inodos}
+	\end{figure}
+
+De esta manera solo es necesario mantener en memoria las tablas de los archivos abiertos (y solo las partes que se van usando de la misma).
+
+En este caso, se reserva un inodo como entrada al directorio raíz y por cada archivo o subdirectorio hay una entrada que apunta a al inodo correspondiente.
+
+\subsection{Manejo del espacio libre}
+Dado que el espacio del disco es limitado y los archivos se van creando, modificando y borrando con el tiempo, el sistema mantiene una \textbf{lista de espacio libre} que indica cuales son los bloques libres del disco. De esta forma, para crear un archivo, se debe buscar en esta lista el espacio requerido
 \subsection{\red{FAT, inodos}}
-% TODO
-\subsection{\red{Atributos}}
 % TODO
 \subsection{\red{Directorios}}
 % TODO
@@ -232,4 +340,6 @@ Por lo general, junto con estos esquemas se agrega un disco de respuesto que no 
 \subsection{\red{Características avanzadas}}
 % TODO
 \subsection{\red{NFS, VFS}}
+Con la evolución de la red y la tecnología de archivos, los métodos de compartir archivos han cambiado. Los primeros métodos implementados consistian en transferir manualmente los archivos usando programos como \textbf{ftp}. Luego, se comenzaron a usar sistemas de archivos distribuidos (distributed file system - DFS) en la cual los directorios remotos son visibles desde una computadora local. El tercer: \textbf{World Wide Web} es, en cierto modo es una reversión al primer método, ya que es necesario un navegador web para poder acceder a los archivos remotos y distintas operaciones son usadas para transferir archivos.
 % TODO
+\printbibliography[keyword=filesystem, title=Bibliografía]
