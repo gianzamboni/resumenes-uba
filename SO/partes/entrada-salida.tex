@@ -328,18 +328,50 @@ De esta manera solo es necesario mantener en memoria las tablas de los archivos 
 En este caso, se reserva un inodo como entrada al directorio raíz y por cada archivo o subdirectorio hay una entrada que apunta a al inodo correspondiente.
 
 \subsection{Manejo del espacio libre}
-Dado que el espacio del disco es limitado y los archivos se van creando, modificando y borrando con el tiempo, el sistema mantiene una \textbf{lista de espacio libre} que indica cuales son los bloques libres del disco. De esta forma, para crear un archivo, se debe buscar en esta lista el espacio requerido
-\subsection{\red{FAT, inodos}}
-% TODO
-\subsection{\red{Directorios}}
-% TODO
-\subsection{\red{Caché}}
-% TODO
-\subsection{\red{Consistencia, journaling}}
-% TODO
-\subsection{\red{Características avanzadas}}
-% TODO
-\subsection{\red{NFS, VFS}}
+Dado que el espacio del disco es limitado y los archivos se van creando, modificando y borrando con el tiempo, el sistema mantiene una \textbf{lista de espacio libre} que indica cuales son los bloques libres del disco. De esta forma, para crear un archivo, se debe buscar en esta lista el espacio requerido. Luego, ese espacio se borra de dicha lista.
+
+Hay varias formas de implementar esta lista:
+
+\subsubsection{Bit Vector}
+La forma más simple es usar un \textbf{bit map} o \textbf{vector bit}. Cada bloque esta representado por 1 bit. Si el bloque está libre, el bit es 1, si está siendo usado es un 0.
+
+La principal ventaja de esta implementación es su relativa simplicidad y la eficiencia que tiene para encontrar el primer bloque libre en el disco. Sin embargo, son ineficientes salvo que se mantengantotalmente en memoria, lo cual es un problema si el disco es demasiado grande ya que puede llegar ocupar demasiado espacio.
+
+\subsubsection{Listas enlazadas}
+Otra forma es mantener un puntero al primer bloque libre del disco y cachearlo en memoria. El bloque contiene un puntero al siguiente bloque libre y así. Entonces la lista enlazada está repartida en los bloques libres del disco. Este esquema no eficiente: Para recorrer la lista debemos leer cada bloque lo que requiere un gran tiempo de I/O. Afortunadamente, esto no es algo que se haga usualemente. Por lo general, el sistema operativo, solo necesita un bloque libre para asignar un archivo. 
+
+Se puede mejorar este método haciendo que cada bloque tenga $n$ punteros a bloques libres y un último puntero al siguiente bloque de la lista. De esta manera, se acelera el acceso a las direcciones de varios bloques.
+
+Además, también se puede mantener punteros solo al primer bloque de una lista contigua de bloques y la cantidad de bloques contiguos. De esta manera, también nos ahorramos una cantidad gran cantidad de punteros.
+
+\subsection{Perfomance}
+Algunos sistemas separan una parte de la memoria principal para usarla como caché usando el sistema de paginación similar al visto en la sección \ref{paginacion}. Este tipo de caché trata la información de los archivos como páginas en vez de bloques, esto nos permite unificar los accesos de los procesos con la memoria virtual en vez de utilizar el sitema de archivos: Este esquema se llama \textbf{memoria virtual unificada}.
+
+Otro problema que puede afectar la perfomance del sistema es si las operaciones  de I/O son síncronas o asíncronas. Las \textbf{ escrituras síncronas} ocurren en el el orden en el que el subsistema de disco recibe los pedidos y las escrituras no se bufferean. En las \textbf{escrituras asíncroncas}, los datos son almacenados en la caché y se devuelve el control al proceso. Luego la caché es bajada a memoria en otro momento. Por lo general, las escrituras se hacen de manera asincroca, sin embargo los sistemas operativos incluyen un flag en la system \texttt{open} que permiten a un proceso requerir escrituras sincrónicas.
+
+\subsection{Recuperación}
+Los archivos y directorios deben ser mantenidos tanto en memoria principal como en disco y se debe asegurar que una falla en sistema no resulte en perdida de información o incosistencia en las estructuras de datos del filesystem.
+
+\subsubsection{Consistencia}
+Cualquiera sea la causa de corrupción, un sistema de archivos debe detectar el problema y corregirlo. Para detectarlo, se puede escanear la metadata de cada archivo para confirmar su estado. Sin embargo, esto puede llegar a tomar varias horas si el sistema es muy grande y debería hacerse cada vez que el sistema bootea.
+
+Alternativamente, el sistema de archivos puede almacenar su estado en la meta-data del sistema:  Un bit se setea cuando se están produciendo cambios en los datos del sistema. Si todas las actualizaciones son completadas correctamente, entonces se limpia el bit. Si esto no sucede, se debe correr un programa llamado \textbf{consistency checker} que realiza el escaneo mencionado y trata de corregir las inconsistencias que encuentre.
+
+\subsubsection{Journaling}
+Con el verificador de incosistencias, permitimos que las estucturas se rompan y las reparamos en la fase de recuperación. Sim embargo, este método tiene varios problemas: Puede haber inconsistencias irreparables, puede requerir intervención humana y tomar mucho tiempo.
+
+La solución a este problema es aplicar técnicas de recuperación basadas en logging: Cada conjunto de operaciones para realizar una tarea específica en el disco es llamada \textbf{transacción}. Primero se escriben en un log todos los cambios, se consideran como listos para \textit{commitear} (escribir en disco) y se devuelve el control al proceso. Mientras tanto, las entradas escritas en el log se ejecutan en el sistema de archivos.
+
+A medida que estas acciones se van completando, se actualiza un puntero que indica cual es la próxima acción a realizar. Una vez que se terminó de commitear una transacción, la misma se remueve del log (que suele ser un \textbf{buffer circular}).
+
+Si el sistema falla, el log tendrá cero o más transacciones que no fueron completadas, por lo que deben terminarse. El sistema puede retomar la ejecución desde el puntero guardado y se puede recuperar la consistencia del sistema. Si la transacción fue abortada, entonces sus cambios deben revertirse. 
+
+Este registro se escrbie en bloques consecutivos, por lo que para modificarlo, se realiza una escritura secuencial y el impacto en performance es bajo.
+
+\subsection{Network File System}
 Con la evolución de la red y la tecnología de archivos, los métodos de compartir archivos han cambiado. Los primeros métodos implementados consistian en transferir manualmente los archivos usando programos como \textbf{ftp}. Luego, se comenzaron a usar sistemas de archivos distribuidos (distributed file system - DFS) en la cual los directorios remotos son visibles desde una computadora local. El tercer: \textbf{World Wide Web} es, en cierto modo es una reversión al primer método, ya que es necesario un navegador web para poder acceder a los archivos remotos y distintas operaciones son usadas para transferir archivos.
-% TODO
+
+Los sistemas de archivos de red son protocolos que permiten acceder a sistemas de archivos remotos como si fuesen locales usando llamadas a procedimientos remotos. Para esto se define un protocolo de montaje que permite montar el file system remoto en el sistema local como si  fuese una parte integral del de sistema de archivos locales. Para poder soportar esto, los SO implementan una capa llamada \textbf{Virtual File System} que contiene \textit{vnodes} por cada archivo abierto. Así, los pedidos de E/S que llegan a este sistema son despachados al sistema de archivos locales o al sistema de archivos de red de manera transparente.
+
+Si bien es necesario un módulo de kernel especial del lado del cliente, del lado del server alcanza con un programa común y corriente.
 \printbibliography[keyword=filesystem, title=Bibliografía]
