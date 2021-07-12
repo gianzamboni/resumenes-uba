@@ -1,28 +1,143 @@
-\part{\red{Protección y seguridad}}
-	\subsection{\red{Conceptos de protección y seguridad}}
-	% TODO
-	\subsection{\red{Matrices de permisos}}
-	% TODO
-	\subsection{\red{MAC vs. DAC}}
-	% TODO
-	\subsection{\red{Autenticación, autorización y auditoría}}
-	% TODO
-	\subsection{\red{Funciones de hash de una vía}}
-	% TODO
-	\subsection{\red{Encriptación simétrica}}
-	% TODO
-	\subsection{\red{RSA}}
-	% TODO
-	\subsection{\red{Privilegios de procesos}}
-	% TODO
-	\subsection{\red{Buffer overflows}}
-	% TODO
-	\subsection{\red{Inyección de parámetros}}
-	% TODO
-	\subsection{\red{Condiciones de carrera}}
-	% TODO
-	\subsection{\red{Sandboxes}}
-	% TODO
-	\subsection{\red{Principios generale de seguridad}}
-	% TODO
+\part{Protección y seguridad}
+Decimos que un sistema es seguro si sus recursos son usados y accedidos como es debido bajo toda circunstancia. A pesar de que es imposible implementar un sistema totalmente seguro, existen mecanismos para hacer que las infracciones de seguridad sean poco probables. Por lo general, se descompone la seguridad de un sistema en tres partes:
+\begin{itemize}
+	\item \textbf{Confidencialidad}: Se debe garantizar que solo los usuarios autorizados a ver cierta información pueden hacerlo.
+	\item \textbf{Integridad}: Ningún usuario debería poder modificar los datos del sistema salvo que tenga expresa autorización de su dueño.
+	\item \textbf{Disponibilidad}: Nadie puede alterar el sistema y hacer que sea inutilizable. 
+\end{itemize}
 
+Para esto, debemos tener formas de cerciorarnos que un usuario es quien dice ser (\textbf{autenticar}), de controlar a que archivos/procesos puede acceder, usar y modifcar (\textbf{autorizar}) y, por último, mantener un registro de cuales son su acciones (\textbf{auditar}) para poder identificar quien son los responsables de las modificaciones al sistema.
+
+\section{Autenticación: Encriptación de valores/mensajes}
+La autenticación de un usuario es uno de los mayores problemas de seguridad en un sistema operativo. Por lo general, los usuarios se identifican a si mismos sin embargo debemos tener una forma de verificar la autenticidad de esa identificación.
+
+\paragraph{Criptografía:} Rama de las matemáticas y de la informática que se ocupa de cifrar/descifrar información utilizando métodos y técnicas que permitan el intercambio de mensajes de manera que sólo puedan ser leídas por las personas a quienes van dirigidos.
+
+\paragraph{Criptoanálisis:} Estudio de los métodos que se utilizan para quebrar textos cifrados con objeto de recuperar la información original en ausencia de la clave.
+
+\subsection{Funciones de hash de una vía}
+La forma más común de autenticación es el uso de contraseñas: Cuando el usuario se identifica con su n nombre de cuenta y una contraseña. Si la contraseña que provee mateha con la almacenada en el sistema, entonces asume que el usuario es quien dice ser.
+
+Desafortunadamente, las contraseñas pueden ser adivinadas, expuestas accidentalmente o robadas de manera muy fácil. Por esta razón, los sistemas operativos las guardan hasheadas en un archivo del sistema: Dada una clave $x$, guardan el valor $f(x)$ donde $f$ es una función no inversible (dado $f(x)$ es imposible o es muy difícil saber quien es $x$).
+
+Si bien, no es posible revertir un hash a su valor original, este método puede ser vulnerado si se toma un diccionario de contraseñas y se hashea cada uno de sus valores. Si el usuario había elegido una palabra del diccionario como contraseña, entonces es descubierta. Por esta razón, el sistema le agrega "sal" a la misma: Es un valor random que se agrega al final de la contraseña antes de hashearla. 
+
+En el sistema se guarda tanto el hash generado por esta  concatenación como el valor usado para salar la contraseña original. De esta manera, se complica al atacante descubrir una contraseña porque debe probar cada palabra de su diccionario con cada posible sal existente. 
+
+Además, si dos usuarios habían elegido la misma contraseña como se sala con distintos valores, el valor guardado en el sistema es distinto y si la palabra es vulnerada para uno de esos usuarios, el otro no es afectado.
+
+\subsection{Encriptación de mensajes}
+\subsubsection{Algoritmos de encriptación simétricos} 
+El remitente codifica su mensaje $M$ usando una clave secreta $K$ que debe ser conocida por el destinatario. Cuando el mensaje llega a destino, el de debe usar la misma clave para decodificarlo.
+
+El problema con este tipo de algoritmo, es que se debe mantener secreta la clave $K$ por lo que se deben buscar medios alternativos para comunicarla (no puede ser a través de una red).
+
+\subsubsection{Algoritmos de encriptación asimetricos}
+En este tipo de algoritmos, el remitente y el destinatario usan claves distintas para codificar y decoficar el mismo mensaje, respectivamente.
+
+Un entidad que desee recibir una comunicación encriptada crea dos claves: Una clave pública $P$ y una clave privada $K$ tales que cualquier mensaje encriptado con $P$ solo puede ser desencriptado con $K$.
+
+De esta manera, cualquier remitente que desee entablar una comunicación segura con esta entidad podrá encriptar su mensaje con la clave $P$ y enviarla sin preocuparse por que el mensaje sea iterceptado pues solo la entidad correspondiente podrá descifrarlo.
+
+Uno de los algoritmos más famosos de este tipo es el algoritmo RSA.
+
+Otra forma de usar este tipo de algoritmos, es para firmar documentos de manera digital. En estos casos, la entidad que debe firmarlo computa un hash del documento usando un hash de ua via y lo ``encripta" con su clave privada obteniendo lo que se conoce como \textbf{bloque de firma (signature block)}.
+
+Por su parte el destinatario computa el hash del documento usando la misma función de hash y cuando recibe el signature block, lo ``desencripta" usando la clave pública del usuario que lo firmó. Si el hash que obtuvo al desencriptar es distinto al que calculó él, entonces el documento o la firma (o ambos) fueron manipulados.
+
+\newpage
+\section{Autorización: Privilegio de procesos/usuarios}\label{privilegios}
+Se trata de los mecanismos que implementa el sistema para prevenir que los usuarios modifiquen o vean información/archivos a los que no deberían tener acceso.
+
+Uno de los principios más usados durante el desarrollo de un sistema operativo es el \textbf{principio del mínimo privilegio}: Se le da a los programas, usuarios e incluso el sistema los privilegios mínimos y necesarios como para que puedan cumplir con su trabajo.
+
+Un sistema de computadora es una colección de \textbf{sujetos} (usuarios, procesos e incluso el mismo sistema), \textbf{objetos} y recursos (procesos, semáforos, bloques memoria, impresoras, discos). Cada objeto tiene un nombre único que lo diferencia del resto de los objetos del sistema y tiene asociadas \textbf{acciones} (operaciones) bien definidas.
+
+Un sujeto solo debe poder acceder a los objetos para los cuales tiene autorización. Lo que es más, solo debe poder acceder a los objetos en el momento en el que los necesita. Este segundo requerimiento es conocido como \textbf{need-to-know principle} (principio de necesidad de conocer?\footnote{No se como traducir esto, si se les ocuree alguna traduccion mejor, propongan}) y útil para limitar la cantidad de daño que puede provocar un proceso defectuoso.
+
+Por lo general, como los sujetos en un sistema pueden ser muchos, se los agrupa en roles o dominios según ciertas características comunes: Por ejemplo, puede haber usuarios administradora que pueden hacer cualquier operación, usuarios \textit{normales} que pueden abrir, leer y modificar ciertos archivos y usuarios \textit{visitantes} que solo pueden leer un subconjunto mínimo de archivos públicos.
+
+\subsection{Matrices de permisos}
+Una de las formás más fáciles de implementar la autorizaciones es como una matriz de control de accesos o permisos. Cada columna de la matriz representa un objeto y cada fila un sujeto. En cada celda (i,j) se almacena las operaciones que tiene permitido realizar el sujeto $i$ sobre el objeto $j$. Algunos ejemplos de estas operaciones son: Leer, escribir, copiar, abrir, borrar, imprimir, ejecutar, matar (a un proceso), etc.
+
+Por lo general, el administrador del sistema define cuales son las operaciones por defecto que se les permite a hacer a cada usuario cuando se crea un objeto. Pero además, cada usuario puede decidir agregar o quitar permisos en cada celda a medida que vaya siendo necesario. 
+
+La matriz de acceso nos provee de un mecanismo adecuado para definir e implementar los controles estrictos que siguen los principios mencionados. Dado que cada entrada en la matriz de acceso se modifica individualmente, cada una de ellas debe ser considerada como un objeto a ser protegido.
+
+Cuando un proceso es creado, por lo general, hereda los permisos del usuario que los crea. Algunos sistemas operativos, ofrecen formas de crear procesos con permisos de administrador en casos especiales (por ejemlo, el comando \texttt{sudo}, en linux).
+
+\subsubsection{Implementación} 
+Dado que la mayoría de los dominios no van a necesitar acceso a la mayoría de los objetos, la matriz de permisos termina siendo sparsa (muy grande y con la mayoría de sus celdas vacías). Por esta razón, se suele almacenar solo las celdas no vacías.
+
+Hay dos técnicas para lograr esto:
+
+\begin{itemize}
+	\item \textbf{Access Control List:} El sistema asocia a cada objeto una lista enlazada con los dominios que pueden tener acceso a dicho objeto.
+	\item \textbf{Capabilities List:} Se asocia a cada sujeto/dominio una lista enlazada de los objetos a los que puede acceder.
+\end{itemize}
+
+\subsubsection{MAC vs. DAC}
+En la mayoría de los sistemas operativos, se permite a cada usuario determina quien puede leer y escribir cada uno de sus archivos y objetos, este esquema se denomina \textbf{Discretionary Access Control (DAC)}. Sin embargo, hay sistemas que requieren un modelo de protección más estricto: \textbf{Mandatory Access Control (MAC)}. 
+
+En MAC, se regula el flujo de la información, para asegurar que no se filtre a nadie que no tenga los permisos necesarios. El modelo más conocido es el modelo de \textbf{Beill-LaPadula} que tiene las siguientes reglas:
+
+\begin{enumerate}
+	\item \textbf{Propiedad de seguridad simple:} Un proceso corriendo a nivel de seguridad $k$ puede leer objetos que estén al mismo nivel o más abajo.
+	\item \textbf{Propiedad *:} Un proceso corriendo a nivel de seguridad $k$ solo puede escribir objetos con el mismo nivel de seguridad o más alto.
+\end{enumerate}
+
+El modelo descripto se asegura que toda la información de nivel de seguridad $k$ se mantenga secreta a los usuarios con menor prioridad. Sin embargo, no garantiza la integridad de los datos (alguien de nivel $k$ puede escribir objetos con mayor nivel de seguridad). Por esta razón, tambien existe el modelo \textbf{Biba} que es el inverso del anterior: Asegura integridad de la información pero no así mantenerla secreta.
+
+\begin{enumerate}
+	\item \textbf{Propiedad de integridad simple:} Un proceso corriendo a nivel de seguridad $k$ solo puede escribir objetos que estén al mismo nivel o más abajo.
+	\item \textbf{Propiedad *:} Un proceso corriendo a nivel de seguridad $k$ solo puede leer objetos con el mismo nivel de seguridad o más alto.
+\end{enumerate}
+
+\newpage
+\section{Algunos ataques y formas de evitarlos}
+\subsection{Replay Attack}
+Es una ataque de red en el cual la información de una comunicación es repetida o demorada con fines malicisios. El objetivo del atacante es personificar por algún usuario. Supongamos que hay una comunicación encriptada entre un servidor y un usario, el atacante solo necesita interceptar alguno de los mensajes encriptados y reenviarlo al destinatario original. En este caso, el mensaje será aceptado y el destinatario confundirá al atacante con el remitente original.
+
+Por lo general, para evitar este tipo de ataque, se hace algo parecido al "salt", el servidor envía un token (número random) al cliente por cada mensaje que desea enviar. De esta forma, si el cliente encripta su mensaje con este token de único uso y un atacante lo intercepta, cuando el mismo intente reenviar ese mensaje al servidor, el servidor lo rechazará porque el token
+ya fue usado.
+
+\subsection{Buffer Overflow}
+Puede suceder en los sistemas escritos con lenguajes que no realizan comprobación de límites de array (por ejemplo C o C++). Esta falta de chequeo, permite que un usuario pueda modificar direcciones de memoria a las que normalmente no debería tener acceso. Veamos un ejemplo:
+
+\begin{multicols}{2}
+	\begin{minted}{cpp}
+					void A(){
+						char buffer[128];
+						gets(B);
+						writeLog(B);
+					}
+	\end{minted}
+	\columnbreak
+	En este caso, si el programador no implementó por su cuenta que el mensaje ingresado por el usuario tenga, efectivamente, menos de 128 carácteres, se producirá un buffer overflow:
+\end{multicols}
+El sistema escribirá en las direcciones consecutivas a la última posición válida del array dentro del stack del proceso. Un usuario malicioso podría usar esta vulnerabilidad y escribir un mensaje $B$ que remplaze todo el stack de la función modificando la dirección de retorno en el proceso. Suponiendo que el atacante, había logrado infiltrar código malicioso dentro de la memoria previamente, podría redigir la dirección de retorno hacia su propio código, logrando tomar el control del sistema.
+
+\subsection{Inyección de parámetros}
+Algunos programas permiten ejecutar comandos a través de sus parámetros sin saberlo. Este tipo dde bug se da cuando un proceso realiza un sysyem call para ejecutar una tarea pero no valida que los parámetros ingresados por el usuario sean correctos. Por ejemplo, supongamos que tenemos un programa que copia un archivo en otro y toma dos parametros: \texttt{copy original destino}  y que para lograr su objetivo hace una syscall del estilo:
+\texttt{syscall(``cp '' + original + `` '' + destino)}.
+
+Si el programado no  valida que \texttt{original} y \texttt{destino} son nombres válidos, entonces un usuario podría llamar al programa con los parametros "original.txt" y "destino.txt; rm -r /". En este caso, la syscall ejecutaria el comando de copiar y el segundo comando que borraría todos los datos del sistema si tiene los permisos necesarios.
+
+\subsection{Condiciones de carrera} 
+Existen ataque que aprovechan las race condition de un sistema para vulnerarlo. Por ejemplo, supongamos que un proceso intenta crear un archivo. En este caso, el sistema debe comprobar que el proceso tiene los permisos necesarios para escribir en la locación fijada y luego se le permite escribir. 
+
+El problema es que esto ocurre en momentos distintos y en el intervalo entre que uno ocurre y comienza lo segundo, un atacante podría crear un link símbolico que rediriga el path del nuevo archivo a alguna parte del sistema (por ejemplo, el archivo de contraseñas). Entonces, cuando el proceso escriba, lo hará sobreescribiendo el archivo apuntado dejando al sistema operativo incosistente.
+
+\subsection{Malware}
+Se denomina \textbf{malware} al software específicamente diseñado para llevar a cabo acciones no deseadas y sin el consentimiento explicito del usuario. En este tipo de software se incluyen los troyanos, worms, bots, adware, keyloggers, dialer, ransomwware, rogueware, etc.
+
+Por lo general, estos programas infectan el sistema del usuario cuando el mismo realiza descargas pocos confiables, conecta dispositivos que no conoece, abre mails de remitentes que podrían contener codigo ejecutable.
+
+Para prevenir este tipo de infecciones, se usa una gran variedad de mecanismos:
+\begin{itemize}
+	\item \textbf{Firewall:} Es un sistema que permite, al sistema controlar el flujo de datos desde y hacia la red. Gracias a este, puede decidir rechazar información que provienen de direcciones ip desconocidas y evitar que se envie información a las mismas.
+	\item \textbf{Antivirus:} Son programas que analizan el código de los procesos a ejecutar en busca de código malicioso.
+	\item \textbf{Actualización de software:} Estas actualizaciones tinen como objetivo resolver problemas de seguridad que se van descubriendo con el correr del tiempo.
+	\item \textbf{Protecciones y permisos acotados:} La implementación de alguno de los esquemas descriptos en la sección \ref{privilegios} para acotar los permisos de los proceso y así evitar modificaciones no deseadas.
+	\item\textbf{Sandboxes:} Es una técnica en el que el "carcelero", un sistema monitorea el comportamiento su prisionero: Cuando el prisionero realiza un system call, el carcelero toma el control del kernel y decide si se debe le debe permitir o no. Si se acepta, el carcelero le devuelve el control. Sino se mata al prisionero.
+\end{itemize}
