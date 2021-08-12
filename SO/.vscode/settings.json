@@ -1,0 +1,33 @@
+{
+    "cSpell.words": [
+        "Autenticaci",
+        "Autenticación",
+        "Encriptaci",
+        "Encriptación",
+        "Lamport",
+        "Livelock",
+        "Paginaci",
+        "Paginación",
+        "Reorden",
+        "Virtualizaci",
+        "Virtualización",
+        "booteo",
+        "concurrentemente",
+        "din",
+        "dinámicamente",
+        "execve",
+        "inodos",
+        "journaling",
+        "micamente",
+        "multicores",
+        "multiprocesadores",
+        "multitarea",
+        "multithreaded",
+        "n",
+        "ncrona",
+        "s",
+        "syscalls",
+        "síncrona",
+        "waitpid"
+    ]
+}

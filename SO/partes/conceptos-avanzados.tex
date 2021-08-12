@@ -1,11 +1,74 @@
-\part{\red{Conceptos avanzados}}
-\section{\red{Sistemas distribuidos}}
-\subsection{\red{Taxonomía de Flynn}}
-% TODO
-\subsection{\red{Arquitecturas de HW y SW para sistemas distribuidos}}
-% TODO
-\subsection{\red{RPC}}
-% TODO
+\part{Conceptos avanzados}
+
+\section{Sistemas distribuidos}
+
+Un sistema distribuido es un conjunto de nodos conectados a través de un red de comunicación. Desde el punto de vista específico de cada nodo, el resto de los nodos y sus respectivos recursos son remotos mientras que los suyos son locales.
+
+Hay 4 grandes razones para construir sistemas distribuidos: 
+
+\begin{itemize}
+	\item\textbf{Compartir  recursos:} Si hay varios sitios conectados entre si, entonces un usario puede usar los recursos disponibles en alguno de los nodos de la red. En general, los mecanismos para realizar esto son dispositivos de hardware especializados.
+	\item\textbf{Aceleración de procesamiento:} Si hay un proceso que puede ser particionado en varias subprocesos que se pueden correr de manera concurrente, entonces un sistema distribuido puede usar distintos nodos para correrlos simultáneamente para ahorrar tiempo. Adicionalmente, si un nodo está demasiado sobrecargado, el sistema puede repartir el trabajo a otros nodos que no estén en uso (esto se llama \textbf{load sharing} o \textbf{job migration}).
+	\item\textbf{Redundancia:} Los sistemas distribuidos permiten mantener copias redundantes de sus datos en distintos nodos de la red. De esta manera, si un nodo cae, un usuario puede seguir accediendo a la información que necesita sin ningún problema.
+\end{itemize}
+
+Si bien estas son buenas razones para hacer sistemas distribuidos hay que tener en cuenta que su implementación conlleva resolver ciertos problemas como:
+
+\begin{itemize}
+	\item \textbf{Sincronización de eventos:} Como ordenarlos eventos cronológicamente. En general, cada nodo de una red tiene su propio clock y es imposible que todos los clock estén sincronizados a la perfección por lo que se deben implementar mecanismos que permitan decidir si un evento en un nodo $a$ es anterior o posterior a un evento en un nodo $b$.
+	\item \textbf{Coherencia de datos:} Se debe asegurar que los datos sean consistentes entre los distintos nodos de la red. Si se realizan ciertas acciones sobre el sistema, se debe asegurar que todos los nodos afectados reciban la información necesaria para actuar acorde a los cambios que se producen. Por ejemplo, si en un nodo se borra alguna entrada de una bases de datos, todos los nodos que estén haciendo uso de esa entrada deben poder darse cuenta que ya no es válida.
+	\item \textbf{Información parcial:} Los datos del sistema están repartidos en toda la red: Ningún nodo tiene toda la información, por esta razón debe saber a quien a recurrir para conseguir los datos específicos que necesita en cada momento.´
+\end{itemize}
+
+\subsection{Arquitecturas de sistemas distribuidos con memoria compartida}
+
+Los sistemas distribuidos pueden tener tres tipos de arquitectura de hardware:
+\begin{itemize}
+	\item \textbf{Acceso de memoria uniforme (UMA):} Son sistemas en los que se usa un único controlador de memoria. El mismo se encarga de administrar la memoria asiganada a cada proceso/nodo de la red.
+	\item \textbf{Acceso de memoria  no uniforme (NUMA):}  En este sistema se le asigna a cada nodo su propia memoria local para su propio uso. Esto permite que cada nodo acceda de manera más rápida a sus datos y solo se comunica con otros nodos de la red si es necesario.
+\end{itemize}
+
+En cuanto a la administración de memoria del sistema, tenemos	 distintos tipos de asignaciones:
+\begin{itemize}
+	\item \textbf{Estructurada:}
+	\begin{itemize}
+	\item \textbf{Memoria asociativa:} Son memorias que están optimizadas para realizar búsquedas a través de todos los datos (a diferencia de las memorias normales que proveen acceso directo a un dato en base a su dirección).
+	\item\textbf{Arrays distribuidos:} Son arrays cuyos datos se almacenan en distintos nodos de una red. Las operaciones sobre el mismo son enviadas a un nodo \textit{master} que las mapea a operaciones que se distribuyen a los nodos correspondientes.
+	\end{itemize}
+	\item\textbf{No estructurada:}
+	\begin{itemize}
+		\item \textbf{Memoria virtual global:} Asigna un namespace a la memoria distribuida en la red. De esta manera, todos los nodos pueden acceder a la misma sin necesitar saber donde se encuentra ubicado el dato que necesita.
+		\item\textbf{Memoria virtual particionada por localidad:} \red{????}
+	\end{itemize}
+\end{itemize}
+\subsection{Protocolos de comunicación}
+\subsubsection{Comunicación sincrónica}
+Los protocolos más comunes soportan una arquitectura \textit{cliente/servidor} en la que un nodo (\textit{cliente}) ejecutando un proceso solicita los servicios de otro (\textit{servidor}):
+\paragraph{Telnet:} Es un protocolo que permite que un usuario se conecte de manera remota a un dispositivo de la red y utilizar sus recursos a través de una terminal de comandos.
+\paragraph{RPC:} Es un mecanismo que les permite a los programas realizar procedure calls remotas. Involucra una serie de bibliotecas que oculta del programador los detalles de comunicación y le permiten además enviar los datos de un lugar a otro de la red.
+
+\subsubsection{Pasaje de mensajes asincrónico}
+Este mecanismo es uno de lo más generales porque no supone que haya nada compartido, excepto un canal de comunicación a través del cual envían datos. El remitente del mensaje, lo codificado antes de enviarlo por el canal y luego el destinatario lo decodifica. Si la comunicaciones asíncrona, se debe tener en cuenta que el sistema debe atender el traspaso de mensajes, la comunicación es lenta y eventualmente se podrían perder paquetes.
+
+\paragraph{Conjetura de Brewer:} En un entorno distribuido no se puede tener a la vez consistencia, disponibilidad y tolerancia a fallas. Sólo dos de esas tres.
+
+\subsection{Locks en entornos distribuidos}
+En sistemas distribuidos no tenemos la posibilidad de ejecutar operaciones atómicas por lo que es necesario crear mecanismos que permitan controlar el flujo de los eventosy la modificación de los datos para que no se genere ninguna inconsistencia.
+
+Las opcion más simple es hacer que un único nodo se encarge de coordinar el uso de todos los recursos de la red. En el mismo se ejecutan procesos llamados \textit{proxies} que representan a cada proceso remoto y negocia con el resto de los proxies la asignación de recursos al proceso que representa.
+
+Uno de los principales problemas de esta metodología, es que si el nodo coordinador se desconecta de la red, los recursos quedan inutilizables. Además, dependiendo de la capacidad de la red, se pueden llegar a generar cuellos de botella si hay demasiados procesos haciendo pedidos simultáneamente ya que cada interacción entre un proceso y el coordinador requiere de mensajes que viajen por la red.
+
+Otro problema es la sincronización de los eventos. Cada proceso tiene su propio clock que no está sincronizado con el del resto por lo que el coordinador debe decidir que pasó antes y qué paso después. Cuando la precisión importa, Lamport, propone definir un \textit{orden parcial no reflexivo} entre los eventosde la siguiente manera:
+\begin{itemize}
+	\item Si dentro de un proceso, $A$ sucede antes que $B$, entonces $A \rightarrow B$.
+	\item Si $E$ es el envío de un mensaje y $R$ su recepción, $E \rightarrow R$. Aunque $E$ y $R$ sucedan en procesos distintos.
+	\item Si $A \rightarrow B$ y $B \rightarrow C$, entonces $A \rightarrow C$.
+	\item Si no vale ni $A \rightarrow B$ y $B \rightarrow C$, entonces $A \rightarrow C$.
+	\item Si no vale ni $A \rightarrow B$, ni $B \rightarrow A$, entonces $A$ y $B$ son \textit{concurrentes}.
+\end{itemize}
+
+Entonces, cada proceso usa su reloj para estampar con un valor monotonamente creciente cada lectura que realiza. Como la reacción siempre es posterior
 \subsection{\red{Threads}}
 % TODO
 \subsection{\red{Pasaje de mensajes}}
