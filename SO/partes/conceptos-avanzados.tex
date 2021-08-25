@@ -41,6 +41,42 @@ En cuanto a la administración de memoria del sistema, tenemos	 distintos tipos 
 		\item\textbf{Memoria virtual particionada por localidad:} \red{????}
 	\end{itemize}
 \end{itemize}
+
+\subsection{Clusters}
+
+Los clusters son un conjunto de computadoras conectadas por una red de alta velocidad sincronizados para realizar un trabajo en común. Estas computadoras trabajan cooperativamente para proveer servicios de manera cooperativa.
+
+Muchas veces, los sistemas están compuestos por un conjunto de clusters (\textit{grid}). Muchas de estas grillas están conectadas a una red, son conocidas como \textit{clouds} y, por lo general, se alquilan bajo demanda. 
+
+Para coordinar la ejecución de un proceso, un scheduler necesita asignar que procesadores de la red lo harán (\textit{asignación estática}) y cada nodo debe esperar que el proceso esté listo y asignarle el tiempo de procesador necesario. 
+
+Otra cosa a tener en cuenta, es que puede si un nodo se sobrecarga de trabajo, puede ser necesario redistribuir la carga (\textit{asingación dinámica}) de cada nodo de la red para lograr un balance de uso equitativo entre los nodos de la red. En este caso, un nodo sobrecargado o un nodo libre, inicia una \textit{migración} que es atendida por el scheduler. 
+
+Cuando el scheduler es notificado de que hay que realizar una migración, debe tomar las siguientes decisiones:
+\begin{itemize}
+	\item \textbf{Transferencia:} Cuándo hay que migrar un proceso.
+	\item \textbf{Selección:} Qué proceso hay que migrar.
+	\item \textbf{Ubicación:} A donde hay que enviar el proceso.
+	\item \textbf{Información:} Cómo difundir el nuevo estado de la red a todos los nodos.
+\end{itemize} 
+
+\subsection{Acuerdo bizantino}
+Supongamos que un proceso debe realizar una acción y notificar al resto de la red que dicha acción se realizó exitosamente. En este caso, debemos propagar la información a través de toda la red, sin embargo puede haber nodos de la misma que no funcionen correctamente o intenten sabotear la operación comunicando cosas que no son ciertas. Si es así, el estado de la operación puede parecer exitosa para algunos nodos y fallida para otros.
+
+El acuerdo bizantino es un método usado para encontrar un consenso sobre el estado de la red entre los nodos de la misma. Dada una red de $n$ nodos en la cual a lo sumo $f$ pueden fallar, este consenso se debe lograr entre todos los nodos correctos ($n-f$) y debe satisfacer tres propiedades:
+\begin{itemize}
+	\item \textbf{Acuerdo:} Todos los nodos correctos deben decidir el mismo valor (0 si se considera a la operación fallida o 1 si no).
+	\item \textbf{Terminación:} Se debe llegar al consenso en una cantidad finita de pasos
+	\item \textbf{Validez:} La decisión tomada debe ser un valor que haya sido propuesto por alguno de los nodos.
+\end{itemize}
+
+\paragraph{Teorema:} Si el canal por el que se comunican los nodos no estable (hay fallas en la comunicación de los mensajes), no existe algoritmo que nos permita conseguir concenso.
+
+\paragraph{Teorema:} Si de los procesos $n$ involucrados en el concenso, llegasen a dejar de funcionar por alguna razon $k < n$, entonces el consenso se puede resolver en $O((k+1)\cdot n^2)$ mensajes.
+
+\paragraph{Teorema:} Si los procesos no son confiables (intentan boicotear el sistema), se puede resolver consenso bizantino para $n$ procesos y $k$ fallas si y solo si $n > 3\cdot k$ y la conectividad es mayor que $2\cdot k$. Donde ``conectividad''` es el mínimo número de nodos que tenemos que sacar a la red para que deje de ser conexa.
+
+
 \subsection{Protocolos de comunicación}
 \subsubsection{Comunicación sincrónica}
 Los protocolos más comunes soportan una arquitectura \textit{cliente/servidor} en la que un nodo (\textit{cliente}) ejecutando un proceso solicita los servicios de otro (\textit{servidor}):
@@ -53,13 +89,14 @@ Este mecanismo es uno de lo más generales porque no supone que haya nada compar
 \paragraph{Conjetura de Brewer:} En un entorno distribuido no se puede tener a la vez consistencia, disponibilidad y tolerancia a fallas. Sólo dos de esas tres.
 
 \subsection{Locks en entornos distribuidos}
+\subsubsection{Lock centralizado}
 En sistemas distribuidos no tenemos la posibilidad de ejecutar operaciones atómicas por lo que es necesario crear mecanismos que permitan controlar el flujo de los eventosy la modificación de los datos para que no se genere ninguna inconsistencia.
 
 Las opcion más simple es hacer que un único nodo se encarge de coordinar el uso de todos los recursos de la red. En el mismo se ejecutan procesos llamados \textit{proxies} que representan a cada proceso remoto y negocia con el resto de los proxies la asignación de recursos al proceso que representa.
 
 Uno de los principales problemas de esta metodología, es que si el nodo coordinador se desconecta de la red, los recursos quedan inutilizables. Además, dependiendo de la capacidad de la red, se pueden llegar a generar cuellos de botella si hay demasiados procesos haciendo pedidos simultáneamente ya que cada interacción entre un proceso y el coordinador requiere de mensajes que viajen por la red.
 
-Otro problema es la sincronización de los eventos. Cada proceso tiene su propio clock que no está sincronizado con el del resto por lo que el coordinador debe decidir que pasó antes y qué paso después. Cuando la precisión importa, Lamport, propone definir un \textit{orden parcial no reflexivo} entre los eventosde la siguiente manera:
+Otro problema es la sincronización de los eventos. Cada proceso tiene su propio clock que no está sincronizado con el del resto por lo que el coordinador debe decidir que pasó antes y qué paso después. Cuando la precisión importa, Lamport, propone definir un \textit{orden parcial no reflexivo} entre los eventos de la siguiente manera:
 \begin{itemize}
 	\item Si dentro de un proceso, $A$ sucede antes que $B$, entonces $A \rightarrow B$.
 	\item Si $E$ es el envío de un mensaje y $R$ su recepción, $E \rightarrow R$. Aunque $E$ y $R$ sucedan en procesos distintos.
@@ -68,16 +105,53 @@ Otro problema es la sincronización de los eventos. Cada proceso tiene su propio
 	\item Si no vale ni $A \rightarrow B$, ni $B \rightarrow A$, entonces $A$ y $B$ son \textit{concurrentes}.
 \end{itemize}
 
-Entonces, cada proceso usa su reloj para estampar con un valor monotonamente creciente cada lectura que realiza. Como la reacción siempre es posterior
+Entonces, cada proceso usa su reloj para estampar con un valor monótonamente creciente en cada mensaje que envía. Como la recepción del mensaje siempre es posterior al envío, cuando un proceso se recibe un mensaje con una marca de tiempo $t$ que es mayor al valor actual del reloj, actualiza su reloj interno a $t+1$.
+
+Ahora, supongamos que un proceso recibe dos mensajes de distintos remitentes al mismo tiempo (ambos con el mismo $t$) y se desea saber cual fue realmente primero. En este caso, deberemos desempatar el $t$ con algún otro valor arbitrario (por ejemplo, usando el pid).
+
+\subsubsection{Locks distribuidos}
+Esta alternativa utiliza el protocolo de mayoría para obtener un lock sobre un recurso copiado en $n$ lugares. Para lograr esto, el proceso que necesita utilizar el recurso envía un pedido al resto de los nodos de la red. Si $n/2 + 1$ nodos le responden que pueden usarlo, entonces consigue el lock.
+
+Cada copia del objeto tiene un número de versión que es actualizado cada vez que el recurso se modifica.
+
+\subsubsection{Exclusión mutua}
+\paragraph{Token passing:} Se arma un anillo lógico entre los procesos y se pone a circular un token. Cuando un proceso quiere entrar a su sección crítica debe esperar a que le llegue dicho token. 
+
+Si un proceso recibe el token pero no necesita usarlo, lo reenvia al proxima nodo inmediatamente. Si necesita entrar en su sección crítica, lo retiene hasta que termina de ejecutarla.
+
+Si no hay fallas en la red, no hay inanición, sin embargo usar este método implica que haya mensaje circulando aún cuando no son necesarios.
+
+\paragraph{Solicitudes:} En este esquema, cuando proceso quiere entrar en su sección crítica debe enviar una solicitud a todos los nodos de la red y esperar la respuesta de cada uno de ellos. Una vez recibidas, el proceso podrá acceder a su sección crítica.
+
+Si hay algún nodo de la red que ya esté ejecutando una sección crítica, entonces ese nodo no devolverá una respuesta al finalizar su ejecución. Además, si hay otro nodo esperando (que haya pedido para entrar a su sección crítica antes), entonces se le da prioridad a ese nodo (y ese nodo tampoco dará respuesta hasta haber entrado y salido de su sección crítica).
+
+El resto de los nodos (aquellos que no necesitan entrar en su sección crítica o que hayan hecho un pedido después que el proceso actual) deberán responder inmediatamente.
+
+\subsubsection{Elección de Lider}
+Es parecido a token passing. Se organizan los proceso en un anillo y cada uno hace circular su ID. Cuando un proceso recibe un id, lo compara con el suyo y envía al siguiente proceso el mayor de los dos.
+
+El proceso termina cuando a un proceso le llega su propio ID en el mensaje, esto quiere decir que su ID recorrió todo el anillo sin encontrar a alguien mayor por lo que  él puede considerarse líder. En este momento, el proceso auto-identificado como líder pone en circulación un mensaje notificando el hecho.
+
+\subsection{Instantánea global consistente}
+Una instantánea global de una red es un estado que consiste en el estado local de cada proceso del sistema junto con los mensajes en tránsito en sus canales de comuncación en determinado momento. 
+
+Cuando un proceso pide una instantanea, un proceso envía un mensaje a todos los nodos de la red (incluso a si mismo) llamado \textit{marca}. En el momento que un proceso recibe este mensaje, guarda una copia de su estado y envía otro mensaje de \textit{marca} a todos los procesos.
+
+El proceso que inicio la instantanea, comienza a registrar todos los mensajes que recibe hasta que consigue todos los mensajes de marca del resto de los nodos. En este momento, la instantánea estará completa.
+
+Esta puede ser usada para determinar propiedades estables, determinar si hubo procesos que terminaron, realizad debugging del sistema y detectar deadlocks.
+
+\subsection{2PC}
+\textbf{Two Phase Commit (2PC)} es un protocolo de transacciones atómica que coordina a los procesos que participan de una transacción distribuida para commitearla o abortarla. Una vez que se comienza a ejecutar una transacción, el protocol consa de dos fases:
+
+\begin{enumerate}
+	\item La fase de request de commit (o de votación) en la que el coordinador de los procesos intenta prepararlos para que tomen todos los pasos necesarios para commitear o abortar la transacción y a votar que se debe hacer.
+	\item La fase de commit: Basandose en la votación de los procesos participantes, el coordinador decide si debe hacer commit de la transacción o abortarla (si al menos uno decidió hacer lo último entonces todos deben hacerlo). Una vez tomada la decisión, notifica a todos los participantes que deben proceder a realizar las acciones necesarias para cumplir lo notificado.
+\end{enumerate}
+
 \subsection{\red{Threads}}
 % TODO
-\subsection{\red{Pasaje de mensajes}}
-% TODO
-\subsection{\red{Orden parcial entre eventos}}
-% TODO
 \subsection{\red{Livelock}}
-% TODO
-\subsection{\red{Acuerdo bizantino}}
 % TODO
 \subsection{\red{Intuición de safety, liveness, fairness}}
 % TODO
@@ -86,16 +160,6 @@ Entonces, cada proceso usa su reloj para estampar con un valor monotonamente cre
 \subsection{\red{Panadería de Lamport}}
 % TODO
 \subsection{\red{Modelos de fallas y métricas de complejidad}}
-
-% TODO
-\subsection{\red{Exclusión mutua y locks distribuidos}}
-% TODO
-\subsection{\red{Elección de líder}}
-% TODO
-\subsection{\red{Instantánea global consistente}}
-% TODO
-\subsection{\red{2PC}}
-% TODO
 
 	\section{\red{Virtualización}}
 	% TODO
