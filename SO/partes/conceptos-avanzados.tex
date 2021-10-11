@@ -149,21 +149,95 @@ Esta puede ser usada para determinar propiedades estables, determinar si hubo pr
 	\item La fase de commit: Basandose en la votación de los procesos participantes, el coordinador decide si debe hacer commit de la transacción o abortarla (si al menos uno decidió hacer lo último entonces todos deben hacerlo). Una vez tomada la decisión, notifica a todos los participantes que deben proceder a realizar las acciones necesarias para cumplir lo notificado.
 \end{enumerate}
 
-\subsection{\red{Threads}}
-% TODO
-\subsection{\red{Livelock}}
-% TODO
-\subsection{\red{Intuición de safety, liveness, fairness}}
-% TODO
-\subsection{\red{Algoritmo del banquero}}
-% TODO
-\subsection{\red{Panadería de Lamport}}
-% TODO
-\subsection{\red{Modelos de fallas y métricas de complejidad}}
 
-	\section{\red{Virtualización}}
-	% TODO
-	\section{\red{Contenedores}}
-	% TODO
-	\section{\red{Cloud computing}}
-	% TODO
+\subsection{File System Distribuidos (DFS)}
+Un sistema de archivos distribuidos es un sistema que provee servicios de archivos (abrir, leer, escribir, cerrar, etc) a sus clientes. Con la particularidad, de que los archivos están repartidos entre todas las máquinas de una red. 
+
+La interfaz del cliente no debería distinguir entre archivos locales y remotos. Es deber del DFS localizar el archivo y gestionar el transporte de datos.
+
+\subsubsection{Estructuras de nombrado}
+\begin{itemize}
+	\item \textbf{Transparencia de ubicación:} El nombre de un archivo no da ninguna pista de cual es la ubicación física en la que está almacenado.
+	\item \textbf{Independencia de ubicación:} No es necesario cambiar el nombre del archivo cuando este es movido entre distintos dispositivos físicos.
+\end{itemize}
+
+La mayoría de los DFSs proveen mapeo estático, independiente de la ubicación para nombre a nivel de usuario.
+
+Hay tres enfoques básicos para nombrar los archivos en estos sistemas: 
+\begin{enumerate}
+	\item El más simple, es identificar a los archivos con alguna combinación del nombre de su host y su nombre local, lo que garantiza un nombre único en todo el sistema distribuido. Sin embargo, este esquema no transparente ni independiente de la ubicación física del archivo.
+	\item La segunda forma consiste en montar los directorios remotos en directorios locales, dando la apariencia de un árbol de directorios coherente. Este método permite la integración transparente de archivos, sin embargo cada máquina debe montar cada directorio remoto a su árbol, lo que puede resultar en diferencias entre los directorios de cada una.
+	\item La última opción es declarar una estructura única global de nombres que abarque todos los archivos del sistema. Sin embargo, este método es difícil de implementar debido a los archivos con nombres especiales y si algún servidor se cae, todos los archivos con nombres almacenados en ese servidor dejarán de ser accesibles.
+\end{enumerate}
+
+\subsubsection{Acceso a archivos remotos}
+Cuando un usuario acceder a un archivo de forma remota, el sistema manda un pedido al servidor, el servidor realiza las accesos necesarios y devuelve los resultados al usuario. Por lo general, esto se realiza mediante algún protocolo de RPC (Remote Procedure Call).
+
+
+Para asegurar un rendimiento adecuado del mecanismo, reducir operaciones de disco y disminuir el tráfico dentro de la red, se utilizan cachés en las máquinas de usuario que mantienen una copia local de los accesos realizados recientemente.
+
+De esta forma, si la información está cacheada (y es válida), se usa directemente sin hacer ningún pedido al server, si no hace el request correspondiente. Cuando la copia cacheada sufre alguna modificación, ésta se debe ver reflejada en el servidor para mantener consistencia.
+
+\subsubsection*{Políticas de actualización de Cachés}
+
+Una de las políticas de actualización más seguras es la \textbf{write-through} que envia las modificaciones al servirdor apenas se realizan. Sin embargo, requiere que cada escritura deba esperar a que la información sea recibida por el server por lo que tiene bajo rendimiento.
+
+Una alternativa es la política\textbf{delayed-write} o \textbf{write-back}, en la que las modificaciones son escritas en caché y luego son enviadas al server. Esto soluciona el problema de \textbf{write-through} y además, las modificaciones sobre-escritas por otros nodos de la red pueden ser obviadas. Sin embargo, es más difícil mantener el estado del archivo consistente.
+
+Las variantes de esta política se diferencian por el momento en que un bloque de datos es enviado al servidor. Esto puede realizarse en el momento en que un bloque va a ser borrado de la  caché del host, o a intervalos regulares en los que se envian los bloques modificados. Otras opcion, en sistemas en los que los archivos están abiertos durante un largo período de tiempo y sufren cambios frecuentes es enviar los bloques modificados una vez que el archivo en cuestión es cerrado.
+
+\subsection*{Consistencia de archivos}
+Al momento de utilizar un archivo, el host debe decidir si la copia de un archivo en su caché es consistente con el archivo guardado en el servidor. Si no lo es, entonces debe actualizar su copia antes de accederlo. Hay dos formas de verificar la validez de la información cacheada:
+\begin{enumerate}
+	\item \textbf{Validación iniciada por el cliente:} El cliente contacta al servidor, quien compara las dos copias y responde con una respuesta. La frecuencia de la validación puede ser una vez antes de cada acceso o solo una única vez en el primer acceso.
+	
+	Hay que tener en cuenta que cada verificación demora el acceso y hacerlos de manera muy frecuente puede conllevar a una sobrecarga de la red.
+	
+	\item \textbf{Validación iniciadad por el servidor:} El servidor mantiene un registro de los archivos cacheados en cada cliente. Cuando detecta que puede llegar a haber una inconsistencia en algún archivo, notifica al cliente afectado y deshabilita el cacheo para ese archivo.´
+\end{enumerate}
+\newpage
+\section{Virtualización}
+\subsection{Microkernels}
+Los microkernels son kernels que solo hacen tareas básicas (manejo de memoria básico, IPC liviano y manejo básico de Entrada/Salida). La idea era minimizar el tamaño del kernel y que las funcionalidades que se le deseen agregar sean provistas por servicios que el usuario debería instalar. Esto permite mayo flexibiidad, extensibilidad y facilidad al momento de actualizar un sistema. Además, una baja de alguno de los servicios no implica una caída total del sistema.
+
+Aunque esta idea, derivó en una comunicación mas rápida entre procesos y módulos de kernel, este enfoque resultó ser mucho más lentos que los kernels monolíticos y nunca se terminaron de instalar en la industria.
+
+
+\subsection{Máquinas Virtuales}
+La idea de una máquina virtual es abstraer el hardware de una computadora en diferentes ambientes de ejecución, creando la ilusión de que cada ambiente está corriendo en su propia computadora.
+
+La implementación de una máquina virtual involucra varios componentes:
+\begin{itemize}
+	\item En la base está el \textbf{host}, que es el sistema físico que corre todos las máquinas virtuales.
+	\item Un \textbf{administrador de máquinas virtuales} (\textit{virtual machine manager - VMM}) que crea y corre las máquinas virtuales ofreciendoles una interfaz para comunicarse con el hardware.
+	\item Y por último, los procesos \textit{huesped} que reciben una copia virtual del host.  
+\end{itemize}
+
+Debido a que el host y cada sistema huésped están casi totalmente aislados entre sí, si un virus afecta alguno de ellos, el mismo no podrá afectar al resto de la máquinas virtuales.
+
+En centros de datos, las máquinas virtuales se usan para \textbf{consolidar} sistemas en un una única máquina virtual, por lo que es más fácil optimizar el uso recursos. Además, algunas maquinas virtuales incluyen \textit{migración sin perdida de servicios (live migration)}, lo que permite mover huéspedes en ejecución desde un servidor físico a otro sin interrrumpir sus operaciones. 
+	
+\subsubsection{Implementación}
+\paragraph{Simulación:} Con este método, se crea una variable de estado artificial que representa la sistema huésped que es modificada cada ve que se ejecuta una instrucción. Sin embargo, el mecanismo puede llegar a ser muy lento.
+
+\paragraph{Emulación}: Consiste en mantener un modo usuario y un modo kernel virtuales que interactuan directamente con el hardware de la máquina real. Cuando el kernel virtual intenta ejecutar una instrucción privilegiada, se genera una \textit{trap} que redirige la instrucción hacia la máquina virtual y emula la acción pedida. Una vez realizado esto, el sistema real vuelve a tomar control de los procesos.
+
+Este método soluciona, tiempos de ejecución de las instrucciones ejecutadas en modo usuario ya que se corren de manera nativa en el hardware. Sin embargo, ejecutar instrucciones privilegiadas puede afectar el rendimiento del sistema.
+
+\paragraph{Translación binaria:} En los microprocesadores en los que no hay una separación clara entre instrucciones privilegiadas y no privilegiadas (por ej, en el x86 hay instrucciones que en modo usuario cambian algunos flags y en modo kernel cambian otros), se usa este método. La idea es que si la máquina virtual quiere ejecutar una de estas instrucciones especiales, primero las traduce a un conjunto de instrucciones equivalente que luego son ejecutadas por el kernel o emuladas dependiendo el efecto que tengan.
+
+\paragraph{Virtualización asistida por Hardware:} Para facilitar la imlementación de los sistemas de emulación (y resolver varios problemas), las fabricantes agregaron soporte para virtualización a los microporocesadores. En el caso de intel, la extensión se llama \textit{VT-x} y provee dos modos: \textbf{VMX root} y \textbf{VMX non-root} que permiten ejecutar las instrucciones del procesador de manera segura.
+
+Además, se agrega la \textbf{Virtual Machine Control Structure} que contiene el estado del huésped, el del anfitrión y distintos campos de control (interrupciones que recibio el huésped, puertos de E/S, etc). De esta manera, cuando se ejecutan una instrucción privilegiada, el hardware pasa automaticamente a modo \textbf{VMX root} y deja que el controlador de la máquina virtual la emule, ignore o termina la acción pedida.
+
+\subsubsection{Contenedores}
+Durante el flujo de trabajo tradicional, el código de un programa se instala y prueban en un sistema particular. Cuando es transferido a un nueva máquina, las diferencias con el sistema operativo sobre la cual se corre la nueva copia puede resultar en errores.
+
+Los contenedores eliminan este problema al encapsular un único paquete ejecutables con el el código de la aplicación, los archivos de configuración, librerías y dependencias necesarias para que pueda correr. Las aplicaciones dentro de los contenedores están aisladas ya que son ejecutadas a través de un motor de ejecución instalado en el sistema operativo del \textit{host}, mediante el cual varios contenedores pueden compartir los recursos de la máquina. Además, gracias a esto, ocupan menos espacio y usan menos recursos que las máquinas virtuales.
+\begin{figure}
+	\centering	
+	\includegraphics[width=0.7\textwidth]{imagenes/contenedores}
+	\caption{Estructura de un sistema con contenedores}
+	\label{fig:contenedores}
+\end{figure}
+	
