@@ -41,9 +41,9 @@ De esta manera, cualquier remitente que desee entablar una comunicación segura 
 
 Uno de los algoritmos más famosos de este tipo es el algoritmo RSA.
 
-Otra forma de usar este tipo de algoritmos, es para firmar documentos de manera digital. En estos casos, la entidad que debe firmarlo computa un hash del documento usando un hash de ua via y lo ``encripta" con su clave privada obteniendo lo que se conoce como \textbf{bloque de firma (signature block)}.
+Otra forma de usar este tipo de algoritmos, es para firmar documentos de manera digital. En estos casos, la entidad que debe firmarlo computa un hash del documento usando un hash de ua via y lo ``encripta'' con su clave privada obteniendo lo que se conoce como \textbf{bloque de firma (signature block)}.
 
-Por su parte el destinatario computa el hash del documento usando la misma función de hash y cuando recibe el signature block, lo ``desencripta" usando la clave pública del usuario que lo firmó. Si el hash que obtuvo al desencriptar es distinto al que calculó él, entonces el documento o la firma (o ambos) fueron manipulados.
+Por su parte el destinatario computa el hash del documento usando la misma función de hash y cuando recibe el signature block, lo ``desencripta'' usando la clave pública del usuario que lo firmó. Si el hash que obtuvo al desencriptar es distinto al que calculó él, entonces el documento o la firma (o ambos) fueron manipulados.
 
 \newpage
 \section{Autorización: Privilegio de procesos/usuarios}\label{privilegios}

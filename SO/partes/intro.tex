@@ -44,4 +44,7 @@ Un sistema operativo provee un entorno de ejecución de programas. Para esto tie
 	\item Biblioteca C
 \end{itemize}
 
+Para realizar un llamada al sistema, el proceso lo hace como si fuese una función más. Sin embargo, al ejecutarse, el procesador genera un \textit{trap}, entra en modo administrador y busca la syscall requerida en una tabla de interrupciones que indica en donde se almacena la misma.
+
+En este momento, se pasan al stack los parametros de la syscall y se ejecuta la misma. Para terminar, se restablecen los privilegios del proceso y se le devuelve el control al proceso.
 \printbibliography[keyword=intro, title=Bibliografía]

@@ -29,7 +29,7 @@ Por otro lado, si el sistema operativo ofrece la posibilidad de reservar memoria
 
 \subsection{Manejo de memoria libre}
 
-Cuando la memoria es asignada de manera dinámica, el sistema operativo de mantener un registro preciso de que partes están ocupadas y cuales no. En general, para realizar esto, se puede utilizar alguna de las siguientes estructuras: un \textbf{bitmap} o una \textbf{lista enlazada}.
+Cuando la memoria es asignada de manera dinámica, el sistema operativo debe mantener un registro preciso de que partes están ocupadas y cuales no. En general, para realizar esto, se puede utilizar alguna de las siguientes estructuras: un \textbf{bitmap} o una \textbf{lista enlazada}.
 
 \begin{figure}[h]
 	\centering
@@ -192,7 +192,7 @@ Una buena aproximación al algoritmo optimo se basa en la observación que las p
 
 En este algoritmo, cuando sucede un page fault, se descarga la página que no ha sido usada durante el mayor rango de tiempo.
 
-\subsubsection{Working Set}
+\subsubsection{Trashing}
 En su forma más pura, los procesos comienzan sin ninguna de páginas en memoria. Tan pronto como el CPU trata de conseguir la primer instrucción se produce un page fault, causando que el sistema operativo traiga la página que contiene la primer instrucción. Por lo general, se producen varios page fault para traer memoria variables globales y el stack. 
 
 Después de un tiempo, el proceso tiene la mayoría de las páginas que necesita para poder ejecutar con relativamente pocos page fault. Esta estrategia se llama \textbf{demand paging} porque ninguna página se carga a no ser que sea necesaria.
@@ -203,7 +203,7 @@ El conjunto de páginas que un proceso está usando se llama conjunto de trabajo
 
 Por esta razón, muchos sistemas tratan hacer un seguimiento del working set de cada proceso y asegurarse que esté completamente en memoria antes de dejar que se ejecute. Este método se llama \textbf{working set model} y está diseñado para disminuir el ratio de page faults provocados por proceso. Cargar páginas antes de que los procesos la necesiten es una técnica llamada \textbf{prepaging}
 
-\subsection{Page fault}
+\subsection{Page fault}\label{page-fault}
 Estos son los pasos que realiza un sistema opertivo una vez que el MMU emite un page fault:
 
 \begin{enumerate}
@@ -223,7 +223,7 @@ Estos son los pasos que realiza un sistema opertivo una vez que el MMU emite un 
 \section{Segmentación}
 La memoria virtual discutida hasta ahora es unidimensional: A cada proceso se le asigna un conjunto de direcciones que van desde 0 hasta una dirección máxima. Cuando el compilador genera un proceso divide este espacio en partes de uso espécifico (por ejemplo, stack, tabla de constantes, tabla de símbolos, código fuente, etc). 
 
-Sin embargo, esta division puede llegar a traer problemas. En la figura \ref{fig:organizacion-proceso}, por ejemplo,  la tabla de símbolos se llenó y no puede seguir creciendo porque las próximas direcciones contienen el código del programa.
+Sin embargo, esta division puede llegar a traer problemas. En la figura \ref{fig:organizacion-proceso-virtual-unidimensional}, por ejemplo,  la tabla de símbolos se llenó y no puede seguir creciendo porque las próximas direcciones contienen el código del programa.
 
 \begin{figure}[h]
 	\centering
