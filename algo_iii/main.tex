@@ -1,0 +1,230 @@
+\input{../document.setup}
+\usemintedstyle{borland}
+
+\input{custom.commands.tex}
+\title{Algoritmos III - Apuntes para final}
+\author{Gianfranco Zamboni}
+
+\usepackage[backend=biber,style=chem-acs,sorting=none]{biblatex}
+\nocite{*}
+
+\addbibresource{bibliography.bib}
+
+\usemintedstyle[cpp]{bordeland, tabsize=2}
+\input{../page.setup}
+\setcounter{tocdepth}{3}
+	\begin{document}
+
+	\maketitle
+	\tableofcontents
+
+\newpage
+\section{Introducción}
+Un \textbf{algoritmo} es una secuencia \textbf{finita} de pasos  \textbf{precisos} (no deben requerir tomar ninguna decisión subjetiva, ni hacer uso de la intuición o la creatividad) necesarias para llevar a cabo un cálculo de manera correcta.
+
+Se dice que un algoritmo está \textbf{bien definido} cuando toda ejecución del mismo bajo los mismos parámetros devuelve el mismo resultado. Hay que tener en cuenta que si bien esto es lo deseable en la mayoría de los casos, muchas veces es necesario usar variables aleatorias o heurísiticas para conseguir un resultado medianamente decente para problemas que no tienen solución o que son muy dificiles de calcular de manera exacta.
+
+\subsection{Analisis de algoritmos}
+
+\paragraph{Análisis empírico:} Implementarlo en una máquina determinada utilizando un lenguaje determinado, correrlo para un conjunto de instancias y comparar sus tiempos de ejecución. Esto implicaría perder tiempo y esfuerzo programandolo, ejecutandolo y además probarlo con un conjunto de instancias acotados por lo que realmente no se podría concluir nada sobre su comportomiento con instancias que queden fuera de ese conjunto.
+
+\paragraph{Análisis teórico:} Determinar matemáticamente la cantidad de tiempo que llevará su ejecución como una función de la medidad de la instancia considerada, independinzándolo de la máquina sobre la cuál es implementado el algoritmo y el lenguaje para hacerlo. Para esto es necesario definir un modelo de cómputo, un lenguaje sobre este modelo, cuales son las instancias del problema relevantes al mismo y sus tamaños.
+
+Dicho de otra forma, desde el punto de vista teórico, se busca determinar la velocidad de crecimiento del tiempo o el espacio requerido por el algoritmo en función del tamaño de las instancias del problema.
+
+Dado un problema, se le asigna un entero \(n\) (llamado el \textbf{tamaño} del problema) que servirá como medida de la cantidad de datos de entrada. Y se define como \textbf{complejidad temporal} del algoritmo al tiempo ejecución de un algoritmo expresado como una función que depende de \(n\).
+
+Análogamente, se puede definir la \textbf{complejidad espacial} del algoritmo como el espacio de memoria necesario para su ejecución en función del tamaño del problema.
+
+\paragraph{Complejidad peor caso:} Se toma como complejidad del algoritmo la función que dada una instancia de tamaño de $n$, devuelve la máxima complejidad posible sobre todas las instancias de ese tamaño.
+
+\paragraph{Complejidad caso promedio:} Se toma como complejidad del algoritmo la función que dada una instancia de tamaño de $n$, devuelve el promedio de todas las complejidades posible sobre todas las instancias de ese tamaño.
+
+\subsubsection{Modelo Random Access Machine (RAM)}
+Una Random Access Machine (RAM) modela una computadora con un único registro acumulador en la cuál las instrucciones no pueden modificarse. La misma está formada por:
+
+\begin{itemize}
+	\item Una \textbf{unidad de entrada} que contiene los datos necesarios para poder ejecutar una corrida del algoritmo. La misma es de solo lectura y, en cada una de sus celdas, puede contener un entero de tamaño arbitrario. Cuando un valor es leído, la cinta se avanza una celda.
+	\item Una \textbf{unidad de salida} que es de solo escritrura y se encuentra inicialmente vacía. Cuando una instrucción es ejecutada, se imprime un entero en la celda que se encuentra bajo la lectora y luego se la avanza una posición.
+	\item Una \textbf{memoria} que consiste en una secuencia infinita de registros, cada uno de los cuales puede contener un entero de tamaño arbitrario. 
+	\item Un \textbf{programa} es una secuencia de instrucciones etiquetadas que no está almacenado en memoria. Asumimos que las instrucciones que contiene un programa, son las instrucciones aritméticas básicas, de entradas/salidas y direccionamiento indirecto y de branching encontradas en la mayoría de las computadoras.
+\end{itemize}
+
+Este modelo se usa cuando los tamaños de los problemas a resolver es lo suficientemente pequeño como para que entren en la memoría principal de una computadora o cuando los enteros usados en la computación son los suficientemente chicos como para que entren en una palabra de la misma.
+
+\subsection{Cálculo de complejidad}
+\subsubsection{Tamaño de una instancia}
+Para especificar la complejidad en peor caso (tanto espacial como temporal), debemos especificar el tiempo de ejecución requerido por cada instrucción y el espacio de cada registro.
+
+La forma más simple para esto es usar el \textbf{criterio de costo uniforme} en el que cada instrucción requiere una unidad de tiempo y cada registro requiere una unidad de espacio. En general, usaremos este criterio para analizar problemas de ordenamientos o sobre grafos y matrices.
+
+
+Una segunda opción (un poco más realista), es tomar en cuenta el tamaño real (en bits) de los operandos. Este el \textbf{criterio de costo logarítmico} que toma en cuenta que son necesarios para representar los datos. 
+\paragraph{Alfabeto:} Es el conjunto de símbolos que puede interpretar en una máquina. Por ejemplo, las computadoras actuales reconocen el alfabeto binario \(\{0,1\}\).
+
+\vspace*{5mm}
+Dada una instancia \(I\), se define \(|I|\) como el número de símbolos de un alfabeto finito necesarios para codificar \(I\). Este tamaño depende del alfabeto elegido.  En el caso de las computadoras actuales, que se manejan con el alfabeto binario, para almacenar un número natural \(n\), se necesitan \(L(n) = \lfloor\log_2{n}\rfloor + 1\) bits.
+
+Usaremos este criterio cuando analicemos problemas sobre números (por ejemplo, el calculo de un factorial).
+
+\subsubsection{Funciones de complejidad}
+Dadas dos funciones \(f,g:\nat\to\reales\) decimos que:
+\begin{itemize}
+	\item \(f(n) = O(g(n))\) si existen \(c\in\reales_+ y n_0\in\nat\) tales que
+	\[f(n)\leq cg(n) \text{ para todo } n\geq n_0\]
+	\item \(f(n) = \Omega(g(n))\) si existen \(c\in\reales_+ y n_0\in\nat\) tales que
+	\[f(n)\geq cg(n) \text{ para todo } n\geq n_0\]
+	\item \(f(n) = \Theta(g(n))\) si \[f(n) = O(g(n)) \text{ y } f(n)= \Omega(g(n))\]
+\end{itemize}
+
+\subsubsection{Problemas bien resueltos}
+Decimos que un problema está \textbf{bien resuelto} si existe un algoritmo de complejidad polinomial que lo resuelva. Es decir, que no consideraremos soluciones sastifactorios a los algoritmos supra-polinomiales.
+
+\subsection{Técnicas de diseño de algoritmos}
+\subsubsection{Algoritmos golosos}
+Los algoritmos golosos toman decisiones basandose en la información disponible actualemente, sin considerar los efectos que esas decisiones podrían tener en el fúturo. Son fáciles de inventar, implementar y son eficientes. Sin embargo, aunque muchas veces proporcionan heurísticas sencillas para resolver problemas de optimización, no siempre funcionan.
+
+Comunmente, los algoritmos golosos y los problemas que pueden resolver tienen las siguientes carácteristicas:
+\begin{itemize}
+	\item El problema se debe resolver de alguna manera óptima. Para construir su solución se mantiene \textbf{un conjunto de candidatos} entre los cuales el algoritmo puede elegir para agregar a la solución en el próximo paso. Por ejemplo, un conjunto de monedas o de nodos de un grafos.
+	\item A medida que el algoritmo progresa, se acumulan dos conjuntos: Uno contiene candidatos que ya fueron considerados y usados; el otro contiene los candadidatos que fueron consiradosy rechazados.
+	\item Hay una \textbf{función de verificación} que dado un conjunto de candidatos verifica si puede ser una solución valida al problema propuesto auque esta no sea la solución óptima.
+	\item Hay una \textbf{función de factibilidad} que dado un conjunto de candidatos verifica si se puede extender con nuevos candidatos para conseguir una solución al problema.
+	\item Hay una \textbf{función de selección} que decide cual de los candidatos disponibles (que no fueron elegidos ni rechazados) es el más prometedor para hacercanos a la solución deseada.
+	\item Hay una f\textbf{función objetivo} que nos da el valor de la solución encontrada. Por ejemplo, el número de monedas utilizadas para el cambio, o la cantidad de nodos usados en un cámino, o cualquier otro valor que estemos intentando optimizar. A diferencia de las otras tres funciones mencionadas anteriormente, esta no aparece explicitamente en el algoritmo goloso.
+\end{itemize}
+
+Estructura general de un algoritmo goloso:
+
+\begin{algorithmic}
+	\Function{greedy}{\(C\): Set}
+	\Comment{\(C\) es el conjunto de candidatos}
+	\State \(S\gets\emptyset\)
+	\Comment{Conjunto en el que se construye la solución}
+	\While{ \(C\neq\emptyset~\land~\lnot\Call{esSolucion}{S}\)}
+		\State \(x \gets \Call{seleccionar}{C}\)
+		\State \(C \gets C~\backslash~\{x\}\)
+		\If{\(\Call{esValido}{S\cup\{x\}}\)}
+			\State \(S\gets S\cup\{x\}\)
+		\EndIf
+	\EndWhile
+	\If{\(\Call{esSolucion}{S}\)}
+		\Return \(S\)
+	\Else
+		\State\Return Error: No hay solución
+	\EndIf
+	\EndFunction
+\end{algorithmic}
+
+\subsubsection{Divide and Conquer}
+Es una técnica que consiste en dividir la instancia de un problema a resolver en varias instancias más pequeñas del mismo problema y resolverlas de manera independiente para luego combinar sus soluciones en la solución de la instancia original. 
+
+Para que valga la pena realizar un algoritmo con esta técnica se deben cumplir tres condiciones:
+
+\begin{enumerate}
+	\item Debe ser posible descomponer las instancias en subinstancias y combinar las subsoluciones de manera eficiente.
+	\item Las subinstancias deben ser todas más o menos del mismo tamaño. La mayoría de los algoritmos de divide and conquer son tales que el tamaño de una subinstancia \(I\), es aproximadamente \(\frac{n}{b}\) donde \(n\) es el tamaño de la instancia original y \(b\) alguna constante.
+\end{enumerate}
+
+La estructura general de un álgortimo de divide and conquer es la siguiente:
+
+\begin{algorithmic}
+	\Function{DivideAndConquer}{\(I\): Instancia del problema}
+	\If{\(I\) es suficientemente pequeño o simple}
+		\Return \(\texttt{resolver}(I)\)
+	\Else
+		\State Descomponer \(I\) en subinstancias \(I_1, I_2,\dots, I_k\)
+		\For{\(i\gets 1~\textbf{to}~k\)}
+			\State \(y_i \gets \Call{DivideAndConquer}{I_i}\)
+		\EndFor
+		\State Combinar las soluciones \(y_1, y_2,\dots, y_k\) obtenidas para obtener la solución \(y\) de \(I\)
+		\State\Return \(y\)
+	\EndIf
+
+	\EndFunction
+\end{algorithmic}
+
+\subsubsection{Backtracking}
+Es una técnica que permite recorrer sistemáticamente todas las posibles configuraciones del espacio de soluciones de un problema computacional. Cuando el algoritmo comienza, no se sabe nada sobre la solución del problema. A medida que va avanzando, se agrega un elemento a la solución para ir consiguiendo soluciones parciales. Si en algún momento, la solución parcial deja de poder ser extendida entonces esa solución se descarta.
+
+Se puede pensar este espacio como un árbol dirigido, donde cada vértice representa una solución parcial \(s\) y un vértice \(x\) es hijo de \(s\) si la solución parcial \(x\) se puede extender desde \(s\). 
+
+El template general para algoritmos de este tipo es: 
+
+\begin{algorithmic}
+	\State \texttt{sol}: Vector \(\gets [] \)
+	\State \texttt{encontro}: Booleano \(\gets false \)
+	\Function{backtracking}{\(v[1\dots k], s\): Instancia del problema}
+	\If{\(k == 0~\land~esSolucion(s)\) }
+	\State\(\texttt{sol} \gets s\)
+	\State \(\texttt{encontro} \gets true\)
+	\Else
+		\For{\(i \gets 1 \textbf{ to } k\)}
+%			\State \Call{backtracking}{\(v[1\dots k]\backslash \{v_i\},~s\cup\{v_i\} \)}
+			\If{encontro}~\Return
+			\EndIf
+		\EndFor
+	\EndIf
+	\EndFunction
+\end{algorithmic}
+
+\subsubsection{Programación dinámica}
+
+\printbibliography[keyword=intro,title={Bibliografía}]
+
+
+\newpage
+\appendix
+\section{Hoja de complejidades}
+\begin{center}
+\begin{tabular}{|l|c|}
+	\hline
+	\textbf{Algoritmo} & \textbf{Complejidad} \\
+	\hline
+	\multicolumn{2}{|c|}{\cellcolor{blue!25}\textbf{De Búsqueda}}\\
+	\hline
+	Secuencial & \(O(n)\) \\
+	\hline
+	Binaria & \(O(\log{n})\) \\
+	\hline
+	\multicolumn{2}{|c|}{\cellcolor{blue!25}\textbf{De Ordenamiento}}\\
+	\hline
+	Bubblesort & \(O(n^2)\) \\
+	\hline
+	Quicksort & \(O(n^2)\) \\
+	\hline
+	Heapsort & \(O(n\log{n})\)* \\
+	\hline
+\end{tabular}
+\end{center}
+
+\paragraph{*} \(O(n\log{n})\) es la complejidad óptima para algoritmos de ordenamiento basados en comparaciones. 
+\color{red}
+\begin{itemize}
+	\item Dados dos algoritmos para resolver un mismo problema, cual es el mejor?
+	\item Si los tamaños de instancia son pequeños, ¿es tan malo un algoritmo exponencial?
+	\item ¿como se comparan \(O(n^85)\) con \(1001^n\)?
+	\item ¿Puede pasar que un algoritmo peor caso exponencial sea eficiente en la práctica?¿Puede pasar que en la práctica sea \textit{el mejor}?
+	\item ¿Que pasa si no encuentro un algoritmo polinomial?
+	\item ¿Que podemos decir en cuanto a la calidad de las soluciones obtenidas por los algoritmos golosos?
+	\item Se puede demostrar que la selección según se maximice \(b_i/p?i\) da una solución óptima
+	\item ¿Que podemos decir en cuanto a la complejidad de los algoritmos golosos?
+	\item ¿Que sucede si los elemenentos se deben poner enteros en el problema de la mochila?
+	\item Recursividad
+	\item Programación dinámica
+	\item Algoritmos probabilísticos
+\end{itemize}
+Algoritmos: Modelos de computación: Máquina de Turing. Algoritmos de tiempo polinomial y no polinomial. Límite inferior. Algoritmos recursivos. Análisis de la complejidad de algoritmos recursivos. Técnicas de diseño de algoritmos: backtracking, programación dinámica.
+
+
+Grafos Definiciones básicas: adyacencia, grado de un nodo, isomorfismos, caminos, conexión, etc. Grafos bipartitos. Arboles: caracterización, árboles orientados, árbol generador. Enumeración. Grafos eulerianos y hamiltonianos. Planaridad. Coloreo. Número cromático. Matching, conjunto independiente, recubrimiento. Recubrimiento de aristas y vértices.
+
+
+
+Algoritmos en grafos y aplicaciones Representación de un grafo en la computadora: matrices de incidencia y adyacencia, listas. Algoritmos de búsqueda en grafos: BFS, DFS, A*. Mínimo árbol generador, algoritmos de Prim y Kruskal. Arboles ordenados: códigos unívocamente descifrables. Algoritmos para detección de circuitos. Algoritmos para encontrar el camino mínimo en un grafo: Dijkstra, Ford, Dantzig. Planificación de procesos: PERT/CPM. Algoritmos heurísticos: ejemplos. Nociones de evaluación de heurísticas y de técnicas metaheurísticas. Algoritmos aproximados. Heurísticas para el problema del viajante de comercio. Algoritmos para detectar planaridad. Algoritmos para coloreo de grafos. Algoritmos para encontrar el flujo máximo en una red: Ford y Fulkerson. Matching: algoritmos para correspondencias máximas en grafos bipartitos. Otras aplicaciones.
+
+
+
+Problemas NP-completos Problemas tratables e intratables. Problemas de decisión. P y NP. Maquinas de Turing no determinísticas. Problemas NP-completos. Relación entre P y NP. Problemas de grafos NP-completos: coloreo de grafos, grafos hamiltonianos, recubrimiento mínimo de las aristas, corte máximo, etc.
+\end{document}
+
