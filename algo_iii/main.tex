@@ -14,7 +14,8 @@
 \input{../page.setup}
 \setcounter{tocdepth}{3}
 	\begin{document}
-
+	\input{tikz.configuration}
+	
 	\maketitle
 	\tableofcontents
 
@@ -170,10 +171,98 @@ El template general para algoritmos de este tipo es:
 
 \subsubsection{Programación dinámica}
 
+Es una técnica que consiste en tomar la subinstancia más pequeña del problema, resolverla e ir extendiendo la solución para instancias cada vez mas grandes. Esta técnica es un método \textbf{bottom-up}, es decir tomamos las instancias más simples del problema y la vamos extendiendo y combinando hasta conseguir la solución correspondiente a la instancia original.
+
+La programación dinámica se utiliza para resolver problemas de optimización que cumplen con el \textbf{principio de optimalidad de bellman} que nos asegura que si tomamos una serie de decisiones óptimas, entonces todas las subsecuencias de decisiones de esa serie son óptimas.
+
+\subsubsection{Algoritmos probabilísticos}
+Cuando un algoritmo tiene que hacer una elección, a veces es preferible elegir al azar en vez e gastar mucho tiempo tratando de ver cual es la mejor opción.
+
+Una de las características de los algoritmos probabilisticos es que puede comportarse de maneras distintas si se lo usa para computar una misma instancia dos o más veces. Su tiempo de ejecución y resultados pueden variar considerablemente de un uso a otro pudiendo incluso nunca llegar a terminar en ciertas corridas para una instancia específica. Sin embargo, dada la posibilidad de reiniciar el algoritmo y obtener un resultado válido éste es un comportamiento que no molesta. 
+
+Por otro lado, una consecuencia de este comportamiento es que, si hay más de una solución al problema, las mismas se pueden obtener corriendo el algoritmo más de una vez.s
+
+Los algoritmos probabílisticos se pueden clasificar dependiendo de la probabilidad de que devuelvan una respuesta correcta:
+
+\begin{itemize}
+	\item \textbf{Algoritmos númericos}: Estos algoritmos devuelven un intervalo de confianza (del estilo ``La solución es \( x \pm y\) con probabilidad \(z\))". Por lo general, mientras más tiempo de proceso les demos, mas preciso es el intervalo que devuelven.
+	\item \textbf{Algoritmos de Montecarlo}: Son algoritmo que dan la respuesta exacta con alta probabilidad. Por lo general, no es posible verificar que la respuesta dada sea correcta sin embargo la probabilidad de error disminuye mientras más tiempo se este ejecutando el algoritmo.
+	\item \textbf{Algoritmos Las Vegas:} Son algoritmos que siempre dan una respuesta correcta pero puede llegar a no dar ninguna respuesta. 
+	\item \textbf{Algoritmos Sherwood:} Son algoritmos que agregan una componente aleatoria a algoritmos determinísticos para tratar de evitar tiempos de ejecución del peor caso. Un ejemplo de esto es el Quicksort con pivote seleccionado aleatoriamente.
+\end{itemize}
+
+\subsubsection{Heurísticas}
+Dado un problema de optimización \(\sqcap\) díficl de resolver (y para el cual probablemente no exista un algoritmo eficiente), los \textbf{algoritmos heurísticos} definen un procedimiento que intenta conseguir soluciones para el mismo pero puede devolver resultados erróneos o no devolver nada directamente.
+
+En otras palabras: Sea \(I\) es una instancaia del problema y \(x^*(I)\) el valor óptimo de la función a optmizar en dicha instancia. Buscamos crear una heurística \(H\) tal que la solución \(x^H(I)\) devuelta por la misma sea lo más cercano a \(x^*(I)\) posible.
+
+\paragraph{Algoritmos apróximados:} Decimos que \(H\) es un algoritmo \(\epsilon-\)aproximado para el problema \(\sqcap\) si para algún \(\epsilon > 0\) vale que \(|x^H(I) - x^*(I)\leq\epsilon|x^*(I)|\)
+
+\paragraph{Algoritmos con certificados:} Por lo general, si bien los problemas dificiles no pueden ser resueltos con algoritmos polinomiales si se puede verificar que las soluciones provistas por las heurísticas sean correctas con algoritmos polinomiales. 
+
+Se dice que los algoritmos diseñados para realizar esta verificación proveen un certificado que afirma la validez de la soluciones propuestas por una heurística.
+
 \printbibliography[keyword=intro,title={Bibliografía}]
 
-
 \newpage
+\section{Grafos}
+\subsection{Definiciones básicas}
+\subsubsection{Tipos de grafo}
+Un grafo \(G = (V,X)\) es un par de conjuntos, donde \(V\) es un conjunto de \textbf{puntos / nodos / vértices} y \(X\) es un subconjunot del conjunto de pares no ordenados de elementos distintos de \(V\). Los elementos de \(X\) se llamas \textbf{aristas, ejes o arcos}.
+
+\begin{figure}
+\begin{center}
+
+	\begin{tikzpicture}
+	\node[basicNode] (p) {\(p\)};
+	\node[basicNode] (q) [right=of p] {\(q\)};
+	\node[basicNode] (r) [below=of p] {\(r\)};
+	\node[basicNode] (s) [below=of q] {\(s\)};
+	
+	\path
+	(p) edge (q)
+	(p) edge (r)
+	(p) edge (s)
+	(q) edge (s)
+	(r) edge (s)
+	;		
+	\end{tikzpicture}
+\end{center}
+	\caption{\(G =([p,~q,~r,~s],~[(p,q),~(p,s),~(q,s),~(r,s)])\)
+	}
+\end{figure}
+
+Dados \(v\) y \(w \in V\), si \(e=(v,w)\in X\) se dice que \(v\) y \(w\) son \textbf{adyacentes} y que \(e\) es \textbf{incidente} a \(v\) y a \(w\).
+
+\paragraph{Multigrafo:} Es un grafo en el que puede haber varias aristas entre el mismo par de nodos distintos.
+		\begin{figure}[H]
+	\begin{center}
+		\begin{tikzpicture}
+		\node[basicNode] (p) {\(p\)};
+		\node[basicNode] (q) [right=of p] {\(q\)};
+		\path
+		(p) edge[out=10, in=170] (q)
+		(p) edge[out=-10, in=-170] (q)
+		;		
+		\end{tikzpicture}
+	\end{center}		
+	\caption{Multigrafo}
+\end{figure}
+\paragraph{Seudografo:} Es un grafo en el que puede haber varias aristas entre cada par de nodos y también puede haber aristas (\textit{loops}) que unan a un nodo con sí mismo.
+	
+\begin{figure}[H]
+	\begin{center}
+		\begin{tikzpicture}
+		\node[basicNode] (p) {\(p\)};
+		\path
+		(p) edge[loop left] (p);		
+		\end{tikzpicture}
+	\end{center}		
+	\caption{Multigrafo}
+\end{figure}
+
+\paragraph{N}
+\subsubsection{Propiedades de un nodo}
 \appendix
 \section{Hoja de complejidades}
 \begin{center}
@@ -199,23 +288,8 @@ El template general para algoritmos de este tipo es:
 \end{center}
 
 \paragraph{*} \(O(n\log{n})\) es la complejidad óptima para algoritmos de ordenamiento basados en comparaciones. 
-\color{red}
-\begin{itemize}
-	\item Dados dos algoritmos para resolver un mismo problema, cual es el mejor?
-	\item Si los tamaños de instancia son pequeños, ¿es tan malo un algoritmo exponencial?
-	\item ¿como se comparan \(O(n^85)\) con \(1001^n\)?
-	\item ¿Puede pasar que un algoritmo peor caso exponencial sea eficiente en la práctica?¿Puede pasar que en la práctica sea \textit{el mejor}?
-	\item ¿Que pasa si no encuentro un algoritmo polinomial?
-	\item ¿Que podemos decir en cuanto a la calidad de las soluciones obtenidas por los algoritmos golosos?
-	\item Se puede demostrar que la selección según se maximice \(b_i/p?i\) da una solución óptima
-	\item ¿Que podemos decir en cuanto a la complejidad de los algoritmos golosos?
-	\item ¿Que sucede si los elemenentos se deben poner enteros en el problema de la mochila?
-	\item Recursividad
-	\item Programación dinámica
-	\item Algoritmos probabilísticos
-\end{itemize}
-Algoritmos: Modelos de computación: Máquina de Turing. Algoritmos de tiempo polinomial y no polinomial. Límite inferior. Algoritmos recursivos. Análisis de la complejidad de algoritmos recursivos. Técnicas de diseño de algoritmos: backtracking, programación dinámica.
 
+\color{red}
 
 Grafos Definiciones básicas: adyacencia, grado de un nodo, isomorfismos, caminos, conexión, etc. Grafos bipartitos. Arboles: caracterización, árboles orientados, árbol generador. Enumeración. Grafos eulerianos y hamiltonianos. Planaridad. Coloreo. Número cromático. Matching, conjunto independiente, recubrimiento. Recubrimiento de aristas y vértices.
 
