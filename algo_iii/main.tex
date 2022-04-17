@@ -701,9 +701,9 @@ Un grafo bipartito con partición \(V_1,~V_2\) es \textbf{bipartito completo} si
 	
 	Sea \(P\) un camino mínimo entre \(v\) y \(u\) y \(Q\) un camino mínimo entre \(v\) y \(w\). Como \(u,w\in V_1\), \(P\) y \(Q\) tienen longitud par.
 	
-	Sea \(z\in V\) el último nodo en el que \(P\) y \(Q\) se cruzan (podría pasar que \(z = u\)). Como \(P\) y \(Q\) definen las distancias a \(v\) y \(w\) respectivamente desde \(u\), entonces \(P_{uz}\) y \(Q_{uz}\) tienen que ser caminos mínimos. Osea que \(l(P_{uz}) = l(Q_{uz}) = d(u,z)\).
-	
-	Entonces \(l(P_{zv})\) y \(l(Q_{zw})\) tienen igual paridad. Definamos \(C = P_{zv}(v,w)Q_{wz}\), entonces \(l(C) = l(P_{zv}) + l(Q_{wz}) + 1\) que es una longitud impar. Absurdo, partiamos de la supocisión de que \(G\) no tenia circuitos de longitud impar \(\blacksquare\)
+	Sea \(z\in V\) el último nodo en el que \(P\) y \(Q\) se cruzan (podría pasar que \(z = u\)). Como \(P\) y \(Q\) definen las distancias a \(v\) y \(w\) respectivamente desde \(u\), entonces \(P_{uz}\) y \(Q_{uz}\) tienen que ser caminos mínimos. Osea que \[l(P_{uz}) = l(Q_{uz}) = d(u,z)\].
+	Entonces \(l(P_{zv})\) y \(l(Q_{zw})\) tienen igual paridad. Definamos \[C = P_{zv}(v,w)Q_{wz}\]
+	Entonces \(l(C) = l(P_{zv}) + l(Q_{wz}) + 1\) que es una longitud impar. Absurdo, partiamos de la supocisión de que \(G\) no tenia circuitos de longitud impar \(\blacksquare\)
 \end{demoPart}
 
 \subsection{Representación de grafos}
@@ -804,7 +804,7 @@ Dado un arco \(e=(u,w)\) llamaremos al primer elemento (\(u\)) \textbf{cola} de 
 
 \paragraph{Puente:} Una arista \(e\) de un grafo \(G\) tal que \(G - e\) tiene más componentes conexas que \(G\).
 
-\begin{lema}
+\begin{lema}\label{unionCaminosSimplesEsCircuito}
 	La unión de dos caminos simples distintos entre dos vértices contiene un circuito simple.
 \end{lema}
 
@@ -833,6 +833,20 @@ Dado un arco \(e=(u,w)\) llamaremos al primer elemento (\(u\)) \textbf{cola} de 
 	\end{enumerate}
 \end{theorem}
 
+\begin{demo}
+	Vamos a demostrar \(1\Rightarrow 2\), \(2 \Rightarrow 3\), \(3 \Rightarrow 4\) y \(4 \Rightarrow 1\).
+\end{demo}
+\begin{demoPart}
+\paragraph{1 \(\Rightarrow\) 2)} \(G\) es árbol, es decir, conexo y sin circuitos. Sea \(e=(u,w)\notin X\). Como \(G\) es conexo existe un camino simple \(P_{uw}\) en \(G\) entre \(u\) y \(w\). Entonces \(P_{uw} + e\) es un circuito simple de \(G + e\).
+	
+	Ahora nos falta ver que no se puede haber generado más de un circuito simple. Vamos a hacerlo por el absurdo. Como sabemos que antes de agregar \(e\), \(G\) no tenía circuitos, todo ciruito simple de \(G + e\) tiene que contener a \(e\), ya que de lo contrario ese circuito estaría en \(G\).
+	
+	Entonces supongamos que existen dos circuitos simples \(C\) y \(C'\) en \(G + e\) que contienen \(e\). Podemos partir estos circuitos en \[ C = P_{uw} + e\] \[C'	= P'_{uw} + e\]
+	
+	\(P_{uw}\) y \(P'_{uw}\) son dos caminos simples distintos entre \(u\) y \(v\) en \(G\). Por el Lema \ref{unionCaminosSimplesEsCircuito}, la unión de estos dos cáminos en \(G\) es un circuito simple. Esto es absurdo ya que \(G\) es un árbol \(\blacksquare\)
+	
+	\paragraph{2 \(\Rightarrow) 3)}
+\end{demoPart}
 \newpage
 \appendix
 \section{Hoja de complejidades}
