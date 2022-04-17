@@ -796,7 +796,43 @@ Dado un arco \(e=(u,w)\) llamaremos al primer elemento (\(u\)) \textbf{cola} de 
 
 \paragraph{Camino orientado:} Es una sucesión de arcos \(e_1e_2\dots e_k\) tal que el primer elemento del arco \(e_i\) coincide con el segundo de \(e_{i-1}\) y el segundo elemento de \(e_i\) con el primero de \(e_{i+1}\) con \(i = 2,\dots,k-1\)
 
-\paragraph{Digrafo fuertemente conexo:} Es un digrafo \(G\) tal que para todo par de vértices \(u,v\in V_G\) existe un camino orientado de \(u\) a \(v\).
+\paragraph{Digrafo fuertemente conexo:} Es un digrafo \(G\) tal que para todo par de vértices \(u,v\in 	V_G\) existe un camino orientado de \(u\) a \(v\).
+
+\newpage
+\section{{Árboles}}
+\paragraph{Árbol:} Grafo conexo sin circuitos simples.
+
+\paragraph{Puente:} Una arista \(e\) de un grafo \(G\) tal que \(G - e\) tiene más componentes conexas que \(G\).
+
+\begin{lema}
+	La unión de dos caminos simples distintos entre dos vértices contiene un circuito simple.
+\end{lema}
+
+\begin{lema}
+	Sea \(G =(V, X)\) un grafo conexo y \(e\in X\). \(G-e = (V, X\backslash\{e\})\) es conexo si y solo si \(e\) pertenece a un circuito simple de \(G\).
+	
+	En otras palabras: Una arista \(e\in X\) es puente si y solo si \(e\) no pertence a ningún circuito simple de \(G\)
+\end{lema}
+
+\begin{demo} 
+	\paragraph{\(\Rightarrow\))} Sea \(e =(u,v)\in X\). Por hipotesis \(G-e\) es conexo. Entonces existe un camino simple \(P_{uw}\) entre \(u\) y \(w\) en \(G - e\) (que no usa a \(e\)). Luego podemos definir a \(C = P_{uw} + e\) como un circuito simple de \(G\) que contiene a \(e\).
+	
+	\paragraph{\(\Leftarrow\) )} Sea \(C\) un circuito simple de \(G\) que contiene a \(e = (u,w)\). Entonces podemos partir a \(C\) en la arista \(e\) y un camino simple \(P_{uw})\) entre \(u\) y \(w\) (que no contiene a \(e\)).
+
+	Como \(G\) es conexo, hay camino entre todo par de vértices. Si esos caminos no una a \(e\), entonces siguen estando en \(G-e\).
+	
+	Si un camino de \(G\) usa \(e\), en \(G-e\) hay un camino alternativo que es cambiando a \(e\) por \(P_{uw}\) en \(Q\). Entonces sigue habiendo camino entre todo par de vértices en \(G-e\). Osea \(G-e\) es conexo.
+\end{demo}
+\begin{theorem}
+	Dado un grafo \(G=(V,X)\), son equivalentes:
+	\begin{enumerate}
+		\item \(G\) es un árbol.
+		\item \(G\) es un grafo sin circuitos simples y para toda arista \(e\) tal que \(e\notin X\), \(G+e = (V, X\cup\{e\})\) tiene exactamente un circuito simple. Además, ese circuito contiene a \(e\).
+		\item Existe exactamente un camino simple entre todo par de vértices.
+		\item \(G\) es conexo pero si se quita cualquier arista a \(G\) queda un grafo no conexo (toda arista es puente).
+	\end{enumerate}
+\end{theorem}
+
 \newpage
 \appendix
 \section{Hoja de complejidades}
