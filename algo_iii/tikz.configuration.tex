@@ -7,9 +7,11 @@
 \usetikzlibrary{fit}
 \usetikzlibrary{calc}
 \usetikzlibrary{matrix}
+\usetikzlibrary{graphs, graphs.standard, quotes}
+\usetikzlibrary{babel}
 
-\tikzstyle{graph}=[
-	node distance=1cm
+\tikzstyle{graphStyle}=[
+	node distance=0.75cm
 ]
 
 
@@ -20,10 +22,11 @@
 	fill=green!50,
 ]
 
-\tikzstyle{Small Node}=[
+\tikzstyle{smallNode}=[
 circle, 
 draw=black,
 thick,
 fill=green!50,
-minimum size=0.5
+minimum size=0.5,
+scale=0.75
 ]
