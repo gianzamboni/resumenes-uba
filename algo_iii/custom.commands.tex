@@ -1,4 +1,9 @@
 \newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\green}[1]{{\color{green}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\violet}[1]{{\color{violet}#1}}
+\newcommand{\orange}[1]{{\color{orange}#1}}
+
 \newcommand{\nat}{\mathbb{N}}
 \newcommand{\reales}{\mathbb{R}}
 
@@ -30,7 +35,7 @@ fill = blue!5
 		\begin{tikzpicture}
 		\node [demoBox](box){%
 			\textbf{\scriptsize 
-				DEMOSTRACIÓN}
+				DEMOSTRACIÓN #1}
 			\nodepart{two}
 			\begin{minipage}{0.75\textwidth}
 			\vspace*{0.1cm}

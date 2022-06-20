@@ -14,6 +14,12 @@
 	node distance=0.75cm
 ]
 
+\tikzstyle{emptyDemoNode} = [
+draw=none, very thick,
+rectangle split, rectangle split parts=1, rounded corners, inner xsep=0cm, inner ysep=0cm,
+rectangle split part fill = {blue!5}
+]
+
 
 \tikzstyle{basicNode}=[
 	circle, 
@@ -22,6 +28,45 @@
 	fill=green!50,
 ]
 
+\tikzstyle{redNode}=[
+basicNode,
+fill=red!70,	
+]
+
+\tikzstyle{redEdge}=[
+red!70,	
+line width=0.75mm,
+]
+
+\tikzstyle{blueNode}=[
+basicNode,
+fill=blue!70,	
+]
+
+\tikzstyle{blueEdge}=[
+blue!70,	
+line width=0.75mm,
+]
+
+\tikzstyle{violetNode}=[
+basicNode,
+fill=violet!70,	
+]
+
+\tikzstyle{violetEdge}=[
+violet!70,	
+line width=0.75mm,
+]
+
+\tikzstyle{orangeNode}=[
+basicNode,
+fill=orange!70,	
+]
+
+\tikzstyle{orangeEdge}=[
+orange!70,	
+line width=0.75mm,
+]
 \tikzstyle{smallNode}=[
 circle, 
 draw=black,
@@ -30,3 +75,4 @@ fill=green!50,
 minimum size=0.5,
 scale=0.75
 ]
+

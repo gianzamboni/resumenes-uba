@@ -1,0 +1,614 @@
+\section{{Árboles}}
+\paragraph{Árbol:} Grafo conexo sin circuitos simples.
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+	\node[basicNode] (v1) at (0,0) {};
+	\node[] (glabel) [below=of v1, xshift=0.5] {Árbol trivial};
+	
+	\node[basicNode] (sv1) at (3,-0.25) {};
+	\node[basicNode] (sv2) [above=of sv1] {};
+	\node[basicNode] (sv3) [right=of sv1] {};
+	\node[basicNode] (sv4) [right=of sv2] {};
+	\node[basicNode] (sv5) [above right=of sv3, yshift=-0.12cm] {};
+	\node[] (sglabel) [below right=of sv1, xshift=-0.75cm] {Árbol \(T\)};
+	
+	\path
+		(sv1) edge (sv2)
+		(sv2) edge (sv3)
+		(sv2) edge (sv4)
+		(sv3) edge (sv2)
+		(sv3) edge (sv5)
+	;
+	\end{tikzpicture}
+\end{center}
+
+\paragraph{Puente:} Una arista \(e\) de un grafo \(G\) tal que \(G - e\) tiene más componentes conexas que \(G\).
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+	\node[basicNode] (v1) at (0,0) {\(v_1\)};
+	\node[basicNode] (v2) [below=of v1, xshift=-0.75cm] {\(v_2\)};
+	\node[basicNode] (v3) [below=of v2] {\(v_3\)};	
+	\node[basicNode] (v4) [right=of v2] {\(v_4\)};
+	\node[basicNode] (v5) [below=of v4] {\(v_5\)};
+	\node[basicNode] (v6) [left=of v2, yshift=-0.75cm] {\(v_6\)};	
+	\node[basicNode] (v7) [right=of v4, yshift=-0.75cm] {\(v_7\)};
+	\node[basicNode] (v8) [above right=of v4]  {\(v_8\)};
+	\node[] (glabel) [below=of v3, xshift=0.95cm] {\red{Puentes: \((v_1,v_8), (v_2, v_4), (v_3, v_5)\)}};
+	
+	\path
+	(v1) edge[redEdge] (v8)
+	(v2) edge (v3)
+	(v2) edge[redEdge]  (v4)
+	(v2) edge (v6)
+	(v3) edge[redEdge]  (v5)
+	(v3) edge (v6)
+	(v4) edge (v7)
+	(v4) edge (v8)
+	(v7) edge (v8)
+	;
+	\end{tikzpicture}
+\end{center}
+
+
+\begin{lema}\label{unionCaminosSimplesEsCircuito}
+	La unión de dos caminos simples distintos entre dos vértices contiene un circuito simple.
+\end{lema}
+
+\begin{lema}\label{conexomenosesiiecircuitosimple}
+	Sea \(G =(V, X)\) un grafo conexo y \(e\in X\). \(G-e = (V, X\backslash\{e\})\) es conexo si y solo si \(e\) pertenece a un circuito simple de \(G\).
+	
+	En otras palabras: Una arista \(e\in X\) es puente si y solo si \(e\) no pertence a ningún circuito simple de \(G\)
+\end{lema}
+
+\begin{demo}[]
+	\paragraph{\(\Rightarrow\))} Sea \(e =(u,v)\in X\). Por hipotesis \(G-e\) es conexo. Entonces existe un camino simple \(P_{uw}\) entre \(u\) y \(w\) en \(G - e\) (que no usa a \(e\)). Luego podemos definir a \(C = P_{uw} + e\) como un circuito simple de \(G\) que contiene a \(e\).
+	
+	\paragraph{\(\Leftarrow\) )} Sea \(C\) un circuito simple de \(G\) que contiene a \(e = (u,w)\). Entonces podemos partir a \(C\) en la arista \(e\) y un camino simple \(P_{uw})\) entre \(u\) y \(w\) (que no contiene a \(e\)).
+
+	Como \(G\) es conexo, hay camino entre todo par de vértices. Si esos caminos no una a \(e\), entonces siguen estando en \(G-e\).
+\end{demo}
+\begin{demoPart} 
+	Si un camino de \(G\) usa \(e\), en \(G-e\) hay un camino alternativo que es cambiando a \(e\) por \(P_{uw}\) en \(Q\). Entonces sigue habiendo camino entre todo par de vértices en \(G-e\). Osea \(G-e\) es conexo.
+\end{demoPart}
+
+\begin{theorem}\label{equivalenciasArbol}
+	Dado un grafo \(G=(V,X)\), son equivalentes:
+	\begin{enumerate}
+		\item \(G\) es un árbol.
+		\item \(G\) es un grafo sin circuitos simples y para toda arista \(e\) tal que \(e\notin X\), \(G+e = (V, X\cup\{e\})\) tiene exactamente un circuito simple. Además, ese circuito contiene a \(e\).
+		\item Existe exactamente un camino simple entre todo par de vértices.
+		\item \(G\) es conexo pero si se quita cualquier arista a \(G\) queda un grafo no conexo (toda arista es puente).
+	\end{enumerate}
+\end{theorem}
+
+\begin{demo}
+	Vamos a demostrar \(1\Rightarrow 2\), \(2 \Rightarrow 3\), \(3 \Rightarrow 4\) y \(4 \Rightarrow 1\).
+
+\paragraph{1 \(\Rightarrow\) 2)} \(G\) es árbol, es decir, conexo y sin circuitos. Sea \(e=(u,w)\notin X\). Como \(G\) es conexo existe un camino simple \(P_{uw}\) en \(G\) entre \(u\) y \(w\). Entonces \(P_{uw} + e\) es un circuito simple de \(G + e\).
+	
+	Ahora nos falta ver que no se puede haber generado más de un circuito simple. Vamos a hacerlo por el absurdo. Como sabemos que antes de agregar \(e\), \(G\) no tenía circuitos, todo ciruito simple de \(G + e\) tiene que contener a \(e\), ya que de lo contrario ese circuito estaría en \(G\).
+	
+	Entonces supongamos que existen dos circuitos simples \(C\) y \(C'\) en \(G + e\) que contienen \(e\). Podemos partir estos circuitos en \[ C = P_{uw} + e\] \[C'	= P'_{uw} + e\]
+	
+	\(P_{uw}\) y \(P'_{uw}\) son dos caminos simples distintos entre \(u\) y \(v\) en \(G\). Por el Lema \ref{unionCaminosSimplesEsCircuito}, la unión de estos dos cáminos en \(G\) es un circuito simple. Esto es absurdo ya que \(G\) es un árbol.
+
+	\paragraph{2 \(\Rightarrow\) 3)} Primero veamos que \(G)\) es conexo, es decir que hay camino entre todo par de vértices \(u\) y \(v\). Si \((u,w)\in X_G\), el camino es la arista \((u,w)\). Si \(u\) y \(v\) no son adyacentes en \(G\), por hipotesis, \(G+(u,v)\) contiene exactamente un circuito simple \(C\) que contiene a \(u,w\). Podemos partir ese circuito en \(C = P_{uw} + (u,w)\) y \(P_{uw}\) es un camino simple entre \(u,v\).
+\end{demo}
+\begin{demoPart}	
+	\paragraph{3 \(\Rightarrow\) 4)} Por hipotesis, \(G\) es conexo. Supongamos que existe \(e=(u,v)\in X\) tal que \(G - e\) es conexo. Por Lema \ref{conexomenosesiiecircuitosimple}, \(e\) pertenece a un circuito simple \(C\) de \(G\). Partir a \(C = P_{u,v} + (u,v)\), entonces \(P_{uv}]\) y \((u,v)\) son dos caminos simples distintos entre \(u\) y \(v\), contradiciento \(3\).
+	
+	\paragraph{4 \(\Rightarrow\) 1)} Por hipotesis, \(G\) es conexo. Por contradicción, supongamos que no es un árbol, osea que tiene un circuito \(C\). Sea \(e=(u,w)\)) una arista de ese circuito. Por Lema \ref{conexomenosesiiecircuitosimple}, \(G - e\) es conexo, pero esto contradice \(4\). Luego \(G\) es conexo y sin circuitos, osea es un árbol.
+\end{demoPart}
+
+\paragraph{Hoja:} Una hoja es un nodo de grado 1.
+
+\begin{lema}\label{arboldoshojas}
+	Todo árbol no trivial \(T\) (de al menos dos vértices) tiene al menos dos hojas.
+\end{lema}
+\begin{demo}
+	Sea \(P: v_1\dots v_k\) un camino simple máximal (no extendible por sus extremos) en el árbol \(T\). Veamos que \(v_1\)) y \(v_k\) son hojas. 	
+	
+	Supongamos que \(d(v_1) > 1\). Entonces \(v_1\) tiene otro vértice adyacente
+	 \(w\) además de \(v_2\) y \(w \neq v_2\). Como \(P\) es máximal, \(w\)
+	  necesariamente ya tiene que estar en \(P\) (sino podriamos agregarlo y seguir extiendiendo el
+	 camino).
+	 Luego, \(P_{v_1,w} + (v_1, w)\) es un circuito, contradiciento que \(T\) es un árbol.
+	Se puede utilizar el mismo razonamiento para deducir que \(d(v_k) = 1\).
+\end{demo}
+
+\begin{lema}\label{arbolcantEjes}
+	Sea \(G = (V, X)\) un árbol. Entonces \(m = n - 1\).
+\end{lema}
+\begin{demo}
+	Vamos a hacer inducción en la cantidad de vértices.
+	\paragraph{Caso base (\(n = 1\)):} Se cumple por que \(n = 1\) y \(m = 0\)
+	\paragraph{Caso inductivo:} Sea \(T = (V, X)\) un árbol con \(k\) vértices (\(k > 1\)). Nuestra hipotesis inductiva es: \[\forall~T' ~/~ n_{T'} \leq k \implies m_{T'} = n_{T'} - 1\]
+	
+	
+	Por lema \ref{arboldoshojas}, \(T\) tiene al menos una hoja \(u\). Definamos \(T - u = (V \backslash \{u\},~X\backslash \{(u,v)\). \(T - u\) es conexo y no tiene circuitos, osea que es un árbol de \(k-1\). Por hipotesis inductiva, \(T - u\) tiene \(k-2\) aristas. Como \(d(u) = 1\), \(T\) tiene una arista más. Luego \(T\) tiene \(k-1\) aristas.
+\end{demo}
+
+\paragraph{Bosque:} Es un grafo sin circuitos simples.
+\begin{coro}\label{bosqueCantEjes}
+	Sea \(G = (V,X)\) sin circuitos simples y \(c\) componentes conexas. Entonces \(m = n - c\).
+\end{coro}
+\begin{demo}
+Para \(i=1,\dots,c\), sea \(n_i\) la cantidad de vértices de la componente \(i\) y \(m_i\) la cantidad de aristas.
+
+Como cada componente conexa de \(G\) es un árbol, podemos aplicar el lema \ref{arbolcantEjes}. Entonces \(m_i = n_i - 1~\forall~i=1\dots c\). Sumando, obtenemos que \[ m = \sum_{i=1}^{c}m_i = sum_{i=1}^{c}n_i - 1 = n - c\]
+\end{demo}
+
+\begin{coro}\label{bosqueNC}
+	Sean \(G = (V, X)\) un bosque con \(c\) componentes conexas. Entonces \(m \geq n -c\)
+\end{coro}
+\begin{demo}
+	Si \(G\) tiene circuitos, removerlos sacando una arista por vez hasta que el grafo resultante \(\hat{G}\) sea sin circuitos. Entonces, por Lema \ref{bosqueCantEjes}, \(\hat{m} = n - \hat{c}\)
+\end{demo}
+
+\begin{theorem}
+	Dado un grafo \(G\) son equivalentes:
+	\begin{enumerate}
+		\item \(G\) es un árbol
+		\item \(G\) es un grafo sin circuitos simples y \(m = n-1\)
+		\item \(G\) es conexo y \(m = n - 1\)
+	\end{enumerate}
+\end{theorem}
+\begin{demo}
+	\paragraph{1 \(\Rightarrow\) 2)} Como \(G\) es árbol, \(G\) no tiene circuitos y \(m = n - 1\) por Lema \ref{arbolcantEjes}
+	\paragraph{2 \(\Rightarrow\) 3)} Sea \(c\) lacantidad de componentes conexas de \(G\). Por corolario \ref{bosqueNC} , \(n - 1 = m = n - c\).
+	\paragraph{3 \(\Rightarrow\)  1)} Por contradicción, supongamos que \(G\) tiene un circuito simple. Sea \(e = (v,w)\) una arista del circuito. Entonces, por Lema \ref{unionCaminosSimplesEsCircuito}, \(G' = G - e\) es conexo y \(m' = n - 2\), contradiciendo el corolario \ref{bosqueCantEjes}. Luego, \(G\) no puede tener circuitos simples. \(G\) es árbol.
+\end{demo}
+
+\subsection{Árboles enraizados}
+Un \textbf{árbol enraizado} es un árbol qeue tiene un vértice distinguido que llamamos \textbf{raíz}. Explicitamente queda definido un árbol dirigido, considerando caminos orientados desde la raíz al resto de los vértices. 
+
+\begin{itemize}
+	\item Los vértices \textbf{internos} de un árbol son aquellos que no son ni hojas ni la raíz.
+	\item El \textbf{nivel} de un vértice de un árbol con raíz en la distancia de la raíz a ese vértice.
+	\item Decimos que dos vértices adyacentes tienen \textbf{relación parde-hijo}, siendo el padre el vértice de menor nivel.
+	\item La \textbf{altura} \(h\) de un árbol con raíz es la distancia desde la raíz al vértice más lejano.
+	\item Un árbol se dice (exactamente) \(m-ario\) si todos sus vértices,salvo las hojas y las raíz tienen grado (exactamente) a lo sumo \(m + 1\) y la raíz (exactamanete) a lo sumo \(m\).
+	\item Un árbol se dice \textbf{balanceado} si todas sus hojas están a nivel \(h\) ó \(h - 1\).
+	\item Un árbol se dice \textbf{balanceado completo} si todas sus hojas están a nivel \(h\).
+\end{itemize}
+
+\begin{theorem}
+	Sea \(T\) un árbol \(m\)-ario de altura \(h\) con \(l\) hojas entonces:
+	\begin{enumerate}
+		\item \(T\) tiene a lo sumo \(m^h\) hojas.
+		\item \(h \geq \lceil \log_m{l}\rceil\)
+		\item Si \(T\) es un árbol exáctamente m-ario balancaeando completo entonces \(h = \lceil \log_m{l}\rceil\)
+	\end{enumerate}
+\end{theorem}
+\begin{demo}[DE 1]
+	Lo hacemos por inducción en la altura del árbol:
+	\paragraph{Caso base (\(h = 1\)):} Por definición, en un árbol $m$, cada nodo tiene a lo sumo \(m\) hijos. Si tomamos la raíz, entonces \(d(r) \leq m\). Y como el árbol es de altura \(1\), todos sus hijos son hojas entonces: \(\# hojas = d(r) \leq m = m^1\)
+	\vspace*{1mm}
+		\begin{center}
+		\begin{tikzpicture}[graphStyle]
+			\node[basicNode, scale=0.37] (v1) at (0,0) {};
+			\node[basicNode, scale=0.37] (v2) [below left=of v1] {};
+			\node[basicNode, scale=0.37] (v3) [below right=of v1] {};
+			\node[basicNode, scale=0.37] (v4) [below=of v1] {};
+			\node[emptyDemoNode] (r) [above=of v1, yshift=-0.75cm] {r};
+			\node[emptyDemoNode] (l1) [left=of v1]{};
+			\node[emptyDemoNode] (r1) [right=of v1]{};
+			\node[emptyDemoNode] (lr1) [below right=of r1, yshift=0.75cm, xshift=-0.65cm]{\(\leq m\)};
+
+			\path
+			(v1) edge (v2)
+			(v1) edge (v3)
+			(v1) edge (v4)
+			(l1) edge[dashed,bend right=45] (r1)
+			;
+		\end{tikzpicture}
+	\end{center}
+	\paragraph{Paso inductivo:} Sea \(T = (V,X)\) un árbol \(m\)-ario de altura \(h > 1\). Nuestra hipotesis inductiva es:
+	\begin{center}
+		Todo árbol \(m\)-ario de altura \(h' < h\) tiene a lo sumo \(m^{h'}\) hojas.
+	\end{center}
+	Sea \(r\) la raíz de \(T\), como \(T\) es un árbol \(m\)-ario, \(d(r) = k \leq m\). Sean \(T_1,\dots,T_k\) las componentes conexas de \(T-r\):
+			\begin{center}
+		\begin{tikzpicture}[graphStyle]
+		\node[basicNode, scale=0.37] (v1) at (0,0) {};
+		\node[basicNode, scale=0.37] (v2) [below left=of v1] {};
+		\node[basicNode, scale=0.37] (v3) [below right=of v1] {};
+		\node[basicNode, scale=0.37] (v4) [below=of v1] {};
+		\node[emptyDemoNode] (r) [above=of v1, yshift=-0.75cm] {r};
+		\node[emptyDemoNode] (l1) [left=of v1]{};
+		\node[emptyDemoNode] (r1) [right=of v1]{};
+		\node[emptyDemoNode] (lr1) [below right=of r1, yshift=0.75cm, xshift=-0.65cm]{\(\leq m\)};
+		
+		\node[emptyDemoNode] (t1r) [below right=of v2, xshift=-0.5cm]{};
+		\node[emptyDemoNode] (t1l) [below left=of v2, xshift=0.5cm]{};
+		\node[emptyDemoNode, inner ysep=0.25cm] (t1b) [below=of v2]{\(T_1\)};
+		
+		\node[emptyDemoNode] (t2r) [below right=of v4, xshift=-0.5cm]{};
+		\node[emptyDemoNode] (t2l) [below left=of v4, xshift=0.5cm]{};
+		\node[emptyDemoNode, inner ysep=0.25cm] (t2b) [below=of v4, yshift=0.25cm]{\(\dots\)};
+		
+		\node[emptyDemoNode] (t3r) [below right=of v3, xshift=-0.5cm]{};
+		\node[emptyDemoNode] (t3l) [below left=of v3, xshift=0.5cm]{};
+		\node[emptyDemoNode, inner ysep=0.25cm] (t3b) [below=of v3]{\(T_k\)};
+		
+		\path
+		(v1) edge (v2)
+		(v1) edge (v3)
+		(v1) edge (v4)
+		(l1) edge[dashed,bend right=45] (r1)
+		(v2) edge[dashed] (t1r) 
+		(v2) edge[dashed] (t1l) 
+		(v2) edge[dashed] (t1b) 
+		
+		(v4) edge[dashed] (t2r) 
+		(v4) edge[dashed] (t2l) 
+		(v4) edge[dashed] (t2b) 
+		
+		(v3) edge[dashed] (t3r) 
+		(v3) edge[dashed] (t3l) 
+		(v3) edge[dashed] (t3b) 
+		;
+		\end{tikzpicture}
+	\end{center}
+\end{demo}
+\begin{demoPart}
+	Cada \(T_i\) tiene altura \(h_i \leq h - 1\), osea que por la HI vale que \(\#hojas(T_i) \leq m^{h_i} \leq m^{h-1}\). Además, de que todas las hojas de cada \(T_i\) son hojas \(T\). 
+	
+	Si hay algun \(T_i\) cuya altura sea \(0\), entonces no tiene hojas pero \(T_i\) era un hoja de \(T\), sin embargo sigue valiendo que \(0 \leq m^0 \leq m^{h-1}\).
+
+	Entonces:
+	\begin{align*}
+	\#hojas(T) &= \sum_{\substack{i=0 \\ h_i > 0}}^{k}\underbrace{\#hojas(T_i)}_{\leq m^{h_i}} + \sum_{\substack{i=0 \\ h_i = 0}}^{k}\hspace*{5mm}\underbrace{1}_{\leq m^{h_1}} \\ &\leq \sum_{i=0}^{k} m^{h_i} \leq \sum_{i=0}^{k} m^{h - 1} \leq \sum_{i=0}^{m} m^{h - 1} \\ &\leq m\times m^{h-1} \leq m^h
+	\end{align*}
+\end{demoPart}
+
+\begin{demo}[DE 2]
+	Por 1, sabemos que \(l \leq m^h \implies \log_m l \leq h\) y como \(h\) es entero \(\lceil\log_m l\rceil \leq h\)
+\end{demo}
+\begin{demo}[DE 3]	
+	Si \(T\) es un árbol exactamente \(m\)-ario balanceado completo, entonces los \(T_1, \dots, T_k\) de la demostración del punto 1 son también árboles \(m\)-arios balanceados completos (por lo que cumplen la hipotesis inductiva) y los pasos son todas igualdades.
+\end{demo}
+
+\subsection{Árboles generadores}
+Un \textbf{árbol generador} (\(AG\) de un grafo \(G\) es un subgrafo generador (que tiene el mismo conjunto de vértices ) de \(G\) que es árbol.
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+	\node[basicNode] (v1) at (0,0) {};
+	\node[basicNode] (v2) [above=of v1] {};
+	\node[basicNode] (v3) [right=of v1] {};
+	\node[basicNode] (v4) [right=of v2] {};
+	\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {};
+	\node[] (glabel) [below right=of v1, xshift=-2cm] {Grafo \(G\) y un AG(\(G\)) \red{\(T\)}};
+		
+	\path
+	(v1) edge[redEdge] (v2)
+	(v1) edge[redEdge] (v3)
+	(v2) edge (v3)
+	(v2) edge[redEdge] (v4)
+	(v3) edge[redEdge] (v5)
+	(v4) edge (v5)
+	;
+	\end{tikzpicture}
+\end{center}
+
+\begin{theorem}\label{arbolesGeneradores}
+	Sea \(G=(V,X)\) un grafo conexo:
+	\begin{enumerate}
+		\item \(G\) tiene (al menos) un árbol generador.
+		\item \(G\) tiene un único árbol generador si y solo si \(G\) es un árbol.
+		\item Sea \(T = (V, X_T)\) y \(e\in X \backslash X_T \). Sea \(f\neq e\) una arista del circuito que se genera cuando se agrega \(e\) a \(T\). Entonces \(T + e - f\) es un árbol generador de \(G\).	
+	\end{enumerate}
+\end{theorem}
+\begin{demo}[DE 1]
+	Sea \(G=(V,X)\) un grafo conexo, podemos construir un árbol generador \(T\) de la siguiente manera:
+\begin{algorithmic}
+	\State Definimos \(T = (V, X_T)\) con \(X_T = X\). 
+	\While{\(T\) tenga algún circuito}
+		\State Seleccionamos \(e\in X_T\) que pertenezca a un circuito de \(T\).
+		\State \(T = T - e\)
+	\EndWhile
+\end{algorithmic}
+Como todas las aristas removidas pertenecen a un circuito (no son puentes), cuando termina el procedimiento \(T\) es un subgrafo conexo generador de \(G\) (por lema \ref{conexomenosesiiecircuitosimple})  y todas sus aristas son puente. Entonces, por el teorema \ref{equivalenciasArbol}, \(T\) es un árbol.
+\end{demo}
+
+\begin{demo}[DE 2]
+	\paragraph{\(\Rightarrow)\)} \(G\) tiene un único árbol generador. Supongamos que no es un árbol, entonces tiene por lo menos un circuito simple \(C\) (supongamos que tiene exactamente uno, sin perdida de generalidad). 
+	
+	Sean \(e\) y \(f\) dos aristas de \(C\), entonces siguiendo el procedimiento de la demostración anterior podemos formar dos árboles generadores distintos de \(G\): \(T_1 = G - e\) y \(T_2 = G -f\), si elegimos sacar \(e\) o \(f\), respectivamente.
+	
+	En ambos casos, sabemos que son árboles porque \(C\) era el único ciclo simple de \(G\) y quitarle una arista lo rompe. Luego, llegamos a un absurdo que proviene de suponer que \(G\) no era un árbol.
+	
+	\paragraph{\(\Leftarrow\)} \(G\) es un árbol.Por teorema \ref{equivalenciasArbol}, todas sus aristas son puente, es decir que cualquier arista que \(e\) saquemos hace que \(G - e\) deje de ser conexo. Luego, \(G\) es un árbol generador de si mismo.
+\end{demo}
+
+\begin{demo}[DE 3]
+	Como \(T\) es un árbol generador de \(G\), entonces por el teorema \ref{equivalenciasArbol}, sabemos que \(T + e\) tiene exactamente un circuito \(C\). Sea \(e\neq f\) una arista de \(C\), por lema \ref{conexomenosesiiecircuitosimple}, si se quita una arista de un circuito el grafo sigue siendo conexo, es decir \(T + e - f\) es conexo.
+	
+	Entonces \(T + e - f\) es un grafo generador \(G\), conexo y con \(n-1\) aristas, lo que implica que \(T + e - f\) es árbol generador de \(G\).
+\end{demo}
+
+\subsection{Recorrido de árboles o grafos}
+Hay dos formas de recorrer un grafo: \textbf{Breadth-First Search (BFS)} o \textbf{Depth-First Search (DFS)}.
+
+En el BFS, se comienza por el nivel 0 (la raíz) y se visita cada vértice en un nivel antes de pasar al siguiente.
+
+En el DFS, se comienza por la raíz y se explora cada rama lo más profundo posible antes de retroceder.
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+	\node[basicNode] (v1) at (0,0) {1};
+	\node[basicNode] (v2) [above=of v1] {2};
+	\node[basicNode] (v3) [right=of v1] {3};
+	\node[basicNode] (v4) [right=of v2] {4};
+	\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {5};
+	\node[] (glabel) [below right=of v1, xshift=-1.75cm] {Orden de recorrido BFS};
+	
+	\node[basicNode] (bv1) at (5,0) {1};
+	\node[basicNode] (bv2) [above=of bv1] {5};
+	\node[basicNode] (bv3) [right=of bv1] {2};
+	\node[basicNode] (bv4) [right=of bv2] {4};
+	\node[basicNode] (bv5) [above right=of bv3, yshift=-0.12cm] {3};
+	\node[] (bglabel) [below right=of bv1, xshift=-1.75cm] {Orden de recorrido DFS};
+	
+	\path
+	(v1) edge (v2)
+	(v1) edge (v3)
+	(v2) edge (v3)
+	(v2) edge (v4)
+	(v3) edge (v5)
+	(v4) edge (v5)
+	
+	(bv1) edge (bv2)
+	(bv1) edge (bv3)
+	(bv2) edge (bv3)
+	(bv2) edge (bv4)
+	(bv3) edge (bv5)
+	(bv4) edge (bv5)
+	;
+	\end{tikzpicture}
+\end{center}
+
+Para ambos tipos de recorrido el algoritmo es similar, se diferencian en las estructuras que se usan para implementarlos:
+
+\begin{algorithmic}
+	\Procedure{BFS}{$\mathtt{G = (V, X)}$}
+		\State $\mathtt{r \gets v \in V}$
+		\State $\mathtt{to\_visit \gets Queue()}$
+		\State $\mathtt{to\_visit.push(r)}$
+		\State $\mathtt{r.used \gets true}$
+		\While{$\mathtt{\lnot to\_visit.empty()}$}
+			\State $\mathtt{i \gets to\_visit.pop()}$
+			\For{$\forall~\mathtt{(i, j) \in X~/~\lnot j.used}$}
+				\State $\mathtt{j.used \gets true}$
+				\State $\mathtt{to\_visite.push(j)}$
+			\EndFor
+		\EndWhile
+	\EndProcedure
+\end{algorithmic}
+
+Para implementar un \textbf{DFS} hay que utilizar una pila (\texttt{Stack}) en vez de una cola.
+
+\subsection{Árbol generador mínimo}
+\paragraph{Grafo pesado:} Grafo que tiene un costo asociado a sus aristas o vértices.
+
+Sea \(T=(V,X)\) un árbol y \(l:X\to\reales\) una función que asigna costos a las aristas de \(T\). Se define el \textbf{costo} de \(T\) como \(l(T) = \sum_{e\in T}l(e)\).
+
+Dado un grafo \(G =(V,X)\), un \textbf{árbol generador mínimo} de \(G\), \(AGM(G) = T	\), es un árbol generador de \(G\) de mínimo costo, es decir:
+\[l(T) \leq l(T')~\forall~T'~\text{árbol generador de} G\]
+\vspace*{5mm}
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+	\node[basicNode] (v1) at (0,0) {};
+	\node[basicNode] (v2) [above=of v1] {};
+	\node[basicNode] (v3) [right=of v1] {};
+	\node[basicNode] (v4) [right=of v2] {};
+	\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {};
+	\node[] (glabel) [below right=of v1, xshift=-2cm] {Grafo pesado \(G\) y un \red{AGM(\(G\))}};
+	
+	\path
+	(v1) edge[redEdge]  node[left]  {$1$} (v2)
+	(v1) edge node[below]  {$2$} (v3)
+	(v2) edge[redEdge]  node[above, xshift=0.2cm, yshift=-0.1cm] {$2$} (v3)
+	(v2) edge node[above] {$5$} (v4)
+	(v3) edge[redEdge]  node[below, xshift=0.2cm, yshift=0.1cm] {$2$} (v5)
+	(v4) edge[redEdge] node[above, xshift=0.1cm, yshift=-0.1cm] {$1$} (v5)
+	;
+	\end{tikzpicture}
+\end{center}
+
+Dado un grafo pesado en las aristas \(G = (V,X)\), el problema de árbol generador mínimo consiste en encontrar un AGM de \(G\).
+
+\subsubsection{Algoritmo de Prim}
+El algoritmo de Prim es un algoritmo \textbf{goloso} que construye incrementalmente dos conjuntos, uno de vértices \(V_T\) y uno de aristas \(X_T\) que comienza vacío. En cada iteración se agrega un elemento a cada uno de estos conjuntos. Cuanto \(V_T = V\) el algoritmo termina y las aristas de \(X_T\) definen un AGM de \(G\).
+
+En cada paso, se selecciona la arista de menor costo entre las que tiene un extremo en \(V_T\) y el otro en \(V\backslash V_T\). Esta arista es agregada a \(X_T\) y el extremo a \(V_T\).
+
+\begin{algorithmic}
+	\Procedure{Prim}{$\mathtt{G = (V, X)}$}
+	\State $\mathtt{V_T \gets \{ u \}}$
+	\Comment{Comenzamos con cualquier vértice de \texttt{G}}
+	\State $\mathtt{X_T \gets \emptyset}$
+	\State $\mathtt{i \gets 1}$
+	\While{$\mathtt{i\leq n-1}$}
+	\State $\mathtt{e \gets argmin\{l(e), e =(u,w),~u\in V_T \land w\in V\backslash V_T\}}$
+	\State $\mathtt{X_T \gets X_T \cup \{e\}}$
+	\State $\mathtt{V_T \gets V_T \cup \{w\}}$
+	\State $\mathtt{i\gets i + 1}$
+	\EndWhile
+	\State \Return $\mathtt{T = (V_T, X_T)}$
+	\EndProcedure
+\end{algorithmic}
+
+Notaremos \(T_k = (V_{k}, X_{k})\) al grafo que el algoritmo de Prim construyó al finalizar la iteración \(k\), para \(0 \leq k \leq n - 1\). \(T_0 = (V_0, X_0)\) se refiere a la inicialización antes de entrar a la primera iteración.
+\begin{proposicion}\label{invariantePrim}
+	Dado \(G=(V,X)\) un grafo conexo. \(T_k = (V_{k}, X_{k})\), \(0\leq k \leq n -1\), es árbol y subgrafo de árbol generador mínimo de \(G\).
+\end{proposicion}
+\begin{demo}
+	Lo hacemos por inducción en las iteraciones del ciclo:
+\end{demo}
+\begin{demoPart}
+
+	\begin{multicols}{2}
+	\paragraph{Caso base (k = 0):} Antes de ingresar al ciclo, \blue{\(T_0 = (\{u\},\emptyset)\)} es árbol y subgrafo de todo AGM de \(G\).	
+	\columnbreak
+	\begin{center}	
+		\begin{tikzpicture}[graphStyle]
+		\node[basicNode, scale=0.37] (v1) at (0,0) {};
+		\node[basicNode, scale=0.37] (v2) [above=of v1] {};
+		\node[basicNode, scale=0.37] (v3) [right=of v1] {};
+		\node[blueNode, scale=0.37] (v4) [right=of v2] {};
+		\node[basicNode, scale=0.37] (v5) [above right=of v3, yshift=-0.12cm] {};
+		\node[emptyDemoNode] (u) [above=of v4, yshift=-0.75cm] {\(u\)};
+		\node[emptyDemoNode] (glabel) [below right=of v1, xshift=-2cm] {Paso \blue{\(T_0\)} de Prim sobre \(G\)};
+		\path
+		(v1) edge node[emptyDemoNode,left]  {$1$} (v2)
+		(v1) edge node[emptyDemoNode,below, yshift=-0.1cm]  {$2$} (v3)
+		(v2) edge node[emptyDemoNode,above, xshift=0.2cm, yshift=-0.1cm] {$2$} (v3)
+		(v2) edge node[emptyDemoNode,above] {$5$} (v4)
+		(v3) edge node[emptyDemoNode,below, xshift=0.1cm, yshift=-0.1cm] {$2$} (v5)
+		(v4) edge node[emptyDemoNode, above, xshift=0.1cm, yshift=0.05cm] {$1$} (v5);
+		\end{tikzpicture}
+	\end{center}
+	\end{multicols}
+	\paragraph{Paso inductivo:} Consideremos \(T_k\) con \(k > 1\), nuestra hipotesis inductiva es: 
+	\(\forall~k' < k,~T_k' \) es árbol y subgrafo de algún AGM \(T = (V, X_T)\) de \(G\).
+	\vspace*{-0.3cm}
+	\begin{multicols}{2}
+	Llamemos \blue{\(w\)} al vertice agregado en la iteración \(k\) y \blue{\(e\)} a la arista. Es decir \blue{\(T_k = (V_k, X_k)\)} con \(\blue{V_k} = \red{V_{k-1}}\cup\{\blue{w}\}\) y \(\blue{X_k} = \red{X_{x-1}}\cup\{\blue{e} = (\red{u},\blue{w})\}\), \(\red{u\in V_{k-1}}\) y \(\blue{w}\notin \red{V_{k-1}}\).
+	\columnbreak
+		\begin{center}	
+		\begin{tikzpicture}[graphStyle]
+		\node[blueNode, scale=0.37] (v1) at (0,0) {};
+		\node[basicNode, scale=0.37] (v2) [above=of v1] {};
+		\node[redNode, scale=0.37] (v3) [right=of v1] {};
+		\node[redNode, scale=0.37] (v4) [right=of v2] {};
+		\node[redNode, scale=0.37] (v5) [above right=of v3, yshift=-0.12cm] {};
+		\node[emptyDemoNode] (u) [below=of v3, yshift=0.65cm] {\(\red{u}\)};
+		\node[emptyDemoNode] (w) [below=of v1, yshift=0.65cm] {\(\blue{w}\)};
+		\node[emptyDemoNode] (glabel) [below right=of v1, xshift=-2cm] {Paso \blue{\(T_k\)} de Prim sobre \(G\)};
+		\path
+		(v1) edge node[emptyDemoNode,left]  {$1$} (v2)
+		(v1) edge[blueEdge] node[emptyDemoNode,below, yshift=-0.1cm]  {$2$} (v3)
+		(v2) edge node[emptyDemoNode,above, xshift=0.2cm, yshift=-0.1cm] {$2$} (v3)
+		(v2) edge node[emptyDemoNode,above] {$5$} (v4)
+		(v3) edge[redEdge] node[emptyDemoNode,below, xshift=0.1cm, yshift=-0.1cm] {$2$} (v5)
+		(v4) edge[redEdge] node[emptyDemoNode, above, xshift=0.1cm, yshift=0.05cm] {$1$} (v5);
+		\end{tikzpicture}
+		\end{center}
+\end{multicols}
+\begin{itemize}	
+	\item\textbf{\blue{\(T_k\)} es un árbol:} Por HI, \red{\(T_{k-1}\)} es árbol. Como \blue{\(T_k\)} tiene un vértice y un arista más que \red{\(T_{k-1}\)} y es conexo entonces \blue{\(T_k\)} es árbol.
+	
+	\item  \textbf{\blue{\(T_k\)} es subgrafo de un AGM:} Sea \(\violet{T = (V, X_T)}\) un AGM tal que \red{\(T_{k-1}\)} es súbgrafo \(T\) (\(T\) existe por HI):
+	 \begin{itemize}
+		\item Si \(\blue{e}\in \violet{X_T}\)  entonces \(\blue{T_{k}}\) también es subgrafo de \(\violet{T}\).
+	
+	 	\item Si \(\blue{e}\notin X_T\), veamos que podemos armar un AGM a partir de \(T\) que contenga \red{\(T_{k-1}\)} y a \(\blue{e}\):
+		 		
+	 	\begin{center}	
+	 		\begin{tikzpicture}[graphStyle]
+	 		\node[basicNode, scale=0.37] (v1) at (0,0) {};
+	 		\node[basicNode, scale=0.37] (v2) [above=of v1] {};
+	 		\node[redNode, scale=0.37] (v3) [right=of v1] {};
+	 		\node[redNode, scale=0.37] (v4) [right=of v2] {};
+	 		\node[redNode, scale=0.37] (v5) [above right=of v3, yshift=-0.12cm] {};
+	 		\node[emptyDemoNode] (u) [below=of v3, yshift=0.65cm] {\(\red{u}\)};
+	 		\node[emptyDemoNode] (w) [below=of v1, yshift=0.65cm] {\(\blue{w}\)};
+	 		\node[emptyDemoNode] (glabel) [below right=of v1, xshift=-1.75cm] {Arbol \violet{\(T\)} tal que \(\blue{e}\notin \violet{X_T}\)};
+	 		\path
+	 		(v1) edge[violetEdge] node[emptyDemoNode,left]  {$1$} (v2)
+	 		(v1) edge[blueEdge] node[emptyDemoNode,below, yshift=-0.1cm]  {$2$} (v3)
+	 		(v2) edge[violetEdge] node[emptyDemoNode,above, xshift=0.2cm, yshift=-0.1cm] {$2$} (v3)
+	 		(v2) edge node[emptyDemoNode,above] {$5$} (v4)
+	 		(v3) edge[violetEdge] node[emptyDemoNode,below, xshift=0.1cm, yshift=-0.1cm] {$2$} (v5)
+	 		(v4) edge[violetEdge] node[emptyDemoNode, above, xshift=0.1cm, yshift=0.05cm] {$1$} (v5);
+	 		\end{tikzpicture}
+	 	\end{center}
+	 		 	
+	 	Como \(T\) es un árbol, \(T + \blue{e}\) tiene un circuito simple \(C\) que contiene a \(\blue{e}\) (por teorema \ref{equivalenciasArbol}). Este circuito está formado por el único camino \(P_{uw}\) entre \(\red{u}\) y \(\blue{w}\) que tiene \(T\) más la arista \blue{\(e\)}.
+	 	
+	 	Sea \(\orange{f} \in \violet{X_T}\) la primer arista de \(P_{uw}\) tal que tiene un extremo em \(\red{T_{k-1}}\) y el otro no (existe, porque el camino empieza en \(\red{u}\) que esta dentro de \(\red{T_{k-1}}\) y termina en \(\blue{w}\) que no lo está.
+	 	
+	 	\begin{center}	
+	 		\begin{tikzpicture}[graphStyle]
+	 		\node[basicNode, scale=0.37] (v1) at (0,0) {};
+	 		\node[basicNode, scale=0.37] (v2) [above=of v1] {};
+	 		\node[redNode, scale=0.37] (v3) [right=of v1] {};
+	 		\node[redNode, scale=0.37] (v4) [right=of v2] {};
+	 		\node[redNode, scale=0.37] (v5) [above right=of v3, yshift=-0.12cm] {};
+	 		\node[emptyDemoNode] (u) [below=of v3, yshift=0.65cm] {\(\red{u}\)};
+	 		\node[emptyDemoNode] (w) [below=of v1, yshift=0.65cm] {\(\blue{w}\)};
+	 		\path
+	 		(v1) edge[violetEdge] node[emptyDemoNode,left]  {$1$} (v2)
+	 		(v1) edge[blueEdge] node[emptyDemoNode,below, yshift=-0.1cm]  {$2$} (v3)
+	 		(v2) edge[orangeEdge] node[emptyDemoNode,above, xshift=0.2cm, yshift=-0.1cm] {$2$} (v3)
+	 		(v2) edge node[emptyDemoNode,above] {$5$} (v4)
+	 		(v3) edge[violetEdge] node[emptyDemoNode,below, xshift=0.1cm, yshift=-0.1cm] {$2$} (v5)
+	 		(v4) edge[violetEdge] node[emptyDemoNode, above, xshift=0.1cm, yshift=0.05cm] {$1$} (v5);
+	 		\end{tikzpicture}
+	 	\end{center}
+	\end{itemize}
+\end{itemize}
+\end{demoPart}
+\begin{demoPart}
+	\begin{itemize}[label={}]
+		\item
+		\begin{itemize}[label={}]
+			\item Definimos \(T' = \violet{T} + \blue{e} - \orange{f}\), veamos que es AGM:
+			\begin{itemize}
+				\item \(T'\) es un árbol generador de \(G\) por el teorema \ref{arbolesGeneradores}
+				\item \(\blue{T_k}\) es subgrafo de \(T'\)
+				\item \(T'\) es AGM de G: Como \orange{\(f\)} era una arista elegible al comienzo de la iteración \(k\), pero el algoritmo eligió \blue{e}, seguro se cumple \(l(\blue{e}) \leq l(\blue{f})\). Entonces \[l(T') = l(\violet{T}) + l(\blue{e}) - l(\blue{f}) \leq \violet{T}\]
+				Entonces \(T'\) es un AGM y además \(\blue{T_k}\) es un subgrafo de \(T'\).
+			\end{itemize}
+		\end{itemize}
+	\end{itemize}
+\end{demoPart}
+
+\begin{theorem}
+	El algoritmo de Prim es correcto, es decir dado un grafo \(G\) conexo determina un árbol generador mínimo de \(G\).
+\end{theorem}
+\begin{demo}
+	Al analizar la iteración \(n-1\), por la propocisión \ref{invariantePrim}, \(T_{n-1}\) es un árbol y subgrafo de algún \(T\) AGM de \(G\).
+	
+	Además, \(T_{n-1}\) es subgrafo generador de \(G\)) ya que cada iteración del algoritmo agrega un vértice distinto a \(V_T\) y, entonces, \(V_{n-1} = V\).
+	
+	Entonces \(T_{n-1} = T\), AGM de \(G\)
+\end{demo}
+
+\subsubsection{Algoritmo de Kruskal}
+Este algoritmo ordena las aristas del grafo de forma creciente según su peso y en cada paso elige la siguiente arista que no forme circuito con las aristas ya elegidas. También es un algoritmo goloso.
+
+\begin{algorithmic}
+	\Procedure{Kurskal}{$\mathtt{G = (V, X)}$}
+	\State $\mathtt{X_T \gets \emptyset}$
+	\State $\mathtt{i \gets 1}$
+	\While{$\mathtt{i\leq n-1}$}
+	\State $\mathtt{e \gets argmin\{l(e),~e}$ \texttt{no forma circuito con las aristas de }$\mathtt{X_T\}}$
+	\State $\mathtt{X_T \gets X_T \cup \{e\}}$
+	\State $\mathtt{i\gets i + 1}$
+	\EndWhile
+	\State \Return $\mathtt{T = (V, X_T)}$
+	\EndProcedure
+\end{algorithmic}
+
+Al comenzar el algoritmo, cuando todavía no se seleccionó arista alguna, cada vértice del grafo forma una componente conexa distinta (es un bosque de árboles triviales). En cada iteración, se elige una arista que tiene extremos en dos componentes conexas distintas del grafo obtenido en el paso anterior, convertindiose en nuevo bosque. El algoritmo termina cuando el bosque pasa a ser un árbol, es decir, se vuelve conexo.
+
+La demostración de correctitud de Kruskal es similar a la de Prim: En cada iteración, el grafo que arma el algoritmo es un bosque. Al final la última iteración, como se incorporaron \(n-1\) aristas, pasa a ser árbol (sin circuitos y con \(m-1\) aristas).
+
+En este caso, debemos demostrar que vale el invariante:
+
+\begin{proposicion}\label{invarianteKruskal}
+	Sea \(T_k\) el grafo generado en la \(k\)-ésima iteración,
+	\(T_k = (V_{k}, X_{k})\), \(0\leq k \leq n -1\), es un bosque y subgrafo de árbol generador mínimo de \(G\).
+\end{proposicion}
+
+\begin{demo}
+	La demostración es muy similar a la de la proposición \ref{invariantePrim}. Si \(\blue{e}=(u,w)\) es la arista incorporada en el \(k\)-ésimo lugar, la única diferencia significativa es la definición de la arista \orange{\(f\)} en el paso inductivo cuando \(\blue{e}\notin\violet{T}\) (AGM(G) tal que \(\red{T_{k-1}}\in\violet{T}\)).
+	
+	En este caso, debemos elegir una \orange{\(f\)} que pertenezca al circuito \(C = P_{uw} + e\) que tenga un extremo en la componente conexa a la que pertenece \(u\) y el otro fuera de esa compenente.
+	
+	
+\end{demo}
