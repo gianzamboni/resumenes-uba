@@ -1,0 +1,42 @@
+\appendix
+\section{Hoja de complejidades}
+\subsection{Algoritmos sobre arrays}
+\begin{center}
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Algoritmo} & \textbf{Complejidad}                         \\
+    \hline
+    \multicolumn{2}{|c|}{\cellcolor{blue!25}\textbf{De Búsqueda}}     \\
+    \hline
+    Secuencial         & \(O(n)\)                                     \\
+    \hline
+    Binaria            & \(O(\log{n})\)                               \\
+    \hline
+    \multicolumn{2}{|c|}{\cellcolor{blue!25}\textbf{De Ordenamiento}} \\
+    \hline
+    Bubblesort         & \(O(n^2)\)                                   \\
+    \hline
+    Quicksort          & \(O(n^2)\)                                   \\
+    \hline
+    Heapsort           & \(O(n\log{n})\)*                             \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\paragraph{*} \(O(n\log{n})\) es la complejidad óptima para algoritmos de ordenamiento basados en comparaciones.
+
+\subsection{Algoritmos sobre grafos}
+
+\begin{center}
+  \begin{tabular}{|l|c|c|c|}
+    \hline
+                       & \multicolumn{3}{c|}{\textbf{Complejidad}}                                                                \\
+    \hline
+    \textbf{Algoritmo} & \textbf{Matriz de adyacencia}             & \textbf{Lista de Adyacencia} & \textbf{Lista de Incidencias} \\
+    \hline
+    Prim               & \(O(n^2)\)                                & \((n + m)\log{m}\)           & \(m\log{m}\)                  \\
+    \hline
+    Kruskal            & \(O(n^2)\)                                & \(O(m*log(n))\)              & \(n + m\log{(n)}\)            \\
+    \hline
+  \end{tabular}
+\end{center}
