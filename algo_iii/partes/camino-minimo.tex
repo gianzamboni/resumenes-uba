@@ -16,7 +16,7 @@ Dado un grafo \(G\), se pueden definir tres variantes de problemas sobre caminos
 
 Generalmente, los algoritmos para resolver problemas de camino mínimo se basan en que todo subcamino de un camino mínimo entre dos vértices es un camino mínimo.
 
-\begin{proposicion}
+\begin{proposicion}\label{prop::CaminoMinimoEstaHechoDeMinimos}
   Dado un grafo \(G = (V, X)\) con una función de peso \(l: X \to \reales\), sea \(P: v_1\dots v_k\) un camino mínimo de \(v_1\) a \(v_k\). Entonces \(\forall~1\leq i \leq j \leq k\), \(P_{v_iv_j}\) es un camino mínimo desde \(v_i\) a \(v_j\).
 \end{proposicion}
 \begin{demo}
@@ -42,7 +42,7 @@ Dos consideraciones a tener en cuenta:
 \subsection{Camino mínimo con un único origen y múltiples destinos}
 Dado \(G = (V, X)\) un digrafo, \(l: X\to\reales\) una función que asigna a cada arco una cierta longitud y \(v\in V\) un vértice del digrafo, queremos calcular los caminos mínimos desde \(v\) al resto de los vértices.
 
-\subsubsection{En digramos no pesados}
+\subsubsection{En digrafos no pesados}
 En el caso de que todas las aristas tengan igual longitud, este problema se traduce en encontrar los caminos que definan las distancias (de menor cantidad de aristas). Para esto se puede adaptar el BFS (Sección \ref{algorithm:BFS}):
 
 \begin{algorithmic}
@@ -67,3 +67,108 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
   \State\Return \texttt{[pred, dist]}
   \EndProcedure
 \end{algorithmic}
+
+\begin{lema}
+  Dado \(G=(V,X)\) un digrafo y \(v\in V\). Sea \(\texttt{to\_visit}_k=[v_1,\dots,v_r]\) la cola de nodos que se obtiene al finalizar la iteración \(k\) del algoritmo. Se cumple que todos los nodo de la misma están a distancia \(\texttt{dist}[v_1]\) o \( \texttt{dist}[v_1]+ 1\) de \(v\), formalmente:
+  \begin{itemize}
+    \item \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
+    \item \(\texttt{dist}[v_i] \leq \texttt{dist}[v_{i+1}]\) para todo \(i = 1,\dots r-1\)
+  \end{itemize}
+\end{lema}
+\begin{demo}
+  Lo hacemos por inducción en las iteraciones del algoritmo.
+  \paragraph{Caso base:} Antes de entrar al ciclo, la cola solo tiene \(v\) y se asigna \(\texttt{dist}[v] = 0 \). Como \(v\) es el único elemento de la cola, se cumple la propiedad.
+
+
+  \paragraph{Paso inductivo:} Consideremos la iteración \(k\). Llamemos \(\texttt{to\_visit}_k\) con \(k \geq 1\) al valor de la variable \texttt{to\_visit} al finalizar la iteración \(k\) del algoritmo.
+
+  Nuestra hipotesis inductiva es: Para todo \(k' < k\), vale que \(\texttt{to\_visit}_{k'} = [v_1^{k'},\dots,v_{r_k'}^{k'}]\) cumple que  \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
+  \(\texttt{dist}[v^{k'}_i] \leq \texttt{dist}[v^{k'}_{i+1}]\) para todo \(i = 1,\dots r_{k'}-1\).
+  \begin{itemize}
+    \item Si \(\texttt{to\_visit}_{k-1}\) tiene un solo elemento (el que se desencola), como todos los vértices que ingresan tienen igual valor en \texttt{dist}, se cumple la propiedad.
+    \item Si \(\texttt{to\_visit}_{k-1} = [u_1,u_2,\dots,u_r]\) tiene más de un elemento, sea \(w_1,\dots,w_s\) los vértices que se encolan en la iteración \(k\).
+          Entonces veamos que \(\texttt{to\_visit}_k = [u_2,\dots,z,w_1,\dots,w_s]\) cumple la propiedad:
+          \begin{itemize}
+            \item Como \(w_s\) fue agregada en este paso del algoritmo, sabemos que \(\texttt{dist}[w_s] = \texttt{dist}[u_1] + 1\). Por hipotesis inductiva sabemos que \(\texttt{dist}[u_1] \leq \texttt{dist}[u_2]\)
+                  \begin{align*}
+                    \texttt{dist}[u_1] \leq \texttt{dist}[u_2] & \implies \texttt{dist}[u_1] + 1\leq \texttt{dist}[u_2] + 1 \\ & \implies \texttt{dist}[w_s] \leq \texttt{dist}[u_2] + 1
+                  \end{align*}
+                  Entonces la primer parte del lema se cumple.
+          \end{itemize}
+  \end{itemize}
+\end{demo}
+\begin{demoPart}
+  \begin{itemize}
+    \begin{itemize}
+      \item Todos los nodos encolados en este paso están a \(\texttt{dist}[u_1] + 1\) de \(v\). Osea que \(\texttt{dist}[w_i] = \texttt{dist}[u_1] + 1~\forall~i=1\dots s\), entonces tambien vale que \(\texttt{dist}[w_i] \leq \texttt{dist}[w_{i+1}]\) .
+
+            Por hipotesis inductiva sabemos que \(\texttt{dist}[u_i] \leq \texttt{dist}[u_{i+1}]\) para todo \(i=1\dots r\).
+
+            Por hipotesis inductiva sabemos \(\texttt{dist}[u_1]+1 \geq \texttt{dist}[u_r]\), luego \(\texttt{dist}[w_1] \geq \texttt{dist}[u_r]\).
+
+            Luego se cumple la segunda parte de la propiedad.
+    \end{itemize}
+  \end{itemize}
+  \(\null\hfill\blacksquare\)
+\end{demoPart}
+
+\begin{coro}
+  Dago \(G=(V,X)\) un digrafo y \(v,w\in V\). Si el vértice \(w\) ingresa a \texttt{to\_visit} antes que el vértice \(v\), entonces se cumple que \(dist[w]\leq dist[v]\) durante toda la corrida del algoritmo.
+\end{coro}
+
+\begin{lema}\label{lema::BFS::distMayorAd}
+  Dado \(G=(V, X)\) un digrafo y \(v\in V\). Se cumple que \(\texttt{dist}[w]\geq d(v,w)\) para todo \(w\in V\) en todo momento del algoritmo.
+\end{lema}
+
+\begin{demo}
+  Haremos inducción en las iteraciones de \(k\).
+
+  \paragraph{Caso base:} Para \(k=0\) (antes de entrar al ciclo), \(\texttt{to\_visit}_0 = [v]\), \(\texttt{dist}[v] = 0\) y \(\texttt{dist}[w] = \infty\) para todo \(w\in V\) tal que \(w\neq v\).
+
+  Como \(d(v,v) = 0\), se cumple que \(\texttt{dist}[w] \geq d(v,w)\) para todo \(w\in V\).
+
+  \paragraph{Paso inductivo:} Nuestra hipotesis inductiva es: \(\texttt{dist}_{k-1}[w] \geq d(v,w)~\forall~w\in V\) donde \(\texttt{dist}_{k-1}\) es el valor de la variable \texttt{dist} al finalizar la iteración \(k-1\).
+
+  Sea \(x\) el vértice que se desencolaen la iteración \(k\) y \(x_1,\dots,x_s\) los vértices que se encolan. La variable \texttt{dist} solo se modifica en las posiciones de \(x_1,\dots,x_s\). Es decir que \(\text{dist}_k[w] = \texttt{dist}_{k-1}[w]\) para todo \(w\in V / \{x_1,\dots,x_s\}\), entonces por hipotesis inductiva vale \(\texttt{dist}_k[w] \geq d(v,w)\) para \(w\in V / \{x_1,\dots,x_s\}\).
+
+  Para las posiciones modificadas, tenemos que \[\texttt{dist}[x_i] = \texttt{dist}_{k-1}[x] + 1\]Por hipotesis inductiva sabemos que \(\texttt{dist}_{k-1}[x] \geq d(v,x)\), además como \(x_i\) fue agregado a la cola, sabemos que existe \((x, x_i)\in V\).
+
+  Sea \(P_{i} = P_{vx} + (x,x_i)\) un camino entre \(v\) y \(x_i\). Si \(P_{vx}\) es un camino mínimo entre \(v\) y \(x\) entonces \[l(P_{i}) = l(P_{vx}) + 1 = d(v,x) + 1 \underset{HI}{\leq} \texttt{dist}_{k-1}[x] + 1 = \texttt{dist}[w_i] \]
+\end{demo}
+\begin{demoPart}
+  Como \(d(v,x_1)\) es la longitud de los caminos mínimos entre \(v\) y \(x_i\), sabemos que \(d(v, x_i) \leq l(P_i)\), entonces \(d(v,x_1) \leq \texttt{dist}[w_i]\).
+\end{demoPart}
+
+\begin{theorem}
+  Dado \(G=(V,X)\) un digrafo y \(v\in V\). El algoritmo BFS enunciado calcula \(d(v,w)\) para todo \(w\in V\)
+\end{theorem}
+\begin{demo}
+  Por el lema \ref{lema::BFS::distMayorAd}, sabemos que \(\texttt{dist}[w]\geq d(v,w)\) para todo \(w\in V\). Supongamos ahora que para algún vértice no se cumple la igualdad.
+
+  Sea \(x\in V\) el vértice con menor \(d(v,x)\) tal que \(\texttt{dist}[x] > d(v,x)\):
+  \begin{itemize}
+    \item Sabemos que \(v \neq x\) porque \texttt{dist}\([v] = d(v,v) = 0\) (este valor se asigna antes de entrar a la primera iteración).
+    \item Sea \(P = v,\dots,y,x \) un camino mínimo desde \(v\) a \(x\), entonces
+          \[d(v,x) = l(P) = d(v,y) + 1 \] (el subcamino de \(v\) a \(y\) es camino mínimo por la proposicion \ref{prop::CaminoMinimoEstaHechoDeMinimos}).
+
+          Ahora, como \(x\) es el vértice de menor distancia a \(v\) tal que \(\texttt{dist}[x] > d(v,x)\) e \(y\) está a menor distancia de \(v\) que \(w\) entonces vale que \(\texttt{dist}[y] = d(v,y)\).
+
+          Entonces, en la iteración del algoritmo que analizamos \(y\), tiene que pasar alguna de las situaciones siguientes:
+          \begin{enumerate}
+            \item \(x\) ya fue desencolado de \texttt{to\_visit}\label{menorQueY}
+            \item \(x\) ya está en la cola\label{menorQueY2}
+            \item \(x\) todavía no está en la cola \label{faltaX}
+          \end{enumerate}
+
+          Si ocurren la situacion \ref*{menorQueY} y \ref*{menorQueY2},como \(x\) fue encolado antes que \(y\), vale que \(\texttt{dist}[x] \leq \texttt{dist}[y] \), entonces:
+          \[ d(v,x) = \texttt{dist}[y] + 1 \geq dist[x] + 1 > dist[x]\]
+          Esto genera un absurdo.
+
+          Si ocurre la situacion \ref*{faltaX}, \(x\) todavía no está en la cola entonces se lo agrega porque existe \((y,x) \in X\). Además, el algoritmo fijará \texttt{dist}\([x] = \texttt{dist}[y] + 1 = d(v,x)\), contradiciendo nuestra supocisión.
+  \end{itemize}
+\end{demo}
+
+\subsection{En digrafos pesados}
+En los casos en que los arcos del digrafo no tengan el mismo peso, BFS no es aplicable. Además. dependiendo que represente la función de peso, podría ser que algunos de estos valores sean negativos.
+
+\subsubsection{Algoritmo de Dijsktra}

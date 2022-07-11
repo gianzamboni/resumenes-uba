@@ -33,15 +33,15 @@ fill = blue!5
 \NewEnviron{demo}[1][]{%
 	\begin{center}
 		\begin{tikzpicture}
-		\node [demoBox](box){%
-			\textbf{\scriptsize 
-				DEMOSTRACIÓN #1}
-			\nodepart{two}
-			\begin{minipage}{0.75\textwidth}
-			\vspace*{0.1cm}
-			\BODY
-			\end{minipage}
-		};
+			\node [demoBox](box){%
+				\textbf{\scriptsize
+					DEMOSTRACIÓN #1}
+				\nodepart{two}
+				\begin{minipage}{0.75\textwidth}
+					\vspace*{0.1cm}
+					\BODY
+				\end{minipage}
+			};
 		\end{tikzpicture}
 	\end{center}
 }
@@ -49,12 +49,12 @@ fill = blue!5
 \NewEnviron{demoPart}[1][]{%
 	\begin{center}
 		\begin{tikzpicture}
-		\node [demoPart](box){%
-			\begin{minipage}{0.75\textwidth}
-			\vspace*{0.1cm}
-			\BODY
-			\end{minipage}
-		};
+			\node [demoPart](box){%
+				\begin{minipage}{0.75\textwidth}
+					\vspace*{0.1cm}
+					\BODY
+				\end{minipage}
+			};
 		\end{tikzpicture}
 	\end{center}
 }
