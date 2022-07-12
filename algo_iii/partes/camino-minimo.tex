@@ -45,32 +45,32 @@ Dado \(G = (V, X)\) un digrafo, \(l: X\to\reales\) una función que asigna a cad
 \subsubsection{BFS}
 En el caso de que todas las aristas tengan igual longitud, este problema se traduce en encontrar los caminos que definan las distancias (de menor cantidad de aristas). Para esto se puede adaptar el BFS (Sección \ref{algorithm:BFS}):
 
+\begin{algorithmic}
+  \Procedure{BFS}{$\mathtt{G = (V, X)}$, $v \in V$}
+  \State $\mathtt{pred[w] =}$ \texttt{antecesor de w en un camino minimo desde v}
+  \State $\mathtt{dist[w] =}$ \texttt{distancia desde v a w}
+
+  \State $\mathtt{pred[v]\gets 0}$
+  \State $\mathtt{dist[v]\gets 0}$
+  \State $\mathtt{to\_visit \gets \{v\}}$
+  \For{$\mathtt{w\in V \backslash \{ v \}}$}
+  \State $\mathtt{dist[w] \gets \infty}$
+  \EndFor
+  \While{$\mathtt{\lnot to\_visit.empty()}$}
+  \State $\mathtt{x \gets to\_visit.pop()}$
+  \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
+  \State $\mathtt{pred[w] \gets x}$
+  \State $\mathtt{dist[w] \gets dist[x] + 1}$
+  \State $\mathtt{to\_visite.push(w)}$
+  \EndFor
+  \EndWhile
+  \State\Return \texttt{[pred, dist]}
+  \EndProcedure
+\end{algorithmic}
+
 \begin{lema}
   Dado \(G=(V,X)\) un digrafo y \(v\in V\). Sea \(\texttt{to\_visit}_k=[v_1,\dots,v_r]\) la cola de nodos que se obtiene al finalizar la iteración \(k\) del algoritmo. Se cumple que todos los nodo de la misma están a distancia \(\texttt{dist}[v_1]\) o \( \texttt{dist}[v_1]+ 1\) de \(v\), formalmente:
   \begin{itemize}
-    \begin{algorithmic}
-      \Procedure{BFS}{$\mathtt{G = (V, X)}$, $v \in V$}
-      \State $\mathtt{pred[w] =}$ \texttt{antecesor de w en un camino minimo desde v}
-      \State $\mathtt{dist[w] =}$ \texttt{distancia desde v a w}
-
-      \State $\mathtt{pred[v]\gets 0}$
-      \State $\mathtt{dist[v]\gets 0}$
-      \State $\mathtt{to\_visit \gets \{v\}}$
-      \For{$\mathtt{w\in V \backslash \{ v \}}$}
-      \State $\mathtt{dist[w] \gets \infty}$
-      \EndFor
-      \While{$\mathtt{\lnot to\_visit.empty()}$}
-      \State $\mathtt{x \gets to\_visit.pop()}$
-      \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
-      \State $\mathtt{pred[w] \gets x}$
-      \State $\mathtt{dist[w] \gets dist[x] + 1}$
-      \State $\mathtt{to\_visite.push(w)}$
-      \EndFor
-      \EndWhile
-      \State\Return \texttt{[pred, dist]}
-      \EndProcedure
-    \end{algorithmic}
-
     \item \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
     \item \(\texttt{dist}[v_i] \leq \texttt{dist}[v_{i+1}]\) para todo \(i = 1,\dots r-1\)
   \end{itemize}
@@ -81,9 +81,11 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
 
 
   \paragraph{Paso inductivo:} Consideremos la iteración \(k\). Llamemos \(\texttt{to\_visit}_k\) con \(k \geq 1\) al valor de la variable \texttt{to\_visit} al finalizar la iteración \(k\) del algoritmo.
-
+\end{demo}
+\begin{demoPart}
   Nuestra hipotesis inductiva es: Para todo \(k' < k\), vale que \(\texttt{to\_visit}_{k'} = [v_1^{k'},\dots,v_{r_k'}^{k'}]\) cumple que  \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
   \(\texttt{dist}[v^{k'}_i] \leq \texttt{dist}[v^{k'}_{i+1}]\) para todo \(i = 1,\dots r_{k'}-1\).
+
   \begin{itemize}
     \item Si \(\texttt{to\_visit}_{k-1}\) tiene un solo elemento (el que se desencola), como todos los vértices que ingresan tienen igual valor en \texttt{dist}, se cumple la propiedad.
     \item Si \(\texttt{to\_visit}_{k-1} = [u_1,u_2,\dots,u_r]\) tiene más de un elemento, sea \(w_1,\dots,w_s\) los vértices que se encolan en la iteración \(k\).
@@ -94,20 +96,14 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
                     \texttt{dist}[u_1] \leq \texttt{dist}[u_2] & \implies \texttt{dist}[u_1] + 1\leq \texttt{dist}[u_2] + 1 \\ & \implies \texttt{dist}[w_s] \leq \texttt{dist}[u_2] + 1
                   \end{align*}
                   Entonces la primer parte del lema se cumple.
+            \item Todos los nodos encolados en este paso están a \(\texttt{dist}[u_1] + 1\) de \(v\). Osea que \(\texttt{dist}[w_i] = \texttt{dist}[u_1] + 1~\forall~i=1\dots s\), entonces tambien vale que \(\texttt{dist}[w_i] \leq \texttt{dist}[w_{i+1}]\) .
+
+                  Por hipotesis inductiva sabemos que \(\texttt{dist}[u_i] \leq \texttt{dist}[u_{i+1}]\) para todo \(i=1\dots r\).
+
+                  Por hipotesis inductiva sabemos \(\texttt{dist}[u_1]+1 \geq \texttt{dist}[u_r]\), luego \(\texttt{dist}[w_1] \geq \texttt{dist}[u_r]\).
+
+                  Luego se cumple la segunda parte de la propiedad.
           \end{itemize}
-  \end{itemize}
-\end{demo}
-\begin{demoPart}
-  \begin{itemize}
-    \begin{itemize}
-      \item Todos los nodos encolados en este paso están a \(\texttt{dist}[u_1] + 1\) de \(v\). Osea que \(\texttt{dist}[w_i] = \texttt{dist}[u_1] + 1~\forall~i=1\dots s\), entonces tambien vale que \(\texttt{dist}[w_i] \leq \texttt{dist}[w_{i+1}]\) .
-
-            Por hipotesis inductiva sabemos que \(\texttt{dist}[u_i] \leq \texttt{dist}[u_{i+1}]\) para todo \(i=1\dots r\).
-
-            Por hipotesis inductiva sabemos \(\texttt{dist}[u_1]+1 \geq \texttt{dist}[u_r]\), luego \(\texttt{dist}[w_1] \geq \texttt{dist}[u_r]\).
-
-            Luego se cumple la segunda parte de la propiedad.
-    \end{itemize}
   \end{itemize}
   \(\null\hfill\blacksquare\)
 \end{demoPart}
@@ -276,34 +272,44 @@ Cada uno de estos pasos se realiza \(n\) veces, veamos distintas implementacione
 \subsubsection{Algoritmo de Bellman-Ford}
 El algorimo de Bellman-Ford, utiliza programación dinámica para calcular todos los caminos mínimos con origen en un nodo \(v\). Pero, a diferencia de Dijsktra, acepta grafos cuyos arcos pueden tener pesos negativos.
 
-En cada iteración, el algoritmo va guardando una cota superior de la longitud de un camino mínimo desde \(v\) a \(u\). Va modificando todas esas cotas de manera iterativa hasta que llega a una iteración en la que ninguna de ellas cambia:
+En cada iteración, el algoritmo va guardando una cota superior de la longitud de un camino mínimo desde \(v\) a \(u\). Va modificando todas esas cotas de manera iterativa hasta que llega a una iteración en la que ninguna de ellas cambia.
 
 \begin{algorithmic}
-  \Procedure{Dijsktra}{$G = (V, X),~v \in V$}
+  \Procedure{BellmanFord}{$G = (V, X),~v \in V$}
   \State $\mathtt{\pi[u] =}$ valor del camino mínimo desde $v$ a $u$
-  \State $\mathtt{S \gets \{v\}}$
-  \State $\mathtt{\pi[v] \gets 0}$\Comment{Inicializamos $\pi$ y $texttt{pred}$}
-  \State $\mathtt{pred[v] \gets 0}$
-  \For{$u\in V$}
-  \If{$\mathtt{(v, u) \in X}$}
-  \State $\mathtt{\pi[u] = l(v, u)}$
-  \State $\mathtt{pred[u] = v}$
-  \Else
-  \State $\mathtt{\pi[u] = \infty}$
-  \State $\mathtt{pred[u] = \infty}$
-  \EndIf
+  \State
+  \State $\mathtt{\pi[v] \gets 0}$\Comment{Inicializamos $\pi$ y $\texttt{pred}$}
+  \State $\mathtt{i \gets 0}$
+  \For{$u\in V \backslash \{v\}$}
+  \State $\mathtt{\pi[u] \gets \infty}$
   \EndFor
-
-  \While{ $\mathtt{S \neq V}$ }\Comment{Calculamos los caminos mínimos}
-  \State $\mathtt{w\gets arg\min\{\pi[u], u\in V\backslash S\}}$
-  \State $\mathtt{S \gets S\cup\{w\}}$
-  \For{$\mathtt{u \in V \backslash S~\land~(w,u)\in X}$ }
-  \If{$\mathtt{\pi[u] > \pi[w] + l(w,u)}$}
-  \State $\mathtt{\pi[u] \gets \pi[w] + l(w,u)}$
-  \State $\mathtt{pred[u] = w}$
-  \EndIf
+  \State
+  \While{ \texttt{haya cambioes en}$\mathtt{\pi}$ e \(i < n\) }\Comment{Calculamos los caminos mínimos}
+  \State $\mathtt{i\gets i + 1}$
+  \For{$\mathtt{u \in V \backslash \{v\}}$}
+  \State $\mathtt{\pi[u] \gets \min(\pi[u], \min_{(w,u)\in X}\{\pi[w] + l(w,u)\})}$
   \EndFor
   \EndWhile
-  \State\Return$[\mathtt{\pi}, pred]$
+  \If{i == n}
+  \State\Return\texttt{"Hay circiuitos de longitud negativa"}
+  \Else
+  \State\Return \(\pi\)
+  \EndIf
   \EndProcedure
 \end{algorithmic}
+
+\begin{lema}
+  Dados un digrafo \(G=(V,X\) y \(l:X\to\reales\) una funci de peso para las aristas de \(G\). Si \(G\) no tiene cirtuicos de longitud negativa, al finalizar la iteración \(k\), el algoritmo de Belman-Ford deteternuba los caminos mínimos de a lo sumo \(k\) arcos entre el vértice \(v\) y los demás vértices.
+\end{lema}
+
+\begin{demo}
+  Haremos inducción en las iteraciones del algoritmo.
+
+  \paragraph{Caso Base (\(k=0\)):} Antes de ingresar por primera vez al ciclo, el algoritmo fija \(\pi[v] = 0\) y \(\pi[u] = \infty\) para todo \(u\in V\backslash \{v\}\). Esto es correcto ya que el único camino posible con 0 arcos es de \(v\) a \(v\).
+
+  \paragraph{Paso inductivo \(k \leq 1\):} Nuestra hipotesis inductiva es: Al terminar la iteración \(k'\) \( k' < k\), el algoritmo determin en \(\pi_{k'}\) las longitudesde los caminos mínimos desde \(v\) al resto de los vértices con a lo sumo \(k'\) arcos.
+
+  Sea \(u\) un vértice tal que el camino mínimo desde \(v\) a \(u\) con menos cantidad de arcos contiene \(k\) arcos y \(P\) uno de estos caminos. Sea \(w\) el predecesor de \(u\) en \(P\). Por optimalidad de subcaminos, \(P_{vw}\) es un camino mínimo de \(v\) a \(w\) con \(k-1\) arcos. Por hipotesis inductiva, este caminoesta correctamente identificado al terminar la iteración \(k-1\) del algoritmo.
+
+  Luego, en la iteración \(k\), \(\pi[u]\) recibe el valor correcto cuando se examina el arco \((w,u)\). Como este valor no puede ser mejorado (porque implicaria que \(P\) no es camino mínimo), no será modificado en las iteraciones sucesivas del algoritmo. Luego, el algoritmo calcula correctamente los caminos mínimos desde \(v\) al resto de los vértices.\hfill\(\blacksquare\)
+\end{demo}

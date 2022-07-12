@@ -69,10 +69,9 @@
 	\paragraph{\(\Leftarrow\) )} Sea \(C\) un circuito simple de \(G\) que contiene a \(e = (u,w)\). Entonces podemos partir a \(C\) en la arista \(e\) y un camino simple \(P_{uw})\) entre \(u\) y \(w\) (que no contiene a \(e\)).
 
 	Como \(G\) es conexo, hay camino entre todo par de vértices. Si esos caminos no una a \(e\), entonces siguen estando en \(G-e\).
-\end{demo}
-\begin{demoPart}
+
 	Si un camino de \(G\) usa \(e\), en \(G-e\) hay un camino alternativo que es cambiando a \(e\) por \(P_{uw}\) en \(Q\). Entonces sigue habiendo camino entre todo par de vértices en \(G-e\). Osea \(G-e\) es conexo.
-\end{demoPart}
+\end{demo}
 
 \begin{theorem}\label{equivalenciasArbol}
 	Dado un grafo \(G=(V,X)\), son equivalentes:
@@ -96,12 +95,11 @@
 	\(P_{uw}\) y \(P'_{uw}\) son dos caminos simples distintos entre \(u\) y \(v\) en \(G\). Por el Lema \ref{unionCaminosSimplesEsCircuito}, la unión de estos dos cáminos en \(G\) es un circuito simple. Esto es absurdo ya que \(G\) es un árbol.
 
 	\paragraph{2 \(\Rightarrow\) 3)} Primero veamos que \(G)\) es conexo, es decir que hay camino entre todo par de vértices \(u\) y \(v\). Si \((u,w)\in X_G\), el camino es la arista \((u,w)\). Si \(u\) y \(v\) no son adyacentes en \(G\), por hipotesis, \(G+(u,v)\) contiene exactamente un circuito simple \(C\) que contiene a \(u,w\). Podemos partir ese circuito en \(C = P_{uw} + (u,w)\) y \(P_{uw}\) es un camino simple entre \(u,v\).
-\end{demo}
-\begin{demoPart}
+
 	\paragraph{3 \(\Rightarrow\) 4)} Por hipotesis, \(G\) es conexo. Supongamos que existe \(e=(u,v)\in X\) tal que \(G - e\) es conexo. Por Lema \ref{conexomenosesiiecircuitosimple}, \(e\) pertenece a un circuito simple \(C\) de \(G\). Partir a \(C = P_{u,v} + (u,v)\), entonces \(P_{uv}]\) y \((u,v)\) son dos caminos simples distintos entre \(u\) y \(v\), contradiciento \(3\).
 
 	\paragraph{4 \(\Rightarrow\) 1)} Por hipotesis, \(G\) es conexo. Por contradicción, supongamos que no es un árbol, osea que tiene un circuito \(C\). Sea \(e=(u,w)\)) una arista de ese circuito. Por Lema \ref{conexomenosesiiecircuitosimple}, \(G - e\) es conexo, pero esto contradice \(4\). Luego \(G\) es conexo y sin circuitos, osea es un árbol.
-\end{demoPart}
+\end{demo}
 
 \paragraph{Hoja:} Una hoja es un nodo de grado 1.
 
@@ -311,8 +309,10 @@ Un \textbf{árbol generador} (\(AG\) de un grafo \(G\) es un subgrafo generador 
 		\State \(T = T - e\)
 		\EndWhile
 	\end{algorithmic}
-	Como todas las aristas removidas pertenecen a un circuito (no son puentes), cuando termina el procedimiento \(T\) es un subgrafo conexo generador de \(G\) (por lema \ref{conexomenosesiiecircuitosimple})  y todas sus aristas son puente. Entonces, por el teorema \ref{equivalenciasArbol}, \(T\) es un árbol.
 \end{demo}
+\begin{demoPart}
+	Como todas las aristas removidas pertenecen a un circuito (no son puentes), cuando termina el procedimiento \(T\) es un subgrafo conexo generador de \(G\) (por lema \ref{conexomenosesiiecircuitosimple})  y todas sus aristas son puente. Entonces, por el teorema \ref{equivalenciasArbol}, \(T\) es un árbol.
+\end{demoPart}
 
 \begin{demo}[DE 2]
 	\paragraph{\(\Rightarrow)\)} \(G\) tiene un único árbol generador. Supongamos que no es un árbol, entonces tiene por lo menos un circuito simple \(C\) (supongamos que tiene exactamente uno, sin perdida de generalidad).
@@ -447,9 +447,6 @@ Notaremos \(T_k = (V_{k}, X_{k})\) al grafo que el algoritmo de Prim construyó 
 \end{proposicion}
 \begin{demo}
 	Lo hacemos por inducción en las iteraciones del ciclo:
-\end{demo}
-\begin{demoPart}
-
 	\begin{multicols}{2}
 		\paragraph{Caso base (k = 0):} Antes de ingresar al ciclo, \blue{\(T_0 = (\{u\},\emptyset)\)} es árbol y subgrafo de todo AGM de \(G\).
 		\columnbreak
@@ -549,18 +546,21 @@ Notaremos \(T_k = (V_{k}, X_{k})\) al grafo que el algoritmo de Prim construyó 
 					            (v4) edge[violetEdge] node[emptyDemoNode, above, xshift=0.1cm, yshift=0.05cm] {$1$} (v5);
 				            \end{tikzpicture}
 			            \end{center}
+			            \begin{itemize}
+				            \item \(T'\) es un árbol generador de \(G\) por el teorema \ref{arbolesGeneradores}
+				            \item \(\blue{T_k}\) es subgrafo de \(T'\)
+				            \item \(T'\) es AGM de G: Como \orange{\(f\)} era una arista elegible al comienzo de la iteración \(k\), pero el algoritmo eligió \blue{e}, seguro se cumple \(l(\blue{e}) \leq l(\blue{f})\).
+			            \end{itemize}
 		      \end{itemize}
 	\end{itemize}
-\end{demoPart}
+\end{demo}
 \begin{demoPart}
 	\begin{itemize}[label={}]
 		\item
 		      \begin{itemize}[label={}]
-			      \item Definimos \(T' = \violet{T} + \blue{e} - \orange{f}\), veamos que es AGM:
-			            \begin{itemize}
-				            \item \(T'\) es un árbol generador de \(G\) por el teorema \ref{arbolesGeneradores}
-				            \item \(\blue{T_k}\) es subgrafo de \(T'\)
-				            \item \(T'\) es AGM de G: Como \orange{\(f\)} era una arista elegible al comienzo de la iteración \(k\), pero el algoritmo eligió \blue{e}, seguro se cumple \(l(\blue{e}) \leq l(\blue{f})\). Entonces \[l(T') = l(\violet{T}) + l(\blue{e}) - l(\blue{f}) \leq \violet{T}\]
+			      \item
+			            \begin{itemize}[label={}]
+				            \item  Entonces \[l(T') = l(\violet{T}) + l(\blue{e}) - l(\blue{f}) \leq \violet{T}\]
 				                  Entonces \(T'\) es un AGM y además \(\blue{T_k}\) es un subgrafo de \(T'\).
 			            \end{itemize}
 		      \end{itemize}
