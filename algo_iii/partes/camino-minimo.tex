@@ -127,11 +127,13 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
 
   Sea \(x\) el vértice que se desencolaen la iteración \(k\) y \(x_1,\dots,x_s\) los vértices que se encolan. La variable \texttt{dist} solo se modifica en las posiciones de \(x_1,\dots,x_s\). Es decir que \(\text{dist}_k[w] = \texttt{dist}_{k-1}[w]\) para todo \(w\in V / \{x_1,\dots,x_s\}\), entonces por hipotesis inductiva vale \(\texttt{dist}_k[w] \geq d(v,w)\) para \(w\in V / \{x_1,\dots,x_s\}\).
 
-  Para las posiciones modificadas, tenemos que \[\texttt{dist}[x_i] = \texttt{dist}_{k-1}[x] + 1\]Por hipotesis inductiva sabemos que \(\texttt{dist}_{k-1}[x] \geq d(v,x)\), además como \(x_i\) fue agregado a la cola, sabemos que existe \((x, x_i)\in V\).
-
-  Sea \(P_{i} = P_{vx} + (x,x_i)\) un camino entre \(v\) y \(x_i\). Si \(P_{vx}\) es un camino mínimo entre \(v\) y \(x\) entonces \[l(P_{i}) = l(P_{vx}) + 1 = d(v,x) + 1 \underset{HI}{\leq} \texttt{dist}_{k-1}[x] + 1 = \texttt{dist}[w_i] \]
+  Para las posiciones modificadas, tenemos que \[\texttt{dist}[x_i] = \texttt{dist}_{k-1}[x] + 1\]
 \end{demo}
 \begin{demoPart}
+  Por hipotesis inductiva sabemos que \(\texttt{dist}_{k-1}[x] \geq d(v,x)\), además como \(x_i\) fue agregado a la cola, sabemos que existe \((x, x_i)\in V\).
+
+  Sea \(P_{i} = P_{vx} + (x,x_i)\) un camino entre \(v\) y \(x_i\). Si \(P_{vx}\) es un camino mínimo entre \(v\) y \(x\) entonces \[l(P_{i}) = l(P_{vx}) + 1 = d(v,x) + 1 \underset{HI}{\leq} \texttt{dist}_{k-1}[x] + 1 = \texttt{dist}[w_i] \]
+
   Como \(d(v,x_1)\) es la longitud de los caminos mínimos entre \(v\) y \(x_i\), sabemos que \(d(v, x_i) \leq l(P_i)\), entonces \(d(v,x_1) \leq \texttt{dist}[w_i]\).
 \end{demoPart}
 
@@ -217,24 +219,30 @@ Este algoritmo asume que las longitudes de arco son positivas. El grafo puede se
   \begin{itemize}
     \item Si \(y = u\), sea \(x\) el predecesor de \(u\) (que está en \(\texttt{S}_k\)) entonces \(l(P') = \pi[x] + l(x,u)\)
           \begin{itemize}
-            \item Si \(x\) entró en \texttt{S} después que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[w] + l(w,u)\) en la iteración en la que se agregó a \(w\). Luego, en la iteración  en la que agregó a \(x\) concluyó que \[\pi[u] = \pi[w] + l(w,u) \leq \pi[x] + l(x,u)\]
+            \item Si \(x\) entró en \texttt{S} después que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[w] + l(w,u)\) en la iteración en la que se agregó a \(w\).
+          \end{itemize}
+  \end{itemize}
+\end{demo}
+\begin{demoPart}
+  \begin{itemize}
+    \item[]
+          \begin{itemize}
+            Luego, en la iteración  en la que agregó a \(x\) concluyó que \[\pi[u] = \pi[w] + l(w,u) \leq \pi[x] + l(x,u)\]
 
-                  Osea que \(P\) es un camino mas corto que \(P'\).
+            Osea que \(P\) es un camino mas corto que \(P'\).
             \item  Si \(x\) entró antes que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[x] + l(x,u)\) en la iteración en la que se agregó a \(x\). Luego, en la iteración en la que agregó a \(w\) concluyó que \[\pi[u] = \pi[x] + l(x,u) \geq \pi[w] + l(w,u)\]
                   Osea que el nuevo camino \(P\) es más corto que \(P'\) y termina quedando \(\pi[u] = \pi[w] + l(w,u)\).
           \end{itemize}
     \item Si \(y\neq u\), entonces ambos vértices son candidatos para ser elegidos en la iteración \(k\). Sin embargo, como se elgió a \(u\) vale que: \[\pi[w] + l(w,u) = \pi_{k-1}[u] \leq\pi_{k-1}[y]\]
 
           Sea \(x\) el predecesor de \(y\), como \(x\in S_{k-1}\) sabemos que \(\pi_{k-1}[y]\leq\pi[x] + l(x,y)\) (Hizo esta comparación cuando se agregó \(x\) a \texttt{S}\(_{k-1}\)).
-  \end{itemize}
-\end{demo}
-\begin{demoPart}
-  Ahora por hipotesis inductiva, \(\pi[x]\) es la longitud del camino mínimo desde \(v\) hasta \(x\) entonces:
-  \begin{align*}
-    l(P) & = \pi[w] + l(w,u) = \pi_{k-1}[u] \leq \pi_{k-1}[y] \leq \pi[x] + l(x,u) \\
-         & \leq l(P'_{vx}) \leq l(P'_{vx}) + l(x,y) \leq l(P'_{vy}) \leq l(P')
-  \end{align*}
+          Ahora por hipotesis inductiva, \(\pi[x]\) es la longitud del camino mínimo desde \(v\) hasta \(x\) entonces:
+          \begin{align*}
+            l(P) & = \pi[w] + l(w,u) = \pi_{k-1}[u] \leq \pi_{k-1}[y] \leq \pi[x] + l(x,u) \\
+                 & \leq l(P'_{vx}) \leq l(P'_{vx}) + l(x,y) \leq l(P'_{vy}) \leq l(P')
+          \end{align*}
 
+  \end{itemize}
   Entonces \(l(P)\leq l(P')\) para todo camino \(P'\) desde \(v\) a \(u\) y \(\pi[u]\) es la longitud de camino mínimo desde \(v\) a \(u\).\hfill\(\blacksquare\)
 \end{demoPart}
 
