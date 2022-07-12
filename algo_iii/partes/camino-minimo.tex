@@ -42,35 +42,35 @@ Dos consideraciones a tener en cuenta:
 \subsection{Camino mínimo con un único origen y múltiples destinos}
 Dado \(G = (V, X)\) un digrafo, \(l: X\to\reales\) una función que asigna a cada arco una cierta longitud y \(v\in V\) un vértice del digrafo, queremos calcular los caminos mínimos desde \(v\) al resto de los vértices.
 
-\subsubsection{En digrafos no pesados}
+\subsubsection{BFS}
 En el caso de que todas las aristas tengan igual longitud, este problema se traduce en encontrar los caminos que definan las distancias (de menor cantidad de aristas). Para esto se puede adaptar el BFS (Sección \ref{algorithm:BFS}):
-
-\begin{algorithmic}
-  \Procedure{BFS}{$\mathtt{G = (V, X)}$, $v \in V$}
-  \State $\mathtt{pred[w] =}$ \texttt{antecesor de w en un camino minimo desde v}
-  \State $\mathtt{dist[w] =}$ \texttt{distancia desde v a w}
-
-  \State $\mathtt{pred[v]\gets 0}$
-  \State $\mathtt{dist[v]\gets 0}$
-  \State $\mathtt{to\_visit \gets \{v\}}$
-  \For{$\mathtt{w\in V \backslash \{ v \}}$}
-  \State $\mathtt{dist[w] \gets \infty}$
-  \EndFor
-  \While{$\mathtt{\lnot to\_visit.empty()}$}
-  \State $\mathtt{x \gets to\_visit.pop()}$
-  \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
-  \State $\mathtt{pred[w] \gets x}$
-  \State $\mathtt{dist[w] \gets dist[x] + 1}$
-  \State $\mathtt{to\_visite.push(w)}$
-  \EndFor
-  \EndWhile
-  \State\Return \texttt{[pred, dist]}
-  \EndProcedure
-\end{algorithmic}
 
 \begin{lema}
   Dado \(G=(V,X)\) un digrafo y \(v\in V\). Sea \(\texttt{to\_visit}_k=[v_1,\dots,v_r]\) la cola de nodos que se obtiene al finalizar la iteración \(k\) del algoritmo. Se cumple que todos los nodo de la misma están a distancia \(\texttt{dist}[v_1]\) o \( \texttt{dist}[v_1]+ 1\) de \(v\), formalmente:
   \begin{itemize}
+    \begin{algorithmic}
+      \Procedure{BFS}{$\mathtt{G = (V, X)}$, $v \in V$}
+      \State $\mathtt{pred[w] =}$ \texttt{antecesor de w en un camino minimo desde v}
+      \State $\mathtt{dist[w] =}$ \texttt{distancia desde v a w}
+
+      \State $\mathtt{pred[v]\gets 0}$
+      \State $\mathtt{dist[v]\gets 0}$
+      \State $\mathtt{to\_visit \gets \{v\}}$
+      \For{$\mathtt{w\in V \backslash \{ v \}}$}
+      \State $\mathtt{dist[w] \gets \infty}$
+      \EndFor
+      \While{$\mathtt{\lnot to\_visit.empty()}$}
+      \State $\mathtt{x \gets to\_visit.pop()}$
+      \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
+      \State $\mathtt{pred[w] \gets x}$
+      \State $\mathtt{dist[w] \gets dist[x] + 1}$
+      \State $\mathtt{to\_visite.push(w)}$
+      \EndFor
+      \EndWhile
+      \State\Return \texttt{[pred, dist]}
+      \EndProcedure
+    \end{algorithmic}
+
     \item \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
     \item \(\texttt{dist}[v_i] \leq \texttt{dist}[v_{i+1}]\) para todo \(i = 1,\dots r-1\)
   \end{itemize}
@@ -168,10 +168,7 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
   \end{itemize}
 \end{demo}
 
-\subsection{En digrafos pesados}
-En los casos en que los arcos del digrafo no tengan el mismo peso, BFS no es aplicable. Además. dependiendo que represente la función de peso, podría ser que algunos de estos valores sean negativos.
-
-\subsubsection{Algoritmo de Dijsktra}
+\subsubsection{Algoritmo de Dijkstra}
 El algoritmo de Dijsktra es un algoritmo goloso que construye un árbol de caminos mínimos con raiz en \(v\). En cada iteración agrega el vértice más cercano a \(v\) de entre todos los que todavía no fueron agregados al árbol.
 
 Este algoritmo asume que las longitudes de arco son positivas. El grafo puede ser orientado o no.
@@ -206,7 +203,7 @@ Este algoritmo asume que las longitudes de arco son positivas. El grafo puede se
   \EndProcedure
 \end{algorithmic}
 
-\begin{lema}
+\begin{lema}\label{lema::dijkstra::invariante}
   Dado un digrafo \(G=(V,X)\) con pesos positivos en los arcos, al finalizar la iteración \(k\) el algoritmo de Dijsktra determina, siguiendo hacia atrás \texttt{pred} hasta llegar a \(v\), un caminom mínimo entre el vértice \(v\) y cada vértice \(u \in \texttt{S}_k\), con longitud $\mathtt{\pi[u]}$.
 \end{lema}
 
@@ -244,3 +241,69 @@ Este algoritmo asume que las longitudes de arco son positivas. El grafo puede se
 
   Entonces \(l(P)\leq l(P')\) para todo camino \(P'\) desde \(v\) a \(u\) y \(\pi[u]\) es la longitud de camino mínimo desde \(v\) a \(u\).\hfill\(\blacksquare\)
 \end{demoPart}
+
+\begin{theorem}
+  Dado un digrafo \(G=(V,X)\) con pesos positivos en los arcos y \(v\in V\), el algorimo de Dijkstra determina el camino mínimo entre el vértice \(v\) y el resto de los vértices.
+\end{theorem}
+
+\begin{demo}
+  En cada iteración un nuevo vértice es incorporado a \texttt{S} y el algortimo termina cuando \texttt{S} = \(V\).
+
+  Por el lema \ref{lema::dijkstra::invariante}, al finalizar la última iteración del ciclo, el algoritmo de Dijkstra determina, siguiendo hacia atrás \texttt{pred} hasta llegar a \(v\), un camino mínimo entre el vértice \(v\) y cada vértice \(u\in V\) con longitud \(\pi[u]\).\hfill\(\blacksquare\)
+\end{demo}
+
+\paragraph{Complejidad del algoritmo:} Los pasos computacionales críticos son:
+\begin{enumerate}
+  \item\label{disjkstra::paso::agregarV} Encontrar el próximo vértice a agregat en \texttt{S}.
+  \item\label{disjkstra::paso::actualizarPi} Actualizar \(\pi\).
+\end{enumerate}
+
+Cada uno de estos pasos se realiza \(n\) veces, veamos distintas implementaciones:
+
+\begin{itemize}
+  \item La forma más fácil de implementar \ref{disjkstra::paso::agregarV} es buscar secuencialmente el vértice que minimiza, esto se hace en \(O(n)\). En el paso \(2\), el vértice elegido tiene a lo sumon \(n\) vértices adyacentes y para cada uno podemos actualizar en \(O(1)\). Considerando esto, cada iteración es \(O(n)\), resultando \(O(n^2)\) elalgoritmo completo.
+  \item Para mejorar, esta complejidad, en el paso \label{dijsktra::paso::agregarV}, podemos usar una cola de prioridad implementada sobre un heap de \(n\) elementos. Crear esta cola es \(O(n)\). Luego es posible borrar el elemento mínimo e insterar uno nuevo en \(O(\log{n})\). Además, si se mantiene un arreglo auxiliar apuntando a la posición acutal cada vértice en el heap, tambien es posible modificar el valor de \(\pi\) en \(O(1)\) y hacer las modificaciones necesarias al heap en \(O(log n)\).
+
+        Considerando todas las iteraciones:
+        \begin{itemize}
+          \item la operación \ref{disjkstra::paso::agregarV} en \(O(log n)\).
+          \item y \(d(u)\) incersiones/modificaciones en el heap para hacer actualizar \(\pi\) en \(O(\log{n})\) para cada vértice elegido \(u\). Osea que \ref{disjkstra::paso::actualizarPi} se hace en \(O(m*\log{n})\).
+        \end{itemize}
+
+        Luego el algoritmo completo resulta \(O(n\log{n} + m\log{n})\) = \(O(m\log(n))\). Notar que esta complejidad hace que el algoritmo sea más rápido si \(m\in O(n)\) (el grafo es ralo), si \(m\in O(n^2)\) (el grafo es denso), entonces la complejidad empeora.
+\end{itemize}
+
+\subsubsection{Algoritmo de Bellman-Ford}
+El algorimo de Bellman-Ford, utiliza programación dinámica para calcular todos los caminos mínimos con origen en un nodo \(v\). Pero, a diferencia de Dijsktra, acepta grafos cuyos arcos pueden tener pesos negativos.
+
+En cada iteración, el algoritmo va guardando una cota superior de la longitud de un camino mínimo desde \(v\) a \(u\). Va modificando todas esas cotas de manera iterativa hasta que llega a una iteración en la que ninguna de ellas cambia:
+
+\begin{algorithmic}
+  \Procedure{Dijsktra}{$G = (V, X),~v \in V$}
+  \State $\mathtt{\pi[u] =}$ valor del camino mínimo desde $v$ a $u$
+  \State $\mathtt{S \gets \{v\}}$
+  \State $\mathtt{\pi[v] \gets 0}$\Comment{Inicializamos $\pi$ y $texttt{pred}$}
+  \State $\mathtt{pred[v] \gets 0}$
+  \For{$u\in V$}
+  \If{$\mathtt{(v, u) \in X}$}
+  \State $\mathtt{\pi[u] = l(v, u)}$
+  \State $\mathtt{pred[u] = v}$
+  \Else
+  \State $\mathtt{\pi[u] = \infty}$
+  \State $\mathtt{pred[u] = \infty}$
+  \EndIf
+  \EndFor
+
+  \While{ $\mathtt{S \neq V}$ }\Comment{Calculamos los caminos mínimos}
+  \State $\mathtt{w\gets arg\min\{\pi[u], u\in V\backslash S\}}$
+  \State $\mathtt{S \gets S\cup\{w\}}$
+  \For{$\mathtt{u \in V \backslash S~\land~(w,u)\in X}$ }
+  \If{$\mathtt{\pi[u] > \pi[w] + l(w,u)}$}
+  \State $\mathtt{\pi[u] \gets \pi[w] + l(w,u)}$
+  \State $\mathtt{pred[u] = w}$
+  \EndIf
+  \EndFor
+  \EndWhile
+  \State\Return$[\mathtt{\pi}, pred]$
+  \EndProcedure
+\end{algorithmic}
