@@ -53,12 +53,12 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
   \State $\mathtt{pred[v]\gets 0}$
   \State $\mathtt{dist[v]\gets 0}$
   \State $\mathtt{to\_visit \gets \{v\}}$
-  \For{$\mathtt{\forall~w\in V \backslash \{ v }$}
+  \For{$\mathtt{w\in V \backslash \{ v \}}$}
   \State $\mathtt{dist[w] \gets \infty}$
   \EndFor
   \While{$\mathtt{\lnot to\_visit.empty()}$}
   \State $\mathtt{x \gets to\_visit.pop()}$
-  \For{$\mathtt{\forall~w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
+  \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
   \State $\mathtt{pred[w] \gets x}$
   \State $\mathtt{dist[w] \gets dist[x] + 1}$
   \State $\mathtt{to\_visite.push(w)}$
@@ -172,3 +172,75 @@ En el caso de que todas las aristas tengan igual longitud, este problema se trad
 En los casos en que los arcos del digrafo no tengan el mismo peso, BFS no es aplicable. Además. dependiendo que represente la función de peso, podría ser que algunos de estos valores sean negativos.
 
 \subsubsection{Algoritmo de Dijsktra}
+El algoritmo de Dijsktra es un algoritmo goloso que construye un árbol de caminos mínimos con raiz en \(v\). En cada iteración agrega el vértice más cercano a \(v\) de entre todos los que todavía no fueron agregados al árbol.
+
+Este algoritmo asume que las longitudes de arco son positivas. El grafo puede ser orientado o no.
+
+\begin{algorithmic}
+  \Procedure{Dijsktra}{$G = (V, X),~v \in V$}
+  \State $\mathtt{\pi[u] =}$ valor del camino mínimo desde $v$ a $u$
+  \State $\mathtt{S \gets \{v\}}$
+  \State $\mathtt{\pi[v] \gets 0}$\Comment{Inicializamos $\pi$ y $texttt{pred}$}
+  \State $\mathtt{pred[v] \gets 0}$
+  \For{$u\in V$}
+  \If{$\mathtt{(v, u) \in X}$}
+  \State $\mathtt{\pi[u] = l(v, u)}$
+  \State $\mathtt{pred[u] = v}$
+  \Else
+  \State $\mathtt{\pi[u] = \infty}$
+  \State $\mathtt{pred[u] = \infty}$
+  \EndIf
+  \EndFor
+
+  \While{ $\mathtt{S \neq V}$ }\Comment{Calculamos los caminos mínimos}
+  \State $\mathtt{w\gets arg\min\{\pi[u], u\in V\backslash S\}}$
+  \State $\mathtt{S \gets S\cup\{w\}}$
+  \For{$\mathtt{u \in V \backslash S~\land~(w,u)\in X}$ }
+  \If{$\mathtt{\pi[u] > \pi[w] + l(w,u)}$}
+  \State $\mathtt{\pi[u] \gets \pi[w] + l(w,u)}$
+  \State $\mathtt{pred[u] = w}$
+  \EndIf
+  \EndFor
+  \EndWhile
+  \State\Return$[\mathtt{\pi}, pred]$
+  \EndProcedure
+\end{algorithmic}
+
+\begin{lema}
+  Dado un digrafo \(G=(V,X)\) con pesos positivos en los arcos, al finalizar la iteración \(k\) el algoritmo de Dijsktra determina, siguiendo hacia atrás \texttt{pred} hasta llegar a \(v\), un caminom mínimo entre el vértice \(v\) y cada vértice \(u \in \texttt{S}_k\), con longitud $\mathtt{\pi[u]}$.
+\end{lema}
+
+\begin{demo}
+  Haremos inducción en la cantidad de iteraciones.
+  \paragraph{Caso base (\(k = 0\)):} Antes de entrar por primera vez al ciclo, vale \(\mathtt{S}_0 =\{v\}\) y \(\mathtt{\pi}[v] = 0\). Esto es correcto ya que el camíno mínimo desde \(v\) hasta \(v\) es 0 por definición.
+
+  \paragraph{Paso inductivo:} Consideremos la iteración \(k\) con \(k \geq 1\).
+
+  Nuestra hipotesis inductiva es: Al terminar la iteración  \(k'\) (\(k' < k\)), \(\forall~u\in \texttt{S}_{k'}\), \(\pi[u]\) es la longitud de un camino mínimo de \(v\) a \(u\) finalizado en \(\texttt{pred}[u]\).
+
+  Sea \(u\) el vértice agregado a \texttt{S} en la iteración \(k\). \(\texttt{S}_{k} = \texttt{S}_{k-1}\cup \{u\}\) con \(\texttt{pred}[u] = w\). Como \(w\in\texttt{S}_{k-1}\), por hipotesis inductiva, \(\pi[w]\) es el válor del camino mínimo desde \(v\) a \(w\) definido por \texttt{pred}. Llamemos \(P_{vw}\) a ese camino mínimo.
+
+  Sea \(P = P_{vw} + (w,u)\) y \(P'\) otro camino de \(v\) a \(u\) y sea \(y\in P'\) el primer vértice que no está en \(\texttt{S}_{k-1}\) (debe existir porque \(v\in \texttt{S}_{k-1}\) y \(u\notin\texttt{S}_{k-1}\)):
+  \begin{itemize}
+    \item Si \(y = u\), sea \(x\) el predecesor de \(u\) (que está en \(\texttt{S}_k\)) entonces \(l(P') = \pi[x] + l(x,u)\)
+          \begin{itemize}
+            \item Si \(x\) entró en \texttt{S} después que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[w] + l(w,u)\) en la iteración en la que se agregó a \(w\). Luego, en la iteración  en la que agregó a \(x\) concluyó que \[\pi[u] = \pi[w] + l(w,u) \leq \pi[x] + l(x,u)\]
+
+                  Osea que \(P\) es un camino mas corto que \(P'\).
+            \item  Si \(x\) entró antes que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[x] + l(x,u)\) en la iteración en la que se agregó a \(x\). Luego, en la iteración en la que agregó a \(w\) concluyó que \[\pi[u] = \pi[x] + l(x,u) \geq \pi[w] + l(w,u)\]
+                  Osea que el nuevo camino \(P\) es más corto que \(P'\) y termina quedando \(\pi[u] = \pi[w] + l(w,u)\).
+          \end{itemize}
+    \item Si \(y\neq u\), entonces ambos vértices son candidatos para ser elegidos en la iteración \(k\). Sin embargo, como se elgió a \(u\) vale que: \[\pi[w] + l(w,u) = \pi_{k-1}[u] \leq\pi_{k-1}[y]\]
+
+          Sea \(x\) el predecesor de \(y\), como \(x\in S_{k-1}\) sabemos que \(\pi_{k-1}[y]\leq\pi[x] + l(x,y)\) (Hizo esta comparación cuando se agregó \(x\) a \texttt{S}\(_{k-1}\)).
+  \end{itemize}
+\end{demo}
+\begin{demoPart}
+  Ahora por hipotesis inductiva, \(\pi[x]\) es la longitud del camino mínimo desde \(v\) hasta \(x\) entonces:
+  \begin{align*}
+    l(P) & = \pi[w] + l(w,u) = \pi_{k-1}[u] \leq \pi_{k-1}[y] \leq \pi[x] + l(x,u) \\
+         & \leq l(P'_{vx}) \leq l(P'_{vx}) + l(x,y) \leq l(P'_{vy}) \leq l(P')
+  \end{align*}
+
+  Entonces \(l(P)\leq l(P')\) para todo camino \(P'\) desde \(v\) a \(u\) y \(\pi[u]\) es la longitud de camino mínimo desde \(v\) a \(u\).\hfill\(\blacksquare\)
+\end{demoPart}
