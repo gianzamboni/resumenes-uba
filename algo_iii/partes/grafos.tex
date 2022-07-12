@@ -1,0 +1,613 @@
+\section{Grafos}
+\subsection{Definiciones básicas}
+Los grafos proporcionan una forma conveniente y flexible de representar problemas de la vida real que consideran una red como estructura subyacente. Esta red puede ser física (como instalaciones eléctticas) o abstractas (que modelan relaciones menos tangibles, como relaciones sociales y bases de datos).
+
+Matemáticamente, un grafo \(G = (V,X)\) es un par de conjuntos, donde \(V\) es un conjunto de \textbf{puntos / nodos / vértices} y \(X\) es un subconjunot del conjunto de pares no ordenados de elementos distintos de \(V\). Los elementos de \(X\) se llamas \textbf{aristas, ejes o arcos}.
+
+\begin{figure}[H]
+	\begin{center}
+
+		\begin{tikzpicture}
+			\node[basicNode] (p) {\(p\)};
+			\node[basicNode] (q) [right=of p] {\(q\)};
+			\node[basicNode] (r) [below=of p] {\(r\)};
+			\node[basicNode] (s) [below=of q] {\(s\)};
+
+			\path
+			(p) edge (q)
+			(p) edge (r)
+			(p) edge (s)
+			(q) edge (s)
+			(r) edge (s)
+			;
+		\end{tikzpicture}
+	\end{center}
+	\caption{\(G =([p,~q,~r,~s],~[(p,q),~(p,s),~(q,s),~(r,s)])\)
+	}
+\end{figure}
+
+Dados \(v\) y \(w \in V\), si \(e=(v,w)\in X\) se dice que \(v\) y \(w\) son \textbf{adyacentes} y que \(e\) es \textbf{incidente} a \(v\) y a \(w\).
+
+La definición de grafo no alcanza para modelar todas las situaciones posibles de una red. Por ejemplo, si se quisiese modelar la ruta de los aviones entre varias ciudades, deberiamos poder modelar varios vuelos entre dos ciudades:
+
+\paragraph{Multigrafo:} Es un grafo en el que puede haber varias aristas entre el mismo par de nodos distintos.
+\begin{figure}[H]
+	\begin{center}
+		\begin{tikzpicture}
+			\node[basicNode] (p) {};
+			\node[basicNode] (q) [right=of p] {};
+			\path
+			(p) edge[out=10, in=170] (q)
+			(p) edge[out=-10, in=-170] (q)
+			;
+		\end{tikzpicture}
+	\end{center}
+	\caption{Multigrafo}
+\end{figure}
+\paragraph{Seudografo:} Es un grafo en el que puede haber varias aristas entre cada par de nodos y también puede haber aristas (\textit{loops}) que unan a un nodo con sí mismo.
+
+\begin{figure}[H]
+	\begin{center}
+		\begin{tikzpicture}
+			\tikzset{every loop/.style={}}
+			\node[basicNode] (p) {};
+			\path
+			(p) edge[loop] (p);
+		\end{tikzpicture}
+	\end{center}
+	\caption{Multigrafo}
+\end{figure}
+
+\paragraph{Notación:} \(n = |V|\) y \(m=|X|\)
+
+\paragraph{Grado:} El grado \(d_G(v)\) de un nodo \(v\) es la cantidad de aristas incidentes a \(v\) en el grafo \(G\).
+
+Notaremos \(\Delta(G)\) al máximo grado de los vértices de \(G\) y \(\delta(G)\) al mínimo.
+
+\paragraph{Nota:} En un seudografo, un loop aporta 2 al grado del vértice.
+
+\begin{theorem}
+	La suma de los grados de los nodos de un grafo es igual a dos veces el número de aristas, es decir: \[\sum_{i=1}^{n}v_i = 2m\]
+\end{theorem}
+
+\begin{demo}
+	Sea \(G = (V, X)\) un grafo de \(n\) nodos y \(m\) aristas. Haremos inducción en la cantidad de aristas:
+
+	\paragraph{Caso base:} \(m = 1\).
+
+	En este caso, el grafo \(G\) tiene sólo una arista que notamos \(e = (u,w)\). Entonces \(d(u) = d(w) = 1\) y \(d(v) = 0\) para todo \(v\in V\) tal que \(v\neq u,w\). Por lo tanto, \[\sum_{v\in V}d(v) = 2\] y \(2m = 2\), cumpliendose la propiedad.
+	\paragraph{Paso inductivo:} Consideremos un grafo \(G=(V,X)\) con \(m\) aristas \((m > 1)\). Nuestra hipotesis inductiva es: \textit{En todo grafo \(G' = (V', X')\) con \(m'\) aristas \((m' < m)\), se cumple que } \[\sum_{v\in V'}{d_{G'}}(v) = 2m'\]
+
+	Sea \(e = (u,w) \in X\), llamemos \(G'' = (V, X-\{e\})\) al grafo que resulta si le quitamos \(e\) a \(G\). Como la cantidad de aristas de \(G''\) es \(m-1\), \(G''\) cumple con la hipótesis inductiva. Entonces vale que
+	\[\sum_{v\in V}{d_{G''}}(v) = 2(m-1)\]
+
+	Como \(d_G(u) = d_G''(u) + 1\), \(d_G(w) = d_G''(w) + 1\) y \(d_G(x) = d_G''(x)~\forall~x\in V,~x\neq u,w\), obtenemos que: \[\sum_{v\in V}{d_{G}}(v) = \sum_{v\in V}{d_{G''}}(v) + 2 = 2(m-1) + 2 = 2m\]
+\end{demo}
+
+\begin{coro}
+	La cantidad de vértices de grado impar de un grafo es par.
+\end{coro}
+
+\paragraph{Grafo completo:} Son grafos en los que todos sus vértices son adyacentes entre sí. Notaremos como \(K_n\) al grafo completo de \(n\) vértices.
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (k11) at (0,0.75) {};
+		\node[] (k1Label) [below=of k11, yshift=-0.23cm] {\(K_1\)};
+
+		\node[basicNode] (k21) at (1,0.75) {};
+		\node[basicNode] (k22) [right=of k21] {};
+		\node[] (k2Label) [below=of k21, yshift=-0.23cm, xshift=0.6cm] {\(K_2\)};
+
+		\node[basicNode] (k31) at (3,0.25) {};
+		\node[basicNode] (k32) [right=of k31] {};
+		\node[basicNode] (k33) [above=of k31, xshift=0.5cm] {};
+		\node[] (k3Label) [below=of k31, yshift=0.27cm, xshift=0.6cm] {\(K_3\)};
+
+		\node[basicNode] (k41) at (5,0.25) {};
+		\node[basicNode] (k42) [right=of k41] {};
+		\node[basicNode] (k43) [above=of k41] {};
+		\node[basicNode] (k44) [above=of k42] {};
+		\node[] (k4Label) [below=of k41, yshift=0.25cm, xshift=0.6cm] {\(K_4\)};
+
+		\node[basicNode] (k51) at (7.5,0) {};
+		\node[basicNode] (k52) [right=of k51] {};
+		\node[basicNode] (k53) [above right=of k52, yshift=0.25cm, xshift=-0.25cm] {};
+		\node[basicNode] (k54) [above left=of k53, xshift=-0.25cm] {};
+		\node[basicNode] (k55) [below left=of k54, xshift=-0.25cm] {};
+		\node[] (k5Label) [below=of k51, yshift=0.5cm, xshift=0.6cm] {\(K_5\)};
+
+		\path
+		(k21) edge (k22)
+
+		(k31) edge (k32)
+		(k31) edge (k33)
+		(k32) edge (k33)
+
+		(k41) edge (k42)
+		(k41) edge (k43)
+		(k41) edge (k44)
+		(k42) edge (k43)
+		(k42) edge (k44)
+		(k43) edge (k44)
+
+		(k51) edge (k52)
+		(k51) edge (k53)
+		(k51) edge (k54)
+		(k51) edge (k55)
+		(k52) edge (k53)
+		(k52) edge (k54)
+		(k52) edge (k55)
+		(k53) edge (k54)
+		(k53) edge (k55)
+		(k54) edge (k55)
+		;
+	\end{tikzpicture}
+\end{center}
+\paragraph{Propiedad:} Un grafo completo de \(n\) nodos tiene $\frac{n(n-1)}{2}$ aristas
+
+\paragraph{Grafo complemento:} Dado un grafo \(G=(V,X))\), su grafo complemento \(\bar{G} = (V, \bar{X})\) es el grafo con el mismo conjunto de vértices pero un par de vértices son adyacentes en $\bar{G}$ si y solo si no son adyacentes en $G$.
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above=of v1] {};
+		\node[basicNode] (v3) [right=of v1] {};
+		\node[basicNode] (v4) [right=of v2] {};
+		\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {};
+		\node[] (glabel) [below right=of v1, xshift=-0.5cm] {Grafo \(G\)};
+
+		\node[basicNode] (bv1) at (3,0) {};
+		\node[basicNode] (bv2) [above=of bv1] {};
+		\node[basicNode] (bv3) [right=of bv1] {};
+		\node[basicNode] (bv4) [right=of bv2] {};
+		\node[basicNode] (bv5) [above right=of bv3, yshift=-0.12cm] {};
+		\node[] (bglabel) [below right=of bv1, xshift=-0.5cm] {Grafo \(\bar{G}\)};
+
+		\path
+		(v1) edge (v2)
+		(v1) edge (v3)
+		(v2) edge (v3)
+		(v2) edge (v4)
+		(v3) edge (v5)
+		(v4) edge (v5)
+
+		(bv1) edge (bv4)
+		(bv1) edge[bend right=90] (bv5)
+		(bv2) edge[bend left=90] (bv5)
+		(bv3) edge (bv4)
+		;;
+	\end{tikzpicture}
+\end{center}
+
+\paragraph{Propiedad:} Si \(G\) tiene \(n\) vértices y \(m\) aristas, entonces: \[m_{\bar{G}} = \frac{n(n-1)}{2} - m\]
+
+\subsubsection{Caminos y ciclos}
+\paragraph{Camino:} Un camino en un grafo, es una secuencia alternada de vértices y aristas \[P = v_0e_1v_1e_2\dots v_{k-1}e_kv_k\] tal que un extremo de la arista \(e_i\) es \(v_{i-1}\) y el otro es \(v_i\) para \(i=1\dots k\).
+
+\paragraph{Camino simple:} Es un camino que no pasa dos veces por el mismo vértice.
+
+\paragraph{Sección:} La sección de un camino \(P = v_0e_1v_1e_2\dots v_{k-1}e_kv_k\) es una subsecuencia \[v_ie_{i+1}v_{i+1}e_{i+2}\dots v_{j-1}e_jv_j\] de términos consecutivos de \(P\), y lo notamos como \(P_{v_iv_j}\).
+
+\paragraph{Circuito:} Es un camino que empieza y termina en el mismo vértice.
+
+\paragraph{Circuito Simple:} Es un circuito de tres o más vértices que no pasa dos veces por el mismo vértices.
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {\(v_1\)};
+		\node[basicNode] (v2) [above=of v1] {\(v_2\)};
+		\node[basicNode] (v3) [right=of v1] {\(v_3\)};
+		\node[basicNode] (v4) [right=of v2] {\(v_4\)};
+		\node[basicNode] (v5) [above right=of v3, yshift=-0.5cm] {\(v_5\)};
+		\node[] (glabel) [below right=of v1, xshift=-1cm] {Camino no simple};
+		\node[] (glabel1) [below=of glabel, yshift=0.75cm] {\red{\(P = v_2v_3v_1v_2v_4\)}};
+
+		\node[basicNode] (bv1) at (5,0) {\(v_1\)};
+		\node[basicNode] (bv2) [above=of bv1] {\(v_2\)};
+		\node[basicNode] (bv3) [right=of bv1] {\(v_3\)};
+		\node[basicNode] (bv4) [right=of bv2] {\(v_4\)};
+		\node[basicNode] (bv5) [above right=of bv3, yshift=-0.5cm] {\(v_5\)};
+		\node[] (bglabel) [below right=of bv1, xshift=-1cm] {Camino simple};
+		\node[] (bglabel1) [below=of bglabel, yshift=0.75cm] {\red{\(P = v_1v_2v_5v_4\)}};
+
+		\node[basicNode] (cv1) at (0,-5) {\(v_1\)};
+		\node[basicNode] (cv2) [above=of cv1] {\(v_2\)};
+		\node[basicNode] (cv3) [right=of cv1] {\(v_3\)};
+		\node[basicNode] (cv4) [right=of cv2] {\(v_4\)};
+		\node[basicNode] (cv5) [above right=of cv3, yshift=-0.5cm] {\(v_5\)};
+		\node[] (cglabel) [below right=of cv1, xshift=-1.25cm] {Circuito no simple};
+		\node[] (cglabel1) [below=of cglabel, yshift=0.75cm] {\red{\(P = v_1v_3v_2v_4v_5v_2v_1\)}};
+
+		\node[basicNode] (dv1) at (5,-5) {\(v_1\)};
+		\node[basicNode] (dv2) [above=of dv1] {\(v_2\)};
+		\node[basicNode] (dv3) [right=of dv1] {\(v_3\)};
+		\node[basicNode] (dv4) [right=of dv2] {\(v_4\)};
+		\node[basicNode] (dv5) [above right=of dv3, yshift=-0.5cm] {\(v_5\)};
+		\node[] (dglabel) [below right=of dv1, xshift=-1cm] {Circuito simple};
+		\node[] (dglabel1) [below=of dglabel, yshift=0.75cm] {\red{\(P = v_2v_3v_5v_4v_2\)}};
+
+		\path
+		(v1) edge[redEdge]  (v2)
+		(v1) edge[redEdge]  (v3)
+		(v2) edge[redEdge] (v3)
+		(v2) edge[redEdge]  (v4)
+		(v2) edge (v5)
+		(v3) edge (v5)
+		(v4) edge (v5)
+
+		(bv1) edge[red, line width=0.75mm]   (bv2)
+		(bv1) edge (bv3)
+		(bv2) edge (bv3)
+		(bv2) edge (bv4)
+		(bv2) edge[redEdge]   (bv5)
+		(bv3) edge (bv5)
+		(bv4) edge[redEdge]   (bv5)
+
+		(cv1) edge[redEdge] (cv2)
+		(cv1) edge[redEdge] (cv3)
+		(cv2) edge[redEdge] (cv3)
+		(cv2) edge[redEdge] (cv4)
+		(cv2) edge[redEdge] (cv5)
+		(cv3) edge (cv5)
+		(cv4) edge[redEdge] (cv5)
+
+		(dv1) edge (dv2)
+		(dv1) edge (dv3)
+		(dv2) edge[redEdge] (dv3)
+		(dv2) edge[redEdge] (dv4)
+		(dv2) edge (dv5)
+		(dv3) edge[redEdge] (dv5)
+		(dv4) edge[redEdge] (dv5)
+		;
+	\end{tikzpicture}
+\end{center}
+
+\paragraph{Longitud de un camino:} Dado un camino \(P\), su longitud \(l(P)\) es la cantidad de aristas que tiene.
+
+\paragraph{Distancia:} La distancia \(d(v,w)\) entre dos vértices \(v\) y \(w\) se define como la longitud del camino más corto entre \(v\) y \(w\).
+\begin{itemize}
+	\item Si no existe camino entre \(v\) y \(w\) decimos que \(d(v,w) = \infty\).
+	\item \(\forall~v\in V,~d(v,v) = 0\)
+\end{itemize}
+
+\begin{proposicion}
+	Si un camino \(P\) entre \(v\) y \(w\) tiene longitud \(d(v,w)\) entonces \(P\) es un camino simple.
+\end{proposicion}
+\begin{demo}
+	Demostración por el absurdo. Sea \(P = v\dots w\) un camino entre \(v\) y \(w\) con \(l(P) = d(v,w)\). Supongamos que \(P\) no es simple, es decir existe un vértice \(u\) que se repite en \(P\) (\(u\) podría llegar a ser \(v\) o \(w\)) entonces \(P = v\dots u \dots u \dots w\).
+
+	Formemos ahora un camino \(P' = P_{vu}P_{uw}\), como \(P'\) no tiene todos los nodos que están en \(P_{uu}\) nos queda que \(l(P') < l(P) = d(v,w)\). Esto genera un absurdo porque por definición \(d(v,w)\) es la longitud del camino más corto entre \(v\) y \(w\).
+\end{demo}
+
+\begin{proposicion}
+	La función de distancia cumple las siguientes propiedades para todo \(u,v,w\) pertenecientes a \(V\):
+	\begin{enumerate}
+		\item \(d(u,v)\geq 0\)
+		\item \(d(u,v)=0 \iff u=v\)
+		\item \(d(u,v) = d(v,u)\)
+		\item \(d(u,w) \leq d(u,v) + d(v,w)\)
+	\end{enumerate}
+\end{proposicion}
+
+\subsubsection{Subgrafos y Componentes Conexas}
+
+\paragraph{Subgrafo:}
+Dado un grafo \(G=(V_G, X_G)\), un subgrafo de \(G\) es un grafo \(H = (V_H, X_H)\) tal que \(V_H\subseteq V_G\) y \(X_H\subseteq X_G\cap (V_H\times V_H)\). Y notamos \(H\subseteq G\).
+
+\begin{itemize}
+	\item Si \(H \subseteq G\) y \(H\neq G\), entonces \(H\) es un \textbf{subgrafo propio} de \(G\) y notamos \(H \subset G\).
+	\item \(H\) es un subgrafo generador de \(G\) si \(H \subseteq G\) y \(V_G = V_H\).
+	\item Un subgrafo \(H=(V_H, X_H)\) de \(G=(V_G, X_G)\), es un \textbf{subgrafo inducido} si \(\forall~u,v\in V_H\) tal que \((u,v)\in X_G \Rightarrow (u,v)\in X_H\).
+	\item Un subgrafo inducido de \(G=(V_G, X_G)\) por un conjunto de vértices \(V'\subseteq V_G\), se denota como \(G_{[V']}\).
+\end{itemize}
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above left=of v1] {};
+		\node[basicNode] (v3) [above right=of v1] {};
+		\node[] (glabel) [below=of v1] {Grafo \(G\)};
+
+		\node[basicNode] (bv1) at (3,0) {};
+		\node[basicNode] (bv2) [above left=of bv1] {};
+		\node[] (glabel) [below=of bv1, text width=2cm, text centered] {Sugrafo propio de \(G\)};
+
+		\node[basicNode] (cv1) at (6,0) {};
+		\node[basicNode] (cv2) [above left=of cv1] {};
+		\node[basicNode] (cv3) [above right=of cv1] {};
+		\node[] (glabel) [below=of cv1, text width=3cm, text centered] {Grafo que no es subgrafo de \(G\)};
+
+		\node[basicNode] (dv1) at (9,0) {};
+		\node[basicNode] (dv2) [above left=of dv1] {};
+		\node[] (glabel) [below=of dv1, text width=2.5cm, text centered] {Subgrafo inducido de \(G\)};
+
+		\path
+		(v1) edge (v2)
+		(v1) edge (v3)
+
+		(cv2) edge (cv3)
+
+		(dv1) edge (dv2)
+		;
+	\end{tikzpicture}
+\end{center}
+\paragraph{Grafo conexo:}
+Un grafo se dice \textbf{conexo} si existe camino entre todo par de vértices.
+
+\paragraph{Componente conexa:} Una componente conexa de un grafo \(G=(V_G, X_G)\) es un subgrafo conexo maximal de \(G\). Esto es un subgrafo \(H = (V_H, X_H)\) inducido de \(G\) tal que \(H\) es conexo y si tratamos de agregar cualquier vértice \(v\in V_G \backslash V_H\) entonces nos queda un grafo no conexo.
+
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above left=of v1] {};
+		\node[basicNode] (v3) [above right=of v1] {};
+		\node[basicNode] (v4) [right=of v3] {};
+		\node[basicNode] (v5) [below=of v4] {};
+		\node[] (glabel) [below=of v1, xshift=1cm] {Grafo conexo.};
+
+
+		\node[basicNode] (bv1) at (5,0) {};
+		\node[basicNode] (bv2) [above left=of bv1] {};
+		\node[basicNode] (bv3) [above right=of bv1] {};
+		\node[redNode] (bv4) [right=of bv3] {};
+		\node[redNode] (bv5) [below=of bv4] {};
+		\node[] (glabel) [below=of bv1, text width=4cm, xshift=1cm, text centered] {Grafo no conexo. Tiene dos componentes conexas (la \green{verde} y la \red{roja})};
+
+		\path
+		(v1) edge (v2)
+		(v1) edge (v3)
+		(v3) edge (v4)
+		(v4) edge (v5)
+
+		(bv1) edge (bv2)
+		(bv1) edge (bv3)
+		(bv4) edge (bv5)
+		;
+	\end{tikzpicture}
+\end{center}
+
+\newpage
+\subsection{Grafos bipartitos}
+Un grafo \(G = (V,X)\) se dice \textbf{bipartito} si existe una partición \(V_1,V_2\) del conjunto de vértices \(V\) tal que:
+\begin{itemize}
+	\item \(V = V_1\cup V_2\)
+	\item \(V_1\cap V_2 \neq\emptyset\)
+	\item \(V_1\neq\emptyset\)
+	\item \(V_2\neq\emptyset\)
+	\item Todas las aristas de \(G\) tiene un extremo en \(V_1\) y otro en \(V_2\)
+\end{itemize}
+
+Un grafo bipartito con partición \(V_1,~V_2\) es \textbf{bipartito completo} si todo vértice en \(V_1\) es adyacente a todo vértice en \(V_2\).
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above left=of v1] {};
+		\node[basicNode] (v3) [above right=of v1] {};
+		\node[] (glabel) [below=of v1] {Grafo no bipartito};
+
+		\node[redNode] (bv1) at (4,0) {};
+		\node[basicNode] (bv2) [above=of bv1] {};
+		\node[redNode] (bv3) [right=of bv2] {};
+		\node[basicNode] (bv4) [below=of bv3] {};
+		\node[basicNode] (bv5) [below left=of bv1] {};
+		\node[redNode] (bv6) [above left=of bv2] {};
+		\node[basicNode] (bv7) [above right=of bv3] {};
+		\node[redNode] (bv8) [below right=of bv4] {};
+		\node[] (bglabel) [below right=of bv5, xshift=-0.5cm] {Grafo bipartito};
+
+		\node[basicNode] (cv1) at (8,-0.5) {};
+		\node[basicNode] (cv2) [right=of cv1] {};
+		\node[basicNode] (cv3) [right=of cv2] {};
+		\node[basicNode] (cv4) [right=of cv3] {};
+		\node[redNode] (cv5) [above=of cv1, yshift=1cm] {};
+		\node[redNode] (cv6) [right=of cv5, xshift=.5cm] {};
+		\node[redNode] (cv7) [above=of cv4, yshift=1cm] {};
+		\node[] (cglabel) [below right=of cv1, xshift=-1cm] {Grafo bipartito completo};
+		\path
+		(v1) edge (v2)
+		(v1) edge (v3)
+		(v3) edge (v2)
+
+		(bv1) edge (bv2)
+		(bv1) edge (bv4)
+		(bv1) edge (bv5)
+		(bv2) edge (bv3)
+		(bv2) edge (bv6)
+		(bv3) edge (bv4)
+		(bv3) edge (bv7)
+		(bv4) edge (bv8)
+		(bv5) edge (bv6)
+		(bv5) edge (bv8)
+		(bv6) edge (bv7)
+		(bv7) edge (bv8)
+
+		(cv1) edge (cv5)
+		(cv1) edge (cv6)
+		(cv1) edge (cv7)
+		(cv2) edge (cv5)
+		(cv2) edge (cv6)
+		(cv2) edge (cv7)
+		(cv3) edge (cv5)
+		(cv3) edge (cv6)
+		(cv3) edge (cv7)
+		(cv4) edge (cv5)
+		(cv4) edge (cv6)
+		(cv4) edge (cv7)
+		;
+	\end{tikzpicture}
+\end{center}
+
+\begin{theorem}
+	Un grafo \(G\) con dos o más vértices es bipartito si y solo si no tiene circuitos de longitud impar.
+\end{theorem}
+\begin{demo}
+	Como un grafo es bipartito si y solo si cada una de sus componentes conexas es bipartita alcanza con demostrar el teorema para grafos conexos.
+	\paragraph{\(\left.\Rightarrow\right) \)} Sea \(G\) un grafo conexo bipartito y \(V = (V_1,V_2)\) su bipartición.
+
+	Si \(G\) no tiene circuitos entonces el teorema se cumple de manera trivial.
+
+	Supongamos que \(G\) tiene circuitos y sea \(C = v_1v_2\dots v_kv_1\) un circuito de \(G\). Sin perdida de generalidad, supongamos que \(v_1\in V_1\). Como \((v_1,v_2) \in X\) entonces \(v_2\in V_2\)). En general, \(v_{2i + 1}\in V_1\) y \(v_{2i}\in V_2\). Como \(v_1\in V_1\) y \((v_k,v_1)\in X\), debe pasar \(v_k\in V_2\). Luego \(k = 2i\) para algún \(i\), lo que implica que \(l(C)\) es par.
+\end{demo}
+\begin{demoPart}
+
+	\paragraph{\(\left.\Leftarrow\right)\)} Sea \(G\) un grafo conexo sin circuitos impares. Sea \(u\) cualquier vértice de \(V\). Definimos: \[V_1 = \{ v\in V~/~d(u,v) \text{ es par}\}\] \[V_2 = \{ v\in V~/~d(u,v) \text{ es impar}\}\]
+
+	\(V_1\) y \(V_2\) definen una partición de \(V\) (ya que como \(G\) es conexo no hay vértices a distancia \(\infty\) de \(v\)). Tenemos que ver que definen una bipartición, es decir que no existe arista entre dos vértice de \(V_1\) y dos de \(V_2\). Hagamos esto por el absurdo:
+
+	Supongamos que no es bipartición, es decir existen \(v,w\in V_1\) tales que \((v,w)\in X\). Si \(v = u\), entonces \(d(v,w) = 1\), pero esto no puede pasar por que \(d(u,w) \) es par. Lo mismo para \(w\), luego \(v\neq u,w\).
+
+	Sea \(P\) un camino mínimo entre \(v\) y \(u\) y \(Q\) un camino mínimo entre \(v\) y \(w\). Como \(u,w\in V_1\), \(P\) y \(Q\) tienen longitud par.
+
+	Sea \(z\in V\) el último nodo en el que \(P\) y \(Q\) se cruzan (podría pasar que \(z = u\)). Como \(P\) y \(Q\) definen las distancias a \(v\) y \(w\) respectivamente desde \(u\), entonces \(P_{uz}\) y \(Q_{uz}\) tienen que ser caminos mínimos. Osea que \[l(P_{uz}) = l(Q_{uz}) = d(u,z)\].
+	Entonces \(l(P_{zv})\) y \(l(Q_{zw})\) tienen igual paridad. Definamos \[C = P_{zv}(v,w)Q_{wz}\]
+	Entonces \(l(C) = l(P_{zv}) + l(Q_{wz}) + 1\) que es una longitud impar. Absurdo, partiamos de la supocisión de que \(G\) no tenia circuitos de longitud impar.
+\end{demoPart}
+
+\subsection{Representación de grafos}
+\subsubsection{Matriz de adyacencia de un grafo}
+Dado un grafo \(G\), se define su \textbf{matriz de adyacencia} \(A\in\reales^{n\times n}\), \(A = [a_{ij}]\) como:
+
+\[a_{ij} = \begin{cases}
+		1 & \text{ si } G \text{ tiene una arista entre } v_i \text{ y } v_j \\
+		0 & \text{ si no }
+	\end{cases}
+\]
+
+\begin{proposicion}
+	Si \(A\) es la matriz de adyacencia del grafo \(G\), entonces:
+	\begin{itemize}
+		\item La suma de los elementos de la columna (o fila) \(i\) de \(A\) es igual a \(d(v_i)\).
+		\item Los elementos de la diagonal de \(A^2\) indican los grados de los vértices: \(a_{ii}^2 = d(v_i)\).
+	\end{itemize}
+\end{proposicion}
+
+Para los seudografos, se generaliza la definición dada de la seguiente manera:
+
+\[a_{ij} = \begin{cases}
+		\text{ cantidad de aristas }(v_i,v_j) & \text{ si } i \neq j \\
+		\text{ cantidad de loops sobre } v_i  & \text{ si } i = j
+	\end{cases}
+\]
+
+\subsubsection{Matriz de incidencia de un grafo}
+Dado un grafo \(G\), se define su \textbf{matriz de incidencia} \(B\in\reales^{m\times n}\) con \(B = [b_{ij}]\) como:
+
+\[b_{ij} = \begin{cases}
+		1 & \text{ si la arista } i \text{ es incidente al vértice } v_j \\
+		0 & \text{ sino }
+	\end{cases}\]
+
+\begin{proposicion}
+	Si \(B\) es la matriz de incidencia del grafo \(G\), entonces:
+	\begin{itemize}
+		\item La suma de los elementos de cada fila es igual a 2.
+		\item La suma de los elementos de la \(j\)-ésima columna es igual a \(d(v_j)\).
+	\end{itemize}
+\end{proposicion}
+
+Para los pseudografos, se generaliza la definición de la siguiente forma:
+
+\[b_{ij} = \begin{cases}
+		2 & \text{ si la arista } i \text{ es loop sobre el vertice } v_j             \\
+		1 & \text{ si la arista } i \text{ no es loop e incide sobre el vértice } v_j \\
+		0 & \text{ sino }
+	\end{cases}\]
+
+\subsection{Digrafos}
+\paragraph{Grafo dirigido o digrafo:} Es un par de conjuntos \(G = (V,X)\) donde \(V\) es el conjunto de nodos y \(X\) es un subconjunto del conjunto de pares \textbf{ordenados} de elementos distintos de \(V\). A los elementos de \(X\) los llamaremos \textbf{arcos}.
+
+Dado un arco \(e=(u,w)\) llamaremos al primer elemento (\(u\)) \textbf{cola} de \(e\) y al segundo (\(w\)), \textbf{cabeza} de \(e\).
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above=of v1] {};
+		\node[basicNode] (v3) [right=of v1] {};
+		\node[basicNode] (v4) [right=of v2] {};
+		\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {};
+		\node[] (glabel) [below right=of v1, xshift=-0.75cm] {Digrafo \(G\)};
+
+		\path
+		(v1) edge[-stealth] (v2)
+		(v1) edge[-stealth] (v3)
+		(v2) edge[-stealth, bend right=15] (v3)
+		(v2) edge[-stealth] (v4)
+		(v3) edge[-stealth, bend right=15] (v2)
+		(v3) edge[-stealth] (v5)
+		(v4) edge[-stealth] (v5)
+		;
+	\end{tikzpicture}
+\end{center}
+
+\paragraph{Grado de entrada:} \(d_{in}(v)\) de un vértice \(v\) de un digrafo es la cantidad de arcos que llegan a \(v\). Es decir, la cantidad de arcos que tienen como cabeza a \(v\).
+
+\paragraph{Grado de entrada:} \(d_{out}(v)\) de un nodo \(v\) de un digrafo es la cantidad de arcos que salen de \(v\). Es decir, la cantidad de arcos que tiene a \(v\) como cola.
+
+\paragraph{Grafo subyacente:} El grafo subyacente de un digrafo \(G\) es el grafo \(G^S\) que resulta de remover las direcciones de sus arcos (si para un par de vértices hay arcos en ambas direcciones, sólo se coloca una arista entre ellos).
+
+\begin{center}
+	\begin{tikzpicture}[graphStyle]
+		\node[basicNode] (v1) at (0,0) {};
+		\node[basicNode] (v2) [above=of v1] {};
+		\node[basicNode] (v3) [right=of v1] {};
+		\node[basicNode] (v4) [right=of v2] {};
+		\node[basicNode] (v5) [above right=of v3, yshift=-0.12cm] {};
+		\node[] (glabel) [below right=of v1, xshift=-0.75cm] {Digrafo \(G\)};
+
+		\node[basicNode] (sv1) at (3,0) {};
+		\node[basicNode] (sv2) [above=of sv1] {};
+		\node[basicNode] (sv3) [right=of sv1] {};
+		\node[basicNode] (sv4) [right=of sv2] {};
+		\node[basicNode] (sv5) [above right=of sv3, yshift=-0.12cm] {};
+		\node[] (sglabel) [below right=of sv1, xshift=-0.75cm] {Grafo \(G^S\)};
+
+		\path
+		(v1) edge[-stealth] (v2)
+		(v1) edge[-stealth] (v3)
+		(v2) edge[-stealth, bend right=15] (v3)
+		(v2) edge[-stealth] (v4)
+		(v3) edge[-stealth, bend right=15] (v2)
+		(v3) edge[-stealth] (v5)
+		(v4) edge[-stealth] (v5)
+
+		(sv1) edge (sv2)
+		(sv1) edge (sv3)
+		(sv2) edge (sv3)
+		(sv2) edge (sv4)
+		(sv3) edge (sv5)
+		(sv4) edge (sv5)
+		;
+	\end{tikzpicture}
+\end{center}
+
+\paragraph{Matriz de adyacencia:} de un digrafo \(G\), \(A\in\reales^{n\times n}\), \(A = [a_{ij}]\) se define como:
+
+\[a_ij = \begin{cases}
+		1 & \text{ si } G \text{ tiene un arco } v_i a v_j \\
+		0 & \text{ si no }                                 \\
+	\end{cases}\]
+
+\begin{proposicion}
+	Si \(A\) es la matriz de adyacencia del digrafo \(G\), entonces:
+	\begin{itemize}
+		\item La suma de los elementos de la fila \(i\) de \(A\) es igual a \(d_{out}(v_i)\).
+		\item La suma de los elementos de la columna \(i\) de \(A\) es igual a \(d_{in}(v_i)\).
+	\end{itemize}
+\end{proposicion}
+
+\paragraph{Matriz de incidencia:} de un digrafo \(G\), \(B\in\reales^{m\times n}\), \(B = [b_{ij}]\) se define como:
+
+\[b_ij = \begin{cases}
+		1  & \text{ si } v_j \text{ es cabeza del arco } i \\
+		-1 & \text{ si } v_j \text{ es cola del arco } i   \\
+		0  & \text{ si no }                                \\
+	\end{cases}\]
+
+\begin{proposicion}
+	Si \(B\) es la matriz de incidencia del digrafo \(G\), entonces la suma de los elementos de cada fila es igual a cero.
+\end{proposicion}
+
+\paragraph{Camino orientado:} Es una sucesión de arcos \(e_1e_2\dots e_k\) tal que el primer elemento del arco \(e_i\) coincide con el segundo de \(e_{i-1}\) y el segundo elemento de \(e_i\) con el primero de \(e_{i+1}\) con \(i = 2,\dots,k-1\)
+
+\paragraph{Grafo fuertemente conexo:} Es un digrafo \(G\) tal que para todo par de vértices \(u,v\in 	V_G\) existe un camino orientado de \(u\) a \(v\).

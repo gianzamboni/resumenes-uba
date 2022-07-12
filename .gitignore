@@ -11,3 +11,5 @@
 */cache
 */.kile
 *.kilepr
+*/main.fdb_latexmk
+*/main.fls

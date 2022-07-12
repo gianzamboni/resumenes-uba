@@ -1,0 +1,246 @@
+\section{Caminos mínimos}
+Los grafos (pesados o no) son la estructura natural para modelar redes en las cuales uno quiere ir de un punto a otro de la red atravesando una secuencia de enlaces. Formalmente, sea \(G = (V, X)\) un grafo y \(l: X \to \reales\) una función de longitud/peso para las aristas de \(G\):
+
+\begin{itemize}
+  \item La \textbf{longitud} de un camino \(C\) entre dos vértices \(v\) y \(w\) es la suma de las longitudes de las aristas del camino:
+        \[l(C) = \sum_{e\in C}l(e)\]
+  \item Un \textbf{camino mínimo} \(C^0\) entre \(v\) y \(w\) es un caminot entre \(v\) y \(w\) tal que \[l(C^0)=\min\{l(C) | C \text{es un camino entre } v \text{ y } w\}\]
+\end{itemize}
+
+Dado un grafo \(G\), se pueden definir tres variantes de problemas sobre caminos mínimos:\
+\begin{itemize}
+  \item \textbf{Único origen - único destino:} Determinar un camino mínimo entre dos vértices específicos \(v\) y \(w\).
+  \item \textbf{Único origen - múltiples destinos:} Determinar un camino mínimo desde un vértice específico \(v\) al resto de los vértices de \(G\).
+  \item \textbf{Múltiples origenes - múltiples destinos:} Determinar una camino mínimo entre todos los vértices de \(G\).
+\end{itemize}
+
+Generalmente, los algoritmos para resolver problemas de camino mínimo se basan en que todo subcamino de un camino mínimo entre dos vértices es un camino mínimo.
+
+\begin{proposicion}\label{prop::CaminoMinimoEstaHechoDeMinimos}
+  Dado un grafo \(G = (V, X)\) con una función de peso \(l: X \to \reales\), sea \(P: v_1\dots v_k\) un camino mínimo de \(v_1\) a \(v_k\). Entonces \(\forall~1\leq i \leq j \leq k\), \(P_{v_iv_j}\) es un camino mínimo desde \(v_i\) a \(v_j\).
+\end{proposicion}
+\begin{demo}
+  Podemos descomponer al camino \(P\) en \(P_{v_1v_i} + P_{v_iv_j} + P_{v_jv_k}\), entonces \(l(P) = l(P_{v_1v_i}) + l(P_{v_iv_j})) + l(P_{v_jv_k})\).
+
+  Por el absurdo, asumamos que \(P_{v_iv_j}\) no es un camino mínimo desde \(v_i\) a \(v_j\). Llamemos \(P'\) a un camino entre estos dos vértices, entonces \(l(P') \leq P_{v_iv_j}\). Entonces podemos armar \(P'' = P_{v_1v_i} + P' + P_{v_jv_k}\) y
+  \[l(P'') = l(P_{v_1v_i}) + l(P') + l(P_{v_jv_k}) < l(P_{v_1v_i}) + l(P_{v_iv_j})) + l(P_{v_jv_k}) = l(P)\]
+
+  Luego \(P\) no es un camino mínimo entre \(v\) y \(w\).
+\end{demo}
+
+Dos consideraciones a tener en cuenta:
+\begin{itemize}
+  \item \textbf{Aristas con peso negativo:} Si el digrafo \(G\) no contiene ciclos de peso negativo o contiene alguno pero no es alcanzable desde \(v\), entonces el problema sigue estando bien definido, aunque algunos caminos puedan tener longitud negativa. Sin embargo, si \(G\) tiene algún circuito de peso negativo alcanzable desde \(v\), el concepto de camino mínimo deja de estar bien definido: Si \(w\) pertenece a un camino con ciclo de peso negativo, ningún camino de \(v\) a \(w\) puede ser mínimo porque siempre se puede obtener un camino de peso menor siguiendo ese camino pero atravesando el ciclo de peso negativo una vez más.
+  \item \textbf{Circuitos:} Siempre existe un camino mínimo que no contiene circuitos (si el problema está bien definido):
+        \begin{itemize}
+          \item Sabemos que no puede tener un circuito negativo porque si no no está bien definido.
+          \item Si tiene un circuito de peso positivo, entonces podemos sacarlo obteniendo un camino con el mismo origen y destino de menor longitud (osea que no era camino mínimo).
+          \item Si tiene un circuito de peso cero, entonces sacandolo obtenemos un camino sin cirtutos del mismo peso.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Camino mínimo con un único origen y múltiples destinos}
+Dado \(G = (V, X)\) un digrafo, \(l: X\to\reales\) una función que asigna a cada arco una cierta longitud y \(v\in V\) un vértice del digrafo, queremos calcular los caminos mínimos desde \(v\) al resto de los vértices.
+
+\subsubsection{En digrafos no pesados}
+En el caso de que todas las aristas tengan igual longitud, este problema se traduce en encontrar los caminos que definan las distancias (de menor cantidad de aristas). Para esto se puede adaptar el BFS (Sección \ref{algorithm:BFS}):
+
+\begin{algorithmic}
+  \Procedure{BFS}{$\mathtt{G = (V, X)}$, $v \in V$}
+  \State $\mathtt{pred[w] =}$ \texttt{antecesor de w en un camino minimo desde v}
+  \State $\mathtt{dist[w] =}$ \texttt{distancia desde v a w}
+
+  \State $\mathtt{pred[v]\gets 0}$
+  \State $\mathtt{dist[v]\gets 0}$
+  \State $\mathtt{to\_visit \gets \{v\}}$
+  \For{$\mathtt{w\in V \backslash \{ v \}}$}
+  \State $\mathtt{dist[w] \gets \infty}$
+  \EndFor
+  \While{$\mathtt{\lnot to\_visit.empty()}$}
+  \State $\mathtt{x \gets to\_visit.pop()}$
+  \For{$\mathtt{w \texttt{ tal que } (x \to w)\in X~/~\land dist[w] = \infty}$}
+  \State $\mathtt{pred[w] \gets x}$
+  \State $\mathtt{dist[w] \gets dist[x] + 1}$
+  \State $\mathtt{to\_visite.push(w)}$
+  \EndFor
+  \EndWhile
+  \State\Return \texttt{[pred, dist]}
+  \EndProcedure
+\end{algorithmic}
+
+\begin{lema}
+  Dado \(G=(V,X)\) un digrafo y \(v\in V\). Sea \(\texttt{to\_visit}_k=[v_1,\dots,v_r]\) la cola de nodos que se obtiene al finalizar la iteración \(k\) del algoritmo. Se cumple que todos los nodo de la misma están a distancia \(\texttt{dist}[v_1]\) o \( \texttt{dist}[v_1]+ 1\) de \(v\), formalmente:
+  \begin{itemize}
+    \item \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
+    \item \(\texttt{dist}[v_i] \leq \texttt{dist}[v_{i+1}]\) para todo \(i = 1,\dots r-1\)
+  \end{itemize}
+\end{lema}
+\begin{demo}
+  Lo hacemos por inducción en las iteraciones del algoritmo.
+  \paragraph{Caso base:} Antes de entrar al ciclo, la cola solo tiene \(v\) y se asigna \(\texttt{dist}[v] = 0 \). Como \(v\) es el único elemento de la cola, se cumple la propiedad.
+
+
+  \paragraph{Paso inductivo:} Consideremos la iteración \(k\). Llamemos \(\texttt{to\_visit}_k\) con \(k \geq 1\) al valor de la variable \texttt{to\_visit} al finalizar la iteración \(k\) del algoritmo.
+
+  Nuestra hipotesis inductiva es: Para todo \(k' < k\), vale que \(\texttt{to\_visit}_{k'} = [v_1^{k'},\dots,v_{r_k'}^{k'}]\) cumple que  \(\texttt{dist}[v_1] + 1 \geq \texttt{dist}[v_r]\) y
+  \(\texttt{dist}[v^{k'}_i] \leq \texttt{dist}[v^{k'}_{i+1}]\) para todo \(i = 1,\dots r_{k'}-1\).
+  \begin{itemize}
+    \item Si \(\texttt{to\_visit}_{k-1}\) tiene un solo elemento (el que se desencola), como todos los vértices que ingresan tienen igual valor en \texttt{dist}, se cumple la propiedad.
+    \item Si \(\texttt{to\_visit}_{k-1} = [u_1,u_2,\dots,u_r]\) tiene más de un elemento, sea \(w_1,\dots,w_s\) los vértices que se encolan en la iteración \(k\).
+          Entonces veamos que \(\texttt{to\_visit}_k = [u_2,\dots,z,w_1,\dots,w_s]\) cumple la propiedad:
+          \begin{itemize}
+            \item Como \(w_s\) fue agregada en este paso del algoritmo, sabemos que \(\texttt{dist}[w_s] = \texttt{dist}[u_1] + 1\). Por hipotesis inductiva sabemos que \(\texttt{dist}[u_1] \leq \texttt{dist}[u_2]\)
+                  \begin{align*}
+                    \texttt{dist}[u_1] \leq \texttt{dist}[u_2] & \implies \texttt{dist}[u_1] + 1\leq \texttt{dist}[u_2] + 1 \\ & \implies \texttt{dist}[w_s] \leq \texttt{dist}[u_2] + 1
+                  \end{align*}
+                  Entonces la primer parte del lema se cumple.
+          \end{itemize}
+  \end{itemize}
+\end{demo}
+\begin{demoPart}
+  \begin{itemize}
+    \begin{itemize}
+      \item Todos los nodos encolados en este paso están a \(\texttt{dist}[u_1] + 1\) de \(v\). Osea que \(\texttt{dist}[w_i] = \texttt{dist}[u_1] + 1~\forall~i=1\dots s\), entonces tambien vale que \(\texttt{dist}[w_i] \leq \texttt{dist}[w_{i+1}]\) .
+
+            Por hipotesis inductiva sabemos que \(\texttt{dist}[u_i] \leq \texttt{dist}[u_{i+1}]\) para todo \(i=1\dots r\).
+
+            Por hipotesis inductiva sabemos \(\texttt{dist}[u_1]+1 \geq \texttt{dist}[u_r]\), luego \(\texttt{dist}[w_1] \geq \texttt{dist}[u_r]\).
+
+            Luego se cumple la segunda parte de la propiedad.
+    \end{itemize}
+  \end{itemize}
+  \(\null\hfill\blacksquare\)
+\end{demoPart}
+
+\begin{coro}
+  Dago \(G=(V,X)\) un digrafo y \(v,w\in V\). Si el vértice \(w\) ingresa a \texttt{to\_visit} antes que el vértice \(v\), entonces se cumple que \(dist[w]\leq dist[v]\) durante toda la corrida del algoritmo.
+\end{coro}
+
+\begin{lema}\label{lema::BFS::distMayorAd}
+  Dado \(G=(V, X)\) un digrafo y \(v\in V\). Se cumple que \(\texttt{dist}[w]\geq d(v,w)\) para todo \(w\in V\) en todo momento del algoritmo.
+\end{lema}
+
+\begin{demo}
+  Haremos inducción en las iteraciones de \(k\).
+
+  \paragraph{Caso base:} Para \(k=0\) (antes de entrar al ciclo), \(\texttt{to\_visit}_0 = [v]\), \(\texttt{dist}[v] = 0\) y \(\texttt{dist}[w] = \infty\) para todo \(w\in V\) tal que \(w\neq v\).
+
+  Como \(d(v,v) = 0\), se cumple que \(\texttt{dist}[w] \geq d(v,w)\) para todo \(w\in V\).
+
+  \paragraph{Paso inductivo:} Nuestra hipotesis inductiva es: \(\texttt{dist}_{k-1}[w] \geq d(v,w)~\forall~w\in V\) donde \(\texttt{dist}_{k-1}\) es el valor de la variable \texttt{dist} al finalizar la iteración \(k-1\).
+
+  Sea \(x\) el vértice que se desencolaen la iteración \(k\) y \(x_1,\dots,x_s\) los vértices que se encolan. La variable \texttt{dist} solo se modifica en las posiciones de \(x_1,\dots,x_s\). Es decir que \(\text{dist}_k[w] = \texttt{dist}_{k-1}[w]\) para todo \(w\in V / \{x_1,\dots,x_s\}\), entonces por hipotesis inductiva vale \(\texttt{dist}_k[w] \geq d(v,w)\) para \(w\in V / \{x_1,\dots,x_s\}\).
+
+  Para las posiciones modificadas, tenemos que \[\texttt{dist}[x_i] = \texttt{dist}_{k-1}[x] + 1\]Por hipotesis inductiva sabemos que \(\texttt{dist}_{k-1}[x] \geq d(v,x)\), además como \(x_i\) fue agregado a la cola, sabemos que existe \((x, x_i)\in V\).
+
+  Sea \(P_{i} = P_{vx} + (x,x_i)\) un camino entre \(v\) y \(x_i\). Si \(P_{vx}\) es un camino mínimo entre \(v\) y \(x\) entonces \[l(P_{i}) = l(P_{vx}) + 1 = d(v,x) + 1 \underset{HI}{\leq} \texttt{dist}_{k-1}[x] + 1 = \texttt{dist}[w_i] \]
+\end{demo}
+\begin{demoPart}
+  Como \(d(v,x_1)\) es la longitud de los caminos mínimos entre \(v\) y \(x_i\), sabemos que \(d(v, x_i) \leq l(P_i)\), entonces \(d(v,x_1) \leq \texttt{dist}[w_i]\).
+\end{demoPart}
+
+\begin{theorem}
+  Dado \(G=(V,X)\) un digrafo y \(v\in V\). El algoritmo BFS enunciado calcula \(d(v,w)\) para todo \(w\in V\)
+\end{theorem}
+\begin{demo}
+  Por el lema \ref{lema::BFS::distMayorAd}, sabemos que \(\texttt{dist}[w]\geq d(v,w)\) para todo \(w\in V\). Supongamos ahora que para algún vértice no se cumple la igualdad.
+
+  Sea \(x\in V\) el vértice con menor \(d(v,x)\) tal que \(\texttt{dist}[x] > d(v,x)\):
+  \begin{itemize}
+    \item Sabemos que \(v \neq x\) porque \texttt{dist}\([v] = d(v,v) = 0\) (este valor se asigna antes de entrar a la primera iteración).
+    \item Sea \(P = v,\dots,y,x \) un camino mínimo desde \(v\) a \(x\), entonces
+          \[d(v,x) = l(P) = d(v,y) + 1 \] (el subcamino de \(v\) a \(y\) es camino mínimo por la proposicion \ref{prop::CaminoMinimoEstaHechoDeMinimos}).
+
+          Ahora, como \(x\) es el vértice de menor distancia a \(v\) tal que \(\texttt{dist}[x] > d(v,x)\) e \(y\) está a menor distancia de \(v\) que \(w\) entonces vale que \(\texttt{dist}[y] = d(v,y)\).
+
+          Entonces, en la iteración del algoritmo que analizamos \(y\), tiene que pasar alguna de las situaciones siguientes:
+          \begin{enumerate}
+            \item \(x\) ya fue desencolado de \texttt{to\_visit}\label{menorQueY}
+            \item \(x\) ya está en la cola\label{menorQueY2}
+            \item \(x\) todavía no está en la cola \label{faltaX}
+          \end{enumerate}
+
+          Si ocurren la situacion \ref*{menorQueY} y \ref*{menorQueY2},como \(x\) fue encolado antes que \(y\), vale que \(\texttt{dist}[x] \leq \texttt{dist}[y] \), entonces:
+          \[ d(v,x) = \texttt{dist}[y] + 1 \geq dist[x] + 1 > dist[x]\]
+          Esto genera un absurdo.
+
+          Si ocurre la situacion \ref*{faltaX}, \(x\) todavía no está en la cola entonces se lo agrega porque existe \((y,x) \in X\). Además, el algoritmo fijará \texttt{dist}\([x] = \texttt{dist}[y] + 1 = d(v,x)\), contradiciendo nuestra supocisión.
+  \end{itemize}
+\end{demo}
+
+\subsection{En digrafos pesados}
+En los casos en que los arcos del digrafo no tengan el mismo peso, BFS no es aplicable. Además. dependiendo que represente la función de peso, podría ser que algunos de estos valores sean negativos.
+
+\subsubsection{Algoritmo de Dijsktra}
+El algoritmo de Dijsktra es un algoritmo goloso que construye un árbol de caminos mínimos con raiz en \(v\). En cada iteración agrega el vértice más cercano a \(v\) de entre todos los que todavía no fueron agregados al árbol.
+
+Este algoritmo asume que las longitudes de arco son positivas. El grafo puede ser orientado o no.
+
+\begin{algorithmic}
+  \Procedure{Dijsktra}{$G = (V, X),~v \in V$}
+  \State $\mathtt{\pi[u] =}$ valor del camino mínimo desde $v$ a $u$
+  \State $\mathtt{S \gets \{v\}}$
+  \State $\mathtt{\pi[v] \gets 0}$\Comment{Inicializamos $\pi$ y $texttt{pred}$}
+  \State $\mathtt{pred[v] \gets 0}$
+  \For{$u\in V$}
+  \If{$\mathtt{(v, u) \in X}$}
+  \State $\mathtt{\pi[u] = l(v, u)}$
+  \State $\mathtt{pred[u] = v}$
+  \Else
+  \State $\mathtt{\pi[u] = \infty}$
+  \State $\mathtt{pred[u] = \infty}$
+  \EndIf
+  \EndFor
+
+  \While{ $\mathtt{S \neq V}$ }\Comment{Calculamos los caminos mínimos}
+  \State $\mathtt{w\gets arg\min\{\pi[u], u\in V\backslash S\}}$
+  \State $\mathtt{S \gets S\cup\{w\}}$
+  \For{$\mathtt{u \in V \backslash S~\land~(w,u)\in X}$ }
+  \If{$\mathtt{\pi[u] > \pi[w] + l(w,u)}$}
+  \State $\mathtt{\pi[u] \gets \pi[w] + l(w,u)}$
+  \State $\mathtt{pred[u] = w}$
+  \EndIf
+  \EndFor
+  \EndWhile
+  \State\Return$[\mathtt{\pi}, pred]$
+  \EndProcedure
+\end{algorithmic}
+
+\begin{lema}
+  Dado un digrafo \(G=(V,X)\) con pesos positivos en los arcos, al finalizar la iteración \(k\) el algoritmo de Dijsktra determina, siguiendo hacia atrás \texttt{pred} hasta llegar a \(v\), un caminom mínimo entre el vértice \(v\) y cada vértice \(u \in \texttt{S}_k\), con longitud $\mathtt{\pi[u]}$.
+\end{lema}
+
+\begin{demo}
+  Haremos inducción en la cantidad de iteraciones.
+  \paragraph{Caso base (\(k = 0\)):} Antes de entrar por primera vez al ciclo, vale \(\mathtt{S}_0 =\{v\}\) y \(\mathtt{\pi}[v] = 0\). Esto es correcto ya que el camíno mínimo desde \(v\) hasta \(v\) es 0 por definición.
+
+  \paragraph{Paso inductivo:} Consideremos la iteración \(k\) con \(k \geq 1\).
+
+  Nuestra hipotesis inductiva es: Al terminar la iteración  \(k'\) (\(k' < k\)), \(\forall~u\in \texttt{S}_{k'}\), \(\pi[u]\) es la longitud de un camino mínimo de \(v\) a \(u\) finalizado en \(\texttt{pred}[u]\).
+
+  Sea \(u\) el vértice agregado a \texttt{S} en la iteración \(k\). \(\texttt{S}_{k} = \texttt{S}_{k-1}\cup \{u\}\) con \(\texttt{pred}[u] = w\). Como \(w\in\texttt{S}_{k-1}\), por hipotesis inductiva, \(\pi[w]\) es el válor del camino mínimo desde \(v\) a \(w\) definido por \texttt{pred}. Llamemos \(P_{vw}\) a ese camino mínimo.
+
+  Sea \(P = P_{vw} + (w,u)\) y \(P'\) otro camino de \(v\) a \(u\) y sea \(y\in P'\) el primer vértice que no está en \(\texttt{S}_{k-1}\) (debe existir porque \(v\in \texttt{S}_{k-1}\) y \(u\notin\texttt{S}_{k-1}\)):
+  \begin{itemize}
+    \item Si \(y = u\), sea \(x\) el predecesor de \(u\) (que está en \(\texttt{S}_k\)) entonces \(l(P') = \pi[x] + l(x,u)\)
+          \begin{itemize}
+            \item Si \(x\) entró en \texttt{S} después que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[w] + l(w,u)\) en la iteración en la que se agregó a \(w\). Luego, en la iteración  en la que agregó a \(x\) concluyó que \[\pi[u] = \pi[w] + l(w,u) \leq \pi[x] + l(x,u)\]
+
+                  Osea que \(P\) es un camino mas corto que \(P'\).
+            \item  Si \(x\) entró antes que \(w\), entonces el algoritmo seteó \(\pi[u] = \pi[x] + l(x,u)\) en la iteración en la que se agregó a \(x\). Luego, en la iteración en la que agregó a \(w\) concluyó que \[\pi[u] = \pi[x] + l(x,u) \geq \pi[w] + l(w,u)\]
+                  Osea que el nuevo camino \(P\) es más corto que \(P'\) y termina quedando \(\pi[u] = \pi[w] + l(w,u)\).
+          \end{itemize}
+    \item Si \(y\neq u\), entonces ambos vértices son candidatos para ser elegidos en la iteración \(k\). Sin embargo, como se elgió a \(u\) vale que: \[\pi[w] + l(w,u) = \pi_{k-1}[u] \leq\pi_{k-1}[y]\]
+
+          Sea \(x\) el predecesor de \(y\), como \(x\in S_{k-1}\) sabemos que \(\pi_{k-1}[y]\leq\pi[x] + l(x,y)\) (Hizo esta comparación cuando se agregó \(x\) a \texttt{S}\(_{k-1}\)).
+  \end{itemize}
+\end{demo}
+\begin{demoPart}
+  Ahora por hipotesis inductiva, \(\pi[x]\) es la longitud del camino mínimo desde \(v\) hasta \(x\) entonces:
+  \begin{align*}
+    l(P) & = \pi[w] + l(w,u) = \pi_{k-1}[u] \leq \pi_{k-1}[y] \leq \pi[x] + l(x,u) \\
+         & \leq l(P'_{vx}) \leq l(P'_{vx}) + l(x,y) \leq l(P'_{vy}) \leq l(P')
+  \end{align*}
+
+  Entonces \(l(P)\leq l(P')\) para todo camino \(P'\) desde \(v\) a \(u\) y \(\pi[u]\) es la longitud de camino mínimo desde \(v\) a \(u\).\hfill\(\blacksquare\)
+\end{demoPart}
