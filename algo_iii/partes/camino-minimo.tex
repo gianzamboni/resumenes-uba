@@ -321,3 +321,7 @@ En cada iteración, el algoritmo va guardando una cota superior de la longitud d
 
   Luego, en la iteración \(k\), \(\pi[u]\) recibe el valor correcto cuando se examina el arco \((w,u)\). Como este valor no puede ser mejorado (porque implicaria que \(P\) no es camino mínimo), no será modificado en las iteraciones sucesivas del algoritmo. Luego, el algoritmo calcula correctamente los caminos mínimos desde \(v\) al resto de los vértices.\hfill\(\blacksquare\)
 \end{demo}
+
+\begin{theorem}
+  Dados un grafo \(G = (V,X)\) y \(l:X\to\reales\) una función de peso para las aristas de \(G\). Si \(G\) no tiene circuitos de longitud negativa, el algoritmo de Bellman-Ford determina el camino mínimo entre el vértice \(v\) y todos los demás.
+\end{theorem}
