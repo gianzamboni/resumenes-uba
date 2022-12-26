@@ -1,0 +1,51 @@
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\green}[1]{{\color{darkgreen}#1}}
+
+\usetikzlibrary{shapes.multipart}
+
+\tikzstyle{demoBox} = [
+draw=blue!20, very thick,
+rectangle split, rectangle split parts=2, rounded corners, inner xsep=0.5cm,
+rectangle split part fill = {blue!20, blue!5}
+]
+
+\tikzstyle{demoPart} = [
+draw=blue!20, very thick,
+rounded corners, inner xsep=0.5cm,
+fill = blue!5
+]
+%\newcommand{\qed}{\begin{flushright}
+%		$\blacksquare$
+%\end{flushright}}
+
+\NewEnviron{demo}[1][]{%
+  \begin{center}
+    \begin{tikzpicture}
+      \node [demoBox](box){%
+        \textbf{\scriptsize
+          DEMOSTRACIÓN}
+        \nodepart{two}
+        \begin{minipage}{0.9\textwidth}
+          \vspace*{0.1cm}
+          \BODY
+        \end{minipage}
+      };
+    \end{tikzpicture}
+  \end{center}
+}
+
+\NewEnviron{demoPart}[1][]{%
+  \begin{center}
+    \begin{tikzpicture}
+      \node [demoPart](box){%
+        \begin{minipage}{\textwidth}
+          \vspace*{0.1cm}
+          \BODY
+        \end{minipage}
+      };
+    \end{tikzpicture}
+  \end{center}
+}

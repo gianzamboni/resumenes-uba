@@ -1,0 +1,317 @@
+\input{../document.setup}
+
+\title{Teoría de Lenguajes}
+\author{Gianfranco Zambonni}
+\input{../page.setup}
+\input{custom.comands}
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{propiedad}{Propiedad}[section]
+\newtheorem{lema}{Lema}[section]
+\begin{document}
+
+%%% TEOREMA 5.2 LOGICA - Conjunto consistentes (COMPLETAR HAY QUE PENSAR)
+\maketitle
+\tableofcontents
+\newpage
+\section{Introducción}
+\subsection{Relaciones}
+Dados dos conjuntos \(A\) y \(B\), se llama \textbf{relación} \(R\) de \(A\) en \(B\) a todo subconjutno de \(A\times B\). Notamos \(R:A\to B\).
+\begin{itemize}
+  \item \(aRb\) denota el hecho \((a,b)\in R\).
+  \item Si \(A = B\) se dice que \(R\) es una relación sobre \(A\).
+\end{itemize}
+
+\noindent Una relación \(R: A\to A\) es
+\begin{itemize}
+  \item   \textbf{reflexiva} cuando \(\forall a\in A,~aRa\).
+  \item \textbf{simétrica} cuando \(\forall a,b\in A,~aRb \implies bRa\).
+  \item \textbf{transitiva} cuando \(a,b,c\in A,~aRb~\land~bRc\implies aRc\).
+  \item es de \textbf{equivalencia} cuando es reflexiva, simétrica y transitiva. Este tipo de relaciones particiona a \(A\) en clases de equivalencia.
+\end{itemize}
+
+\subsubsection{Operaciones}
+\paragraph{Composición de relaciones:} Si \(R:A\to B\) y \(S:B\to C\) son relaciones, entonces la composición de \(R\) y \(S\) es la relación \(S\circ R:A\to C\) definida por:
+\[S\circ R = \{(a,c)~|~a\in A,~c\in C : \exists b\in B,~aRb~\land~bSc\}\].
+
+\paragraph{Relación de identidad:} La relación de identidad sobre \(A\) es la relación \(id_A:A\to A\) definida por: \[I = \{(a,a)~|~a\in A\}\].
+\begin{itemize}
+  \item Es el elemento neutro de la composición de relaciones.
+\end{itemize}
+
+\paragraph{Relación de potencia:} Dado \(R: A\to A\) se define la relación de potencia \(R^k: A\to A\) como la composición de \(k\) copias de \(R\):
+\[R^n = \left\{
+  \begin{array}{ll}
+    id_A           & \text{si } n = 0 \\
+    R\circ R^{n-1} & \text{si } n > 0
+  \end{array}
+  \right.
+\]
+
+\paragraph{Clausura transitiva/positiva:} Dada una relación \(R:A\to A\) se define la clausura transitiva de \(R\) como la relación \(R^+\) definida por: \[R^+ = \bigcup_{n=1}^\infty R^n\]
+\begin{enumerate}
+  \item \(R\subseteq R^+\).
+  \item \(R^+\) es transitiva
+  \item Para toda relación \(G:A\to A\) tal que \(R\subseteq G \land G\) es transitiva, entonces \(R^+\subseteq G\), es decir \(R^+\) es la relación transitiva más pequeña que contiene a \(R\).
+\end{enumerate}
+\begin{demo}
+  \begin{enumerate}
+    \item[2)] Si \(a R^+ b\) entonces existe una secuencia de elementos \(a = a_0, a_1, \dots, a_n = b\) tales que \(a_i R a_{i+1}\) para todo \(i\in [0,n-1]\).
+
+      Análogamente, como \(b R^+ c\) existe una secuencia de elementos \(b = b_0, b_1, \dots, b_m = c\) tales que \(b_i R b_{i+1}\) para todo \(i\in [0,m-1]\).
+
+      Por lo tanto, \(a R^{n+m} c\), por lo que \(a R^+ c\).
+    \item[3)] Si \(a R^+ b\) entonces existe una secuencia de elementos \(a = a_0, a_1, \dots, a_n = b\) tales que \(a_i R a_{i+1}\) para todo \(i\in [0,n-1]\).
+
+      Como \(R\subseteq G\) entonces \(a_i G a_{i+1}\) para todo \(i\in [0,n-1]\). Como \(G\) es transitiva entonces la aplicación repetida de la transitividad nos lleva a que \(a_1 G a_n\), por lo que \(a G b\).
+  \end{enumerate}
+\end{demo}
+
+\paragraph{Clausura transitiva reflexiva:} \[ R^* = R^+ \cup id_A = \bigcup_{n=0}^\infty R^n\]
+
+Si \(A\) es un conjunto finito, entonces todas las relaciones \(R:A\to A\) son finitas.
+
+Si \(R\) es reflexiva, entonces \(R^* = R^+\).
+
+\subsection{Alfabetos}
+Un alfabeto es un conjunto finito de símbolos.
+
+\paragraph{Cadena:} Una cadena sobre un alfabeto \(\Sigma\) es una secuencia finita de símbolos de \(\Sigma\). Los símbolos son notados respetando el orden de la secuencia.
+
+\subsubsection{Operaciones}
+\paragraph{Concatenación:} Es una operación entre un símbolo del alfabeto \(\Sigma\) y una cadena sobre dicho alfabeto:
+\[ \circ : \Sigma\times\{\text{cadenas sobre }\Sigma\}\to\{\text{cadenas de }\Sigma\}\]
+\begin{itemize}
+  \item La cadena nula \(\lambda\) es el elemento neutro de la concatenación.
+\end{itemize}
+
+\paragraph{Clausura de Kleene de \(\Sigma\): \(\Sigma^*\)}
+\begin{itemize}
+  \item \(\lambda\in\Sigma^*\)
+  \item \(a\in\Sigma \land^*\implies \forall~\alpha\in\Sigma,~a\circ\alpha\in\Sigma^*\)
+\end{itemize}
+
+\paragraph{Clausura positiva de \(\Sigma\):} \(\Sigma^+ = \Sigma^*\setminus\{\lambda\}\)
+
+\subsection{Lenguajes}
+Un lenguaje es un conjunto de cadenas sobre un alfabeto \(\Sigma\).
+
+\subsubsection{Operaciones}
+\paragraph{Concatenación de lenguajes:} Si \(L_1\) y \(L_2\) son lenguajes definidos sobre los alfabetos \(\Sigma_1\) y \(\Sigma_2\) respectivamente, entonces la concatenación de \(L_1\) y \(L_2\) es el lenguaje \(L_1L_2\) definido por:
+\[ L_1L_2 = \{ \alpha\beta~|~\alpha\in L_1,~\beta\in L_2\}\]
+definido sobre el alfabeto \( \Sigma_1\cup\Sigma_2\).
+
+\paragraph*{Clausura de Kleene \(L^*\):} Se define por:
+\begin{align*}
+  L^0 & = \{\lambda\}                 \\
+  L^n & = LL^{n-1} \text{ para } n>=1 \\
+  L^* & = \bigcup_{n=0}^\infty L^n
+\end{align*}
+\paragraph{Clausura positiva \(L^+\):} \(L^+ = \bigcup_{n=1}^\infty L^n\)
+\begin{itemize}
+  \item \(L^+ = LL^*\)
+  \item \(L^* = L^+\cup\{\lambda\}\)
+  \item Si \(L\) es un lenguaje definido sobre \(\Sigma\) entonces \(L\subseteq\Sigma^*\)
+\end{itemize}
+\subsection{Gramáticas}
+Una gramática es una 4-tupla \((V_N,V_T,P,S)\) donde:
+\begin{itemize}
+  \item \(V_N\) es un conjunto finito de símbolos no terminales.
+  \item \(V_T\) es un conjunto finito de símbolos terminales.
+  \item \(P\) es un conjunto finito de reglas de producción: Son pares ordenados \(\alpha,\beta\) donde \(\alpha\in(V_N\cup V_T)^*V_N(V_N\cup V_T)^*\) y \(\beta\in(V_N\cup V_T)^*\).
+
+        Las notamos como \(\alpha\to\beta\).
+  \item \(S\in V_N\) es el símbolo inicial.
+\end{itemize}
+
+\paragraph{Forma setencial de una grámatica:} Se llama forma sentencial a una derivación de la misma (es decir, una cadena formada por símbolos de \(V_N\cup V_T\) que sea el resultado de una derivación a partir de símbolos iniciales):
+\begin{itemize}
+  \item \(S\) es una forma setencial de \(G\)
+  \item Si \(\alpha\beta\gamma\) es una forma setencial de \(G\) y \(\beta\to\delta\in P\) entonces \(\alpha\delta\gamma\) es una forma setencial de \(G\).
+\end{itemize}
+
+\paragraph{Derivación directa en \(G\):} Si \(\alpha\beta\lambda\in(V_N\cup V_T)^*\) y \(\beta\to\delta\in P\) entonces \(\alpha\delta\lambda\) es una derivación directa de \(G\) de \(\alpha\beta\lambda\) y se denota como \(\alpha\beta\lambda\underset{G}{\implies}\alpha\delta\lambda\).
+
+Denotaremos con \(\overset{+}{\underset{G}{\implies}}\) y \(\overset{*}{\underset{G}{\implies}}\) a la clausura positiva y la clausura transitiva y reflexiva de \(\underset{G}{\implies}\), respectivamente.
+
+Además, \(\overset{k}{\underset{G}{\implies}}\) será la potencia \(k\)-ésima de \(\underset{G}{\implies}\).
+
+\paragraph{Lenguaje de una grámatica \(\mathcal{L}(G)\):} Es el conjunto de todas las cadenas de símbolos terminales que son formas setenciales de \(G\).
+
+\[ \mathcal{L}(G) = \{ \alpha\in V_T^*:~S\overset{+}{\underset{G}{\implies}}\alpha\}\]
+
+\subsubsection{Clasificación de grámaticas (Chomsky)}
+\paragraph{Gramáticas regulares (tipo 3):} Son aquellas gramáticas que cumplen alguna de las siguientes condiciones:
+\begin{itemize}
+  \item Todas sus producciones son de la forma \(A\to xB\) o \(A\to x\) donde \(A,B\in V_N\) y \(x\in V_T^*\). En este caso se dice que es una gramática lineal a derecha.
+  \item Todas sus producciones son de la forma \(A\to Bx\) o \(A\to x\) donde \(A,B\in V_N\) y \(x\in V_T^*\). En este caso se dice que es una gramática lineal a izquierda.
+\end{itemize}
+
+Una forma alternativa de escribir una gramática regular es la siguiente:
+\begin{itemize}
+  \item Todas las producciones son de la forma \(A\to aB\) o \(A\to a\) o \(A\to\lambda\) donde \(A,B\in V_N\) y \(a\in V_T\), para el caso de la gramática lineal a derecha.
+  \item Todas las producciones son de la forma \(A\to Ba\) o \(A\to a\) o \(A\to\lambda\) donde \(A,B\in V_N\) y \(a\in V_T\), para el caso de la gramática lineal a izquierda.
+\end{itemize}
+
+\paragraph{Gramáticas libres de contexto (tipo 2):} Son aquellas gramáticas en las que cada producción es de la forma \(A\to\alpha\) donde \(A\in V_N\) y \(\alpha\in(V_N\cup V_T)^*\).
+
+De la definición anterior puede inferirse que toda grámatica regular es libre de contexto.
+
+\paragraph{Gramáticas sensibles al contexto (tipo 1):} Son aquellas gramáticas en las que cada producción es de la forma \(\alpha\to\beta\) donde \(\alpha,\beta\in(V_N\cup V_T)^*\) y \(|\alpha|\leq |\beta|\).
+
+Se puede inferir que toda gramática independiente del contexto que no posea regla borradoraas (es decir, que no posea producciones de la forma \(A\to\lambda\)) es sensible al contexto.
+
+\paragraph{Gramáticas sin restricciones (tipo 0):} Son aquellas gramáticas que no poseen ninguna restricción como las anteriores.
+
+El conjunto de las grámaticas tipo 0 es el conjunto de todas las grámaticas.
+
+\paragraph{Definición:} Un lenguaje generado por una grámatica tipo \(t\) es llamado \textbf{lenguaje tipo \(t\)}.
+
+\newpage
+\section{Autómatas finitos}
+\subsection{Autómatas finitos deterministicos (AFD)}
+Un autómata finito determinista es una 5-tupla \(\mathcal{M}=\langle Q,\Sigma,\delta,q_0,F\rangle\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \(\delta:Q\times\Sigma\to Q\) es una función de transición.
+  \item \(q_0\in Q\) es el estado inicial.
+  \item \(F\subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Función de transición generalizada \(\hat{\delta}\):} La función de transición \(\delta\) está definida para que tome como parámetro un único símbolo de \(Sigma\). Se puede extender para que tomé como parámetro una cadena de símbolos de \(Sigma\):
+\[ \hat{\delta} : Q\times\Sigma^*\to Q\]
+
+se define de manera recursica como:
+\begin{itemize}
+  \item \(\hat{\delta}(q,\lambda)=q\)
+  \item \(\hat{\delta}(q,\beta a)=\delta(\hat{\delta}(q,\beta),a)\) con \(\beta\in\Sigma^*\) y \(a\in\Sigma\)
+\end{itemize}
+
+\paragraph{Cadena aceptada por un AFD:} Una cadena \(\beta\in\Sigma^*\) es aceptada por un AFD \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) si y solo si \(\hat{\delta}(q_0,\beta)\in F\).
+
+\paragraph{Lenguaje aceptado por un AFD:} El lenguaje aceptado por un AFD \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) es el conjunto de todas las cadenas \(\beta\in\Sigma^*\) que son aceptadas por \(\mathcal{M}\):
+\[ L(\mathcal{M}) = \{ \beta\in\Sigma^*:~\hat{\delta}(q_0,\beta)\in F\}\]
+
+\subsection{Autómatas finitos no deterministas (AFND)}
+Un autómata finito no determinista es una 5-tupla \(\mathcal{M}=\langle Q,\Sigma,\delta,q_0,F\rangle\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \red{\(\delta:Q\times\Sigma\to \mathcal{P}(Q)\)} es una función de transición.
+
+        A diferencia de los AFD, la función \(\delta\) devuelve un conjunto de estados en lugar de un solo estado.
+  \item \(q_0\in Q\) es el estado inicial.
+  \item \(F\subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Función de transición generalizada \(\hat{\delta}\):} Primero vamos a definir \(\delta_P : \mathcal{P}(Q)\times\Sigma\to\mathcal{P}(Q)\) de la siguiente manera:
+\[ \delta_P(P,a) = \underset{p\in P}{\bigcup}\delta(p,a)\]
+
+La función \(\hat{\delta} : Q\times\Sigma^*\to \mathcal{P}(Q)\) se define de manera recursiva como:
+\begin{itemize}
+  \item \(\hat{\delta}(q,\lambda)=\{q\}\)
+  \item \(\hat{\delta}(q,\beta a)= \{ p:~\exists r\in\hat{\delta}(q,\beta)\) tal que \(p \in \delta(r, a)\} = \delta_P(\hat{\delta}(q, \beta), a)\) con \(\beta\in\Sigma^*\) y \(a\in\Sigma\)
+\end{itemize}
+
+Para generalizar a un más podemos definir \(\hat{\delta}_P : \mathcal{P}(Q)\times\Sigma^*\to\mathcal{P}(Q)\) de la siguiente manera:
+\[ \hat{\delta}_P(P,\beta) = \underset{q\in P}{\bigcup}\hat{\delta}(q,\beta)\]
+
+\paragraph{Cadena aceptada por un AFND:} Una cadena \(\beta\in\Sigma^*\) es aceptada por un AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) si y solo si \(\hat{\delta}(q_0,\beta)\cap F \neq \emptyset\). Es decir, si alguno de los estados alcanzados por \(\hat{\delta}(q_0,\beta)\) es un estado final.
+
+\paragraph{Lenguaje aceptado por un AFND:} El lenguaje aceptado por un AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) es el conjunto de todas las cadenas \(\beta\in\Sigma^*\) que son aceptadas por \(\mathcal{M}\):
+\[ L(\mathcal{M}) = \{ \beta\in\Sigma^*:~\hat{\delta}(q_0,\beta)\cap F \neq \emptyset\}\]
+
+\subsubsection{Equivalencia entre AFD y AFND}
+Es trivial ver que para todo AFD existe un AFND que acepte el mismo lenguaje.
+
+\begin{teorema}
+  Dado una AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\), existe un AFD \(\mathcal{M}' = \langle Q', \Sigma, \delta', q_0', F'\rangle\) tal que \(L(\mathcal{M}) = L(\mathcal{M}')\).
+\end{teorema}
+Vamos a demostrar este teorema construyendo una AFD \(\mathcal{M}'\) a partir de \(\mathcal{M}\). Una vez constuido deberemos demostrar que \(\mathcal{M}'\) acepta el mismo lenguaje que \(\mathcal{M}\).
+
+\paragraph{Construcción de \(\mathcal{M}'\):}
+\begin{itemize}
+  \item \(Q'\) será el conjunto de partes \(\mathcal{P}(Q)\) que contenga a todos los posibles conjuntos de estados de \(\mathcal{M}\). Vamos a denotar cada estado \(s\in Q'\) con etiquetas del estilo \([q_1,\dots, q_k]\) donde \(q_1,\dots,q_k\in Q\). Entonces:
+        \[ Q' = \mathcal{P}(Q)\]
+  \item \(\delta'([q_1,\dots, q_k],a) = [p_1, \dots, p_m] \iff \delta_P(\{q_1,\dots,q_k\},a) = \{p_1,\dots,p_m\}\)
+  \item \(q_0' = [q_0]\)
+  \item \(F' = \{ [q_1,\dots, q_n]\in Q' : \{q_1,\dots,q_n\}\cap F \neq \emptyset\}\)
+\end{itemize}
+
+\paragraph{Equivalencia de funciónes de transición generalizadas:} Antes de demostrar que ambos automátas aceptan el mismo lenguaje, vamos a demostrar que las funciones de transición generalizadas de ambos automátas son equivalentes cuando las llamamos con el estado inicial como primer parámetro. Es decir, queremos ver que \(\hat{\delta}'(q_0',\beta) = [p_1,\dots,p_k] \iff \hat{\delta}(q_0,\beta) = \{p_1,\dots, p_k\}\).
+
+Lo vamos a hacer por inducción. Recordemos que \(q_0' = [q_0]\):
+\begin{itemize}
+  \item Caso base: \(\beta = \lambda\):
+        \begin{itemize}
+          \item \(\hat{\delta}'([q_0],\lambda) = [q_0]\) por definición de \(\hat{\delta}'\).
+          \item \(\hat{\delta}(q_0,\lambda) = \{q_0\}\) por definición de \(\hat{\delta}\).
+        \end{itemize}
+        Luego \(\hat{\delta}'([q_0],\lambda) = [q_0] \iff \hat{\delta}(q_0,\lambda) = \{q_0\}\).
+
+  \item Caso inductivo: \(\beta \implies \beta a\): Por hipotesis inductiva tenemos que \[\hat{\delta}'(q_0',\beta) = [r_1,\dots,r_m] \iff \hat{\delta}(q_0,\beta) = \{r_1,\dots, r_m\}\]
+        Queremos ver que \(\hat{\delta}'(q_0',\beta a) = [p_1,\dots,p_m] \iff \hat{\delta}(q_0,\beta a) = \{p_1,\dots, p_m\}\)
+        \begin{align*}
+           & \hat{\delta}'(q_0',\beta a) = [p_1,\dots,p_k]  \underset{\text{def.}}{\iff} \delta'(\hat{\delta}'(q_0',\beta),a) = [p_1,\dots,p_k]                                           \\
+           & \underset{\text{def.}}{\iff} \exists [r_1,\dots,r_m]\in Q' \text{ tal que } \delta'(q_0',\beta) = [r_1,\dots,r_m] \land \delta'([r_1,\dots,r_m],a) = [p_1,\dots,p_k]         \\
+           & \underset{H.I.}{\iff} \exists \{   r_1,\dots,r_m\}\in Q \text{ tal que } \hat{\delta}(q_0,\beta) = \{r_1,\dots,r_m\} \land \delta_P(\{r_1,\dots,r_m\},a) = \{p_1,\dots,p_k\} \\
+           & \underset{\text{def.}}{\iff} \delta_P(\hat{\delta}(q_0,\beta),a) = \{p_1,\dots,p_k\} \underset{\text{def.}}{\iff} \hat{\delta}(q_0,\beta a) = \{p_1,\dots,p_k\}
+        \end{align*}
+\end{itemize}
+
+\paragraph{Demostración de la equivalencia:} Ahora que hemos demostrado que las funciones de transición generalizadas de ambos automátas son equivalentes, vamos a demostrar que ambos automátas aceptan el mismo lenguaje:
+
+\begin{align*}
+  \beta \in \mathcal{L}(\mathcal{M}) & \underset{\text{def.}}{\iff} \hat\delta(q_0, \beta) = \{q_1,\dots, q_n\}\land\{q_1,\dots,q_n\}\cap F \neq \emptyset                                                                              \\
+                                     & \iff \underbrace{\hat\delta(q_0', \beta) = [q_1,\dots, q_n]}_{\text{\scriptsize por equivalencia de generalizaciones}} \land~~~~~~\underbrace{[q_1,\dots,q_n]\in F'}_{\text{\scriptsize def.}F'} \\
+                                     & \underset{def.}{\iff} x\in\mathcal{L}(M')
+\end{align*}
+
+\subsection{Autómatas finitos no deterministico con transiciones  \(\lambda\)}
+\label{sec:afd-lambda}
+Un autómata finito no determinista con transiciones \(\lambda\) es un autómata finito no determinista que tiene transiciones \(\lambda\). Estas transacciones nos permiten ir de un estado a otro sin consumir ningún símbolo de entrada.
+
+Los definimos con una 5-upla \((Q,\Sigma,\delta,q_0,F)\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \red{\(\delta : Q \times (\Sigma \cup \{\lambda\}) \to \mathcal{P}(Q)\)} es una función de transición.
+  \item \(q_0 \in Q\) es el estado inicial.
+  \item \(F \subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Clausura \(\lambda\) de un estado \(q\):} Se denota \(Cl_\lambda(q)\) es el conjunto de estados que se pueden alcanzar desde \(q\) siguiendo solo transiciones \(\lambda\). Es decir, \[Cl_\lambda(q) = \delta(q,\lambda)\]
+
+Además \(q\in Cl_\lambda(q)\).
+
+\paragraph{Clausura \(\lambda\) de un conjunto de estados \(P\):} \[Cl_{P\lambda}(P) = \bigcup_{p\in P} Cl_\lambda(p)\]
+\appendix
+\newpage
+
+\paragraph{Generalización de la función de transición:}
+Podemos extender \(\delta\) a conjunto de estados:
+\begin{align*}
+   & \delta_P: \mathcal{P}(Q) \times (\Sigma \cup \{\lambda\}) \to \mathcal{P}(Q) \\
+   & \delta_P(P,a) = \underset{p\in P}{\bigcup} \delta(p,a)
+\end{align*}
+
+Entonces podemos definir:
+
+\begin{align*}
+   & \hat\delta: Q \times \Sigma^* \to \mathcal{P}(Q)                                                                                                                                                             \\
+   & \hat\delta(q_0,\lambda) = Cl_\lambda(q_0)                                                                                                                                                                    \\
+   & \hat\delta(q_0, \beta a) = Cl_{P\lambda}\left(\delta_P(\hat\delta(q_0,\beta), a)\right) = Cl_{P\lambda}\left(\left\{ p: \exists q\in \hat\delta(q_0,\beta) \text{ tal que } p\in \delta(q,a) \right\}\right)
+\end{align*}
+
+Tambien extendemos \(\hat\delta\) a conjuntos de estados:
+\begin{align*}
+   & \hat\delta_P: \mathcal{P}(Q) \times \Sigma^* \to \mathcal{P}(Q)  \\
+   & \hat\delta_P(P,\beta a) = \bigcup_{p\in P} \hat\delta(p,\beta a)
+\end{align*}
+
+\end{document}
+
+
