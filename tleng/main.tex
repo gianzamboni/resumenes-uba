@@ -270,7 +270,7 @@ Lo vamos a hacer por inducción. Recordemos que \(q_0' = [q_0]\):
                                      & \underset{def.}{\iff} x\in\mathcal{L}(M')
 \end{align*}
 
-\subsection{Autómatas finitos no deterministico con transiciones  \(\lambda\)}
+\subsection{Autómatas finitos no deterministico con transiciones  \texorpdfstring{\(\lambda\)}{lambda}}
 \label{sec:afd-lambda}
 Un autómata finito no determinista con transiciones \(\lambda\) es un autómata finito no determinista que tiene transiciones \(\lambda\). Estas transacciones nos permiten ir de un estado a otro sin consumir ningún símbolo de entrada.
 
@@ -314,7 +314,7 @@ Tambien extendemos \(\hat\delta\) a conjuntos de estados:
 \paragraph{Lenguaje aceptado por un AFND-\(\lambda\):} El lenguaje aceptado por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) es el conjunto de todas las cadenas aceptadas por \(M\):
 \[\mathcal{L}(M) = \{\beta \in \Sigma^* : \hat\delta(q_0,\beta)\cap F \neq \emptyset\}\]
 
-\subsubsection{Equivalencia entre AFND y AFND-\(\lambda\)}
+\subsubsection{Equivalencia entre AFND y AFND-\texorpdfstring{\(\lambda\)}{lambda}}
 \label{sec:afd-afd-lambda}
 Dado un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) podemos construir un AFND \(M' =\langle Q,\Sigma,\delta',q_0,F'\rangle\) tal que \(M\) acepte el mismo lenguaje que \(M'\).
 
@@ -347,11 +347,48 @@ Dado un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) podemos con
 
 \paragraph{Demostración de equivalencia:} Veamos ahora que \(M\) acepta el mismo lenguaje que \(M'\), vamos a separar la demostración en dos casos: \(\beta=\lambda\) y \(\beta \neq \lambda\).
 \begin{itemize}
-  \item \(\beta=\lambda\).
-        \begin{align*}
-          \lambda\in \mathcal{L}(M) & \Leftrightarrow \hat\delta(q_0,\lambda)\cap F \neq \emptyset \Leftrightarrow Cl_{P\lambda}(q_0)\cap F \neq \emptyset \Leftrightarrow q_0\in F' \Leftrightarrow \lambda\in \mathcal{L}(M')
-        \end{align*}
+  \item \(\beta=\lambda\)
+        \begin{itemize}
+          \item \(\lambda\in\mathcal{L}(M) \implies \lambda\in\mathcal{L}(M')\)
+                \begin{align*}
+                   & \lambda\in \mathcal{L}(M)  \underset{def.}{\implies} \hat\delta(q_0,\lambda)\cap F \neq \emptyset \underset{def.}{\implies} Cl_{\lambda}(q_0)\cap F \neq \emptyset \\
+                   & \underset{\text{por construcción }M'}{\implies} q_0\in F' \underset{def.}{\implies} \lambda\in \mathcal{L}(M')
+                \end{align*}
+          \item \(\lambda\in\mathcal{L}(M') \implies \lambda\in\mathcal{L}(M)\).
+                \begin{align*}
+                   & \lambda\in \mathcal{L}(M')  \underset{\text{def.}}{\implies} q_0\in F' \underset{\text{construcción } M'}{\implies} q_0\in F \lor Cl_\lambda(q_0)\cap F \neq\emptyset \\
+                \end{align*}
+                Como \(q_0\in F \implies Cl_\lambda(q_0)\cap F \neq\emptyset\), entonces:
+                \begin{align*}
+                  q_0\in F \lor Cl_\lambda(q_0)\cap F \neq\emptyset \implies Cl_\lambda(q_0)\cap F \neq\emptyset \underset{\text{def.}}{\implies} \lambda\in \mathcal{L}(M)
+                \end{align*}
+        \end{itemize}
+  \item \(\beta \neq \lambda\)
+        \begin{itemize}
+          \item \(\beta\in\mathcal{L}(M) \implies \beta\in\mathcal{L}(M')\)
+                \begin{align*}
+                   & \beta\in \mathcal{L}(M) \underset{\text{def.}}{\implies} \hat\delta(q_0,\beta)\cap F \neq \emptyset \underset{\text{por equivalencia transiciones}}{\implies} \delta'(q_0,\beta)\cap F \\
+                   & \underset{\text{construcción } M'}{\implies} \delta'(q_0,\beta)\cap F' \neq \emptyset \underset{\text{def.}}{\implies} \beta\in \mathcal{L}(M')
+                \end{align*}
+          \item \(\beta\in\mathcal{L}(M') \implies \beta\in\mathcal{L}(M)\)
+                \begin{align*}
+                   & \beta\in \mathcal{L}(M') \underset{\text{def.}}{\implies} \delta'(q_0,\beta)\cap F' \neq \emptyset \underset{\text{equiv. transiciones}}{\implies} \hat\delta(q_0,\beta)\cap F' \neq \emptyset \\
+                   & \underset{\text{constr.} M'}{\implies} \hat\delta(q_0,\beta)\cap F \neq \emptyset \lor \hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset
+                \end{align*}
+                Si vale la primera parte de la última expresión \(\delta(q_0,\beta)\cap F \neq \emptyset\) entonces \(\beta\in \mathcal{L}(M)\) por definición.
+
+                Veamos que pasa si vale \(\hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset\):
+                \begin{align*}
+                  \hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset \implies \hat\delta(q_0,\beta)\cap F \neq \emptyset \lor \hat\delta(q_0,\beta)\cap\{q_0\} \neq \emptyset
+                \end{align*}
+
+                La primer parte es lo mismo que arriba, analizemos la segunda:
+                \begin{align*}
+                  \hat\delta(q_0,\beta)\cap\{q_0\} \neq \emptyset \implies Cl_\lambda(q_0)\cap F \neq \emptyset \implies \lambda\in \mathcal{L}(M)
+                \end{align*}
+        \end{itemize}
 \end{itemize}
+Queda demostrada la equivalencia de lenguajes.
 \end{document}
 
 
