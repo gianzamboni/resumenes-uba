@@ -288,9 +288,6 @@ Los definimos con una 5-upla \((Q,\Sigma,\delta,q_0,F)\) donde:
 Además \(q\in Cl_\lambda(q)\).
 
 \paragraph{Clausura \(\lambda\) de un conjunto de estados \(P\):} \[Cl_{P\lambda}(P) = \bigcup_{p\in P} Cl_\lambda(p)\]
-\appendix
-\newpage
-
 \paragraph{Generalización de la función de transición:}
 Podemos extender \(\delta\) a conjunto de estados:
 \begin{align*}
@@ -312,6 +309,49 @@ Tambien extendemos \(\hat\delta\) a conjuntos de estados:
    & \hat\delta_P(P,\beta a) = \bigcup_{p\in P} \hat\delta(p,\beta a)
 \end{align*}
 
+\paragraph{Cadena aceptada por un AFND-\(\lambda\):} Una cadena \(\beta\) es aceptada por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) si y solo si \(\hat\delta(q_0,\beta)\cap F \neq \emptyset\).
+
+\paragraph{Lenguaje aceptado por un AFND-\(\lambda\):} El lenguaje aceptado por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) es el conjunto de todas las cadenas aceptadas por \(M\):
+\[\mathcal{L}(M) = \{\beta \in \Sigma^* : \hat\delta(q_0,\beta)\cap F \neq \emptyset\}\]
+
+\subsubsection{Equivalencia entre AFND y AFND-\(\lambda\)}
+\label{sec:afd-afd-lambda}
+Dado un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) podemos construir un AFND \(M' =\langle Q,\Sigma,\delta',q_0,F'\rangle\) tal que \(M\) acepte el mismo lenguaje que \(M'\).
+
+\paragraph{Construcción de M':} Notemos que ambos autómatas tiene el mismo conjunto de estados \(Q\), el mismo conjunto de símbolos de entrada \(\Sigma\) y el mismo estado inicial \(q_0\). Por lo que solo debemos definir \(\delta'\) y \(F'\).
+\begin{itemize}
+  \item \(\delta'(q,a) = \hat\delta(q, a) = Cl_{P\lambda}\left(\delta_P(\hat\delta(q,\lambda), a)\right)\)
+  \item \(
+        F' = \begin{cases}
+          F\cup\{q_0\} & \text{si } Cl_{P\lambda}(q_0)\cap F \neq \emptyset \\
+          F            & \text{si no}
+        \end{cases}\)
+\end{itemize}
+
+\paragraph{Equivalencia de funciones de transición generalizada:} Vamos a demostrar por inducción que \(\hat\delta'(q_0,\beta) = \hat\delta(q_0,\beta)\) para todo \(|\beta|\geq 1\):
+\begin{itemize}
+  \item Caso base: \(|\beta|=1\). Sea \(\beta = a\), entonces \(\hat\delta'(q_0,\beta) = \hat\delta'(q_0, a) = \hat\delta(q_0, a)\) por como definimos \(\delta'\).
+  \item Caso inductivo: Supongamos que \(\hat\delta'(q_0,\beta) = \hat\delta(q_0,\beta)\) para todo \(|\beta|\leq n\). Sea \(\omega = \beta a\). Entonces:
+        \begin{align*}
+          \hat\delta'(q_0,\omega) & = \hat\delta'(q_0,\beta a) \underset{\text{def.}}{=} \delta'_P(\hat\delta'(q_0,\beta), a) \underset{\text{H.I}}{=} \delta'_P  (\hat\delta(q_0,\beta), a)\hspace*{1cm}(1) \\
+        \end{align*}
+        Por otro lado, dado \(P \subseteq Q\) tenemos que:
+        \begin{align*}
+          \delta_P'(P, a) & \underset{\text{def.}}{=} \bigcup_{p\in P} \delta'(p, a) \underset{\text{construcción de } M'}{=} \bigcup_{p\in P} \hat\delta(p, a)\underset{\text{def}}{=} \hat\delta_P(P,a)
+        \end{align*}
+        Entonces, remplazando en (1) el último término con este resultado, nos queda:
+        \begin{align*}
+          \delta'_P(\hat\delta(q_0,\beta), a) & = \hat\delta_P(\hat\delta(q_0,\beta), a) \underset{\text{def.}}{=} \hat\delta(q_0,\beta a) \underset{\text{def.}}{=} \hat\delta(q_0,\omega)
+        \end{align*}
+\end{itemize}
+
+\paragraph{Demostración de equivalencia:} Veamos ahora que \(M\) acepta el mismo lenguaje que \(M'\), vamos a separar la demostración en dos casos: \(\beta=\lambda\) y \(\beta \neq \lambda\).
+\begin{itemize}
+  \item \(\beta=\lambda\).
+        \begin{align*}
+          \lambda\in \mathcal{L}(M) & \Leftrightarrow \hat\delta(q_0,\lambda)\cap F \neq \emptyset \Leftrightarrow Cl_{P\lambda}(q_0)\cap F \neq \emptyset \Leftrightarrow q_0\in F' \Leftrightarrow \lambda\in \mathcal{L}(M')
+        \end{align*}
+\end{itemize}
 \end{document}
 
 
