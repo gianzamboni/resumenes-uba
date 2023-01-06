@@ -1,0 +1,216 @@
+\section{Minimización de AFD}
+\subsection{Indistinguibilidad}
+Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD, decimos que \(p,q\in Q\),  son indistinguibles \((p\equiv q)\) si para toda cadena \(\alpha\in\Sigma^*\) tal que \(\hat\delta(p,\alpha) \in F\) entonces pasa que \(\hat\delta(q,\alpha) \in F\) y viceversa. Si \(p, q\in Q\) son indistinguibles, entonces decimos que \(p\) y \(q\) son equivalentes.
+
+\[ p \equiv q \iff \forall \alpha \in \Sigma^*:~(\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F)\]
+
+\paragraph{Teorema:} Si \(p\) y \(q\) son indistinguibles, sea \(\alpha\in\Sigma^*\) entonces \(\hat\delta(p,\alpha) \equiv \hat\delta(q,\alpha)\)
+
+\[ p \equiv q \implies \forall \alpha \in \Sigma^*:~\hat\delta(p,\alpha) \equiv \hat\delta(q,\alpha)\]
+\begin{demo}[\textwidth]
+  Sean \(p,q\in Q\), \(p\equiv q\).
+
+  Supogamos que existe \(\alpha\in\Sigma^*\) tal que \(\hat\delta(p, \alpha) \not\equiv \hat\delta(q,\alpha)\) entonces existe una cadena \(\gamma\in\Sigma^*\) que distingue a \(\hat\delta(p,\alpha)\) de \(\hat\delta(q,\alpha)\). Osea que \(\hat\delta(\hat\delta(p,\alpha), \gamma) \in F\) y \(\hat\delta(\hat\delta(q,\alpha), \gamma) \not\in F\) (o viceversa).
+
+  Por def: \(\hat\delta(\hat\delta(p,\alpha),\gamma) = \hat\delta(p,\alpha\gamma)\) y \(\hat\delta(\hat\delta(q,\alpha), \gamma) = \hat\delta(p,\alpha\gamma)\). Entonces, como \(\alpha\gamma\) es una cadena que nos permite distinguir \(p\) de \(q\), es decir \(p \not\equiv q\). Absurdo.
+\end{demo}
+
+\paragraph{Teorema:} \(\equiv\) es una relación de equivalencia.
+
+\begin{demo}[\textwidth]
+  \begin{itemize}
+    \item \textbf{Reflexividad:} \(p\equiv p\):
+          \[ \forall \alpha \in \Sigma^*:~(\hat\delta(p,\alpha) \in F \iff \hat\delta(p,\alpha) \in F) \iff p \equiv p \]
+    \item \textbf{Simetría:} \(p\equiv q \implies q\equiv p\):
+          \begin{align*}
+             & p \equiv q \implies \forall \alpha \in \Sigma^*:~(\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F)  \\
+             & \iff \forall \alpha \in \Sigma^*:~(\hat\delta(q,\alpha) \in F \iff \hat\delta(p,\alpha) \in F) \iff q \equiv p
+          \end{align*}
+    \item \textbf{Transitividad:} \(p\equiv q \land q\equiv r \implies p\equiv r\):
+          \begin{itemize}
+            \item[] \(p \equiv q \implies \forall \alpha \in \Sigma^*:~(\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F)\)
+            \item[] \(q \equiv r \implies \forall \alpha \in \Sigma^*:~(\hat\delta(q,\alpha) \in F \iff \hat\delta(r,\alpha) \in F)\)
+          \end{itemize}
+          Entonces
+          \begin{align*}
+             & \forall \alpha \in \Sigma^*:~(\hat\delta(p,\alpha) \in F \iff \hat\delta(r,\alpha) \in F) \iff p \equiv r
+          \end{align*}
+  \end{itemize}
+\end{demo}
+
+\subsubsection{Indestinguibilidad de orden k}
+\[ p \overset{k}{\equiv} q \iff \forall \alpha\in\Sigma^*, (|\alpha|\leq k) \implies (\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F)\]
+
+\paragraph{Propiedades:}
+\begin{enumerate}
+  \item \(\overset{k}{\equiv}\) es un relación de equivalencia.
+        \begin{demo}[\textwidth]
+          Es exactamente igual a la demostración \(\equiv\) es transitiva.
+        \end{demo}
+  \item \(\overset{k+1}{\equiv}\subseteq\overset{k}{\equiv}\)
+        \begin{demo}[\textwidth]
+          \[ p \overset{k+1}{\equiv} q \implies \forall \alpha\in\Sigma^*, (|\alpha|\leq k+1) \implies (\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F)\]
+
+          Ahora como esto vale \(\forall \alpha\in\Sigma^*, (|\alpha|\leq k+1)\), necesarimente vale \(\forall \alpha\in\Sigma^*, (|\alpha|\leq k)\). Entonces
+          \[ \forall \alpha\in\Sigma^*, (|\alpha|\leq k+1) \implies (\hat\delta(p,\alpha) \in F \iff \hat\delta(q,\alpha) \in F) \implies p \overset{k}{\equiv} q\]
+        \end{demo}
+  \item \(\left(Q / \overset{0}{\equiv}\right) = \{Q-F, F\}\) si \(Q - F \neq \emptyset\) y \(F \neq\emptyset\). En castellano, \(\overset{0}{\equiv}\) divide al conjunto de estados en estados finales y no finales.
+  \item \(
+        p\overset{k+1}{\equiv} q \iff \left(p \overset{0}{\equiv} q
+        \right) \land \left(
+        \forall a\in\Sigma, \delta(p,a) \overset{k}{\equiv} \delta(q,a)
+        \right)
+        \)
+        \begin{demo}[\textwidth]
+          \begin{itemize}
+            \item[\(\Rightarrow)\)] Como \(\overset{k+1}{\equiv} \subseteq \overset{k}{\equiv}\) entonces \( p\overset{k+1}{\equiv} q \implies p \overset{0}{\equiv} q\).
+
+              Por otro lado, supongamos que no vale \(\left(
+              \forall a\in\Sigma, \delta(p,a) \overset{k}{\equiv} \delta(q,a)
+              \right)\) entonces
+              \[
+                \exists a\in\Sigma,~\exists\alpha\in\Sigma^*, (|\alpha|\leq k) \land \hat\delta(\delta(p,a), \alpha) \in F \land \hat\delta(\delta(q,a),\alpha) \notin F
+              \]
+
+              o viceversa. Pero entonces \( p \overset{k+1}{\not\equiv} q\) ya que \(a\alpha\leq k + 1 \) y \(a\alpha\) distinque a \(p\) y a \(q\).
+
+            \item[\(\Leftarrow\)] Supogamos que \(p \overset{k}{\equiv} q\). Entonces ó \(p \overset{0}{\equiv} q\) ó \(\exists a\alpha,~|a\alpha| \leq k + 1\) que distingue \(p\) de \(q\), o sea que:
+              \[
+                \hat\delta(\delta(p,a),\alpha)\in F \land \hat\delta(\delta(q,a),\alpha)\notin F
+              \]
+
+              o viceversa. Pero entonce \(\delta(p,a) \overset{k+1}{\not\equiv} \delta(q,a)\).
+          \end{itemize}
+        \end{demo}
+  \item \(\left(\overset{k+1}{\equiv} = \overset{k}{\equiv}\right) \implies \forall n\geq 0, \left(
+        \overset{k+n}{\equiv} = \overset{k}{\equiv}
+        \right)
+        \)
+        \begin{demo}[\textwidth]
+          Lo vamos a demostrar por inducción:
+          \begin{itemize}
+            \item[] \textbf{Caso base:}\(n=0\). Entonces \(k \overset{k}{\equiv}=\overset{k}{\equiv}\).
+            \item[] \textbf{Paso inductivo:} Suponemos que es cierto para \(n\), osea que vale \(\overset{k+1}{\equiv} =\overset{k}{\equiv} \implies \overset{k+n}{\equiv} = \overset{k}{\equiv}\)
+
+              Queremos probar \(\overset{k+1}{\equiv} =\overset{k}{\equiv} \implies \overset{k+n+1}{\equiv} = \overset{k}{\equiv}\):
+
+              Sabemos que \(\overset{k+n+1}{\equiv} = \overset{k}{\equiv}\) si y solo si \(\forall p,q\in Q, \left(
+              p\overset{k}{\equiv} q \iff p\overset{k+n+1}{\equiv} q
+              \right)\)
+
+              Por la propiedad (4), tenemos:
+              \begin{align*}
+                 & p\overset{k+n+1}{\equiv} \iff \left(p \overset{0}{\equiv}q\right)\land\left(
+                \forall a\in\Sigma, \delta(p,a) \overset{k+n}{\equiv} \delta(q,a)
+                \right)   \left(p \overset{0}{\equiv}q\right)\land\left(
+                \forall a\in\Sigma, \delta(p,a) \overset{k+n}{\equiv} \delta(q,a)
+                \right)                                                                                                              \\
+                 & \underset{\text{prop. 2}}{\implies} \left(p \overset{0}{\equiv}q\right)\land\left(
+                \forall a\in\Sigma, \delta(p,a) \overset{k}{\equiv} \delta(q,a) \right)                                              \\
+                 & \underset{\text{prop. 4}}{\implies} p \overset{k+1}{\equiv}q \underset{\text{prop. 2}}{\implies} q \overset{k}{p}
+              \end{align*}
+          \end{itemize}
+        \end{demo}
+\end{enumerate}
+\subsection{Autómatas finito determinístico mínimo}
+Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD sin estados inaccesibles, el AFD mínimo equivalente \(M'= \langle Q', \Sigma, \delta', q_0, F'\rangle\) se define de la siguiente manera:
+\begin{itemize}
+  \item \(Q' = Q / \equiv\). Vamos a notar \([q]\) al estado que representa a la clase de equivalencia que contiene a \(q\).
+  \item \(\delta'([q], a) = [\delta(q,a)]\)
+  \item \(q_0' = [q_0]\)
+  \item \(F' = \{[q]\in Q'~:~ q \in F\}\)
+\end{itemize}
+
+\paragraph{Teorema:}
+\[\forall \alpha\in\Sigma^*, \hat\delta(q, \alpha) = r \implies \hat\delta'(q_0', \alpha) = \hat\delta'([q], \alpha) = [r]\]
+
+\begin{demo}[\textwidth]
+  Va a ser por inducción en la longitud de \(\alpha\):
+  \begin{itemize}
+    \item \(\alpha = \lambda\): \(\hat\delta(q, \epsilon) = q\), por def. de \(\hat\delta\)
+
+          \(\hat\delta'(q_0', \epsilon) = \hat\delta'([q], \epsilon) = [q]\) por def. de \(\hat\delta'\)
+
+          Entonces \(\hat\delta(q, \lambda) = q \implies \hat\delta'([q], \lambda) = [q]\)
+  \end{itemize}
+\end{demo}
+\begin{demoPart}[\textwidth]
+  \begin{itemize}
+    \item Paso inductivo: Sea \(\alpha = \beta a\), queremos probar que \(\hat\delta(q,\alpha) = r \implies \hat\delta'([q], \alpha) = [r]\).
+
+          Nuestra hipotesis inductiva es \(\forall \beta\in\Sigma^*,~|\beta|\leq n,~\hat\delta(q, \beta) = p \implies \hat\delta'([q], \beta) = [p]\)
+
+          Entonces:
+
+          \[ \hat\delta(q, \alpha) = \hat\delta(q, \beta a) = \delta(\hat\delta(q, \beta), a) = \hat\delta(p, a) = r \underbrace{\implies}_{\text{constr. }\delta'} \delta'([p], a) = [r] ~(1)\]
+
+          Además, por hipotesis inductiva sabemos que \(\hat\delta'([q], \beta) = [p]\), entonces remplazando en el último término de la ecuación (1) obtenemos:
+
+          \[ \delta'([p], \alpha) = \delta'(\hat\delta'([q], \beta), a) = \hat\delta(q,\beta a) = \hat\delta(q,\alpha) = [r] \]
+  \end{itemize}
+
+\end{demoPart}
+\subsection{Algoritmo de minimización de un AFD}
+\begin{algorithmic}
+  \Require \(M = \langle Q, \Sigma, \delta, q_0, F\rangle\)
+  \State \(P\leftarrow\{Q-F, F\}\) \Comment{\(P = \overset{0}{\equiv}\), separamos los estados finales de los no finales}
+  \State \(stop\leftarrow false\)
+  \While{\(stop = false\)}
+  \State\(P'\leftarrow\emptyset\)
+  \For{\(X\in P\)} \Comment{Separamos cada clase de equivalencia en las subclases de \(\overset{n+1}{\equiv}\)}
+  \While{\(\exists e\in X : \lnot\texttt{marked}(e, X)\)} \Comment{Elegimos un nuevo representante para cada clase}
+  \State\(X_1\leftarrow\{e\}\)
+  \State\(\texttt{marked}(e,X)\)
+  \For{\(e'\in X: e\neq e'\)} \Comment{Conseguimos los elementos de esa clase}
+  \If{\(\lnot\texttt{marked}(e', X)\land(\forall a\in\Sigma,~[\delta(e,a)] = [\delta(e',a)])\)}
+  \State\(X_1\leftarrow X_1\cup\{e'\}\)
+  \State\(\texttt{mark}(e',X)\)
+  \EndIf
+  \EndFor
+  \State \(P'\leftarrow P'\cup \{X_1\}\)
+  \EndWhile
+  \EndFor
+  \If{\(P \neq P'\)}
+  \State \(P\leftarrow P'\)
+  \Else
+  \State \(stop\leftarrow true\)
+  \EndIf
+  \EndWhile
+\end{algorithmic}
+
+\paragraph{Lema:} Sean \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) y \(M'=\langle Q', \Sigma, \delta', q'_0, F'\rangle\) dos AFDs. Si \(M\) no poseee estados inaccesibles y todo par de cadenas que conducen a estados diferentes de \(M\) conducen a estados diferentes de \(M'\), entonces la cantidad de estados de \(M'\) es mayor o igual a la cantidad de estados de \(M\). Es decir:
+
+\[
+  \left(
+  \forall\alpha,\beta\in\Sigma^*,~\hat\delta(q, \alpha) \neq \hat\delta(q, \beta) \implies \hat\delta'(q_0', \alpha) \neq \hat\delta'(q_0', \beta)
+  \right) \implies |Q|\leq |Q'|
+\]
+
+\begin{demo}[\textwidth]
+  Sea \(g:Q\to\Sigma^*\) definida por \(g(q) = \min\left\{\alpha\in\Sigma^*:~\hat\delta(q_0,\alpha) = q\right\}\) donde suponemos una relación de orden en \(\Sigma^*\) dada por la longitud para cadenas de distinta longitud, y por el lexicográfico para las cadenas de igual longitud. Definamos \(f: Q\to Q'\) con \(f(q)=\hat\delta'(q_0', g(q))\).
+
+  Como para cualquier par de estados diferentes \(p,q\in Q\) es cierto que \(\hat\delta(q_0, g(p))\neq\hat\delta(q_0, g(q))\), entonces \(\hat\delta'(q_0', g(p))\neq\hat\delta'(q_0', g(q))\). Lo que equivale a decir que \(f(p)\neq f(q)\). Por lo tanto, \(f\) es una función inyectiva, es decir que \(|Q|\leq |Q'|\).
+\end{demo}
+
+\paragraph{Lema:} Sea \(M_R = \langle Q_R, \Sigma, \delta_R, q_{R0}, F_R\rangle\) el autómata reducido correspondiente a \(M = \langle Q, \Sigma, \delta, q_0, F\rangle\). Entonces, cualquier autómata \(M' = \langle Q', \Sigma, \delta', q_{0'}, F'\rangle\) que reconozca el mismo lenguaje que \(M\) no poseerá menos estados que \(M_R\). Osea:
+\[
+  \forall M',~\mathcal{L} (M') = \mathcal{L} (M) \implies |Q'| \geq |Q_R|
+\]
+
+\begin{demo}[\textwidth]
+  Supongamos que \(\exists M'\) tal que \( |Q'| < |Q_R|\), entonces según el lema anterior deben existir dos cadenas \(\alpha,\beta\in\Sigma^*\) tales que
+  \[
+    \hat{\delta_R}(q_0,\alpha) \neq \hat{\delta_R}(q_0,\beta) \land \hat{\delta'}(q_0',\alpha) = \hat{\delta'}(q_0',\beta)
+  \]
+  Pero entonces, como \(\hat{\delta_R}(q_0,\alpha)\) y \(\hat{\delta_R}(q_0,\beta)\) son estados diferentes, entonces \(\hat{\delta}(q_0,\alpha)\) y \(\hat{\delta}(q_0,\beta)\) son estados distinguibles por pertenecer al autómata reducido \(M_R\) entonces \(\exists\gamma\in\Sigma^*\) tal que:
+  \[
+    \hat{\delta}(q_0,\alpha\gamma)\in F \land \hat{\delta}(q_0,\beta\gamma)\notin F
+  \]
+  o viceversa. Entonces \(\alpha\gamma\in\mathcal{L}(M_R) \iff \beta\gamma\notin\mathcal{L}(M_R)\).
+
+  Por otro lado, como \(\hat\delta'(q_0',\alpha) = \hat\delta'(q_0',\beta)\), es obvio que \[
+    \hat\delta'(q_0',\alpha\gamma)\in F\land \hat\delta'(q_0',\beta\gamma)\in F
+  \] o ninguno de los dos perteneces a \(F\). De esto se inifiere que \(\alpha\gamma\in\mathcal{L}(M') \iff \beta\gamma\in\mathcal{L}(M')\).
+
+  Pero entonces, como \(\mathcal{L}(M') \neq \mathcal{L}(M)\), lo que contradice nuestra hipotesis inicial.
+\end{demo}

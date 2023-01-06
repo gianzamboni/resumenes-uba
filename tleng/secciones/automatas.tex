@@ -1,0 +1,227 @@
+\section{Autómatas finitos}
+\subsection{Autómatas finitos deterministicos (AFD)}
+Un autómata finito determinista es una 5-tupla \(\mathcal{M}=\langle Q,\Sigma,\delta,q_0,F\rangle\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \(\delta:Q\times\Sigma\to Q\) es una función de transición.
+  \item \(q_0\in Q\) es el estado inicial.
+  \item \(F\subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Función de transición generalizada \(\hat{\delta}\):} La función de transición \(\delta\) está definida para que tome como parámetro un único símbolo de \(
+\Sigma\). Se puede extender para que tome como parámetro una cadena de símbolos de \(\Sigma\), es decir \(\hat{\delta} : Q\times\Sigma^*\to Q\):
+\begin{itemize}
+  \item \(\hat{\delta}(q,\lambda)=q\)
+  \item \(\hat{\delta}(q,\beta a)=\delta(\hat{\delta}(q,\beta),a)\) con \(\beta\in\Sigma^*\) y \(a\in\Sigma\)
+\end{itemize}
+
+\paragraph{Cadena aceptada por un AFD:} Una cadena \(\beta\in\Sigma^*\) es aceptada por un AFD \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) si y solo si \(\hat{\delta}(q_0,\beta)\in F\).
+
+\paragraph{Lenguaje aceptado por un AFD:} El lenguaje aceptado por un AFD \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) es el conjunto de todas las cadenas \(\beta\in\Sigma^*\) que son aceptadas por \(\mathcal{M}\):
+\[ L(\mathcal{M}) = \{ \beta\in\Sigma^*:~\hat{\delta}(q_0,\beta)\in F\}\]
+
+\subsection{Autómatas finitos no deterministas (AFND)}
+Un autómata finito no determinista es una 5-tupla \(\mathcal{M}=\langle Q,\Sigma,\delta,q_0,F\rangle\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \(\delta:Q\times\Sigma\to \red{\mathcal{P}(Q)}\) es una función de transición.
+
+        A diferencia de los AFD, la función \(\delta\) devuelve un conjunto de estados en lugar de un solo estado.
+  \item \(q_0\in Q\) es el estado inicial.
+  \item \(F\subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Función de transición generalizada \(\hat{\delta}\):} Primero vamos a definir \(\delta_P : \mathcal{P}(Q)\times\Sigma\to\mathcal{P}(Q)\) de la siguiente manera:
+\[ \delta_P(P,a) = \underset{p\in P}{\bigcup}\delta(p,a)\]
+
+La función \(\hat{\delta} : Q\times\Sigma^*\to \mathcal{P}(Q)\) se define de manera recursiva como:
+\begin{itemize}
+  \item \(\hat{\delta}(q,\lambda)=\{q\}\)
+  \item \(\hat{\delta}(q,\beta a)= \{ p:~\exists r\in\hat{\delta}(q,\beta)\) tal que \(p \in \delta(r, a)\} = \delta_P(\hat{\delta}(q, \beta), a)\) con \(\beta\in\Sigma^*\) y \(a\in\Sigma\)
+\end{itemize}
+
+Para generalizar a un más podemos definir \(\hat{\delta}_P : \mathcal{P}(Q)\times\Sigma^*\to\mathcal{P}(Q)\) de la siguiente manera:
+\[ \hat{\delta}_P(P,\beta) = \underset{q\in P}{\bigcup}\hat{\delta}(q,\beta)\]
+
+\paragraph{Cadena aceptada por un AFND:} Una cadena \(\beta\in\Sigma^*\) es aceptada por un AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) si y solo si \(\hat{\delta}(q_0,\beta)\cap F \neq \emptyset\). Es decir, si alguno de los estados alcanzados por \(\hat{\delta}(q_0,\beta)\) es un estado final.
+
+\paragraph{Lenguaje aceptado por un AFND:} El lenguaje aceptado por un AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\) es el conjunto de todas las cadenas \(\beta\in\Sigma^*\) que son aceptadas por \(\mathcal{M}\):
+\[ L(\mathcal{M}) = \{ \beta\in\Sigma^*:~\hat{\delta}(q_0,\beta)\cap F \neq \emptyset\}\]
+
+\subsubsection{Equivalencia entre AFD y AFND}
+Es trivial ver que para todo AFD existe un AFND que acepte el mismo lenguaje.
+
+\begin{teorema}
+  Dado una AFND \(\mathcal{M} = \langle Q, \Sigma, \delta, q_0, F\rangle\), existe un AFD \(\mathcal{M}' = \langle Q', \Sigma, \delta', q_0', F'\rangle\) tal que \(L(\mathcal{M}) = L(\mathcal{M}')\).
+\end{teorema}
+Vamos a demostrar este teorema construyendo una AFD \(\mathcal{M}'\) a partir de \(\mathcal{M}\). Una vez constuido deberemos demostrar que \(\mathcal{M}'\) acepta el mismo lenguaje que \(\mathcal{M}\).
+
+\paragraph{Construcción de \(\mathcal{M}'\):}
+\begin{itemize}
+  \item \(Q'\) será el conjunto de partes \(\mathcal{P}(Q)\). Vamos a denotar cada estado \(s\in Q'\) con etiquetas del estilo \([q_1,\dots, q_k]\) donde \(q_1,\dots,q_k\in Q\). Entonces:
+        \[ Q' = \mathcal{P}(Q)\]
+  \item \(\delta'([q_1,\dots, q_k],a) = [p_1, \dots, p_m] \iff \delta_P(\{q_1,\dots,q_k\},a) = \{p_1,\dots,p_m\}\)
+  \item \(q_0' = [q_0]\)
+  \item \(F' = \{ [q_1,\dots, q_n]\in Q' : \{q_1,\dots,q_n\}\cap F \neq \emptyset\}\)
+\end{itemize}
+
+\paragraph{Equivalencia entre funciones de transición:} Antes de demostrar que ambos automátas aceptan el mismo lenguaje, vamos a demostrar que las funciones de transición generalizadas de ambos automátas son equivalentes cuando las llamamos con el estado inicial como primer parámetro. Es decir, queremos ver que \(\hat{\delta}'(q_0',\beta) = [p_1,\dots,p_k] \iff \hat{\delta}(q_0,\beta) = \{p_1,\dots, p_k\}\).
+
+Lo vamos a hacer por inducción. Recordemos que \(q_0' = [q_0]\):
+\begin{itemize}
+  \item Caso base: \(\beta = \lambda\):
+        \begin{itemize}
+          \item \(\hat{\delta}'([q_0],\lambda) = [q_0]\) por definición de \(\hat{\delta}'\).
+          \item \(\hat{\delta}(q_0,\lambda) = \{q_0\}\) por definición de \(\hat{\delta}\).
+        \end{itemize}
+        Luego \(\hat{\delta}'([q_0],\lambda) = [q_0] \iff \hat{\delta}(q_0,\lambda) = \{q_0\}\).
+
+  \item Caso inductivo: \(\beta \implies \beta a\):
+
+        Nuestra hipotesis inductiva es \(\hat{\delta}'(q_0',\beta) = [r_1,\dots,r_m] \iff \hat{\delta}(q_0,\beta) = \{r_1,\dots, r_m\}\).
+
+        Queremos ver que \(\hat{\delta}'(q_0',\beta a) = [p_1,\dots,p_k] \iff \hat{\delta}(q_0,\beta a) = \{p_1,\dots, p_k\}\)
+        \begin{align*}
+          \hat{\delta}'(q_0',\beta a) = [p_1,\dots,p_k]  \iffa{def.} & \delta'(\hat{\delta}'(q_0',\beta),a) = [p_1,\dots,p_k]                                                            \\
+          \iffa{def.}                                                & \red{\exists [r_1,\dots,r_m]\in Q' \text{ tal que } \delta'(q_0',\beta) = [r_1,\dots,r_m]}                        \\
+                                                                     & \land \blue{\delta'([r_1,\dots,r_m],a) = [p_1,\dots,p_k]}                                                         \\
+          \iffab{\red{H.I}}{\blue{constr.}}                          & \red{\exists \{   r_1,\dots,r_m\}\in Q \text{ tal que } \hat{\delta}(q_0,\beta) = \{r_1,\dots,r_m\}}              \\
+                                                                     & \land \blue{\delta_P(\{r_1,\dots,r_m\},a) = \{p_1,\dots,p_k\}}                                                    \\
+          \iffa{def.}                                                & \delta_P(\hat{\delta}(q_0,\beta),a) = \{p_1,\dots,p_k\} \iffa{def.} \hat{\delta}(q_0,\beta a) = \{p_1,\dots,p_k\}
+        \end{align*}
+\end{itemize}
+
+\paragraph{Demostración de la equivalencia:} Ahora que hemos demostrado que las funciones de transición generalizadas de ambos automátas son equivalentes, vamos a demostrar que ambos automátas aceptan el mismo lenguaje:
+
+\begin{align*}
+  \beta \in \mathcal{L}(\mathcal{M})  \iffa{def.} & \red{\hat\delta(q_0, \beta) = \{q_1,\dots, q_n\}}\land\blue{\{q_1,\dots,q_n\}\cap F \neq \emptyset} \\
+  \iffab{\red{equiv.}}{\blue{constr.}}            & \red{\hat\delta(q_0', \beta) = [q_1,\dots, q_n]}\land\blue{[q_1,\dots,q_n]\in F'}                   \\
+  \iffa{def.}                                     & x\in\mathcal{L}(M')
+\end{align*}
+
+\subsection{Autómatas finitos no deterministico con transiciones  \texorpdfstring{\(\lambda\)}{lambda}}
+\label{sec:afd-lambda}
+Un autómata finito no determinista con transiciones \(\lambda\) es un autómata finito no determinista que tiene transiciones \(\lambda\). Estas transacciones nos permiten ir de un estado a otro sin consumir ningún símbolo de entrada.
+
+Los definimos con una 5-upla \((Q,\Sigma,\delta,q_0,F)\) donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un conjunto finito de símbolos de entrada.
+  \item \red{\(\delta : Q \times (\Sigma \cup \{\lambda\}) \to \mathcal{P}(Q)\)} es una función de transición.
+  \item \(q_0 \in Q\) es el estado inicial.
+  \item \(F \subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Clausura \(\lambda\) de un estado \(q\):} Se denota \(Cl_\lambda(q)\) es el conjunto de estados que se pueden alcanzar desde \(q\) siguiendo solo transiciones \(\lambda\). Es decir, \[Cl_\lambda(q) = \delta(q,\lambda)\]
+
+Además \(q\in Cl_\lambda(q)\).
+
+\paragraph{Clausura \(\lambda\) de un conjunto de estados \(P\):} \[Cl_{P\lambda}(P) = \bigcup_{p\in P} Cl_\lambda(p)\]
+\paragraph{Generalización de la función de transición:}
+Podemos extender \(\delta\) a conjunto de estados:
+\begin{align*}
+   & \delta_P: \mathcal{P}(Q) \times (\Sigma \cup \{\lambda\}) \to \mathcal{P}(Q) \\
+   & \delta_P(P,a) = \underset{p\in P}{\bigcup} \delta(p,a)
+\end{align*}
+
+Entonces podemos definir:
+
+\begin{align*}
+   & \hat\delta: Q \times \Sigma^* \to \mathcal{P}(Q)                                                                                                                                                             \\
+   & \hat\delta(q_0,\lambda) = Cl_\lambda(q_0)                                                                                                                                                                    \\
+   & \hat\delta(q_0, \beta a) = Cl_{P\lambda}\left(\delta_P(\hat\delta(q_0,\beta), a)\right) = Cl_{P\lambda}\left(\left\{ p: \exists q\in \hat\delta(q_0,\beta) \text{ tal que } p\in \delta(q,a) \right\}\right)
+\end{align*}
+
+Tambien extendemos \(\hat\delta\) a conjuntos de estados:
+\begin{align*}
+   & \hat\delta_P: \mathcal{P}(Q) \times \Sigma^* \to \mathcal{P}(Q)  \\
+   & \hat\delta_P(P,\beta a) = \bigcup_{p\in P} \hat\delta(p,\beta a)
+\end{align*}
+
+\paragraph{Cadena aceptada por un AFND-\(\lambda\):} Una cadena \(\beta\) es aceptada por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) si y solo si \(\hat\delta(q_0,\beta)\cap F \neq \emptyset\).
+
+\paragraph{Lenguaje aceptado por un AFND-\(\lambda\):} El lenguaje aceptado por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) es el conjunto de todas las cadenas aceptadas por \(M\):
+\[\mathcal{L}(M) = \{\beta \in \Sigma^* : \hat\delta(q_0,\beta)\cap F \neq \emptyset\}\]
+
+\subsubsection{Equivalencia entre AFND y AFND-\texorpdfstring{\(\lambda\)}{lambda}}
+\label{sec:afd-afd-lambda}
+Dado un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) podemos construir un AFND \(M' =\langle Q,\Sigma,\delta',q_0,F'\rangle\) tal que \(M\) acepte el mismo lenguaje que \(M'\).
+
+\paragraph{Construcción de M':} Notemos que ambos autómatas tiene el mismo conjunto de estados \(Q\), el mismo conjunto de símbolos de entrada \(\Sigma\) y el mismo estado inicial \(q_0\). Por lo que solo debemos definir \(\delta'\) y \(F'\).
+\begin{itemize}
+  \item \(\delta'(q,a) = \hat\delta(q, a) = Cl_{P\lambda}\left(\delta_P(\hat\delta(q,\lambda), a)\right)\)
+  \item \(
+        F' = \begin{cases}
+          F\cup\{q_0\} & \text{si } Cl_{\lambda}(q_0)\cap F \neq \emptyset \\
+          F            & \text{si no}
+        \end{cases}\)
+\end{itemize}
+
+\paragraph{Equivalencia de funciones de transición generalizada:} Vamos a demostrar por inducción que \(\hat\delta'(q_0,\beta) = \hat\delta(q_0,\beta)\) para todo \(|\beta|\geq 1\):
+\begin{itemize}
+  \item Caso base: \(|\beta|=1\). Sea \(\beta = a\), entonces \(\hat\delta'(q_0,\beta) = \hat\delta'(q_0, a) = \hat\delta(q_0, a)\) por como definimos \(\delta'\).
+  \item Caso inductivo: Supongamos que \(\hat\delta'(q_0,\beta) = \hat\delta(q_0,\beta)\) para todo \(|\beta|\leq n\). Sea \(\omega = \beta a\). Entonces:
+        \begin{align*}
+          \hat\delta'(q_0,\omega) & = \hat\delta'(q_0,\beta a) \underset{\text{def.}}{=} \delta'_P(\hat\delta'(q_0,\beta), a) \underset{\text{H.I}}{=} \delta'_P  (\hat\delta(q_0,\beta), a)\hspace*{1cm}(1) \\
+        \end{align*}
+        Por otro lado, dado \(P \subseteq Q\) tenemos que:
+        \begin{align*}
+          \delta_P'(P, a) & \underset{\text{def.}}{=} \bigcup_{p\in P} \delta'(p, a) \underset{\text{constr.}}{=} \bigcup_{p\in P} \hat\delta(p, a)\underset{\text{def}}{=} \hat\delta_P(P,a)
+        \end{align*}
+        Entonces, remplazando el último término en (1), nos queda:
+        \begin{align*}
+          \delta'_P(\hat\delta(q_0,\beta), a) & = \hat\delta_P(\hat\delta(q_0,\beta), a) \underset{\text{def.}}{=} \hat\delta(q_0,\beta a) \underset{\text{def.}}{=} \hat\delta(q_0,\omega)
+        \end{align*}
+\end{itemize}
+
+\paragraph{Demostración de equivalencia:} Veamos ahora que \(M\) acepta el mismo lenguaje que \(M'\), vamos a separar la demostración en dos casos: \(\beta=\lambda\) y \(\beta \neq \lambda\).
+\begin{itemize}
+  \item \(\beta=\lambda\)
+        \begin{itemize}
+          \item \(\lambda\in\mathcal{L}(M) \implies \lambda\in\mathcal{L}(M')\)
+                \begin{align*}
+                  \lambda\in \mathcal{L}( M)  \iffa{def.} & \hat\delta(q_0,\lambda)\cap F \neq \emptyset     \\ \iffa{def.} &Cl_{\lambda}(q_0)\cap F \neq \emptyset \\
+                  \thena{constr.}                         & q_0\in F' \iffa{def.} \lambda\in \mathcal{L}(M')
+                \end{align*}
+
+          \item \(\lambda\in\mathcal{L}(M') \implies \lambda\in\mathcal{L}(M)\).
+                \begin{align*}
+                  \lambda\in \mathcal{L}(M')  \thena{def.} & q_0\in F'                                                                                \\
+                  \thena{constr.}                          & \red{q_0\in F} \lor \blue{Cl_\lambda(q_0)\cap F \neq\emptyset}                           \\
+                  \thena{\red{def. F}}                     & \red{Cl_\lambda(q_0)\cap F \neq\emptyset}\lor \blue{Cl_\lambda(q_0)\cap F \neq\emptyset} \\
+                  \thena{def.}                             & Cl_\lambda(q_0)\cap F \neq\emptyset                                                      \\
+                  \iffa{def.}                              & \lambda\in\mathcal{L}(M)                                                                 \\
+                \end{align*}
+        \end{itemize}
+  \item \(\beta \neq \lambda\)
+        \begin{itemize}
+          \item \(\beta\in\mathcal{L}(M) \implies \beta\in\mathcal{L}(M')\)
+                \begin{align*}
+                  \beta\in \mathcal{L}(M)  \thena{def.} & \hat\delta(q_0,\beta)\cap F \neq \emptyset                                                             \\
+                  \thena{equiv. tran.}                  & \hat\delta'(q_0,\beta)\cap F \neq\emptyset                                                             \\
+                  \thena{constr. M'}                    & \hat\delta'(q_0,\beta)\cap F' \neq \emptyset \underset{\text{def.}}{\implies} \beta\in \mathcal{L}(M')
+                \end{align*}
+          \item \(\beta\in\mathcal{L}(M') \implies \beta\in\mathcal{L}(M)\)
+                \begin{align*}
+                  \beta\in \mathcal{L}(M') \thena{def.}  & \hat\delta'(q_0,\beta)\cap F' \neq \emptyset                                                          \\
+                  \thena{equiv. trans}                   & \hat\delta(q_0,\beta)\cap F \neq \emptyset\lor \hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset
+                  \hat\delta(q_0,\beta) \cap
+                  \\
+                  \underset{\text{constr.} M'}{\implies} & \hat\delta(q_0,\beta)\cap F \neq \emptyset
+                \end{align*}
+                Si vale la primera parte de la última expresión \(\delta(q_0,\beta)\cap F \neq \emptyset\) entonces \(\beta\in \mathcal{L}(M)\) por definición.
+
+                Veamos que pasa si vale \(\hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset\), es decir hay un camino de  transiciones \(\lambda\) desde \(q_0\) hasta algún estado estado \(q'\in F\):
+                \begin{align*}
+                  \hat\delta(q_0,\beta)\cap(F\cup\{q_0\}) \neq \emptyset \implies \hat\delta(q_0,\beta)\cap F \neq \emptyset \lor \hat\delta(q_0,\beta)\cap\{q_0\} \neq \emptyset
+                \end{align*}
+
+                La primer parte es lo mismo que arriba, analizemos la segunda:
+                \begin{align*}
+                  \hat\delta(q_0,\beta)\cap\{q_0\} \neq \emptyset \implies Cl_\lambda(q_0)\cap F \neq \emptyset \implies \lambda\in \mathcal{L}(M)
+                \end{align*}
+        \end{itemize}
+\end{itemize}
+Queda demostrada la equivalencia de lenguajes.

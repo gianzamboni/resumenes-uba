@@ -4,6 +4,19 @@
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\green}[1]{{\color{darkgreen}#1}}
 
+\newcommand{\iffa}[1]{
+  \underset{\text{#1}}{\iff}
+}
+\newcommand{\iffab}[2]{
+  \underset{\text{#2}}{\iffa{#1}}
+}
+
+\newcommand{\thena}[1]{
+  \underset{\text{#1}}{\implies}
+}
+\newcommand{\thenab}[2]{
+  \underset{\text{#2}}{\thena{#1}}
+}
 \usetikzlibrary{shapes.multipart}
 
 \tikzstyle{demoBox} = [
@@ -28,7 +41,7 @@ fill = blue!5
         \textbf{\scriptsize
           DEMOSTRACIÓN}
         \nodepart{two}
-        \begin{minipage}{0.9\textwidth}
+        \begin{minipage}{#1}
           \vspace*{0.1cm}
           \BODY
         \end{minipage}
@@ -41,7 +54,7 @@ fill = blue!5
   \begin{center}
     \begin{tikzpicture}
       \node [demoPart](box){%
-        \begin{minipage}{\textwidth}
+        \begin{minipage}{#1}
           \vspace*{0.1cm}
           \BODY
         \end{minipage}
