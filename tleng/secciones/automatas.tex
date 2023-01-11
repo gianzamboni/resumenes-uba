@@ -93,7 +93,7 @@ Lo vamos a hacer por inducción. Recordemos que \(q_0' = [q_0]\):
         \end{align*}
 \end{itemize}
 
-\paragraph{Demostración de la equivalencia:} Ahora que hemos demostrado que las funciones de transición generalizadas de ambos automátas son equivalentes, vamos a demostrar que ambos automátas aceptan el mismo lenguaje:
+\paragraph{Demostración de la equivalencia:} Ahora que hemos demostrado que las funciones de \\ transición generalizadas de ambos automátas son equivalentes, vamos a demostrar que ambos automátas aceptan el mismo lenguaje:
 
 \begin{align*}
   \beta \in \mathcal{L}(\mathcal{M})  \iffa{def.} & \red{\hat\delta(q_0, \beta) = \{q_1,\dots, q_n\}}\land\blue{\{q_1,\dots,q_n\}\cap F \neq \emptyset} \\
@@ -142,7 +142,7 @@ Tambien extendemos \(\hat\delta\) a conjuntos de estados:
 
 \paragraph{Cadena aceptada por un AFND-\(\lambda\):} Una cadena \(\beta\) es aceptada por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) si y solo si \(\hat\delta(q_0,\beta)\cap F \neq \emptyset\).
 
-\paragraph{Lenguaje aceptado por un AFND-\(\lambda\):} El lenguaje aceptado por un AFND-\(\lambda\) \(M =\langle Q,\Sigma,\delta,q_0,F\rangle\) es el conjunto de todas las cadenas aceptadas por \(M\):
+\paragraph{Lenguaje aceptado por un AFND-\(\lambda\):} El lenguaje aceptado por un AFND-\(\lambda\) \\ \(M = \langle Q,\Sigma,\delta,q_0,F\rangle\) es el conjunto de todas las cadenas aceptadas por \(M\):
 \[\mathcal{L}(M) = \{\beta \in \Sigma^* : \hat\delta(q_0,\beta)\cap F \neq \emptyset\}\]
 
 \subsubsection{Equivalencia entre AFND y AFND-\texorpdfstring{\(\lambda\)}{lambda}}
