@@ -1,0 +1,172 @@
+\section{Lenguajes regulares}
+\label{sec:pumping}
+\subsection{Lema de pumping}
+\label{subsec:pumping}
+\paragraph{Propiedad:} Sea \(\mathcal{L}\) un lenguaje regular, si las longitudes de las cadenas de un lenguaje \(\mathcal{L}\) están acotadas superiormente, entonces \(\mathcal{L}\) tiene que ser finito.
+
+\paragraph{Propiedad:} Si \(\mathcal{L}\) es un luenguaje regular infinito, entonces el grafo de un autómata fínito que acepte \(\mathcal{L}\) tiene que tener un camino desde el estado inicial hasta algún estado final que paso por algún ciclo.
+
+\paragraph{Lema de pumping:} Sea \(\mathcal{L}\) un lenguaje regular, si \(\mathcal{L}\) es infinito, entonces todas las cadenas \(\omega\) de longitud mayor o igual a \(n\) (para algún \(n > 1\)) van a ser de la forma \(\omega=xy^iz\), estext decir hay una parte de \(\omega\) que se repite \(i\) cantidad de veces:
+
+\begin{align*}
+   & \mathcal{L} \text{ es regular e infinito}\implies \exists n\in\mathbb{N}\text{ tal que } \\ &\forall\omega\in\mathcal{L},~|\omega|\geq n:\left( \exists x,y,z\in\Sigma^*: \omega=xyz\land|xy|\leq n\land|z|\geq 1 \land (\forall i\geq  0 :~ xy^iz\in\mathcal{L}\right) \\
+\end{align*}
+\begin{demo}[0.8\textwidth]  Supongamos que \(\mathcal{L}\) es un lenguaje regular. Entonces existe una AFD \(A =\langle Q, \Sigma, \delta, q_0, F\rangle\) que acepta \(\mathcal{L}\).
+
+  Sea \(n = |Q|\) la cantidad de estados de \(A\) y \(\omega=a_1a_2\dots a_m\in\Sigma^*\) de longitud \(m > n\). Para cada \(i = 0,\dots, m\) definamos el estado \(p_i = \hat\delta(q_0, a_1\dots a_i)\) (el estado en el que se encuentra \(A\) después de haber consumido los primeros \(i\) símbolos de \(\omega\).
+
+  Como el \(A\) solo tiene \(n\) estados pero hay \(m > n\) estados \(p\), poes imposible que todos los \(p\) sean distintos. Por lo tanto, existen \(0 \leq i < j \leq n\) tales que \(p_i = p_j\).
+
+  Considerar entonces la siguiente descomposición para \(\omega = xyz\):
+  \begin{itemize}
+    \item[] \(x = a_1\dots a_i\)
+    \item[] \(y = a_{i+1}\dots a_j\)
+    \item[] \(z = a_{j+1}\dots a_m\)
+  \end{itemize}
+  Entonces podemos concluir que:
+  \begin{itemize}
+    \item[] \(\hat\delta(q_0, x) = p_j\)
+    \item[] \(\hat\delta(p_i, y) = p_j\) (que como son el mismo estado implica que \(A\) tiene un ciclo)
+    \item[] \(\hat\delta(p_j, z) = p_m\)
+  \end{itemize}
+
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+
+  Observar que \(x\) podría ser la cadena cuando \(i = 0\), \(z\) podría ser vacía si \(j = n = m\), pero \(y\) no puede ser vacía ya que se tomó \(i < j\).
+
+  Vimos entonces que si \(\mathcal{L}\) es regular y \(|\omega| \geq n\) entonces podemos dividirla en cadenas \(x,y,z\) tal que \(|xy|\leq n\) y \(|z|\geq 1\). Ahora vamos a ver que si \(xyz \in \mathcal{L}\) entonces \(xy^kz \in \mathcal{L}\) para todo \(k\geq 0\).
+
+  \begin{itemize}
+    \item Si \(k = 0\) entonces \(xy^0z = xz\):
+          \[\hat\delta(q_0, xz) = \hat\delta(\hat\delta(q_0, x), z) = \hat\delta(p_i, z) = \hat\delta(p_j, z) = p_m\]
+          Y \(p_m\) es un estado final pues es el mismo estado al que llegamos si la entrada fuese \(xyz\in\mathcal{L}\). Entonces \(xz = xy^0z \in \mathcal{L}\).
+    \item Si \(i > 0\). Entonces \(A\) consume \(x\) desde \(q_0\) y llega hasta \(p_i\). Luego \(A\) consume \(y\) desde \(p_i\) y llega hasta \(p_j\) (que son iguales) y repite este ciclo \(k\) veces hasta consumir todas las apariciones de \(y\) en la cadena. Finalmente \(A\) consume \(z\) desde \(p_j\) y llega hasta \(p_m\). Entonces \(A\) llega a un estado final y por lo tanto \(xy^kz \in \mathcal{L}\).
+  \end{itemize}
+\end{demoPart}
+\paragraph{Contrarecíproco:}
+\begin{align*}
+   & \forall   n\in\mathbb{N}  \exists\omega\in\mathcal{L}\text{ tal que } |\omega|\geq n \land  \forall x,y,z\in\Sigma^*: \omega\neq xyz \land|xy|\geq n\lor|z|\leq 1 \lor \exists i\geq 0,~ xy^iz\notin\mathcal{L} \\ &
+  \implies \mathcal{L}\text{  no es regular}                                                                                                                                                                         \\
+\end{align*}
+
+\subsection{Operaciones sobre lenguajes regulares}
+\subsubsection{Unión de lenguajes regulares}
+Dados \(M_1\) y \(M_2\) AFDs que aceptan los lenguajes \(L_1\) y \(L_2\), respectivamente, podemos construir un AFD \(M = \langle Q_{\cup}, \Sigma, \delta_{\cup}, q_{0\cup}, F_{\cup}\rangle\) que acepte el lenguaje \(L_1 \cup L_2\) con:
+\begin{itemize}
+  \item \(Q_{\cup} = Q_1 \times Q_2\)
+  \item \(\delta_{\cup}((q,r), a) = (\delta_1(q,a),\delta_2(r,a)) \) para \(q\in Q_1\), \(r\in Q_2\) y \(a\in\Sigma\)
+  \item \(q_{0\cup} = (q_{0_1},q_{0_2})\)
+  \item \(F_{\cup} = \{(q,r)\in Q_{\cup} \mid q\in F_1 \lor r\in F_2\}\)
+\end{itemize}
+\begin{demo}[0.8\textwidth]
+  \begin{align*}
+    \alpha\in\mathcal{L}(M_\cup) \iff & \hat\delta_\cup((q_{0_1}, q_{0_2}), \alpha) \in F_\cup \iff (\hat\delta_1(q_{0_1}, \alpha), \hat\delta_2(q_{0_2}, \alpha)) \in F_\cup \\ \iff &\hat\delta_1(q_{0_1}, \alpha) \in F_1 \lor \hat\delta_2(q_{0_2}, \alpha) \in F_2 \\
+    \iff                              & \alpha\in\mathcal{L}(M_1) \lor \alpha\in\mathcal{L}(M_2)
+  \end{align*}
+\end{demo}
+
+\subsubsection{Intersección de lenguajes regulares}
+Dados \(M_1\) y \(M_2\) AFDs que aceptan los lenguajes \(L_1\) y \(L_2\), respectivamente, podemos construir un AFD \(M_\cap = \langle Q_{\cap}, \Sigma, \delta_{\cap}, q_{0\cap}, F_{\cap}\rangle\) que acepte el lenguaje \(L_1 \cap L_2\) con:
+\begin{itemize}
+  \item \(Q_{\cap} = Q_1 \times Q_2\)
+  \item \(\delta_{\cap}((q,r), a) = (\delta_1(q,a),\delta_2(r,a)) \) para \(q\in Q_1\), \(r\in Q_2\) y \(a\in\Sigma\)
+  \item \(q_{0\cap} = (q_{0_1},q_{0_2})\)
+  \item \(F_{\cap} = \{(q,r)\in Q_{\cap} \mid q\in F_1 \land r\in F_2\}\)
+\end{itemize}
+
+\begin{demo}[0.8\textwidth]
+  \begin{align*}
+    \alpha\in\mathcal{L}(M_\cap) \iff & \hat\delta_\cap((q_{0_1}, q_{0_2}), \alpha) \in F_\cap \iff (\hat\delta_1(q_{0_1}, \alpha), \hat\delta_2(q_{0_2}, \alpha)) \in F_\cap \\ \iff &\hat\delta_1(q_{0_1}, \alpha) \in F_1 \land \hat\delta_2(q_{0_2}, \alpha) \in F_2 \\ \iff & \alpha\in\mathcal{L}(M_1) \land \alpha\in\mathcal{L}(M_2)
+  \end{align*}
+\end{demo}
+
+\subsubsection{Complemento de lenguajes regulares}
+\begin{teorema}
+  El conjunto de lenguajes regulares incluido en \(\Sigma^*\) es cerrado respecto de la complementación. Es decir, si \(L\in\mathcal{L}(\Sigma^*)\) es un lenguaje regular entonces \(\bar{L}\in\mathcal{L}(\Sigma^*)\) también lo es.
+\end{teorema}
+\begin{demo}[0.8\textwidth]
+  Sea \(\mathcal{L} = \mathcal{L}(M)\) con \(M=(Q,\Sigma,\delta,q_0,F)\) un AFD cuya función de transición \(\delta\) está definida para todos los elementos del alfabeto \(\Sigma\). Si hay algún símbolo \(a\in\Sigma\) que falta en las posibles transiciones desde un estado \(q\in Q\) entonces se puede agregar un estado trampa \(q_{trampa}\) (no final) y una transición \(\delta(q,a) = q_{trampa}\) para completar la definición de la función.
+
+  Si armamos el automáta \(M_{\lnot} =\langle Q,\Sigma,\delta,q_0,Q - F\rangle\), entnonces \(\alpha\in\mathcal{L}M_{\lnot} \iff \delta(q_0, w) \in Q - F \iff \alpha\in\Sigma^* - L\).
+\end{demo}
+
+\begin{teorema}
+  El conjunto de lenguajes regulares es cerrado respecto de la intersección
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Como ya probamos que el conjunto de lenguajes regulares es cerrado respecto de la unión y el complemento entonces si logramos escribir la interesección como combinación de estas dos operaciones podremos decir que también es cerrada respecto de la intersección:
+  \[
+    L_1 \cap L_2 = \overline{\overline{L_1\cap L_2}} = \overline{\overline{L_1} \cup \overline{L_2}}
+  \]
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+  Entonces si \(L_1\) y \(L_2\) son lenguajes regulares, entonces sus complementos también lo son y la unión de los complementos y el complemento de la misma también lo son.
+\end{demoPart}
+
+\begin{teorema}
+  De estos ultimos tres teoremas puede deducirse que la unión finita y la intersección finita de lenguajes regulares dan por resultado un lenguaje regular.
+
+  \[
+    \forall n\in\mathbb{N},~\bigcup_{i=1}^n L_i \text{ es regular}
+  \]
+  \[
+    \forall n\in\mathbb{N},~\bigcap_{i=1}^n L_i \text{ es regular}
+  \]
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Por inducción sobre n:
+  \begin{itemize}
+    \item[] \textbf{Caso base:} \(n=0\). \[
+        \bigcup_{i=1}^0 L_i = \emptyset \text{ es regular}
+      \]
+      \[ \bigcap_{i=1}^0 L_i  = \emptyset \text{ es regular}\]
+    \item \textbf{Caso inductivo:} \(n\geq 1\). Supongamos que \(L_1,\dots,L_n\) son lenguajes regulares y que \(\overset{n-1}{\underset{i=1}{\bigcup}} L_i\) y \(\overset{n-1}{\underset{i=1}{\bigcap}} L_i\) son lenguajes regulares. Entonces:
+
+          \[ \bigcup_{i=1}^{n} L_i = \bigcup_{i=1}^{n-1} L_i \cup L_n \text{ es regular}\]
+          \[ \bigcap_{i=1}^{n} L_i = \bigcap_{i=1}^{n-1} L_i \cap L_n \text{ es regular}\]
+  \end{itemize}
+\end{demo}
+\begin{teorema}
+  Todo lenguaje finito es regular
+\end{teorema}
+\begin{demo}[0.8\textwidth]
+  Sea \(L\) un lenguaje finito tal que \(|L| = n\) y \(x_i \in L\) con \(1 \leq i \leq n\).
+
+  Entonces podemos definir \(n\) lenguajes \(L_i = \{ x_i \} \) regulares. Por el teorema anterior, la unión finita de lenguajes regulares es un lenguaje regular. Entonces \(L = \overset{n}{\underset{i=1}{\bigcup}} L_i\) es un lenguaje regular.
+\end{demo}
+
+\newpage
+\subsection{Problemas decicibles acerca de lenguajes regulares}
+\begin{enumerate}
+  \item \textbf{Pertenencia:} Dado un lenguaje regular \(L\) y una cadena \(w\), determinar si \(w\in L\).
+        \begin{itemize}
+          \item[] Se construye un AFD \(M\) que reconozca \(L\) y se verifica si \(w\) es aceptada por \(M\).
+        \end{itemize}
+  \item \textbf{Finitud:} Dado un lenguaje regular \(L\), determinar si \(L\) es finito.
+        \begin{itemize}
+          \item[] Un lenguaje regular \(L\) es finito, si en su AFD ningún ciclo que es alcanzable desde el estado inicial puede, a su ve, alcanzar algún estado final.
+            \[
+              L \text{ finito } \iff \left(
+              \forall q \in Q,\left(
+                q_0 \overset{*}{\rightarrow} q \land q \overset{*}{\rightarrow} f \in F \implies \left(\not\exists q\overset{+}{\rightarrow} q\right)
+                \right)
+              \right)\]
+            Escrito en función de \(\delta\):
+            \begin{align*}
+              L \text{ finito si y solo si: } \forall q \in Q & \text{ tal que } \left(
+              \exists\alpha,\omega\in\Sigma^*,~\hat\delta(q_0, \alpha) = q \land \hat\delta(q, \omega) = f \in F
+              \right)                                                                   \\ &\text{vale que} \left(\not\exists\beta\in\Sigma^+,~\hat\delta(q, \beta) = q\right)
+            \end{align*}
+        \end{itemize}
+  \item \textbf{Vacuidad:} Dado un lenguaje regular \(L\), determinar si \(L\) es vacío.
+        \begin{itemize}
+          \item[] Se construye el AFD \(M\) que reconozca \(L\) y se verifica si el conjunto \(A\) de estados alcanzables de \(M\) tiene un estado final. Si \(F\cap A = \emptyset\), entonces \(L\) es vacío.
+        \end{itemize}
+  \item \textbf{Equivalencia:} Dados dos lenguajes regulares \(L_1\) y \(L_2\), determinar si \(L_1\) y \(L_2\) son equivalentes.
+        \begin{itemize}
+          \item[] Si el lenguaje \( (L_1 \cap \overline{L_2}) \cup (\overline{L_1}\cap L_2) \) es vacío, entonces \(L_1\) y \(L_2\) son equivalentes, si no no lo son.
+        \end{itemize}
+\end{enumerate}

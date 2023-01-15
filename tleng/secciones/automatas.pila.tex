@@ -1,0 +1,179 @@
+\section{Autómatas de Pila}
+\label{sec:automatas-pila}
+
+Los autómatas de pila (AP) son autómatas fínitos que además tienen la cpaidad de almacenar información en una pila con dos operaciones básicas: apilar y desapilar. La operación apilar consiste en agregar un elemento a la pila, mientras que la operación desapilar consiste en eliminar el elemento que se encuentra en la cima de la misma.
+
+Cuando se va a realiar una transición, se consume un elemento de la cadena de entrada y un elemento del tope de la pila. Al moverse al  nuevo estado, el automáta puushea (apila) una cadena de símbolos en la pila (que puede ser vacía).
+
+\paragraph{Definición:} Un autómata de pila (AP) es una 7-tupla $M = (Q, \Sigma, \Gamma, \delta, q_0, Z_0, F)$ donde:
+
+\begin{itemize}
+  \item $Q$ es un conjunto finito de estados.
+  \item $\Sigma$ es el alfabeto de entrada y es finito.
+  \item $\Gamma$ es un alfabeto de la pila y es finito.
+  \item $\delta$ es la función de transición, que es un conjunto de reglas de la forma:
+        \[ \delta: Q \times (\Sigma\cup\{\lambda\}) \times \Gamma \rightarrow \mathcal{P}(Q\times\Gamma^*) \]
+        \[ \delta(q, a, Z) = \{ (p_1, \gamma_1), (p_2, \gamma_2), \ldots, (p_n, \gamma_n) \} \]
+        \(\delta\) indica el estado que \(p_i\) al que se transiciona y la cadena \(\gamma_i\) que se apila en la pila.
+  \item $q_0 \in Q$ es el estado inicial.
+  \item $Z_0 \in \Gamma$ es el símbolo inicial de la pila.
+  \item $F\subseteq Q$ es el conjunto de estados finales.
+\end{itemize}
+
+\subsection{Configuración instantanea}
+\label{subsec:configuracion-instantanea}
+
+Una configuración instantánea de un autómata de pila es una 3-tupla $(q, w, \gamma) \in Q\times\Sigma\times\Gamma^*$ donde:
+\begin{itemize}
+  \item $q \in Q$ es el estado actual.
+  \item $w \in \Sigma^*$ es la parte de la cadena de entrada que no ha sido consumida.
+  \item $\gamma \in \Gamma^*$ es el contenido de la pila.
+\end{itemize}
+
+La configuracion inicial de un automáta será entonces $\sigma = (q_0, \alpha, Z_0)$ si \(\alpha\) es la cadena que usamos de entrada.
+
+\paragraph{Cambio de configuración:} Sea $M=\langle Q, \Sigma, \Gamma, \delta, q_0, Z_0, F \rangle$ un automáta de pila, \(a\in\Sigma\), \(\alpha\in\Sigma^*\), \(t\in\Gamma\), \(\tau,\pi\in\Sigma^*\) y \(q,r\in Q\). Definimos las transiciones \((\vdash\)) entre dos configuraciones instantaneas de la siguiente manera:
+\begin{itemize}
+  \item \((q, a\alpha, t\pi)\vdash (r, \alpha, \tau\pi)\) si \((r,\tau)\in\delta(q,a,t)\).
+  \item \((q,   \alpha, t\pi)\vdash (r, \alpha, \tau\pi)\) si \((r,\tau)\in\delta(q,\lambda,t)\).
+\end{itemize}
+
+\subsection{Lenguajes reconocidos por un autómata}
+\subsection{Lenguaje aceptado por estado final}
+Son todas las cadenas \(\alpha\in\Sigma^*\) que hacen que el automáta llegue a un estado final \(q\in F\).
+
+\[ \mathcal{L}(M) = \{ \alpha \in \Sigma^* \mid \exists q \in F \text{ tal que } (q_0, \alpha, Z_0) \overset{*}{\vdash}  (q, \lambda, Z_0) \} \]
+
+\subsubsection{Lenguaje aceptado por pila vacía}
+Son todas las cadenas \(\alpha\in\Sigma^*\) que hacen que el automáta llegue a un estado en el cual la pila quede vacía.
+
+\[ \mathcal{L}_\lambda(M) = \{ \alpha \in \Sigma^* \mid \exists q \in F \text{ tal que } (q_0, \alpha, Z_0) \overset{*}{\vdash}  (q, \lambda, \lambda) \} \]
+
+
+\begin{teorema}
+  \label{teo:automata-pila}
+  Sea \(M=\langle Q, \Sigma, \Gamma, \delta, q_0, Z_0, F \rangle\) un automáta que acepta el lenguaje \(\mathcal{L}(M)\) por estado final, entonces existe \(M'=\langle Q', \Sigma, \Gamma', \delta', q'_0, X_0, \emptyset \rangle\) tal que \(\mathcal{L}_\lambda(M') = \mathcal{L}(M)\).
+\end{teorema}
+\begin{demo}[0.8\textwidth]
+  Construimos \(M'\) de la siguiente manera:
+  \begin{itemize}
+    \item \(Q' = Q \cup \{q_\lambda, q_0'\}\)
+    \item \(\Gamma' = \Gamma \cup \{ X_0 \}\)
+    \item \(\delta': Q'\times\Sigma\times\Gamma' \rightarrow \mathcal{P}(Q'\times\Gamma')\)
+          \begin{enumerate}
+            \item\(\delta'(q_0', \lambda, X_0) = \{ (q_0, Z_0X_0) \}\)
+            \begin{itemize}
+              \item[] \(M'\) entra al estado inicial de \(M\) con la pila \(Z_0X_0\). como \(X_0\) no es un símbolo de la pila de \(M\), \(M\) no puede vaciar la pila.
+            \end{itemize}
+            \item  \(\forall q\in Q\), \(a\in\Sigma\cup\{\lambda\}\),   \( \delta'(q, a, Z) = \{ (r, \tau) \mid (r, \tau) \in \delta(q, a, Z) \text{ con } r\in Q\land \tau\in\Gamma^* \} \)
+                  \begin{itemize}
+                    \item[] \(M'\) sigue las mismas transiciones que \(M\) para todos los estados originales.
+                  \end{itemize}
+          \end{enumerate}
+  \end{itemize}
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+  \begin{itemize}
+    \begin{enumerate}
+      \setcounter{enumi}{2}
+      \item \(\forall q\in F\), \(\forall Z\in\Gamma', (q_\lambda, \lambda) \in\delta'(q, \lambda, Z)\)
+            \begin{itemize}
+              \item[] Cuando \(M'\) llega a un estado que es final en \(M\) automáticamente se activa el el estado \(q_\lambda\) que desencola el último elemento de la pila (y no pushea nada).
+            \end{itemize}
+      \item \(\forall Z\in\Gamma', (q_\lambda, \lambda) \in\delta'(q_\lambda, \lambda, Z)\)
+            \begin{itemize}
+              \item[] Cuando \(M'\) llega al estado \(q_\lambda\), sin importar cual es el tope de la pila lo desencola hasta que la pila queda vacía (hay un loop sobre \(q_\lambda\) que consume toda la pila).
+            \end{itemize}
+    \end{enumerate}
+  \end{itemize}
+
+  Veamos que \(\mathcal{L}_\lambda(M) = L\), lo vamos a demostrar en dos pasos:
+  \paragraph{\(\mathcal{L}(M) \subseteq \mathcal{L}_\lambda(M)\):}
+  \begin{itemize}
+    \item[]   Si \(\alpha\in \mathcal{L}(M)\) entonces \((q_0, \alpha, Z_0) \underset{M}{\overset{*}{\vdash}}  (q, \lambda, \gamma)\) con \(q\in F\) (por def.).
+
+      Por la regla 1, tenemos que \((q_0', \alpha, X_0) \underset{M'}{\overset{*}{\vdash}}  (q_0, \alpha, Z_0X_0)\)
+
+      Por la regla 2, \((q_0, \alpha, Z_0) \underset{M'}{\overset{*}{\vdash}}  (q, \lambda, \gamma)\), entonces \[(q_0', \alpha, X_0) \underset{M'}{\overset{*}{\vdash}}  (q_0, \alpha, Z_0X_0) \underset{M'}{\overset{*}{\vdash}} (q,\lambda, \gamma X_0)\]
+
+      Por las reglas 3 y 4 es cierto que \((q,\lambda, \gamma X_0) \underset{M'}{\overset{*}{\vdash}} (q_\lambda, \lambda, \lambda)\)
+
+      Por lo tanto, \(\alpha\in \mathcal{L}_\lambda(M)\)
+  \end{itemize}
+
+  \paragraph{\(\mathcal{L}_\lambda(M) \subseteq L\):}
+  \begin{itemize}
+    \item[] Si \(\alpha\in \mathcal{L}_\lambda(M)\) entonces, por como construimos \(M'\) vale que \[(q_0', \alpha, X_0) \underset{M'}{\vdash} \underbrace{(q_0, \alpha, Z_0X_0) \underset{M'}{\overset{*}{\vdash}} (q,\lambda, \gamma X_0)}_{A} \underset{M'}{\overset{*}{\vdash}} (q_\lambda, \lambda, \lambda)\]
+
+      De \(A\) se puede ver que \((q_0,\alpha, Z_0) \underset{M}{\overset{*}{\vdash}} (q,\lambda, \gamma)\). Además como los únicos estados que pueden llegar a \(q_\lambda\) son estados finales de \(M\) (por 3) vale que \(q\in F\). Luego \(\alpha\in \mathcal{L}(M)\)
+  \end{itemize}
+\end{demoPart}
+
+\begin{teorema}
+  Sea \(M=\langle Q, \Sigma, \Gamma, \delta, q_0, Z_0, \emptyset \rangle\) y \(\mathcal{L}_\lambda(M)\) el lenguaje que acepta por pila vacía. Entonces existe \(M'= \langle Q', \Sigma, \Gamma', \delta', q_0', X_0, F \rangle\) tal que \(\mathcal{L}(M') = \mathcal{L}_\lambda(M)\).
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Construimos \(M'\) de la siguiente manera:
+  \begin{itemize}
+    \item \(Q' = Q \cup \{q'_0, q'_f\}\)
+    \item \(\Gamma' = \Gamma\cup\{X_0\}\)
+    \item \(F = \{ q'_f \} \)
+    \item \(\delta': Q' \times (\Sigma \cup \{\lambda\}) \times \Gamma' \to \mathcal{P}(Q' \times \Gamma'^*)\)
+          \begin{enumerate}
+            \item \(\delta'(q'_0, \lambda, X_0) = \{(q_0, Z_0X_0)\} \)
+                  \begin{itemize}
+                    \item[] \(M'\) activa automaticamente el estado \(q_0\) con pila \(Z_0X_0\) y como \(X_0\) no es un símbolo de \(\Gamma\), \(M\) no puede consumirlo y vaciar la pila.
+                  \end{itemize}
+            \item \( \forall q\in Q, \forall a\in\Sigma\cup\{\lambda\},  \delta'(q, a, Z) = \delta(q, a, Z) \)
+                  \begin{itemize}
+                    \item[] Simulación de \(M\).
+                  \end{itemize}
+            \item \(\forall q\in Q,~(q'_f, \lambda) \in \delta(q,\lambda,X_0)\)
+                  \begin{itemize}
+                    \item[] Todos los estados a los que se puede llega con la pila vacía en \(M\), llegarán con \(X_0\) en  \(M'\). En este caso, podrán saltar automaticamente al estado \(q'_f\in F\).
+                  \end{itemize}
+          \end{enumerate}
+  \end{itemize}
+
+  La demostración de que ambos lenguajes son equivalentes es similar a la anterior.
+\end{demo}
+
+\subsection{Gramáticas independientes de contexto}
+
+Para toda grámatica independiente de contexto \(G\), puede definirse un autómata de pila \(M\) que acepta por pila vacía el lenguaje generado por dicha gramática.
+
+\begin{demo}[0.8\textwidth]
+  \red{Esto no es una demostración completa.}
+
+  Sea \(G = \langle V_N, V_T, P, S \rangle\) una gramática independiente de contexto, vamos a contruir \(M=\langle Q, \Sigma, \Gamma, \delta, q_0, S, \emptyset \rangle\) tal que \(\mathcal{L}(M) = \mathcal{L}(G)\):
+  \begin{itemize}
+    \item \(Q = \{q_0\}\)
+    \item \(\Sigma = V_T\)
+    \item \(\Gamma = V_N\cup V_T\)
+    \item \(\delta(q_0, a, t) = \begin{cases}
+            \{(q_0,\alpha) : t \to \alpha \in P \} & \text{si } t \in V_N \land a = \lambda        \\
+            \{(q_0, \lambda)\}                     & \text{si } t \in V_T \land a = t \neq \lambda \\
+          \end{cases}\)
+  \end{itemize}
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+  Veamos que \(M\) acepta \(\mathcal{L}(G)\):
+  \begin{itemize}
+    \item Si en el tope de la pila hay un símbolo no términal \(t\in V_N\), entonces el autómata lo remplazará por el lado derecho \(\alpha\) de alguna producción que tenga a \(t\) en el lado izquierdo. Esto lo hará de manera tal que el símbolo que está más a la izquierda en el lado derecho de dicha producción sea el siguiente tope de la pila.
+    \item Si en el tope de la pila hay un símbolo terminal \(t\in V_T\), entonces el autómata verificará que este sea igual al próximo símbolo en la cadena de entrada y lo desapilará.
+  \end{itemize}
+\end{demoPart}
+
+\subsection{Autómatas de pila deterministicos}
+Es un autómata de pila \(M=\langle Q, \Sigma, \Gamma, \delta, q_0, Z_0, F \rangle\) que cumple que para todo \(q\in Q,~a\in\sigma\) y \(A \in \Gamma\):
+\begin{enumerate}
+  \item \(|\delta(q,a,A)|\leq 1\)
+  \item \(|\delta(q,\lambda,A)| \leq 1\)
+  \item \(|\delta(q,\lambda, A) = 1 \implies |\delta(q, a, A)| = 0\)
+\end{enumerate}
+
+\subsubsection{Propiedad del prefijo}
+Se dice que un lenguaje \(L\) posee la \textbf{propiedad del prefijo} si y sollo si para todo par de cadenas \textbf{no nulas} \(x\) e \(y\) es cierto que \(x \in L \implies xy\notin L\).
+
+Si un lenguaje \(L\) no posee la propiedad del prefijo, entonces todo autómata de pila \(M\) que acepte \(L\) por pila vacía es necesariamente \textbf{no deterministico}
