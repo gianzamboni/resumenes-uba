@@ -1,0 +1,140 @@
+\section{Gramáticas Independientes del Contexto}
+\begin{itemize}
+  \item[] Una gramática \(G = \langle V_N, V_T, P, S \rangle\) es independiente del contexto si y solo si las producciones en \(P\) son de la forma \(A\to\alpha\) con \(A \in V_N\) y \(\alpha \in (V_N \cup V_T)^*\).
+  \item[] Si en particular para toda \(A\to\alpha\in P\) pasa que \(\alpha\in(V_N\cup V_T)^+\) (o sea, sin reglas borradoras), entonces decimos que \(G\) es una \textbf{gramática propia}.
+\end{itemize}
+\subsection{Árboles de Derivación}
+Sea \(G = \langle V_N, V_T, P, S \rangle\) una gramática independiente del contexto. Un árbol de derivación de una cadena \(\omega\) en \(G\) es una estructura de árbol tal que:
+\begin{itemize}
+  \item Cada vértice posee una etiqueta que pertenece al conjunto \(V_N \cup V_T\cup\{\lambda\}\).
+  \item La raíz del árbol posee la etiqueta \(S\).
+  \item Si un vértice es interior, entonces su etiqueta pertenece al conjunto \(V_N\).
+  \item Si un vértice \(v_n\) posee la etiqueta \(A\) y sus hijos \(v_1, \ldots, v_m\) poseen las etiquetas \(X_1, \ldots, X_m\), entonces \(A\to X_1\ldots X_m\in P\).
+  \item Si un vértice es hoja, entonces su etiqueta pertenece al conjunto \(V_T\cup\{\lambda\}\).
+  \item Si una hoja posee la etiqueta \(\lambda\), entonces es el único hijo de su.
+\end{itemize}
+
+\paragraph{Camino:} Sea \(A\in V_N\) y \(X\in V_n\cup V_T\) un vértice de un árbol de derivación. El camino de \(A\) a \(X\) es la secuencia de vértices \(A=v_1, v_2, \ldots, v_n=X\) tal que \(v_i\) es hijo de \(v_{i+1}\) para todo \(i\in\{1, \ldots, n-1\}\).
+
+\paragraph{Altura de un árbol:} La altura de un árbol de derivación es la longitud del camino más largo de la raíz a una hoja.
+
+\paragraph{Longitud de un camino:} La longitud de un camino es la cantidad de arcos que lo componen.
+
+\begin{lemma}\label{lem:altura}
+  Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contexto con \(P\neq\emptyset\) y sea \(T(S)\) el árbol de derivación de \(S\) en \(G\) para algún \(\alpha\in\Sigma^*\) de altura \(h\).
+  \begin{center}
+    Si \(a=\max\{|\beta|: A\to\beta\in P\}\), entonces \(|\alpha|\leq a^h\)
+  \end{center}
+\end{lemma}
+
+\begin{demo}[0.8\textwidth]
+  Por inducción en \(h\):
+  \begin{itemize}
+    \item \textbf{Caso base:} \(h=0\). El único árbol de derivación posible de esta altura es el símbolo \(S\). Por lo tanto \(a^h = a ^ 0 = 1 = |S|\).
+    \item \textbf{Paso inductivo:} Sea \(\mathcal{T}(S)\) el árbol de derivación para \(\alpha\) de altura \(h+1\).  Sea \(\gamma\in(V_N\cup V_T)^+\) una cadena tal que \(\gamma\Rightarrow\alpha\) en \(G\). Entonces el árbol de derivación de \(\gamma\) en \(G\) tiene altura \(h\).
+
+
+  \end{itemize}
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+  \begin{itemize}
+    \item[]
+      Por hipotesis inductiva, vale que \(|\gamma|\leq a^h\). Por lo tanto, \(|\alpha|\leq a^h\).
+
+      Por otra parte, \(|\alpha|\leq a|\gamma|\) ya que en el peor de los casos cada símbolo de \(\gamma\) usa la reducción de mayor tamaño. Luego, \(|\alpha|\leq aa^h = a^{h+1}\).
+  \end{itemize}
+\end{demoPart}
+\subsection{Gramáticas Ambiguas}
+Una gramática independiente del contexto \(G\) es \textbf{ambigua} si y solo si \(\exists \alpha\in\mathcal{L}(G)\) tal que posea más de un árbol de derivación.
+
+\paragraph{Lenguaje intrisícamente ambiguo:} Un lenguaje independiente del contexto \(L\) es \textbf{íntrisicamente ambiguo}si y solo si todas las grámaticas que lo tienen como lenguaje son ambiguas.
+\paragraph{Derivación más a la izquierda:} Una \textbf{derivación más a la izquierda} \(\left(\underset{L}{\Rightarrow}\right)\) de una cadena \(\omega\) es aquella que se obtiene remplazando el primer símbolo no terminal que contenga por alguna de sus derivaciónes:
+Si \(A\in V_N\), \(\alpha\in V_T^*\), \(\beta \in (V_N \cup V_T)^*\) y \(A\to\gamma\in P\) entonces \(\alpha A \beta \underset{L}{\Rightarrow}  \alpha\gamma\beta \)
+
+\paragraph{Derivación más a la derecha:}  Una \textbf{derivación más a la derecha} \(\left(\underset{R}{\Rightarrow}\right)\) de una cadena \(\omega\) es aquella que se obtiene remplazando el último símbolo no terminal que contenga por alguna de sus derivaciónes:
+Si \(A\in V_N\), \(\alpha\in (V_N \cup V_T)^*\), \(\beta \in V_T^*\) y \(A\to\gamma\in P\) entonces \(\alpha A \beta \underset{R}{\Rightarrow}  \alpha\gamma\beta \)
+
+\subsection{Lema de Pumping para Lenguajes Independientes del Contexto}
+Sea \(L\) un lenguaje independiente del contexto sobre un alfabeto \(\Sigma\), existe \(n > 0\) tal que para todo \(\alpha\in L\), \(|\alpha|\geq n\) existe \(r,x,y,z,s\in\Sigma^*\) tales que:
+\begin{enumerate}
+  \item \(\alpha = rxyzs\)
+  \item \(|xyz|\leq n\)
+  \item \(|xz| > 0\)
+  \item \(\forall i\geq 0, rx^iyz^is\in L\)
+\end{enumerate}
+\subsubsection{Demostración}
+Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contexto y sea \(a = \max\{|\beta|: A\to\beta\in P\}\).
+
+\begin{enumerate}
+  \item Tomemos \(n = a^{|V_N|+1}\). Sea \(\alpha\in\mathcal{L}(G)\) tal que \(|\alpha|\geq n\) y sea \(T(S)\) un árbol mínimo de derivación de \(\alpha\) en \(G\), es decir tiene la mínima altura posible y tal que no existe otro con menos derivaciones.
+
+        Por el lema \ref{lem:altura}, resulta que \(a^h\geq |\alpha|\geq n = a^{|V_N|+1}\). Por lo tanto, \(h\geq |V_N|+1\). Entonces existe algún símbolo \(b\in\alpha\) tal que su camino desde la raíz es de longitud  \(h\geq|V_N|+1\).
+
+        Como la cantidad de símbolos no terminales es \(|V_N|\), entonces en ese camino seguramente existe un no-terminal \(A\) repetido. Recorriendo el camino de forma ascendente, buscamos sus primeras dos apariciones:
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[scale=0.3]{imagenes/gic.pumping.tree.png}
+          \end{center}
+        \end{figure}
+
+        Entonces podemos escribir \(\alpha=rxyzs\) con \(r,x,y,z\) y \(s\) como se muestra en la figura.
+  \item \(|xyz|\leq n = a^{|V_n| + 1}\).
+        Como \(A\) es el primer no terminal que se repite, podemos asegurar que \(h' \leq |V_N| + 1\). La segunda aparición de \(A\) tiene que pasar a lo sumo \(|V_n|\) pasos mas adelantes, sino se debería repetir otro no terminal antes. Entonces por el lema \ref{lem:altura}, resulta que \(|xyz|\leq a^{h'}\leq a^{|V_N|+1}\).
+  \item \(|xz| > 0\).
+
+        Supongamos que \(|xz| = 0\), esto quiere decir que podriamos remplazar el subárbol con raíz en la segunda aparición de \(A\) por el subárbol con raíz en la primera aparición.
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[scale=0.4]{imagenes/gic.pumping.tree.colapsable.png}
+          \end{center}
+        \end{figure}
+
+        Esto es absurdo ya que habíamos dicho que el árbol era mínimo por lo que no debería poder colapsarse ninguno de sus caminos.
+
+  \item \(\forall i\geq 0, rx^iyz^is\in L\)
+        Finalmente, vamos a demostrar esto por inducción:
+        \begin{itemize}
+          \item \textbf{Caso base (\(i = 0\)):} Sabemos que \(S\deriva rAs\) y \(A\deriva y\), entonces \(S\deriva rAs\deriva rys\). Además \(rys = rx^0yz^0s\).
+          \item \textbf{Paso inductivo \( i-1 \Rightarrow i\):}
+                \begin{itemize}
+                  \item[] \textbf{Hipotesis inductiva:} \(S\deriva rx^{i-1}Az^{i-1}s\).
+                \end{itemize}
+                Sabemos \(A\deriva xyz\), entonces:
+                \[ S \deriva  rx^{i-1}Az^{i-1}s \Rightarrow rx^{i-1}xyzz^{i-1}s \Rightarrow rx^iyz^is \]
+                Y por lo tanto \(rx^iyz^is\in L\).
+        \end{itemize}
+\end{enumerate}
+
+\subsection{Propiedades de los Lenguajes Independientes del Contexto}
+\begin{itemize}
+  \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1 \cup L_2\) también lo es.
+        \begin{demo}[0.8\textwidth]
+          Como \(L_1\) y \(L_2\) son dos lenguajes independientes del contexto, entonces existen dos grámatica independientes del contexto \(G_1=\langle V_N, \Sigma, P_1, S_1 \rangle\) y \(G_2=\langle V_N, \Sigma, P_2, S_2 \rangle\). tales que \(L_1 = \mathcal{L}(G_1)\) y \(L_2 = \mathcal{L}(G_2)\). Supongamos, además, sin perdida de generlidad que \(V_{N_1}\cap V_{N_2} = \emptyset\). Definamos entonces:
+          \[ G = \langle V_{N_1} \cup V_{N_2} \cup \{S\}, \Sigma, P_1 \cup P_2 \cup \{ S \to S_1,~S\to S_2\}, S \rangle \]
+
+          Veamos que \(\forall\alpha\in\Sigma^*, \alpha\in\mathcal{L}(G) \iff \alpha\in\mathcal{L}(G_1) \cup \mathcal{L}(G_2)\).
+
+          \begin{align*}
+            \alpha\in\mathcal{L}(G) & \iff S\deriva\alpha \iff S_1 \deriva \alpha \lor S_2\deriva \alpha \\
+                                    & \iff \alpha\in\mathcal{L}(G_1) \lor \alpha\in\mathcal{L}(G_2)      \\
+                                    & \iff \alpha\in\mathcal{L}(G_1) \cup \mathcal{L}(G_2)
+          \end{align*}
+        \end{demo}
+  \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1L_2\) también lo es.
+        \begin{demo}
+
+        \end{demo}
+  \item Si \(L\) es un lenguaje independiente del contexto, entonces \(L^+\) también lo es. \red{Demostrar?}
+  \item  Si \(L\) es un lenguaje independiente del contexto, entonces \(L^*\) también lo es. \red{Demostrar?}
+  \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1\cap L_2\) no siempre es lenguaje independiente del contexto \red{Demostrar?}
+  \item El lenguaje \(L = \{ ww : w \in \Sigma^* \}\) no es independiente del contexto. \red{Demostrar?}
+  \item Existe un lenguaje independiente del contexto que \textbf{no-deterministico}. \red{Demostrar?}
+\end{itemize}
+
+\paragraph{Símbolo alcanzable:} Dada una grámatica \(G=\langle V_N, V_T, P, S\rangle\), un símbolo \(A\in V_N\) es alcanzable si existe una forma sentencial que lo contiene,  \(S\deriva \dots A\dots\).
+
+\paragraph{Símbolo activo:} Dada una grámatica \(G =\langle V_N, V_T, P, S\rangle\) un símbolo \(A\in V_N\) es activo si existe \(x\in V_T^*\) tal que \(A\deriva x\).
+
+\paragraph{Símbolo útil:} Un no terminal \(A\) es útil si y solo si es parte de una forma sentencial que genera una cadena de terminales, osea, si \(S\deriva \alpha A\beta \deriva w\) con \(w \in \Sigma^*\) y \(\alpha, \beta \in (V_T\cup V_N)^*\).

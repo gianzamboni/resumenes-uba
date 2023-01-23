@@ -6,7 +6,7 @@
 
 \paragraph{Propiedad:} Si \(\mathcal{L}\) es un luenguaje regular infinito, entonces el grafo de un autómata fínito que acepte \(\mathcal{L}\) tiene que tener un camino desde el estado inicial hasta algún estado final que paso por algún ciclo.
 
-\paragraph{Lema de pumping:} Sea \(\mathcal{L}\) un lenguaje regular, si \(\mathcal{L}\) es infinito, entonces todas las cadenas \(\omega\) de longitud mayor o igual a \(n\) (para algún \(n > 1\)) van a ser de la forma \(\omega=xy^iz\), estext decir hay una parte de \(\omega\) que se repite \(i\) cantidad de veces:
+\paragraph{Lema de pumping:} Sea \(\mathcal{L}\) un lenguaje regular, si \(\mathcal{L}\) es infinito, entonces todas las cadenas \(\omega\) de longitud mayor o igual a \(n\) (para algún \(n > 1\)) van a ser de la forma \(\omega=xy^iz\), es decir hay una parte de \(\omega\) que se repite \(i\) cantidad de veces:
 
 \begin{align*}
    & \mathcal{L} \text{ es regular e infinito}\implies \exists n\in\mathbb{N}\text{ tal que } \\ &\forall\omega\in\mathcal{L},~|\omega|\geq n:\left( \exists x,y,z\in\Sigma^*: \omega=xyz\land|xy|\leq n\land|z|\geq 1 \land (\forall i\geq  0 :~ xy^iz\in\mathcal{L}\right) \\
@@ -15,7 +15,7 @@
 
   Sea \(n = |Q|\) la cantidad de estados de \(A\) y \(\omega=a_1a_2\dots a_m\in\Sigma^*\) de longitud \(m > n\). Para cada \(i = 0,\dots, m\) definamos el estado \(p_i = \hat\delta(q_0, a_1\dots a_i)\) (el estado en el que se encuentra \(A\) después de haber consumido los primeros \(i\) símbolos de \(\omega\).
 
-  Como el \(A\) solo tiene \(n\) estados pero hay \(m > n\) estados \(p\), poes imposible que todos los \(p\) sean distintos. Por lo tanto, existen \(0 \leq i < j \leq n\) tales que \(p_i = p_j\).
+  Como el \(A\) solo tiene \(n\) estados pero hay \(m > n\) estados \(p_i\), es imposible que todos sean distintos. Por lo tanto, existen \(0 \leq i < j \leq n\) tales que \(p_i = p_j\).
 
   Considerar entonces la siguiente descomposición para \(\omega = xyz\):
   \begin{itemize}
@@ -25,7 +25,7 @@
   \end{itemize}
   Entonces podemos concluir que:
   \begin{itemize}
-    \item[] \(\hat\delta(q_0, x) = p_j\)
+    \item[] \(\hat\delta(q_0, x) = p_i\)
     \item[] \(\hat\delta(p_i, y) = p_j\) (que como son el mismo estado implica que \(A\) tiene un ciclo)
     \item[] \(\hat\delta(p_j, z) = p_m\)
   \end{itemize}
@@ -33,7 +33,7 @@
 \end{demo}
 \begin{demoPart}[0.8\textwidth]
 
-  Observar que \(x\) podría ser la cadena cuando \(i = 0\), \(z\) podría ser vacía si \(j = n = m\), pero \(y\) no puede ser vacía ya que se tomó \(i < j\).
+  Observar que \(x\) podría ser la cadena vacía cuando \(i = 0\), \(z\) podría ser vacía si \(j = n = m\), pero \(y\) no puede ser vacía ya que se tomó \(i < j\).
 
   Vimos entonces que si \(\mathcal{L}\) es regular y \(|\omega| \geq n\) entonces podemos dividirla en cadenas \(x,y,z\) tal que \(|xy|\leq n\) y \(|z|\geq 1\). Ahora vamos a ver que si \(xyz \in \mathcal{L}\) entonces \(xy^kz \in \mathcal{L}\) para todo \(k\geq 0\).
 
@@ -46,8 +46,8 @@
 \end{demoPart}
 \paragraph{Contrarecíproco:}
 \begin{align*}
-   & \forall   n\in\mathbb{N}  \exists\omega\in\mathcal{L}\text{ tal que } |\omega|\geq n \land  \forall x,y,z\in\Sigma^*: \omega\neq xyz \land|xy|\geq n\lor|z|\leq 1 \lor \exists i\geq 0,~ xy^iz\notin\mathcal{L} \\ &
-  \implies \mathcal{L}\text{  no es regular}                                                                                                                                                                         \\
+   & \forall   n\in\mathbb{N}~\exists\omega\in\mathcal{L}\text{ tal que } |\omega|\geq n \land  \forall x,y,z\in\Sigma^*: \omega\neq xyz \lor|xy|\geq n\lor|z|\leq 1 \lor \exists i\geq 0,~ xy^iz\notin\mathcal{L} \\ &
+  \implies \mathcal{L}\text{  no es regular}                                                                                                                                                                       \\
 \end{align*}
 
 \subsection{Operaciones sobre lenguajes regulares}
@@ -151,7 +151,7 @@ Dados \(M_1\) y \(M_2\) AFDs que aceptan los lenguajes \(L_1\) y \(L_2\), respec
             \[
               L \text{ finito } \iff \left(
               \forall q \in Q,\left(
-                q_0 \overset{*}{\rightarrow} q \land q \overset{*}{\rightarrow} f \in F \implies \left(\not\exists q\overset{+}{\rightarrow} q\right)
+                q_0 \deriva q \land q \deriva f \in F \implies \left(\not\exists q\overset{+}{\rightarrow} q\right)
                 \right)
               \right)\]
             Escrito en función de \(\delta\):
