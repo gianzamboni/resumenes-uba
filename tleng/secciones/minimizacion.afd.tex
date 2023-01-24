@@ -135,10 +135,6 @@ Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD sin estados inaccesibl
           \(\hat\delta'(q_0', \epsilon) = \hat\delta'([q], \epsilon) = [q]\) por def. de \(\hat\delta'\)
 
           Entonces \(\hat\delta(q, \lambda) = q \implies \hat\delta'([q], \lambda) = [q]\)
-  \end{itemize}
-\end{demo}
-\begin{demoPart}[0.8\textwidth]
-  \begin{itemize}
     \item Paso inductivo: Sea \(\alpha = \beta a\), queremos probar que \(\hat\delta(q,\alpha) = r \implies \hat\delta'([q], \alpha) = [r]\).
 
           Nuestra hipotesis inductiva es \(\forall \beta\in\Sigma^*,~|\beta|\leq n,~\hat\delta(q, \beta) = p \implies \hat\delta'([q], \beta) = [p]\)
@@ -152,7 +148,7 @@ Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD sin estados inaccesibl
           \[ \delta'([p], \alpha) = \delta'(\hat\delta'([q], \beta), a) = \hat\delta(q,\beta a) = \hat\delta(q,\alpha) = [r] \]
   \end{itemize}
 
-\end{demoPart}
+\end{demo}
 \subsection{Algoritmo de minimización de un AFD}
 \begin{algorithmic}
   \Require \(M = \langle Q, \Sigma, \delta, q_0, F\rangle\)

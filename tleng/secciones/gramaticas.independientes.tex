@@ -125,6 +125,8 @@ Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contex
   \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1L_2\) también lo es.
         \begin{demo}[0.8\textwidth]
           Como \(L_1\) y \(L_2\) son dos lenguajes independientes del contexto, entonces existen dos gramáticas independientes de contexto \(G_1=\langle V_{N_1}, \Sigma, P_1, S_1 \rangle\) y \(G_2=\langle V_{N_2}, \Sigma, P_2, S_2 \rangle\) tales que \(L_1 = \mathcal{L}(G_1)\) y \(L_2 = \mathcal{L}(G_2)\). Supongamos, además, sin perdida de generlidad que \(V_{N_1}\cap V_{N_2} = \emptyset\). Definamos entonces:
+        \end{demo}
+        \begin{demoPart}[0.8\textwidth]
           \[ G = \langle V_{N_1} \cup V_{N_2} \cup \{S\}, \Sigma, P_1 \cup P_2 \cup \{ S \to S_1S_2\}, S \rangle \]
 
           Veamos que \(\forall\alpha\in\Sigma^*, \alpha\in\mathcal{L}(G) \iff \alpha\in\mathcal{L}(G_1)\mathcal{L}(G_2)\).
@@ -135,7 +137,7 @@ Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contex
                                     & \iff\red{\beta_1\in\mathcal{L}(G_1)} \land \blue{\beta_2\in\mathcal{L}(G_2)}                                            \\
                                     & \iff \beta_1\beta_2 = \alpha\in\mathcal{L}(G_1)\mathcal{L}(G_2)                                                         \\
           \end{align*}
-        \end{demo}
+        \end{demoPart}
   \item Si \(L\) es un lenguaje independiente del contexto, entonces \(L^+\) también lo es.
         \begin{demo}[0.8\textwidth]
           Como \(L\) es un lenguaje independiente del contexto, entonces existe una gramática independiente del contexto \(G=\langle V_N, \Sigma, P, S \rangle\) tal que \(L = \mathcal{L}(G)\). Definamos entonces:
@@ -148,18 +150,154 @@ Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contex
             \alpha\in\mathcal{L}(G') & \iff S'\deriva\alpha \iff \red{SS' \deriva \alpha}\lor\blue{S\deriva\alpha}
           \end{align*}
 
-          Supongamos que \(\blue{S\deriva\alpha}\), entonces trivialmente vale \(\alpha\in L\subseteq L^+\)
+          Supongamos que \(\blue{S\deriva\alpha}\), entonces trivialmente vale \(\alpha\in L\subseteq L^+\).
 
-          Ahora, si \(\red{SS'\deriva\alpha}\), entonces \(\alpha = \beta\gamma\) con \(\beta,\gamma\in\Sigma^*\) y \(S\deriva\beta\) y
+          Por inducción, Supongamos que \(S' \deriva\beta\in L^+\): Sea \(\alpha =\gamma\beta\) con \(\gamma\in\Sigma^*\). Entonces \(SS'\deriva\alpha \iff SS'\deriva\gamma\beta \iff S\deriva\gamma \land S'\deriva\beta\)
+          Entonces pasa que \(\gamma\in L\) y, por hipotesis inducción,\(\beta\in L^+\), Luego \(\gamma\beta\in L^+\)
         \end{demo}
-  \item  Si \(L\) es un lenguaje independiente del contexto, entonces \(L^*\) también lo es. \red{Demostrar?}
-  \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1\cap L_2\) no siempre es lenguaje independiente del contexto \red{Demostrar?}
-  \item El lenguaje \(L = \{ ww : w \in \Sigma^* \}\) no es independiente del contexto. \red{Demostrar?}
-  \item Existe un lenguaje independiente del contexto que \textbf{no-deterministico}. \red{Demostrar?}
+  \item  Si \(L\) es un lenguaje independiente del contexto, entonces \(L^*\) también lo es.
+        \begin{demo}[0.8\textwidth]
+          Como \(L\) es un lenguaje independiente del contexto, entonces existe una gramática independiente del contexto \(G=\langle V_N, \Sigma, P, S \rangle\) tal que \(L = \mathcal{L}(G)\). Definamos entonces:
+          \[
+            G^* = \langle V_N \cup \{S\}, \Sigma, P \cup \{ S' \to SS',~S'\to \varepsilon\}, S'\rangle
+          \]
+
+          Veamos que \(\mathcal{L}(G^*) = L^*\). Esta demonstración es símilar a la anterior. La única defirencia es que en algún momento, en vez de usarse la regla \(S'\to S\), se usa la regla \(S'\to \varepsilon\).
+        \end{demo}
+  \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1\cap L_2\) no siempre es lenguaje independiente del contexto.
+        \begin{demo}[0.8\textwidth]
+          Sean \(L_1 = \{ a^n b^m c^l: n,m,l \geq 0 \land n = m \}\) y \(L_2 = \{ a^n b^m c^l : n \geq 0 \land m = l \}\) dos lenguajes independientes de contexto (\red{Demostrar?}).
+          Pero \(L_1\cap L_2 = \{ a^n b^m c^l : n,m,l \geq 0 \land n = m = l \}\) no es lenguaje independiente como puede demostrarse utilizando el lema de pumping.
+        \end{demo}
+  \item El lenguaje \(L = \{ ww : w \in \Sigma^* \}\) no es independiente del contexto.
+        \begin{demo}[0.8\textwidth]
+          Sea \(L_1 = \{ a^n b^m a^n b^m:~ n,m\geq 0\}\) es tal que \(L_1 = L \cap a^* b^* a^* b^*\)
+          donde \(a^* b^* a^* b^*\) es un lenguaje regular.
+
+          La interesección entre un lenguaje regular y un lenguaje independiente de contexto da como resultado  un lenguaje independiente de contexto (\red{Demostrar?}).
+
+          Entonces, si \(L\) fuera independiente del contexto, \(L_1\) tambien debiera serlo. Veamos que \(L_1\) no es independiente de contexto:
+
+          Analizemos las componsiciones disponibleas para la cadena \(a^n b^n a^n b^n \in L_1\):
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics[scale=0.3]{imagenes/anbnanbn.png}
+            \end{center}
+          \end{figure}
+          En los primeros cuatro casos se desbalancean la cantidad de \(a\) o \(b\), respectivamente y en el último caso se desbalancean la cantidad de \(a\) y \(b\) simultaneamente.
+        \end{demo}
 \end{itemize}
 
+\subsubsection{Lenguajes libres de contexto deterministicos}
+Un lenguaje \(L\) es libre de contexto deterministicos si existe un autómata de pila determinista \(A\) tal que \(L = \mathcal{L}(A)\).
+
+Para ver más sobre lenguajes libres de contexto deterministicos, ver \href{https://www.cubawiki.com.ar/images/f/ff/TLeng_Resumen_Final_2022.pdf}{Wikipedia}.
+\begin{lemma}
+  El conjunto de lenguajes libres de contexto deterministicos es cerrado por la complementación.
+\end{lemma}
+
+\begin{teorema}
+  Para todo automáta de pila \(M\), existe otro automáta de pila \(M'\) equivalente que siempre consume toda la cadena de entrada.
+\end{teorema}
+\begin{teorema}
+  El complemento de un lenguaje independiente del contexto deterministico es un lenguaje independiente del contexto deterministico.
+\end{teorema}
+\begin{teorema}
+  Existe un lenguaje independiente del contexto que es \textbf{no-deterministíco}
+\end{teorema}
+\begin{demo}[0.8\textwidth]
+  Consideremos el lenguaje \(L = a^k b^k c^k, k\geq 0\). Sabemos que \(L\) no es independiente del contexto. Su complemento puede escribirse como:
+  \begin{align*}
+    \bar{L}= \{ a^i b^j c^k : i,j,k \geq 0 \land i \neq j \} \cup \{ a^i b^j c^k : i,j,k \geq 0 \land j \neq k \} \cup \overline{a^* b^* c^*}
+  \end{align*}
+
+  Osea que \(\overline{L}\) puede escribirse como la unión de dos lenguajes independientes del contexto y un lenguaje regular. Es, por lo tanto, independiente del contexto.
+
+  Supongamosq que \(\overline{L}\) es un lenguaje independiente del contexto deterministico. Entonces, \(\overline{\overline{L}}\) también debería serlo por el teorema anterior. Pero \(\overline{\overline{L}} = L\) que ni siquiera es un lenguaje independiente del contexto. Luego \(\overline{L}\) no es deterministico.
+\end{demo}
+
+\subsection{Gramáticas propias}
+\subsubsection{Conjunto de símbolos activos}
 \paragraph{Símbolo alcanzable:} Dada una grámatica \(G=\langle V_N, V_T, P, S\rangle\), un símbolo \(A\in V_N\) es alcanzable si existe una forma sentencial que lo contiene,  \(S\deriva \dots A\dots\).
 
-\paragraph{Símbolo activo:} Dada una grámatica \(G =\langle V_N, V_T, P, S\rangle\) un símbolo \(A\in V_N\) es activo si existe \(x\in V_T^*\) tal que \(A\deriva x\).
+\paragraph{Símbolo activo:} Dada una grámatica \(G =\langle V_N, V_T, P, S\rangle\) un símbolo \(A\in V_N\) es activo si existe \(\alpha\in V_T^*\) tal que \(A\deriva \alpha\).
 
-\paragraph{Símbolo útil:} Un no terminal \(A\) es útil si y solo si es parte de una forma sentencial que genera una cadena de terminales, osea, si \(S\deriva \alpha A\beta \deriva w\) con \(w \in \Sigma^*\) y \(\alpha, \beta \in (V_T\cup V_N)^*\).
+\paragraph{Símbolo útil:} Un no terminal \(A\) es útil si y solo si es parte de una forma sentencial que genera una cadena de terminales, osea, si \(S\deriva \alpha A\beta \deriva \omega\) con \(\omega \in \Sigma^*\) y \(\alpha, \beta \in (V_T\cup V_N)^*\).
+
+\paragraph{Algoritmos para conseguir el conjunto de no-terminales activos de una gramática:}
+\begin{algorithmic}
+  \Function{activos}{\(\langle V_N, V_T, P, S\rangle\): Gramática}
+  \State \(\texttt{Act}\gets\emptyset\)
+  \Repeat
+  \For{\(A\to \alpha \in P\)}
+  \If{\(\alpha \in (\texttt{A}\cup V_T)^*\)}
+  \State\(\texttt{Act}\leftarrow\texttt{Act}\cup \{A\}\)
+  \EndIf
+  \EndFor
+  \Until{ \texttt{Act} no cambie}
+  \State \Return \texttt{Act}
+  \EndFunction
+\end{algorithmic}
+
+\subsubsection{Conjunto de símbolos anulables}
+\begin{lemma}
+  Sea G una gramática libre de contexto. Entonces existe una grámatica propia (sin producciones borradoras) \(G'\) tal que genere el mismo lenguaje que G sin la cadena nula.
+\end{lemma}
+
+\paragraph{No terminal anulable:} Un no terminal \(A\) es anulable si y solo  \(A\deriva \varepsilon\).
+
+\paragraph{Algoritmo para conseguir el conjunto de no terminales anulables de una gramática:}
+
+\begin{algorithmic}
+  \Function{anulables}{\(\langle V_N, V_T, P, S\rangle\): Gramática}
+  \State \(\texttt{An}\gets\emptyset\)
+  \For{\(A\to \alpha \in P\)}
+  \If{\(\alpha = \lambda\)}
+  \State\(\texttt{An}\leftarrow\texttt{An}\cup \{A\}\)
+  \EndIf
+  \EndFor
+  \Repeat
+  \For{\(A\to \alpha \in P\)}
+  \If{\(\alpha \in \texttt{An}^*\)}
+  \State\(\texttt{An}\leftarrow\texttt{An}\cup \{A\}\)
+  \EndIf
+  \EndFor
+  \Until{ \texttt{An} no cambie}
+  \State \Return \texttt{Anul}
+  \EndFunction
+\end{algorithmic}
+
+\subsubsection{Gramáticas reducidas}
+\paragraph{Grámatica reducida:} Una gramática \(G = \langle V_N, V_T, P, S\rangle\) es reducida si y solo si para todo \(A\in V_N\) se cumple que \(A\) es alcanzable y activo.
+\paragraph{Algoritmo para conseguir una gramática propia:}
+
+\begin{algorithmic}
+  \Function{propia}{\(G=\langle V_N, V_T, P, S\rangle\): Gramática}
+  \State \(\texttt{An}\gets\texttt{anulables}(G)\)
+  \For{\(A\to \alpha \in P\)}
+  \If{\(\alpha = X_1\dots X_k\) con \(X_{j_1}, \dots, X_{j_m} \in \texttt{An}\)}
+  \State Agregar todas las producciones \(A\to\alpha'\) donde las \(\alpha'\) se obtiene eliminando cada subconjunto en \(X_{j_1}, \dots, X_{j_m}\) de \(\alpha\). Si todos los símbolos de \(\alpha\) son anulables, no agregar \(A\to \lambda\).
+  \EndIf
+  \If{\(\alpha = \lambda\)}
+  \State Eliminar la producción \(A\to \lambda\)
+  \EndIf
+  \EndFor
+  \State \Return G modificada
+  \EndFunction
+\end{algorithmic}
+
+\subsubsection{Forma normal de Chomsky}
+Una gramática \(G = \langle V_N, V_T, P, S\rangle\) está en forma normal de Chomsky si y solo si todas sus producciones son de la forma \(A\to BC\) o \(A\to a\), donde \(A, B, C \in V_N\) y \(a \in V_T\).
+
+Si \(L\) un lenguaje independiente del contexto tal que \(\lambda\notin L\) entonces existe una gramática \(G\) en forma normal de Chomsky.
+
+\subsubsection{Forma normal de Greibach}
+Una gramática \(G = \langle V_N, V_T, P, S\rangle\) está en forma normal de Greibach si y solo si todas sus producciones son de la forma \(A\to a\alpha\) donde \(A\in V_N\), \(a\in V_T\) y \(\alpha \in V_N^*\).
+
+Si \(L\) un lenguaje independiente del contexto tal que \(\lambda\notin L\) entonces existe una gramática \(G\) en forma normal de Greibach.
+
+\subsection{Otras propiedades}
+\begin{itemize}
+  \item Si \(M = \langle Q, \Sigma, \delta, q_0, Z_0, F\rangle\) es un autómata de pila y \(L\) el lenguaje tal que \(L = \mathcal{L}_\lambda(M)\), entonces \(L\) es independiente del contexto.
+  \item Sea \(G = \langle V_N, V_T, P, S\rangle\) una grámatica independiente del contexto. Se puede construir un autómata de pila  M tal que \(\mathcal{L}(G) = \mathcal{L}_\lambda(M)\).
+\end{itemize}
