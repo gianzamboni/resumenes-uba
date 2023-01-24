@@ -77,7 +77,7 @@ Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD, decimos que \(p,q\in 
         \end{demo}
         \begin{demoPart}[0.8\textwidth]
           \begin{itemize}
-            \item[\(\Leftarrow\)] Supogamos que \(p \overset{k}{\equiv} q\). Entonces ó \(p \overset{0}{\equiv} q\) ó \(\exists a\alpha,~|a\alpha| \leq k + 1\) que distingue \(p\) de \(q\), o sea que:
+            \item[\(\Leftarrow )\)] Supogamos que \(p \overset{k}{\equiv} q\). Entonces ó \(p \overset{0}{\equiv} q\) ó \(\exists a\alpha,~|a\alpha| \leq k + 1\) que distingue \(p\) de \(q\), o sea que:
               \[
                 \hat\delta(\delta(p,a),\alpha)\in F \land \hat\delta(\delta(q,a),\alpha)\notin F
               \]
@@ -215,5 +215,5 @@ Sea \(M=\langle Q, \Sigma, \delta, q_0, F\rangle\) un AFD sin estados inaccesibl
     \hat\delta'(q_0',\alpha\gamma)\in F\land \hat\delta'(q_0',\beta\gamma)\in F
   \] o ninguno de los dos perteneces a \(F\). De esto se inifiere que \(\alpha\gamma\in\mathcal{L}(M') \iff \beta\gamma\in\mathcal{L}(M')\).
 
-  Pero entonces, como \(\mathcal{L}(M') \neq \mathcal{L}(M)\), lo que contradice nuestra hipotesis inicial.
-  f\end{demo}
+  Pero entonces, \(\mathcal{L}(M') \neq \mathcal{L}(M)\), se contradice nuestra hipotesis inicial.
+\end{demo}
