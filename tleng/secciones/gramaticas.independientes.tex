@@ -117,16 +117,41 @@ Sea \(G=\langle V_N, V_T, P, S \rangle\) una gramática independiente del contex
           Veamos que \(\forall\alpha\in\Sigma^*, \alpha\in\mathcal{L}(G) \iff \alpha\in\mathcal{L}(G_1) \cup \mathcal{L}(G_2)\).
 
           \begin{align*}
-            \alpha\in\mathcal{L}(G) & \iff S\deriva\alpha \iff S_1 \deriva \alpha \lor S_2\deriva \alpha \\
-                                    & \iff \alpha\in\mathcal{L}(G_1) \lor \alpha\in\mathcal{L}(G_2)      \\
+            \alpha\in\mathcal{L}(G) & \iff S\deriva\alpha \iff \red{S_1 \deriva \alpha} \lor \blue{S_2\deriva \alpha} \\
+                                    & \iff \red{\alpha\in\mathcal{L}(G_1)} \lor \blue{\alpha\in\mathcal{L}(G_2)}      \\
                                     & \iff \alpha\in\mathcal{L}(G_1) \cup \mathcal{L}(G_2)
           \end{align*}
         \end{demo}
   \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1L_2\) también lo es.
-        \begin{demo}
+        \begin{demo}[0.8\textwidth]
+          Como \(L_1\) y \(L_2\) son dos lenguajes independientes del contexto, entonces existen dos gramáticas independientes de contexto \(G_1=\langle V_{N_1}, \Sigma, P_1, S_1 \rangle\) y \(G_2=\langle V_{N_2}, \Sigma, P_2, S_2 \rangle\) tales que \(L_1 = \mathcal{L}(G_1)\) y \(L_2 = \mathcal{L}(G_2)\). Supongamos, además, sin perdida de generlidad que \(V_{N_1}\cap V_{N_2} = \emptyset\). Definamos entonces:
+          \[ G = \langle V_{N_1} \cup V_{N_2} \cup \{S\}, \Sigma, P_1 \cup P_2 \cup \{ S \to S_1S_2\}, S \rangle \]
 
+          Veamos que \(\forall\alpha\in\Sigma^*, \alpha\in\mathcal{L}(G) \iff \alpha\in\mathcal{L}(G_1)\mathcal{L}(G_2)\).
+
+          \begin{align*}
+            \alpha\in\mathcal{L}(G) & \iff S\deriva\alpha \iff S_1S_2\deriva\alpha                                                                            \\
+                                    & \iff\exists\beta_1,\beta_2\in\Sigma^*:~\alpha=\beta_1\beta_2\land \red{S_1\deriva\beta_1}\land \blue{S_2\deriva\beta_2} \\
+                                    & \iff\red{\beta_1\in\mathcal{L}(G_1)} \land \blue{\beta_2\in\mathcal{L}(G_2)}                                            \\
+                                    & \iff \beta_1\beta_2 = \alpha\in\mathcal{L}(G_1)\mathcal{L}(G_2)                                                         \\
+          \end{align*}
         \end{demo}
-  \item Si \(L\) es un lenguaje independiente del contexto, entonces \(L^+\) también lo es. \red{Demostrar?}
+  \item Si \(L\) es un lenguaje independiente del contexto, entonces \(L^+\) también lo es.
+        \begin{demo}[0.8\textwidth]
+          Como \(L\) es un lenguaje independiente del contexto, entonces existe una gramática independiente del contexto \(G=\langle V_N, \Sigma, P, S \rangle\) tal que \(L = \mathcal{L}(G)\). Definamos entonces:
+
+          \[ G^+ = \langle V_N \cup \{S\}, \Sigma, P \cup \{ S' \to SS',~S'\to S\}, S'\rangle \]
+
+          Veamos que \(\mathcal{L}(G') = L^+ \)
+
+          \begin{align*}
+            \alpha\in\mathcal{L}(G') & \iff S'\deriva\alpha \iff \red{SS' \deriva \alpha}\lor\blue{S\deriva\alpha}
+          \end{align*}
+
+          Supongamos que \(\blue{S\deriva\alpha}\), entonces trivialmente vale \(\alpha\in L\subseteq L^+\)
+
+          Ahora, si \(\red{SS'\deriva\alpha}\), entonces \(\alpha = \beta\gamma\) con \(\beta,\gamma\in\Sigma^*\) y \(S\deriva\beta\) y
+        \end{demo}
   \item  Si \(L\) es un lenguaje independiente del contexto, entonces \(L^*\) también lo es. \red{Demostrar?}
   \item Si \(L_1\) y \(L_2\) son lenguajes independientes del contexto, entonces \(L_1\cap L_2\) no siempre es lenguaje independiente del contexto \red{Demostrar?}
   \item El lenguaje \(L = \{ ww : w \in \Sigma^* \}\) no es independiente del contexto. \red{Demostrar?}
