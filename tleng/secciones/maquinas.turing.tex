@@ -1,0 +1,157 @@
+\section{Máquinas de Turing}
+El modelo más básico de una máquina de turing  consiste en un control finito, una cinta infinita dividida en celdas y una cabeza de lectura. Cada celda de la cinta puede contener un único símbolo del alfabeto finito de la cinta.
+
+Inicialmente, la cinta contiene una cadena de símbolos de entrada, seguida de un símbolo especial llamado blanco. La cabeza de lectura se coloca sobre el primer símbolo de la cadena de entrada. La máquina de Turing puede leer y escribir símbolos en la cinta o mover la cabeza de lectura a la izquierda o a la derecha.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.75]{imagenes/mt.png}
+  \end{center}
+\end{figure}
+Formalmente, definimos la máquina de Turing (MT) \(M\) como una tupla:
+\[
+  M = \langle Q, \Sigma, \Gamma, \delta, q_0, B, F \rangle
+\]
+
+Donde:
+\begin{itemize}
+  \item \(Q\) es un conjunto finito de estados.
+  \item \(\Sigma\) es un alfabeto de entrada.
+  \item \(\Gamma\) es un alfabeto de cinta.
+  \item \(\delta: Q\times\Gamma\to Q\times\Gamma\times\{L, R\}\) es una función de transición. Podría estar indefinido para algunos argumentos. La función indica devuele el estado al que se debe pasar, el símbolo a escribir en la posición actual de la cinta y el movimiento del cabezal (izquierda o derecha).
+  \item \(q_0 \in Q\) es el estado inicial.
+  \item \(B \in \Gamma\) es el símbolo blanco.
+  \item \(F \subseteq Q\) es el conjunto de estados finales.
+\end{itemize}
+
+\paragraph{Configuración instantanea:} Una configuración instantánea de una MT es una tupla \(\alpha_1 q \alpha_2\) donde \(q\in Q\) y \(\alpha_1,\alpha_2\in\Gamma^*\) donde:
+\begin{itemize}
+  \item \(\alpha_1\) son los simbolos de la cinta a la izquierda del cabezal.
+  \item \(q\) es el estado actual.
+  \item \(\alpha_2\) son los símbolos de la cinta a la derecha del cabezal hasta el último símbolo distinto de \(B\).
+\end{itemize}
+Notemos que \(\alpha_1,\alpha_2\in\Gamma^*\), osea que pueden tener apariciones de \(B\).
+
+Asumismos que el cabezal está escaneando el símbolo más a la derecha de \(\alpha_2\) o un blanco si \(\alpha_2=\lambda\).
+
+\paragraph{Movimiento del cabezal:} El movimiento del cabezal se define como sigue: Sea \[X_1\dots X_{i-2}qX_{i}\dots X_n\]una configuración instantánea de una MT \(M\).
+
+Supongamos que \(\delta(q,X_i) = (p, Y, L)\):
+\begin{itemize}
+  \item Si \(i -1 = n\), asumimos \(X_i = B\)
+  \item Si \(i = 1\) entonces es imposible moverse a la izquierda.
+  \item Si \(1 < i < n\) entonces escribimos:
+        \[
+          X_1\dots X_{i-1}qX_{i}\dots X_n \underset{M}{\vdash} X_1\dots X_{i-2}pX_{i-1}YX_{i+1}\dots X_n
+        \]
+
+        En caso de haya algún sufijo de \(X_{i-1}YX_{i+1}\dots X_n\) que sea completamente blanco, entonces se elimina.
+\end{itemize}
+
+Similarmente, si \(\delta(q,X_i) = (p, Y, R)\):
+\[
+  X_1\dots X_{i-1}qX_{i}\dots X_n \underset{M}{\vdash} X_1\dots X_{i-1}YpX_{i+1}\dots X_n
+\]
+
+Si dos configuraciónes instantáneas están relacionadas por \(\resulta{M}\), entonces decimos que la segunda es un resultado de la primera.
+
+Si una configuración instantánea resulta de otra en un número fínito de pasos, entonces están relacionadas por el símbolo \(\resultam{M}\).
+
+\paragraph{Lenguaje aceptado por una MT:} Definimos al lenguaje aceptado por una MT \(M=\langle Q, \Sigma, \Gamma, \delta, q_0, B, F \rangle\) como:
+\[
+  \mathcal{L}(M) = \{ \omega \in \Sigma^*  : q_0\omega \resultam{M} \alpha_1 p\alpha_2 \text{ con } p\in F \land \alpha_1,\alpha_2\in\Gamma^* \}
+\]
+
+Asumimos que la máquina de Turing se detiene cuando el input es aceptado. Además es posible que nunca se detenga si el input no es aceptado.
+
+\subsection{Autómatas linealmente acotados}
+Es una máquina de Turing  no deterministica que cumple con las siguientes condiciones:
+\begin{enumerate}
+  \item El alfabeto de entrada incluye dos símbolos especiales (\textcentoldstyle~y \textdollar) que son utilizados como topes izquierdo y derecho, respectivamente.
+  \item El autómata no se mueve ni a la izquierda de \textcentoldstyle ni a la derecha de \textdollar, ni los sobreescribe.
+\end{enumerate}
+
+\subsubsection*{Máquinas de dos cintas}
+Una máquina de Turing con dos o más cintas puede simularse usando la defición dada anteriormente. Para ello, definimos los estados en \(\Gamma\) como tuplas \([x_1, x_2]\) donde \(x_i\) sería el símbolo guardado en la \(i\)-ésima cinta.
+
+
+\begin{teorema}
+  Si \(L\) es un lenguaje dependiente del contexto, entonces existe un autómata linealmente acotado \(A\) tal que \(\mathcal{L}(A) = L\).
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Se construye el autómata linealmente acotado \(M\) tal que:
+  \begin{enumerate}
+    \item La primera cinta contiene la cadena de entrada \textcentoldstyle\(\omega\)\textdollar.
+    \item La segunda cinta se utiliza para generar las formas de la derivación. En cualquie instante, esta cinta contendrá la forma sentencial \(\alpha\) que representa la derivación de la cadena de entrada. Se inicializa con el símbolo distingido \(S\).
+  \end{enumerate}
+
+  El autómata funcionará de la siguientes manera:
+  \begin{enumerate}
+    \item Si \(\omega=\lambda\), entonces \(M\) se detiene rechanzando la cadena de entrada.
+    \item Sino:
+          \begin{enumerate}
+            \item Selecciona (en forma no deterministica) la posición \(i\) dentro de \(\alpha\) (la derivación que se encuentra en la cinta)
+            \item Selecciona (en forma no deterministica) la producción \(\beta\to\gamma\in P\).
+            \item Si \(\beta\) aparece a partir de la posición \(i\) en \(\alpha\), entonces remplaza \(\beta\) por \(\gamma\) en \(\alpha\).
+            \item Si la nueva forma sentencial \(\alpha\) es tal que \(|\alpha| > |\omega|\), entonces \(M\) se detiene rechazando la cadena de entrada.
+            \item Sino, comparamos \(\alpha\) con \(\omega\). Si son iguales, entonces \(M\) se detiene aceptando la cadena de entrada. Sino, se vuelve a repetir el paso 2.
+          \end{enumerate}
+  \end{enumerate}
+\end{demo}
+
+\subsubsection{Lenguajes recursivos}
+Son lenguajes \(L\) sobre un alfabeto \(\Sigma\) para el cual existe una máquina de Turing que se detiene para todo \(\alpha\in\Sigma^*\) y la acepta (termina en un estado final) si \(\alpha\in L\) o la rechaza (termina en un estado no final) si \(\alpha\notin L\). En otras palabras, son los lenguajes para los cuales existe un algoritmo que permite decidir la pertenencia (o no) de toda cadena al lenguaje.
+
+\begin{teorema}\label{teorema:recursividad}
+  Todo lenguaje dependiente del contexto es recursivo
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Sea \(G=\langle N, \Sigma, P, S \rangle\) un gramática dependiente del contexto y \(\omega\in\Sigma^*\). Vamos a construir un grafo fínito en el cual cada nodo tiene asocida un \(\alpha\in(V_N\cup V_T)^+\) con \(|\alpha| \leq |\omega|\). Las arista representas una producción de \(G\), osea si \(\gamma_1\tau\gamma_2\) y \(\gamma_1\beta\gamma_2\) son dos nodos, entonces van a estar conectados si y solo si \(\tau\to\beta\in P\).
+
+  Por ser \(G\) dependiente del contexto, vale \(|\tau|\leq |\beta|\), entonces \(|\gamma_1\tau\gamma_2|\leq |\gamma_1\beta\gamma_2|\). Por lo tanto, el grafo es acotado.
+
+  En este grafo finito, es cierto que \(S\underset{G}{\deriva}\omega\) si y solo si existe un camino desde el nodo correspondiente a \(S\) hasta el nodo correspondiente a \(\omega\). Y esto último es decidible, o sea, tiene algoritmo. Por lo tanto, \(G\) es recursivo.
+\end{demo}
+
+\begin{lemma}
+  Sea \(M_1, M_2, \dots\) una enumeración de un conjunto de máquinas de Turing que paran para todas las entadradas. Siempre existe un lenguaje recursivo que no es aceptado por ninguna de ellas, o sea, siempre existe un lenguaje \(L\) tal que \(L\) es recursivo y \(L\notin\mathcal{L}(M_i)\) para todo \(i\).
+\end{lemma}
+
+\begin{demo}[0.8\textwidth]
+  Consideremos el lenguaje definido \( L = \{ \omega_i : \omega_i \notin \mathcal{L}(M_i)\}\), es decir \(L\) está formado por todas las cadenas que son rechazadas por alguna de las máquinas \(M_i\). Como es decidible si \(\omega_i\in L\) o no (pues simplemente corremos las \(M_i\) con entrada \(\omega\) y vemos si para en un estado no final), entonces \(L\) es recursivo.
+
+  Supongamos ahora que este lenguaje es aceptado por alguna de las máquinas enumeradas. Sea \(M_j\), la misma. Entonces ¿que pasa si \(\omega_j\in L\)?
+
+  Por definición de \(L\) tenemos que \(w_j\in L \iff w_j\notin \mathcal{L}(M_j) \iff w_j \notin L\). Esto es un absurdo, por lo tanto \(L\) no es aceptado por ninguna máquina \(M_1,M_2,\dots\).
+\end{demo}
+
+\begin{lemma}
+  Existe un lenguaje recursivo que no es dependiente del contexto
+\end{lemma}
+\begin{demo}[0.8\textwidth]
+  Vamos a tratar de demostrar que podemos encontrar una numeración de máquinas Turing correspondientes a cada uno de los lenguajes dependientes del contexto definidos sobre \(\{0,1\}^*\).
+\end{demo}
+\begin{demoPart}[0.8\textwidth]
+  Estas máquinas de Turing paran en todas las entradas porque como los lenguajes son dependientes de contexto, siempre hay un algoritmo de reconomcimiento cuando el lenguaje es dependiente del contexto.
+
+  Codifiquemos todas estas gramaticas con cadenas binarias, es decir, demos una representación binaria a cada símbolo de la gramática codificando:
+
+  \begin{itemize}
+    \item \(0 = 10\)
+    \item \(1 = 100\)
+    \item y al resto de los simbolos \(s_k = 10^k\)
+  \end{itemize}
+
+  Gracias a esta codificación mediante 0s y 1s, podemos enumerarlas de la siguientes manera: \(G_1,G_2,\dots\). Además, por el teorema \ref{teorema:recursividad}, existen autómatas \(M_1, M_2,\dots\) que aceptan los lenguajes generados por cada una de ellas.
+
+  Luego, por el lema, anterior, tenemos que existe un lenguaje \(L\) recursivo que no es aceptado por ninguno de estos autómatas y no es dependiente del contexto.
+\end{demoPart}
+
+\begin{teorema}
+  Sea \(M\) una máquina de Turing no deterministica y \(L = \mathcal{L}(M)\). Entonces existe una máquina de Turing determinista \(M'\) que acepta el mismo lenguaje.
+\end{teorema}
+
+\begin{demo}[0.8\textwidth]
+  Sea \(r\) la máxima cantidad posible de transiciones que parte de un estado cualquiera de \(M\)
+\end{demo}
