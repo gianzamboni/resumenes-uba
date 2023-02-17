@@ -1,0 +1,287 @@
+\section{Transformación de gramáticas}
+Dada una expresión en un lenguaje formal, buscamos encontrar un algoritmo que permita, a la computadora, entenderla. Para esto debemos realizar los siguientes pasos:
+\begin{enumerate}
+  \item Revisar que la expresión solamente tenga símbolos del alfabeto del lenguaje.
+  \item Revisar que la expresión tenga una forma que respete la grámatica.
+  \item Mapear la expresión, usando la grámatica, a una estructura de datos que pueda ser procesada por la computadora.
+\end{enumerate}
+
+Los lenguajes que no son recursivamente enumerables no pueden ser reconocidos por ninguna máquina de Turing.
+
+Los lenguajes regulares y algunos lenguajes libres de contexto se pueden analizar en tiempo lineal con respecto al tamaño de la entrada.
+
+El analísis de los demás lenguajes libres de contexto se puede realizar en tiempo polinomial con respecto al tamaño de la entrada. Y para lenguajes arbirtrarios no hay cota en la comlejidad computaciónal para analizarlos.
+
+\subsection{Definiciones para recordar}
+\paragraph{Alfabeto:} Conjunto finito de símbolos.
+\paragraph{Cadena:} Secuencia finita de símbolos de un alfabeto.
+\paragraph{Lenguaje:} Conjunto de cadenas.
+
+Hay lenguajes naturales y lenguajes formales. Los segundos se definen matemáticamente mediante grámaticas y/o autómatas.
+
+\paragraph{Grámatica:} Una grámatica formal es una cuádrupla \(G = (N, T, S, P)\) donde:
+\begin{itemize}
+  \item[] \(N\) es un conjunto finito de símbolos no terminales (Variables).
+  \item[]  \(T\) es un conjunto finito de símbolos terminales (Constantes).
+  \item[]  \(S\) es un símbolo distinguido de \(N\)no terminal que representa el símbolo inicial.
+  \item[]  \(P\) es un conjunto finito de reglas de producción de la forma \(A \rightarrow \alpha\), donde \(A,\alpha \in (N\cup T)^*\).
+\end{itemize}
+
+\paragraph{Derivación:} Sea \(G = (N, T, S, P)\) una grámatica formal. Si \(\alpha,\beta,\gamma_1,\gamma_2 \in (N\cup T)^*\) y \(\alpha \in \beta\), entonces \[\gamma_1\alpha\gamma_2\rightarrow \beta\].
+
+La relación \(\Rightarrow\) es el subconjunto \(N\cup T)^*\times (N\cup T)^*\) y significa derivar en un solo paso.
+
+Las relacioens \(\overset{+}{\Rightarrow}\) y \(\overset{*}{\Rightarrow}\) son la clausura transitiva y reflexo-transitiva de \(\Rightarrow\), respectivamente.
+
+El lenguaje generado por la grámatica \(G\) es: \[ \mathcal{L}(G) = \{ \alpha\in V_T^*:~S\overset{+}{\underset{G}{\implies}}\alpha\}\]
+
+\subsubsection{Jerarquía de Chomsky}
+Es una clasifición jerarquica de tipos de grámaticas formales que generan lenguajes formales:
+
+\begin{itemize}
+  \item \textbf{Tipo 0}: Gramáticas sin restricciones. Son todos los lenguajes aceptados por una máquina de Turing y se los llama lenguajes recursivamente enumerables.
+  \item \textbf{Tipo 1}: Gramáticas sensibles al contexto. Las reglas son de la forma \(\alpha\to\beta\) con \(|\alpha|<|\beta|\) y \(\alpha,\beta\in(N\cup T)^*\).
+
+        Son aceptados por autómatas linealmente acotados que son máquinas de Turing determínisticas cuya cinta  de memoria está acotada por un múltiiplo de la longitud de entrada.
+
+        Reconocer este tipo de lenguajes es un problema PSPACE-completo.
+
+  \item \textbf{Tipo 2:} Gramáticas libres de contexto. Las reglas son de la forma \(A\to\gamma\) con \(A\) un no terminal y \(\gamma\) una cadena de no terminales y terminales.
+
+        Estas grámaticas generan todos los lenguajes aceptados por automátas de pila.
+
+        No es cierto que para cada autómata de pila no deterministico exista uno deterministico equivalente.
+
+        Los lenguajes libres de contexto aceptados por autómatas de pila deterministicos se llaman lenguajes LR y se los puede reconocer en tiempo lineal en el tamaño de la entrada.
+
+        Un subconjunto propio de los lenguajes LR son los generados por grámaticas LL y el algoritmo para reconocerlos es muy sencillo.
+
+        Para reconocer un lenguaje libre de contexto no determínistico hay un algoritmo de complejidad cúbica en el tamaño de la entrada.
+
+  \item \textbf{Tipo 3:} Gramáticas regulares. Las reglas son de la forma \(A\to a\) ó \(A\to aB\) con \(A, B\) símbolos no terminales y \(a\) un símbolo terminal.
+
+        Alternativamente, las reglas son de la forma \(A\to a\) y \(A\to Ba\) con \(A, B\) símbolos no terminalesY \(a\) un terminal. La regla \(S\to\lambda\) tambíen está permitida siempre y cuando \(S\) no aparezca en la parte derecha de ninguna regla.
+
+        Estas gramáticas generan todos los lenguajes aceptados por autómatas finitos determinísticos o no determísticos.
+
+        Para determinar si una cadena pertenece o nó a un lenguaje regular, siempre hay un algoritmo lineal en el tamaño de la cadenta.
+\end{itemize}
+
+\subsubsection{Árbol de derivación}
+Un árbol de derivación es una representación gráfica de una derivación que no muestra el orden en que se aplicaron las producciones. LAs estiquetas de los nodos están en \(N\cup T\cup\{
+\lambda\}\). La de los nodos internos son no terminales y la de sus hijos son los símbolos del cuerpo de una producción.
+
+Si un nodo tiene una etiqueta \(A\) entonces hay una producción \(A\to X_1\dots X_n\) y el nodo tiene \(n\) descendientes etiquetados \(X_1,\dots,X_n\).
+
+Cada árbol de derivación tiene asociada una única derivación más a la izquierda y una única derivación más a la derecha.
+
+\subsection{Análisis síntactico o parsing}
+Sea \(G = (N, T, S, P)\) una grámatica libre de contexto. Sea \(\alpha\in(T\cup N)^*\). Un parsing más a la izquierda de \(\alpha\) es la secuencia de producciones usadas en la derivación más a la izquierda de \(\alpha\) desde \(S\). Un parsin más a la derecha de \(\alpha\) es la secuencia de producciones usadas en la derivación más a la derecha de \(\alpha\) desde \(S\).
+
+\paragraph{Gramática ambigua:} Una gramática \(G\) es ambigua si hay una expresión de \(\mathcal{L}(G)\) que tiene más de una derivación más a la izquierda o más de una derivación más a la derecha.
+
+\paragraph{Gramática no ambigua:} Una grámatica libre de contexto es no ambigua si cada cadena de su lenguaje tiene una única derivación más a la izquierda.
+
+Las gramáticas libres de contexto determinísticas son no ambiguas.
+
+\paragraph{Decibilidad de un problema:} Un problem que requiere de respuesta por si o por no, no es decidible cuando no hay ningún algoritmo capaz de responder todas las (infinitas) instancias de un problema.
+
+El problema de decidir si una gramática libre de contexto es ambigua no es decidible.
+
+Cualquier lenguaje no vacío admite una gramática ambigua: Para generarla se puede tomar una gramática no ambigua y agregarle una regla duplicada.
+
+Hay lenguajes \textbf{inherementes ambiguos} que solo pueden ser generados por grámaticas ambiguas.
+
+Si nos enfrentamos con una grámatica ambigua, podemos hacer dos cosas:
+\begin{enumerate}
+  \item Cambiarla
+  \item Descartar árboles de derivación, dando reglas de precedencia.
+\end{enumerate}
+
+\paragraph{Grámaticas recursivas a izquierda:} Una grámatica \(G = (N, T, S, P)\) libre de contexto, es recursiva a izquierda si tiene un no terminal \(A\) tal que para alguna expresión \(\alpha\in(N\cup T)^*\), \[ A\underset{L}{\overset{*}{\Rightarrow}}A\alpha\]
+
+Se llama recursión inmediata cuando hay una producción \(A\to A\alpha\)
+
+\begin{teorema}
+  Todo lenguaje libre de contexto tiene un grámatica que no es recursiva a izquierda
+\end{teorema}
+
+Para demostrar este teorema daremos un algoritmo que transforma una grámatica \(G\) que es recursiva a izquierda en otra grámatica \(G'\) que no lo es y que ambas generan el mismo lenguaje.
+
+\paragraph{Grámatica sin ciclos:} Una grámatica no tiene ciclos si para todo símbolo no terminal \(A\) no hay derivaciónes \(A\overset{+}{\underset{L}{\Rightarrow}} A\)
+
+En las gramáticas libres de contexto, los ciclos se originan en la existencia de producciones \(A\to B\) con \(B\) un único no terminal y en las producciones \(A\to\lambda\).
+
+Es posible transformar las grámatica en otra sin ciclos eliminando las producciones \(A\to\lambda\) (solamente podemos dejar \(S\to\lambda\) y eliminando las producciones con un solo no-terminal en el cuerpo.
+
+\subsection{Eliminación de símbolos inutiles}
+\subsubsection{Eliminación de símbolos inactivos}
+Los \textbf{símbolos inactivos} son los símbolos no terminales que no pueden generar una cadena de terminales.
+
+\paragraph{Input:} \(G = (V_N, V_T, P, S)\) una grámatica libre de contexto.
+\paragraph{Output:} \(G'\) sin símbolos inactivos.
+
+\paragraph{Algoritmo:}
+\begin{enumerate}
+  \item \(Act\leftarrow\emptyset\)
+  \item Mientras sigan apareciendo elementos nuevos en \(Act\)
+        \begin{enumerate}
+          \item[] \(Act\leftarrow Act\cup\{ X\in V_N\mid X\to\gamma\in P\) con \(\gamma\in(V_T\cup Act)^*\}\)
+        \end{enumerate}
+  \item \(G'\leftarrow (V_N\cap Act, V_T, P, S)\)
+\end{enumerate}
+\subsubsection{Eliminación de símbolos inaccesibles}
+Los \textbf{símbolos inaccesibles} son los símbolos de una grámatica que no son usados en ninguna derivación.
+
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\) y sin símbolos inactivos.
+
+\paragraph{Output:} Una grámatica \(G'=(V_N',V_T', P', S)\) tal que
+\begin{itemize}
+  \item \(\mathcal{L}(G') = \mathcal{L}(G)\)
+  \item y \(\forall X\in(V_N'\cup V_T'),~\exists\alpha,\beta\in(V_N'\cup V_T')^*\) tal que \(S\deriva aX\beta\).
+\end{itemize}
+
+\paragraph{Algoritmo}
+\begin{enumerate}
+  \item \(Alc\leftarrow\{S\}\)
+  \item Mientras sigan apareciendo elementos en \(Alc\):
+        \begin{enumerate}
+          \item[] \(Alc\leftarrow Alc\cup\{X\in (V_T\cup V_N)\mid \exists A\to \alpha X\beta\in P \land A\in Alc\}\)
+        \end{enumerate}
+  \item \(G' = (Alc\cap V_N, Alc\cup V_T , S, P', S)\) con \(P'\) el conjunto de producciones de \(G\) que solo usan los símbolos en \(Alc\).
+\end{enumerate}
+
+\subsection{Eliminación de ciclos}
+\subsubsection{Eliminación de producciones \(\lambda\)}
+
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\), sin símbolos inútiles.
+
+\paragraph{Output:} Una grámatica \(G'\) sin producciones lambda distintas de \(S\to \lambda\).
+
+\paragraph{Algoritmo:}
+\begin{enumerate}
+  \item \(Nul \leftarrow \emptyset\)
+  \item Mientras sigan apareciendo elementos nuevos en \(Nul\):
+        \begin{enumerate}
+          \item[] \(Nul\leftarrow Nul\cup\{X\in V_N\mid X\to\alpha\in P\) con \(\alpha\in Nul^* \}\)
+        \end{enumerate}
+  \item Remplazar cada producción de la forma \(X\to \alpha_0Y_1\alpha_1\dots\beta_kY_k\) donde \(Y_i\in Nul\) y \(a_i \in ((V_T\cup V_N) - NUL)^*\). Por \(X\to \alpha_0\beta_1\alpha_1\dots\alpha_k\beta_k\) donde cada \(\beta_i\) es o bien \(Y_i\) o bien \(\lambda\).
+  \item Eliminar todas las producciónes de la forma \(X\to\lambda\).
+  \item Si \(S\in Nul\) agregar un nuevo terminal inicial \(S'\) y las producciones \(S'\to S | \lambda\).
+\end{enumerate}
+
+\subsubsection{Eliminación de producciónes cuyo cuerpo es un único no terminal}
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\) y sin símbolos inaccesibles y sin producciones lambda.
+
+\paragraph{Output:} Una grámatica \(G'\) sin producciones cuyo cuerpo es un único no terminal.
+
+\paragraph{Algoritmo:}
+\begin{enumerate}
+  \item Para cada símbolo \(A\in V_N\) armar \(N_A = \{ B | A \deriva B\}\) de la siguiente manera:
+        \begin{itemize}
+          \item[]  \(N_A \leftarrow \{A\}\)
+          \item[] Mientras sigan apareciendo elementos nuevos en \(N_A\):
+            \begin{enumerate}
+              \item[] \(N_A\leftarrow N_A\cup\{C\in V_N\mid B\to C \in P \land B\in N_A\}\)
+            \end{enumerate}
+        \end{itemize}
+  \item Construir el conjunto de producciones para la nueva gramática de la siguiente forma:
+        \begin{enumerate}
+          \item Para cada \(B \in N_A\): Si \(B\to\alpha\in P\) y no \(\alpha\) no es un único terminal, entonces agregata \(A\to\alpha\) a \(P'\).
+        \end{enumerate}
+\end{enumerate}
+
+\subsection{Eliminación de recursión izquierda}
+\subsubsection{Algoritmo de la eliminación de recursión inmediata a izquierda}
+Sea \(G = (N, T, S, P)\) una grámatica libre de contexto, donde \(P\) es el conjunto de producciones: \[A\to A\alpha_1|\dots|A\alpha_n|\beta_1\dots \beta_m\]
+
+donde ninguno del \(\beta\) empieza con \(A\).
+
+Definimos \(G' = (N\cup{A'}, T, P', S)\) con \(A'\) un nuevo símbolo no terminal y \(P'\) identico a \(P\) excepto que se reemplazan todas las producciones de lado izquiero A por:
+
+\[A\to\beta_1|\dots|\beta_m|\beta_1A'|\dots|\beta_mA'\]
+\[A'\to\alpha_1|\dots|\alpha_n|\alpha1A'|\dots|\alpha_nA'\]
+
+\(P'\) tiene el doble de producciones que \(P\). El algoritmo tiene complejidad \(|P|\).
+
+\subsubsection{Eliminación de la recursión a izquierda}
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\) y sin símbolos inútiles y sin ciclos.
+
+\paragraph{Output:} Una grámatica \(G'\) sin recursión izquierda que acepta el mismo lenguaje que \(G\).
+
+Numeramos todos los símbolos no terminales \(A_1,\dots,A_n\).
+
+\paragraph{Invariante del ciclo:} Todas las producciones con cabeza \(A_k\) para \(k = 1,\dots i-1\) fueron posbilemente transformadas a \(A_k\to\alpha\) done \(\alpha\) empieza con un terminal o un no-terminal mayor que \(A_k\).
+
+\paragraph{Algoritmo:}
+\begin{itemize}
+  \item[] Para \(i = 1,\dots,n\):
+    \begin{itemize}
+      \item[] Para \(j = 1,\dots, i-1\):
+        \begin{itemize}
+          \item[] Si \(A_i\to A_j\alpha\) y  \(A_j\to\delta_1|\delta_2'|\dots|\delta_m\):
+            \begin{itemize}
+              \item[] Remplazar \(A_i\to A_j\alpha\) por \(A_i\to\delta_1|\delta_2'|\dots|\delta_m\alpha\).
+            \end{itemize}
+        \end{itemize}
+      \item[] Eliminar la recursion inmediata de \(A_i\).
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Análisis de complejidad:} Sea \(c\) la máxima cantidad de producciones con la misma cabeza.
+En el peor caso tenemos:
+\begin{itemize}
+  \item Todas las producciones de \(G\) con cabeza \(A_1\) tiene recursión inmediata que con la transformación pasan a ser \(2c\) producciones con cabeza \(A_1\).
+  \item Todas las producciones de \(G\) con cabeza \(A_2\) tienen un cuerpo que comienza con \(A_1\). Entonces, tenemos \(2^2c^2\) producciones con cabeza \(A_2\).
+  \item \(\vdots\)
+  \item Todas las producciones de \(G\) con cabeza \(A_n\) tienen un cuerpo que comienza con \(A_1\). Etnoces pasan a ser \((2c)^{2^n}\)producciones con cabeza \(A_n\).
+\end{itemize}
+Entonces, en el peor caso tenemos \(2(2c)^{2^n}\) producciones con cabeza \(A_n\).
+
+\subsection{Transformación a Forma Normal de Chomsky}
+Sea \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\). \(G\)está en forma normal de Chomsky si cada una de sus producciónes es de la forma \(A\to BC\) y \(A\to a\), donde \(A,B,C\in V_N\) y \(a\in V_T\). Y en caso de que \(\lambda\in\mathcal{L}(G)\), \(S\to\lambda\in P\) y \(\lambda\) no aparece en ningún otro lado.
+
+\subsubsection{Algoritmo de transformación a forma normal de Chomsky}
+
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto sin recursión a izquierda.
+
+\paragraph{Output:} Una grámatica \(G' = (V_N, V_T, S, P')\) en forma normal de Chomsky que acepta el mismo lenguaje que \(G\).
+
+\paragraph{Algoritmo:}
+\begin{enumerate}
+  \item \(P'\leftarrow\{ A\to a\in P\mid A\in V_N\land a\in V_T\}\)
+  \item \(P'\leftarrow P'\cup\{A\to BC\mid A,B,C\in V_T\}\)
+  \item Si \(S\to\lambda\in P\) entonces:
+        \begin{itemize}
+          \item[] \(P'\leftarrow P'\cup\{S\to\lambda\}\)
+        \end{itemize}
+  \item Para cada producción de la forma \(A\to X_1\dots X_k\) con \(k\geq 2\) agregamos a \(P'\) las siguientes producciones:
+        \begin{itemize}
+          \item[] \(A\to X'_1\langle X_2\dots X_k \rangle\)
+          \item[] \(\langle X_2\dots X_k\rangle\to X_2'\langle X_3\dots X_k\rangle\)
+          \item[] \(\vdots\)
+          \item[] \(\langle X_{k-1}{k}\rangle\)
+        \end{itemize}
+        Donde \(X_i,\dots,X_{k}\) son nuevos símbolos no terminales.
+  \item Para cada producción de la forma \(A\to X_1X_2\) tal que \(X_1\) y/o \(X_2\) son terminales, agreamos  a \(P'\) la producción \(A\to X_1'X_2'\).
+  \item Por cada no terminal de la forma \(a'\) introducido en los últimos dos pasos agregamos una producción \(a'\to a\) (con \(a\in V_T\)).
+\end{enumerate}
+\subsection{Transformación a forma normal de Greibach}
+Sea \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto tal que \(\mathcal{L}(G)\neq\emptyset\). \(G\)está en forma normal de Greibach si cada una de sus producciónes es de la forma \(A\to a\alpha\) con \(\alpha\in V_N\) y no hay producciones \(\lambda\).
+
+\subsubsection{Algoritmo de transformación a forma normal de Greibach}
+
+\paragraph{Input:} \(G = (V_N, V_T, S, P)\) una grámatica libre de contexto sin recursión a izquierda.
+
+\paragraph{Output:} Una grámatica \(G' = (V_N, V_T, S, P')\) en forma normal de Greibach que acepta el mismo lenguaje que \(G\).
+
+\paragraph{Algoritmo:}
+\begin{enumerate}
+  \item Contruimos una relación de orden entre todos los símbolos en \(V_N\).
+  \item Para \(i\) desde \(n-1\) hasta 0:
+        \begin{itemize}
+          \item[] Remplazamos cada produccion de la forma \(A_i\to A_j\alpha\) con (\(j > 1\)) por \(A_i\to\beta_1\alpha|\dots|\beta_m\alpha\) donde \(A_j\to\beta_1|\dots|\beta_m\).
+        \end{itemize}
+  \item En este momentos todas las producciónes empiezan con un terminal. Ahora, para cada producción \(A\to aX_1\dots X_n\) remplazamos todos los \(X_j\) que son terminales por un nuevo no terminal \(X_j'\).
+  \item Para cada uno de los símbolos no terminales \(X_j'\) introducidos en el paso anterior, agregamos las producciones \(X_j'\to X_j\)
+\end{enumerate}
