@@ -103,7 +103,7 @@ Este modelo está dividido en 7 capas, cada una de las cuales tiene una función
   \item La capa de \textbf{aplicaciones (Application)} contiene los protocolos necesarios para que los usuarios puedan ver y leer la información.
 \end{enumerate}
 
-Además de estas funcionalidades, cada capa ofrece una interfaz que le permite comunicarse con las capas vecinas para hacer el pasaje de los datos entre ellas.
+Además de estas funcionalidades, cada capa ofrece una interfaz que le permite comunicarse con las capas vecinas para hacer el pasaje de los datos entre ellas y asumen que el host en el otro extremo de la comunicación tendrá una arquitectura similar y podrá interpretar los mensajes de cada una de ellas.
 
 \subsection{Modelo TCP/IP}
 \begin{figure}[H]
@@ -113,32 +113,201 @@ Además de estas funcionalidades, cada capa ofrece una interfaz que le permite c
 	\caption[Modelo TCP/IP de Referencia]{Modelo TCP/IP}
 	\label{fig:tcp}
 \end{figure}
+Fue diseñado con el objetivo de mantener las conexiones intactas mientras ambos puntos finales de conexión estén funcionando, incluso si laguno de las máquinas o líneas entre ellos fuese dado de baja.
+
+\begin{enumerate}
+  \item La capa de \textbf{enlace (Link)} describe que deben cumplir los enlaces (cable de ethernet, lineas telefónicas, etc) para poder usados como medios de trasporte para este tipo de conexión.
+  \item La capa de \textbf{intrared (internet)} permite al host injectar paquetes en cualquier red y se encarga de hacerlos llegar a destino. Esto se hacer de manera independiente para cada paquete, es decir pueden no seguir el mismo camino e incluso podrían llegar en distinto orden. En el último caso corresponde a la capas superiores reodenarlos para que puedan ser procesados, si es necesario.
+  \item La capa de \textbf{transporte (Transport)} debe ser diseñada para permitir que dos entidades de la red puedan mantener una conversación. Aquí se definieron dos protocolos:
+  \begin{itemize}
+    \item El \textbf{Transmission Control Protocol (TCP)} que permite enviar sin errores un stream de bytes desde una máquina a otra en la red.
+    \item El \textbf{User Datagram Protocol (UDP)} que permite evitar todo el flujo de conexión TCP y crear el suyo propio. En general, se usa en aplicaciones que requieren una respuesta más rápida que precisa. 
+  \end{itemize}
+  \item La capa de \textbf{Aplicación (Application)} que se incluye la sesiones y funciones necesarias para codificar y procesar los paquetes enviados y recibidos. Entre los protocolos usados en esta capa se encuentran: TELNEt, FTP y SMTP.
+\end{enumerate}
+
+\newpage
 \section{Nivel físico}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\textwidth
+]{images/sistema-comunicacion.png}
+	\caption[Esquema general de un sistema de comunicación]{Esquema general de un sistema de comunicación}
+	\label{fig:sistema-comunicacion}
+\end{figure}
+Cuando enviamos un mensaje a una máquina en una red, debemos pasar ese mensajes por un \textbf{transmisor} que convertirá el mensaje en una serie de \textbf{señales} que pueden ser enviadas a través del \textbf{canal} que nos comunica con la máquina de \textbf{destino}. La máquina de destino debe tener un \textbf{recibidor} que le permita captar las señales del canal y transformarlas nuevamente en el mensaje original.
+
+
+Sin embargo, los canales de transmisión físicos no son perfectos y aportan \textbf{ruido} a las señales emitidas por nuestro transmisor pudiendo llegar a destino con errores.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\textwidth
+]{images/sistema-comunicacion-correccion.png}
+	\caption[Esquema general de un sistema de comunicación]{Esquema general de un sistema de comunicación}
+	\label{fig:sistema-comunicacion-correccion}
+\end{figure}
+Una forma de tratar de resolver esto es agregar, al modelo, nuevas capas de actores que trabajan para reducir los efectos nocivos del ruido. Por ejemplo, podemos agregar al modelo observadores externos que sean capaces de ver lo que se transmite de un lado y se recibe del otro, deducir información a partir de las diferencias, y tener chance de enviarle
+correcciones al Elemento Corrector. También es posible tener dos niveles de observadores:
+uno que se maneja a nivel mensaje y otro que se maneja a nivel característica del canal
+propio.
+\subsection{Fundamentos de las señales}
+Las señales que se envían por el canal físico para comunicar dos extremos de un canal son \textbf{ondas electromagnéticas} que se propagan a través del canal a una cierta velocidad determinada por el tipo de canal que estemos usando.
+
+Esta onda se desplaza longitudinalmente sobre un plano \textbf{vibrando} a auna \textbf{frecuencia} \(f\) determinada con un comportamiento periódico en el eje de su propagación.
+
+En base a este período definimos su \textbf{longitud de onda} \(\lambda\) como:
+\[\lambda = \frac{c}{f}\] donde \(c=3*10^8\frac{m}{s}\) es la velocidad de la luz.
+
+Esta onda puede chocar con imperfecciones del material (del canal), producir reflexiones y refracciones que se tranducen en \textbf{perdidas} (menos energía para la señal original en la que está codificado el mensaje)
+
+Dado que las ondas electromagnéticas son continuas y que son modificadas a medida que se propagan por el canal, debemos encontrar una manera de mapear estas frecuencias a los 0 y 1 que componen nuestros mensajes.
+
+Para esto, tanto el transmisor como el recibidor definen un \textbf{ancho de banda} que es el rango de frecuencias que va a ocupar las señales que van a ser transmitidas por el canal y dentro de ese rango, cuales deben ser mapeadas a un 1 y cuales a un 0.
+
+\subsection{Teoría de la información}
+\subsubsection{Información}
+Sea \(E\) un suceso que puede presentarse con probabilidad \(P(E)\). Cuando \(E\) tiene lugar, decimos que hemos recibido \[I(E)=\log\frac
+{1}{P(E)}\] unidades de información.
+
+Si introducimos el logaritmo de base 2, la unidad se denomina \textit{bit}. Notemos, también, que si \(P(E) = \frac{1}{2}\), \(I(E) = 1\) bit. Es decir, un bit es la cantidad de información obtenida al especificar una de dos posbiles alternativas igualmente probables.
+
+\subsubsection{Fuentes de Memoria Nula}
+Son fuentes de información que emiten una secuencia de símbolos pertenecientes a un alfabeto finito y fijo \(S=\{s_1,\dots,s_n\}\) de manera estadísticamente independientes. Estas fuentes pueden describirse mediante el alfabeto \(S\) y las probabilidades con que los simbolos se presentan: \(P(s_1), \dots, P(s_n)\).
+
+La información que aporta cada símbolo de la fuente \[I(s_i) = \log_2\frac{1}{P(s_i)}\text{ bits}\]
+\subsubsection{Entropía}
+Dada una fuente de memoria nula \(S\) con alfabeto \({s_1,\dots,s_n}\), la entropía \(H(S)\) es la cantidad media de información por símbolo de la fuente, es decir:
+\[H(S) = \sum_{i=1}^n P(s_i)I(s_i) = \sum_{i=1}^n P(s_i)\log_2\frac{1}{P(s_i)} = -\sum_{i=1}^n P(s_i)\log_2 P(s_i)\text{ bits} \]
+
+Podemos interpretar la entropía como el \textbf{valor medio ponderado de la cantidad de información} del conjunto de mensajes posibles, como una medida de la \textbf{incertidumbre probmedio (grado de incerteza)}acerca de una variable aleatoria o la \textbf{cantidad de información} obtenida al observar la aparición de cada nuevo símbolo.
+
+\paragraph{Propiedades:}
+\begin{itemize}
+  \item La entropía es no negativa y se anula si y solo si la probabilidad de uno de sus símbolos es 1 y la del resto es 0.
+  \item La entropía máxima (\textbf{mayor incertidubme del mensaje}) se logra cuando todos los símbolos que puede ser emitidos por la fuente son equiprobables.
+  \item Si hay \(n\) símbolos equiprobables \(P(s)=\frac{1}{n}\) se cumple:
+    \[
+      H(S) = -\sum_s P(S)\log_2 P(S) = -n(\frac{1}{n}\log_2\frac{1}{n}) = -(\log_2 1 - log_2 n) = \log_2 n
+    \]
+\end{itemize}
+
+\subsubsection{Codificación}
+Dado un alfabeto fuente \(\Sigma\), un código es una correspondencia entre todas las secuencias posibles de símbolos de \(\Sigma\) a secuencidas de símbolos de un alfabeto código \(X\).
+
+Cuando codificamos un alfabeto fuente, buscamos logra una representación eficiente de la información mediante la eliminación de la redundancia.
+
+Un código es \(C:\Sigma\to X^*\):
+\begin{itemize}
+  \item \textbf{Bloque:} Si asigna a cada símbolo una secuencia fija  de símbolos de \(X\).
+  \item \textbf{No singular:} Si todas sus palabras son distintas. Es decir si \(C\) es una función inyectiva.
+  \item \textbf{Separable o Univócamente Decodificable:} Si ninguna tira de símbolos del alfabeto código admite más de una única decodificación.
+  \item \textbf{Instantáneo:} Si cumple la condición libre de prefijos: No existe ninguna palabra que sea prefijo de otra palabra de longitud mayor. Si tenemos este tipo de código entonces cuando el receptor recibe una palabra sabé como tiene que decodificarla, sin la necesidad de esperar más bits.
+  
+  Si un código es instantaneo entonces en univócamente decodificable. 
+\end{itemize}
+
+\paragraph{Inecuación de Kraft:} Dado un alfabeto \(S = \{s_1,\dots,s_n\}\) y un alfabeto de código \(X=\{x_1,\dots,x_m\}\), es condición necesaria y suficiente, para exista un código instantáneo con palabras de longitud \(l_1,\dots,l_{n}\), que se cumpla la siguiente inecuación:
+\[\sum_{i=1}^n |X|^{-l_1}\leq 1\]
+\paragraph{Codificación eficiente:} Buscamos codificar un alfabeto \(S\) de tal forma que máximizar la relación entre la entropía \(H(S)\) y la longitud media del código \(L\):  Sea \(L_i\) la longitud de la palabra que codifica al símbolo \(s_i\) de la fuente, \(p_i\) la probabilidad de aparicion de \(s_i\) y \(r\) la cantidad de símbolos diferentes en el alfabeto del código entonces:
+
+\begin{itemize}
+  \item \(L = \sum p_iL_i \) es la longitud medía del código.
+  \item \(\log r\) es la cantidad promedio máxima de información de un símbolo del código.
+  \item \(h = \frac{H(S)}{L\log r}\) es la eficencia del código.
+\end{itemize}
+
+La máxima eficencia se logra cuando \(h = 1\). En general, esto sucede cuando se asigna las palabras de código más cortas a los símbolos de fuente más probables.
+
+\paragraph{Codificador óptimo:} Es un codificador que usa la menor cantidad posible de bits para codificar un mensaje, es decir: Un codificador se dice óptimo si no existe ningún código para la misma fuente con menor longitud media.
+
+Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
+
+\paragraph{Codificación de Huffman:} Este método obtiene codificadores óptimos armando un árbol de prioridades en base a la frecuencia de aparición de cada símbolo en un mensaje.
+
+\subsection{Los medios de transmición reales}
+Estos son los pasos necesarios a realizar durante el envio de datos a través de un canal:
+\begin{enumerate}
+  \item Una fuente emite un mensaje hacia un codificador que lo transforma en una secuencia de bits a partir de una codificación idealmente eficiente.
+  \item El mensaje codificado en bits, pasa a un codificador de canal que se encarga de transformar esos bits a frecuencias para que puedan ser trasmitidos. Muchas veces, se agrega redundancia para ayudar a combatir el ruido del canal.
+  \item Del otro lado del canal, sucede el proceso inverso: Un decodificador de canal lee las frecuencias y las trasnforma a una secuencia de bits para que, luego, el decodificador del mensaje, la transforme en el mensaje original enviado por la fuente.
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\textwidth
+]{images/sistema-comunicacion-correccion.png}
+	\caption[Esquema general de un sistema de comunicación]{Esquema general de un sistema de comunicación}
+	\label{fig:sistema-comunicacion-real}
+\end{figure}
+\subsubsection{Problemas de los canales físicos}
+Como los canales de transmición existentes no son perfectos, la señal recibida por el decodificador puede diferir de la transmitida debido a una gran variedad de tipos de errores:
+
+\begin{itemize}
+  \item \textbf{Atenuación:}  En medios análogicos, la señales se degradan con la distancia recorrida lo que puede llevar a provocar errores en algunos bits recibidos. Por lo que la intensidad de la señal recibida deber ser suficiente para ser detectada y, además, debe ser suficientemente mayor al ruido del canal para que se reciba sin error. En general, las frecuencias más afectadas son las más altas por lo que se puede ecualizar estas frecuencias, es decir, amplificarlas.
+  \item \textbf{Distorsión de retardo:} En medios guiados, la velocidad de propagación en el medio varía con la frecuencia por lo que los componentes del mensaje llegan en distintos instantes de tiempo, originando desplazamiento de fases entre las distintas frecuencias.
+\item \textbf{Ruido:} Los canales físicos poseen ruido natural. Es decir, transmiten señales adiciones debido a agentes externos:
+\begin{itemize}
+  \item \textbf{Ruido Término ó Ruido Blanco:} Se produce debido a la agitación térmica de electrones y aumenta linealmente con la temperatura absoluta del canal.
+  \item\textbf{Ruido por intermodulación:} Son señales que son la suma o la diferencia de sus frecuencias originales producidas por una falta de linealidad en el canal.
+  \item\textbf{Ruido por Diafonía:} Se produce cuando una señal de una línea interfiere en otra.
+  \item\textbf{Ruido impulsivo:} Son impulsos irregulares o picos que se pueden producir por interferencias externas (como pueden ser interferencia electromagnéticas, tormentas, etc). Este tipo de ruido es de corta duración, tienen gran amplitud y es disruptivo.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Capacidad de un canal}
+Estas perturbaciones afectan la velocidad de transmición del canal por lo que debemos asegurarnos de no enviar más bits que la capacidad límite del mismo para no perder información durante la transmición. Para esto vamos a definir los siguientes conceptos:
+
+\begin{itemize}
+  \item Vamos a nombrar \(C\) a la capacidad del canal, es decir a la cantidad de bits por segundo que podemos transmitir a través del mismo.
+  \item \(B\) es el ancho de banda por el cual vamos a transmitir nuestros datos, va estar medido en ciclos por segundo (Hertz) y va estar limitado por el transmiso y el medio.
+  \item \(N\) es el nivel medio o potencia del ruido del canal
+  \item \(BER\) es la tasa de errores de bits por segundo (Bit Error Rate).
+  \item \(S\) es la potencia o amplitud de la señal.
+  \item \(SNR = S / N\) es la relación señal a ruido medido en decibeles.
+\end{itemize}
+
+\[C = B\log_2(1 + SNR)\]
+
+En principio, si se aumentan el ancho de banda \(B\) y la potencia de señal \(S\), aumenta la velocidad binaria. Sin embargo, un aumento de \(B\) aumenta el ruido y un aumento de \(S\) aumenta las no linealidades y el ruido de intermodulación.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth
+]{images/marco-referencia.png}
+	\caption[Esquema de un sistema de comunicación y sus conceptos asociados]{Esquema de un sistema de comunicación y sus conceptos asociados}
+	\label{fig:marco-referencai}
+\end{figure}
+
+
+\paragraph{Límite de eficencia:} La eficiencia de ancho de banda es la máxima cantidad de bits por segundo que podemos inyectar por cada Hz sin perder información. Mientra más eficiente sea el canal, se pueden transmitir más bits por segundo. 
+
+\paragraph{Límie de confiabilidad:} \red{Es la cantidad máxima de bits por segundos que podemos utilizar para transportar una señal de manera confiable a través de un canal ruidoso}
 \red{
-Concepto de Información. Fuentes de Información de Memoria Nula. Entropía. Longitud de un Código. Relación entre la entropía de una fuente de Información y la Longitud Media del código propuesto. Codificación de Huffman. Ancho de banda. Medios de transmisión guiados y no guiados. Punto a Punto y Compartidos (Broadcast). Modems. Modulación: Fase, Frecuencia, Amplitud y QAM. Conversión Analógico/Digital. Capacidad de Canal. Latencia. Producto delay-ancho de banda.
+Ancho de banda. Medios de transmisión guiados y no guiados. Punto a Punto y Compartidos (Broadcast). Modems. Modulación: Fase, Frecuencia, Amplitud y QAM. Conversión Analógico/Digital. Capacidad de Canal. Latencia. Producto delay-ancho de banda.
 
-Unidad 2:
-Nivel de Enlace: Punto a Punto. Servicios. Entramado. Manejo del enlace. Control de flujo. Control de errores: detección y corrección. Distancia de Hamming. Protocolo Stop \& Wait. Protocolos de ventana deslizante. Comparación de protocolos. Medidas de eficiencia.
+\section{Nivel Enlace}
+Punto a Punto. Servicios. Entramado. Manejo del enlace. Control de flujo. Control de errores: detección y corrección. Distancia de Hamming. Protocolo Stop \& Wait. Protocolos de ventana deslizante. Comparación de protocolos. Medidas de eficiencia.
 
-Unidad 3:
-Medios compartidos: Compartidos. Redes locales (LANs). Generalidades. Medios de transmisión. Nivel físico. Nivel de enlace de datos. Subcapa LLC (Logical Link Control): IEEE802.2. Subcapa MAC (Medium Access Control): IEEE 802.3 (Ethernet). CSMA/CD. Redes Inalámbricas. Frecuencia dedicada versus expandida (Spread Spectrum). WLANs. CSMA/CA. Wi-Fi: IEEE 802.11b/g/n. Repetidores. Puentes. LAN Switches. Conceptos de VLAN y troncales de VLANs (IEEE 802.1Q). Spanning Tree Protocol.
+\section{Medios Compartidos}
+Compartidos. Redes locales (LANs). Generalidades. Medios de transmisión. Nivel físico. Nivel de enlace de datos. Subcapa LLC (Logical Link Control): IEEE802.2. Subcapa MAC (Medium Access Control): IEEE 802.3 (Ethernet). CSMA/CD. Redes Inalámbricas. Frecuencia dedicada versus expandida (Spread Spectrum). WLANs. CSMA/CA. Wi-Fi: IEEE 802.11b/g/n. Repetidores. Puentes. LAN Switches. Conceptos de VLAN y troncales de VLANs (IEEE 802.1Q). Spanning Tree Protocol.
 
-Unidad 4:
-Nivel de red. Conmutación y Forwarding. Subredes. Implementación: circuitos virtuales y datagramas. Control de flujo. Concepto de Ruteo. Protocolo IP. Direccionamiento. Broadcasting. Ejemplos de subnetting. Protocolo ARP. Forwarding. ICMP. Traducción de direcciones (NAT).
+\section{Nivel Red}
+Conmutación y Forwarding. Subredes. Implementación: circuitos virtuales y datagramas. Control de flujo. Concepto de Ruteo. Protocolo IP. Direccionamiento. Broadcasting. Ejemplos de subnetting. Protocolo ARP. Forwarding. ICMP. Traducción de direcciones (NAT).
 
-Unidad 5:
-Ruteo Externo e Interno. Distance Vector y Link State. Los protocolos RIP y OSPF. Áreas. Inundación confiable.
+\section{Ruteo Externo e Interno}
+Distance Vector y Link State. Los protocolos RIP y OSPF. Áreas. Inundación confiable.
 
-Unidad 6:
-Nivel de transporte. Servicios. Primitivas. Protocolos. Servidores de nombres. Manejo de conexión: establecimiento, uso y liberación. Manejo de conexión basados en tiempo. Direccionamiento. Control de flujo. Asignación de buffers. Recuperación de caídas. Multiplexado. Protocolos de nivel 4: Transport Control Protocol (TCP). User Datagram Protocol (UDP) . Mecanismos de control de congestión. Cálculo del RTO. Control de Flujo. Control de errores. Determinación de la performance.
+\section{Nivel de transporte}
+Servicios. Primitivas. Protocolos. Servidores de nombres. Manejo de conexión: establecimiento, uso y liberación. Manejo de conexión basados en tiempo. Direccionamiento. Control de flujo. Asignación de buffers. Recuperación de caídas. Multiplexado. Protocolos de nivel 4: Transport Control Protocol (TCP). User Datagram Protocol (UDP) . Mecanismos de control de congestión. Cálculo del RTO. Control de Flujo. Control de errores. Determinación de la performance.
 
-Unidad 7:
+\section*{Congestión}
 Introducción al problema de congestión. Curvas de Trafico Enviado vs entregado. Resultado con buffer infinito. Causas de congestión. Control de flujo vs Control de congestión. Taxonomia de Yang y Redan. Soluciones de lazo cerrado y abierto. Concepto de sistemas realimentados. Métricas a sensar para las realimentación. Realimentación implícita y explicita. Determinación de la performance.
 
-Unidad 8:
+\section{Aplicaciones}
 Aplicaciones. Correo Electrónico. Protocolos : SMTP, POP3 e IMAP, MIME. Servidores World Wide Web. HTTP. Servidor de Nombres: DNS. Jerarquía de dominios. Resolución de nombres.
 
-Unidad 9:
+\section{Seguridad}
 Seguridad en Redes. Marco de Trabajo. Criptografía. Seguridad. Privacidad. Protocolos de Clave Pública y Privada. Algoritmos: DES, 3DES, AES, RSA, MD5 y SHA .Ventajas y desventajas de cada uno. Sus aplicaciones (Autorización, Firma, Confidencialidad e Integridad). Distribución de Claves Públicas. Firewalls. Tunneling. Conceptos de amenazas, ataques, intrusiones.
 }
 \end{document}
