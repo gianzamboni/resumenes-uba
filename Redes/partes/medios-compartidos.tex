@@ -1,4 +1,4 @@
-\section{Medios Compartidos}
+\part{Medios Compartidos}
 La idea es controlar el acceso a los medios compartidos de manera tal que haya la menor cantidad de intervención humana posible en el proceso. Es decir, se busca no tener la figura de un administrador que tenga que solucionar manualmente las cosas.
 
 Tanto TDM, FDM, WDM y CDMA (Code Division Multiple Access) comparten una característica: debe estar decidido a priori qué usuario está usando qué parte del tiempo, frecuencia, etc. en cada momento. Para eso es necesario saber de antemano cuántos usuarios tendrá el sistema. Esto requiere un administrador dedicado a una red con características estáticas, rígidas.
@@ -13,7 +13,7 @@ En estos casos, el control es descentralizado, y surge la necesidad de un esquem
 
 Ejemplos: Aloha, Ethernet, Wi-Fi, Token Ring.
 
-\subsection{Ethernet (IIEEE 802.3)}
+\section{Ethernet (IIEEE 802.3)}
 Las computadoras de un edificio se conectan entre sí por medio de cables. Cada versión de Ethernet tiene un máximo de distancia física entre segmentos. Para permitir conexiones de mayor distancia se pueden utilizar \textbf{repetidores}, que son dispositivos que amplifican y retransmiten señales en ambas direcciones.
 El formato utilizado para enviar mensajes en la red es el siguiente:
 
@@ -36,7 +36,7 @@ El formato utilizado para enviar mensajes en la red es el siguiente:
   \item Los últimos 4 bytes del paquete son un checksum (CRC de 32 bits) que permite detectar si hubo algún error en el frame, si lo hubo, el frame se descarta.
 \end{itemize}
 
-\subsubsection{Colisiones}
+\subsection{Colisiones}
 Una de las razones para tener una longitud mínima de un frame es para evitar que una máquina termine de transmitir el frame antes de que el primer bit haya alcanzado el otro extremo del cable, donde podría colisionar con otro frame.
 
 \begin{figure}[H]
@@ -55,7 +55,7 @@ Si \(A\) trata de enviar un frame muy corto, puede llegar a pasar que termine de
 
 Este valor se deduce de las especificacioens de IIEEE 802.3: Para una red de 10Mbps con una longitud de 2500 metros y a lo sumo 4 repetidores, se determinó que el round-trip time es de 50 \(\mu\)segundos, asi que 500 bits es el frame más corto posible para detectar colisiones. Este valor se redondeó a 512 bits (64 bytes).
 
-\subsubsection{CSMA/CD con Exponential BackOff}\label{section::csma}
+\subsection{CSMA/CD con Exponential BackOff}\label{section::csma}
 CSMA/CD (Carrier Sense Multiple Access with Collision Detection), es decir, acceso múltiple con sensado de portadora y detección de colisiones, es un algoritmo de control de acceso a un medio compartido.
 
 Utiliza el sensado de portadora para determinar si hay nodos transmitiendo. Cuando un host tiene datos para enviar, sensa el medio compartido:
@@ -88,27 +88,27 @@ Este algoritmo se llama \textbf{Exponential Backoff Binario}, sirve para adaptar
 	\label{fig:csma-cd}
 \end{figure}
 
-\subsubsection{Logical Link Control}
+\subsection{Logical Link Control}
 Es la subcapa de la capa de enlace que se encarga de procesar el paquete recibido en la capa MAC y enviarlo al proceso correspondiente en la capa de Red.
 
-\subsection{Redes inalámbricas: Wi-Fi: IEEE 802.11b/g/n}
+\section{Redes inalámbricas: Wi-Fi: IEEE 802.11b/g/n}
 En las redes inalámbricas, los frames se mandan a través de ondas en una determinada frecuencia, que depende de la tecnología usada para transmitirlas. En este tipo de red, la intensidad de la señal disminuye con la distancia y tiene fuentes de ruidos más impredecibles que en medios guiados. Esto se traduce en una tasa de errores elevadas.
 
-\subsubsection*{Spread Spectrum}
+\subsection{Spread Spectrum}
 Esto sumado a que cualquier dispositivo cercarno puede conectarse a ellas, impulsaron el diseño de técnicas para aprovechar al máximo el ancho de banda de tal forma de proteger a la red de intrusos. Est técnica es llamada \textbf{Spread Spectrum}.
 
 Esta técnica modula la señal usando una moduladora semi random compuesta de 1s y -1s conocida por los dispositivos de la red qur aplican a la señal que quieren enviar. Cuando la señal llega el receptor, este realiza el proceso inverso para conseguir la señal original.
 
 Otra forma de realizar esto, es enviar la información transmitida en un rango de frecuencias que es cambiado varías veces durante el proceso de transmición. En este método, la información original se divide en partes más pequeñas usando un patron conocido solamente por el transmisor y el receptor.
 
-\subsubsection{Carrier Sense Multiple Access / Collision Avoidance (CSMA/CA)}
+\subsection{Carrier Sense Multiple Access / Collision Avoidance (CSMA/CA)}
 
 Dado que las redes inalámbricas son un medio de broadcasting, los equipos de la red debe estar atentos a multiples transmiciones realizadas simultaneamente. 
 A diferencia de los medios guiados, implementar una comunicación full-duplex sobre radio frecuencias es costoso por lo que se intenta evitar las colisiones en vez de resolverlas.
 
 Para manejar esto, se utiliza el sistema CSMA descripto en la sección \ref{section::csma} pero adaptado a los problemas introducidosra minimizar la probabilidad de colisiones. Si durante este período, el medio se libera, el host puede transmitir una nueva trama. Si no, se vuelve a esperar un nuevo período de contentción. por el nuevo medio que es mucho más lento:
 
-\subsubsection*{Colission Avoidance}
+\subsubsection{Colission Avoidance}
 Antes de transmitir, una estación debe determinar el estado del medio. Si el canal no está ocupado, se realiza una espera adicional llamada \textbf{espaciado entre tramas} para asegurarnos de que no colisione.  Si durante esta espera, el medio no permanece libre, entonces se suspende la transmición hasta que se cumpla dicha condición.
 
 Cuando la trama se transmitió, se espera recibir un ACK. Si esto no sucede, se asume que se perdió en una colisión y se retransmitirá la misma. 
@@ -126,7 +126,7 @@ Este método recién descripto es llamado \textbf{Distributed Coordination Funct
 	\label{fig:wifi-estados}
 \end{figure}
 
-\subsubsection*{Problema de la estación oculta}
+\subsubsection{Problema de la estación oculta}
 Supongamos que la computadora \(A\) comienza a transmitir a \(B\). 
 
 Si \(C\) detecta el medio no escuchará a \(A\) porque está fuera de su alcance, y por lo tanto deducirá erroneamente que puede transmitir. Si lo hace, interferirá en \(B\) eliminando la trama de \(A\).
@@ -139,7 +139,7 @@ Si \(C\) detecta el medio no escuchará a \(A\) porque está fuera de su alcance
 	\label{fig:estacion-oculta}
 \end{figure}
 
-\subsubsection*{Problema de la estación expuesta}
+\subsubsection{Problema de la estación expuesta}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth
