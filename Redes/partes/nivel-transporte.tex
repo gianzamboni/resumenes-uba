@@ -103,10 +103,9 @@ El algoritmo utilizado por TCP para establecer y terminar una conexión se llama
 
 Dos computadoras que quieran inicializar una conexión, deben acordar los números de secuencia de inicio que las dos partes planean usar para sus respectivos flujos de bytes. Primero, el cliente (el participante activo) envía un segmento al servidor (el participante pasivo) indicando el número de secuencia inicial que planea usar (\texttt{FLAG = SYN, SequenceNum = x}). El servidor responde con un solo segmento que reconoce el número de secuencia del cliente (\texttt{FLAG = ACK, Ack = x + 1}) y establece su propio número de secuencia de inicio (\texttt{Flags = SYN + ACK, SequenceNum = y}). Finalmente, el cliente responde con un tercer segmento que reconoce el número de secuencia del servidor (\texttt{Flags = ACK, Ack = y + 1}). La razón por la cual cada lado reconoce un número de secuencia que es uno más grande que el enviado es que el campo de reconocimiento realmente identifica el "siguiente número de secuencia esperado", reconociendo implícitamente todos los números de secuencia anteriores. Aunque no se muestra en esta línea de tiempo, se programa un temporizador para cada uno de los dos primeros segmentos, y si no se recibe la respuesta esperada, el segmento se retransmite.
 
-\subsection*{Diagrama de transición de estados de TCP}
+\subsubsection{Diagrama de transición de estados de TCP}
 Todas las conexiones comienzan en el estado CLOSED. A medida que la conexión avanza, la conexión se mueve de un estado a otro de acuerdo con los arcos. Cada arco está etiquetado con una etiqueta de la forma evento / acción.
 
-\subsubsection*{3-Way Handshake}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth
@@ -115,13 +114,62 @@ Todas las conexiones comienzan en el estado CLOSED. A medida que la conexión av
 	\label{fig:tcp-state-transitions}
 \end{figure}
 
+\paragraph{Inicio de conexión:}Al abrir una conexión, el servidor primero invoca una operación de apertura pasiva, lo que hace que TCP se mueva al estado \texttt{LISTEN}. En algún momento posterior, el cliente realiza una apertura activa, lo que hace que su extremo de la conexión envíe un segmento \texttt{SYN} al servidor y se mueva al estado \texttt{SYN SENT}. Cuando el segmento \texttt{SYN} llega al servidor, se mueve al estado \texttt{SYN RCVD} y responde con un segmento \texttt{SYN + ACK}. La llegada de este segmento hace que el cliente se mueva al estado \texttt{ESTABLISHED} y envíe un \texttt{ACK} de vuelta al servidor. Cuando llega este \texttt{ACK}, el servidor finalmente se mueve al estado \texttt{ESTABLISHED}.
+
+Si el \texttt{ACK} del cliente al servidor se pierde, la conexión aún funciona correctamente. Esto se debe a que el lado del cliente ya está en el estado \texttt{ESTABLISHED}, por lo que el proceso de aplicación local puede comenzar a enviar datos al otro extremo. Cada uno de estos segmentos de datos tendrá el indicador \texttt{ACK} establecido y el valor correcto en el campo de reconocimiento, por lo que el servidor pasará al estado \texttt{ESTABLISHED} cuando llegue el primer segmento de datos. Este es en realidad un punto importante sobre TCP: cada segmento informa qué número de secuencia el remitente espera ver a continuación, incluso si esto repite el mismo número de secuencia contenido en uno o más segmentos anteriores.
+
+\paragraph{Fin de la conexión:} 
+Las aplicaciones en ambos lados de la conexión deben cerrar de forma independiente su mitad de la conexión. Si solo un lado cierra la conexión, esto significa que no tiene más datos para enviar, pero aún está disponible para recibir datos del otro lado. Esto complica el diagrama de transición de estado porque debe tener en cuenta la posibilidad de que los dos lados invoquen el operador de cierre al mismo tiempo, así como la posibilidad de que primero un lado invoque el cierre y luego, en algún momento posterior, el otro lado invoque el cierre:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth
+]{images/tcp-closign-connection.png}
+	\caption[Diagrama de cierre de conexión]{Diagrama de cierre de conexión}
+	\label{fig:tcp-closign-connection}
+\end{figure}
+
+
+Una conexión en el estado \texttt{TIME_WAIT} no puede pasar al estado \texttt{CLOSED} hasta que haya esperado dos veces la cantidad máxima de tiempo que un datagrama IP podría vivir en Internet. La razón de esto es que, si bien el lado local de la conexión ha enviado un \texttt{ACK} en respuesta al segmento \texttt{FIN} del otro lado, no sabe si el \texttt{ACK} se entregó correctamente. Como consecuencia, el otro lado podría retransmitir su segmento \texttt{FIN}, y este segundo segmento podría retrasarse en la red. 
+
+Si se permitiera pasar directamente al estado CLOSED, entonces otro par de procesos de aplicación podrían llegar y abrir la misma conexión (es decir, usar el mismo par de números de puerto), y el segmento \texttt{FIN} retrasado de la encarnación anterior de la misma inmediatamente iniciaría la terminación de la encarnación posterior.
+
+\subsubsection*{Sliding Window en TCP}
+La variante de TCP del algoritmo de ventana deslizante sirve para varios propósitos:
+\begin{itemize}
+  \item Garantiza la entrega confiable de datos,
+  \item Garantiza que los datos se entreguen en orden
+  \item Impone un control de flujo entre el remitente y el receptor.
+\end{itemize} 
+
+Para lograr lo último, en lugar de tener una ventana deslizante de tamaño fijo, el receptor anuncia un tamaño de ventana al remitente. Esto se hace utilizando el campo \texttt{AdvertisedWindow} en el encabezado TCP. Luego, el remitente está limitado a tener no más \texttt{AdvertisedWindow} bytes de datos no reconocidos en un momento dado. El receptor selecciona un valor adecuado para \texttt{AdvertisedWindow} en función de la cantidad de memoria asignada a la conexión con el fin de almacenar en búfer los datos. De esta manera, se evita que el remitente sobrecargue el búfer del receptor.
+
+\subsubsection*{Envio confiable y ordenado}
+El remitente mantiene un búfer de envío que utiliza para almacenar datos que se han enviado pero que aún no se han reconocido, así como datos que ha escrito la aplicación de envío pero que aún no se han transmitido.
+
+En el lado receptor, TCP mantiene un búfer de recepción. Este búfer contiene datos que llegan desordenados, así como datos que están en el orden correcto (es decir, no faltan bytes antes en el flujo) pero que el proceso de aplicación aún no ha tenido la oportunidad de leer.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth
+]{images/tcp-buffers.png}
+	\caption[Buffers de TCP]{Buffers de TCP}
+	\label{fig:tcp-buffers}
+\end{figure}
+
+Del lado del remitente, se mantienen tres punteros en el búfer de envío: \texttt{LastByteAcked}, \texttt{LastByteSent} y \texttt{LastByteWritten} y se cumplen las siguientes condiciones:
+\begin{itemize}
+  \item \(\texttt{LastByteAcked} \leq \texttt{LastByteSent}\)
+  \item \(\texttt{LastByteSent} \leq \texttt{LastByteWritten}\)
+\end{itemize}
 
 \newpage
 
 % Traducir del ingles
-All
-connections start in the CLOSED state. As the connection progresses, the
-connection moves from state to state according to the arcs. Each arc is
-labeled with a tag of the form event/action.
+Looking first at the sending side, three pointers are maintained into the
+send buffer, each with an obvious meaning: LastByteAcked, LastByteSent,
+and LastByteWritten. Clearly
+
 % Al español:
-Todas las conexiones comienzan en el estado CLOSED. A medida que la conexión avanza, la conexión se mueve de un estado a otro de acuerdo con los arcos. Cada arco está etiquetado con una etiqueta de la forma evento / acción.
+Mirando primero el lado del envío, se mantienen tres punteros en el búfer de envío, cada uno con un significado obvio: LastByteAcked, LastByteSent y LastByteWritten. Claramente
+
