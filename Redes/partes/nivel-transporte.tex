@@ -123,14 +123,13 @@ Las aplicaciones en ambos lados de la conexión deben cerrar de forma independie
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth
-]{images/tcp-closign-connection.png}
+	\includegraphics[width=0.8\textwidth
+]{images/tcp-closing-conection.png}
 	\caption[Diagrama de cierre de conexión]{Diagrama de cierre de conexión}
 	\label{fig:tcp-closign-connection}
 \end{figure}
 
-
-Una conexión en el estado \texttt{TIME_WAIT} no puede pasar al estado \texttt{CLOSED} hasta que haya esperado dos veces la cantidad máxima de tiempo que un datagrama IP podría vivir en Internet. La razón de esto es que, si bien el lado local de la conexión ha enviado un \texttt{ACK} en respuesta al segmento \texttt{FIN} del otro lado, no sabe si el \texttt{ACK} se entregó correctamente. Como consecuencia, el otro lado podría retransmitir su segmento \texttt{FIN}, y este segundo segmento podría retrasarse en la red. 
+Una conexión en el estado \texttt{TIME\_WAIT} no puede pasar al estado \texttt{CLOSED} hasta que haya esperado dos veces la cantidad máxima de tiempo que un datagrama IP podría vivir en Internet. La razón de esto es que, si bien el lado local de la conexión ha enviado un \texttt{ACK} en respuesta al segmento \texttt{FIN} del otro lado, no sabe si el \texttt{ACK} se entregó correctamente. Como consecuencia, el otro lado podría retransmitir su segmento \texttt{FIN}, y este segundo segmento podría retrasarse en la red. 
 
 Si se permitiera pasar directamente al estado CLOSED, entonces otro par de procesos de aplicación podrían llegar y abrir la misma conexión (es decir, usar el mismo par de números de puerto), y el segmento \texttt{FIN} retrasado de la encarnación anterior de la misma inmediatamente iniciaría la terminación de la encarnación posterior.
 
@@ -151,7 +150,7 @@ En el lado receptor, TCP mantiene un búfer de recepción. Este búfer contiene 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth
+	\includegraphics[width=0.8\textwidth
 ]{images/tcp-buffers.png}
 	\caption[Buffers de TCP]{Buffers de TCP}
 	\label{fig:tcp-buffers}
@@ -159,17 +158,110 @@ En el lado receptor, TCP mantiene un búfer de recepción. Este búfer contiene 
 
 Del lado del remitente, se mantienen tres punteros en el búfer de envío: \texttt{LastByteAcked}, \texttt{LastByteSent} y \texttt{LastByteWritten} y se cumplen las siguientes condiciones:
 \begin{itemize}
-  \item \(\texttt{LastByteAcked} \leq \texttt{LastByteSent}\)
-  \item \(\texttt{LastByteSent} \leq \texttt{LastByteWritten}\)
+  \item \(\texttt{LastByteAcked} \leq \texttt{LastByteSent}\): El receptor no puede haber reconocido un byte que aún no se ha enviado
+  \item \(\texttt{LastByteSent} \leq \texttt{LastByteWritten}\): TCP no puede enviar un byte que el proceso de aplicación aún no ha escrito.
+  \item Ninguno de los bytes a la izquierda de \texttt{LastByteAcked} necesita ser guardado en el búfer porque ya han sido reconocidos, y ninguno de los bytes a la derecha de \texttt{LastByteWritten} necesita ser almacenado en el búfer porque aún no se han generado.
 \end{itemize}
+
+Un conjunto similar de punteros (números de secuencia) se mantienen en el lado receptor: \texttt{LastByteRead}, \texttt{NextByteExpected} y \texttt{LastByteRcvd}. Sin embargo, las desigualdades son un poco menos intuitivas, debido al problema de la entrega desordenada:
+\begin{itemize}
+  \item \(\texttt{LastByteRead} < \texttt{NextByteExpected}\): Un byte no puede ser leído por la aplicación hasta que sea todos los bytes anteriores y ese mismo byte hayan sido recibidos. \texttt{NextByteExpected} apunta al byte inmediatamente después del último byte que cumple con este criterio.
+  \item \(\texttt{NextByteExpected} \leq \texttt{LastByteRcvd} + 1\): Si los datos llegaron en orden, \texttt{NextByteExpected} apunta al byte después de \texttt{LastByteRcvd}, mientras que si los datos han llegado desordenados, entonces \texttt{NextByteExpected} apunta al comienzo del primer espacio en los datos.
+  \item Los bytes a la izquierda de \texttt{LastByteRead} no necesitan estar en búfer porque ya han sido leídos por el proceso de aplicación local, y los bytes a la derecha de \texttt{LastByteRcvd} no necesitan estar en búfer porque aún no han llegado.
+\end{itemize}
+
+\subsubsection*{Control de flujo}
+Ambos búferes mencionados en la sección anterior son de algún tamaño finito, denotados como \texttt{MaxSendBuffer} y \texttt{MaxRcvBuffer}.
+
+En TCP, el receptor se debe asegurar qué \[\texttt{LastByteRcvd} - \texttt{LastByteRead} \leq \texttt{MaxRcvBuffer}\]
+para evitar la sobrecarga de su búfer. Para esto, controla el tamaño de la ventana deslizante que anuncia al remitente seteando el campo \texttt{AdvertisedWindow} en el encabezado TCP con el valor \[\texttt{MaxRcvBuffer} - ((\texttt{NextByteExpected}-1)-\texttt{LastByteRead})\]
+que es la cantidad de espacio libre que tiene en el búfer.
+
+A medida que le llegan los datos, los reconoce siempre que también hayan llegado todos los bytes anteriores. Además, \texttt{LastByteRcvd} se mueve a la derecha (se incrementa), lo que significa que la ventana anunciada potencialmente se reduce. Si se reduce o no depende de qué tan rápido el proceso de la aplicación local está consumiendo datos. Si el proceso local está leyendo datos tan rápido como llegan, entonces la ventanta anunciada se mantiene. Sin embargo, si el proceso receptor se atrasa, tal vez porque realiza una operación muy costosa en cada byte de datos que lee, entonces la ventana anunciada se vuelve más pequeña con cada segmento que llega, hasta que eventualmente llega a 0.
+
+\paragraph{Wraparound:} El número de secuencia utilizado en una conexión determinada podría dar la vuelta, un byte con el número de secuencia \(x\) podría enviarse en un momento determinado, y luego en un momento posterior un segundo byte con el mismo número de secuencia \(x\) podría enviarse. Nuevamente, asumimos que los paquetes no pueden sobrevivir en Internet por más tiempo que el \(MSL\) recomendado. Si esto sucede o no depende de qué tan rápido se pueden transmitir los datos a través de Internet, es decir, qué tan rápido se puede consumir el espacio de número de secuencia de 32 bits.
+
+\paragraph{Manteniendo el pipe lleno:} El valor del \texttt{AdvertisedWindow} debe ser lo suficientemente grande como para permitir que el remitente mantenga el pipe lleno. El receptor es libre de no anunciar una ventana de tamaño máximo (tan grande como lo permite el campo \texttt{AdvertisedWindow}).
+
+El máximo \texttt{AdvertisedWindow} posible se puede calcular como el  producto de la demora y el ancho de banda \(delay\times bandwidth\).
+
+\subsubsection{Transmisión de datos}
+TCP usa tres mecanismos para decidir cuando transmitir datos:
+\begin{itemize}
+  \item TCP mantiene una variable, generalmente llamada \textbf{tamaño máximo de segmento}\\ (\(MSS\)), y envía un segmento tan pronto como ha recopilado \(MSS\) bytes del proceso de envío. 
+  Generalmente se establece este valor de tal manera de evitar que la IP local se fragmente.Es decir, \(MSS\) se establece en la unidad máxima de transmisión (MTU) de la red conectada directamente, menos el tamaño de los encabezados TCP e IP.
+  \item TCP admite una operación de empuje, y el proceso de envío invoca esta operación para vaciar efectivamente el búfer de bytes no enviados.
+  \item El último disparador para transmitir un segmento es que se active un temporizador; el segmento resultante contiene tantos bytes como los que están actualmente almacenados en búfer para su transmisión.
+\end{itemize}
+
+\paragraph{Silly Window Syndrome:} Supongamos que el remitente está acumulando bytes para enviar, pero la ventana está actualmente cerrada. Ahora suponga que llega un \texttt{ACK} que abre efectivamente una ventana de pocos bytes. La especificación original no aclaraba que hacer en esta situación y las primeras implementaciones de TCP decidieron transmitir un segmento medio lleno. Después de todo, no hay forma de saber cuánto tiempo pasará antes de que la ventana se abra aún más.
+
+Resulta que esta estrategia de aprovechar agresivamente cualquier ventana disponible conduce a una situación ahora conocida como el \texttt{síndrome de la ventana tonta}.
+
+Si el remitente llena agresivamente un contenedor vacío más pequeño que un \(MSS\) tan pronto como llega, el receptor \(ACK\) ese número de bytes, y por lo tanto el contenedor introducido en el sistema permanece en el sistema indefinidamente. Es decir, se llena e inmediatamente se vacía en cada extremo y nunca se fusiona con contenedores adyacentes para crear contenedores más grandes.
+
+Actualmente, se puede retrasar este sindromehaciendo que el receptor espere a poder aceptar \(MSS\) bytes antes de anunciar una ventana abierta.
+
+Dado que no podemos eliminar la posibilidad de que se introduzca un contenedor pequeño en el flujo, también necesitamos mecanismos para fusionarlos. El receptor puede hacer esto retrasando los ACK: enviando un ACK combinado en lugar de varios más pequeños, pero esta es solo una solución parcial porque el receptor no tiene forma de saber cuánto tiempo es seguro esperar a que llegue otro segmento o para que la aplicación lea más datos.
+
+\paragraph{Algoritmo de Naggle:} Mientras TCP tenga datos en vuelo, el remitente eventualmente recibirá un ACK. Este ACK se puede tratar como un temporizador que se activa, lo que desencadena la transmisión de más datos. El algoritmo de Nagle proporciona una regla simple y unificada para decidir cuándo transmitir:
+\begin{itemize}
+  \item[] La aplicacion produce \(b\) bytes:
+  \begin{itemize}
+    \item[] Si \(b \geq  MSS\) y \(\texttt{AdvertisedWindow}\geq MSS\)
+     \begin{itemize}
+      \item[] Se manda un segmento completo
+    \end{itemize}
+    \item[] Sino:
+    \begin{itemize}
+      \item[] Si hay datos que todavia no fueron reconocidos (sin acks)
+      \begin{itemize}
+        \item[] Acumular datos hasta que el próximo \texttt{ACL} llegue.
+      \end{itemize}
+      \item[] Sino:
+      \begin{itemize}
+        \item[] Enviar todos los datos ahora
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+En otras palabras, siempre está bien enviar un segmento completo si la ventana lo permite. También está bien enviar inmediatamente una pequeña cantidad de datos si actualmente no hay segmentos en tránsito, pero si hay algo en vuelo, el remitente debe esperar un ACK antes de transmitir el siguiente segmento.
+
+Debido a que algunas aplicaciones no pueden permitirse tal retraso para cada escritura que realiza en una conexión TCP, la interfaz de socket permite a la aplicación desactivar el algoritmo de Nagel estableciendo la opción TCP \texttt{NODELAY}. Usar esta opción significa que los datos se transmiten lo antes posible.
+
+\subsubsection{Retransmisión adaptativa}
+Debido a que TCP garantiza la entrega confiable de datos, retransmite cada segmento si no se recibe un \texttt{ACK} en un cierto período de tiempo. El protocolo establece este tiempo de espera como una función del RTT que espera entre los dos extremos de la conexión. Desafortunadamente, dada la gama de RTT posibles entre cualquier par de hosts en Internet, así como la variación en RTT entre los mismos dos hosts con el tiempo, elegir un valor de tiempo de espera apropiado no es tan fácil. Para abordar este problema, TCP utiliza un mecanismo de retransmisión adaptativo.
+
+\paragraph{Algortimo original:} Cada vez que TCP envía un segmento de datos, registra el tiempo. Cuando llega un ACK para ese segmento, TCP lee el tiempo nuevamente y luego toma la diferencia entre estos dos tiempos como un \texttt{SampleRTT}. TCP luego calcula un \texttt{EstimatedRTT} como un promedio ponderado entre la estimación anterior y esta nueva muestra. Es decir,
+  \[ \texttt{EstimatedRTT} = \alpha\times \texttt{EstimatedRTT} + (1-\alpha)\times \texttt{SampleRTT} \]
+
+El parámetro \(\alpha\) se selecciona para suavizar el \texttt{EstimatedRTT}. Un \(\alpha\) pequeño realiza un seguimiento de los cambios en el RTT, pero tal vez esté demasiado influenciado por fluctuaciones temporales. Por otro lado, un \(\alpha\) grande es más estable pero quizás no sea lo suficientemente rápido como para adaptarse a cambios reales. La especificación original de TCP recomendó una configuración de \(\alpha\) entre \(0.8\) y \(0.9\).
+
+TCP luego usa \texttt{EstimatedRTT} para calcular el tiempo de espera de una manera bastante conservadora:
+\[ \texttt{TimeOut} = 2\times \texttt{EstimatedRTT}\]
+
+\paragraph{Algoritmo de Karn/Partridge:} Un ACK no reconoce realmente una transmisión; en realidad, reconoce la recepción de datos. En otras palabras, cada vez que se retransmite un segmento y luego llega un ACK al remitente, es imposible determinar si este ACK debe asociarse con la primera o la segunda transmisión del segmento con el fin de medir el tiempo de ida y vuelta de la muestra. Es necesario saber qué transmisión asociar con el fin de calcular un \texttt{SampleRTT} preciso.  
+
+Este algoritmo, resuelve esto haciendo que solo se calcule un \texttt{SampleRTT} para segmentos que fueron transmitidos una sola vez. Cada vez que TCP retransmite un segmento, duplica el valor del siguiente timeout (usa \textbf{exponential backoff}). Esta última decisión se debe a que la congestión es la causa más probable de segmentos perdidos, lo que significa que el remitente de un mensaje no debe reaccionar agresivamente a un timeout. De hecho, cuanto más veces se agota el tiempo de espera de la conexión, más cautelosa debe ser la fuente.
+
+\paragraph{Algoritmo de Jacobson/Karels:} Es una mejora al algoritmo anterior. Si la variación entre las muestras es pequeña, entonces el \texttt{EstimatedRTT} puede ser considerado confiable y no hay razón para multiplicar esta estimación por 2 para calcular el timeout. Por otro lado, una gran varianza en las muestras sugiere que el valor de timeout no debe estar demasiado acoplado al \texttt{EstimatedRTT}. Para tener en cuenta estas situaciones, una vez obtenido un \texttt{SampleRTT}, se calcula el \texttt{TimeOut} de la siguiente manera:
+\[\texttt{Difference} = \texttt{SampleRTT} - \texttt{EstimatedRTT}\]
+\[ \texttt{EstimatedRTT} = \texttt{EstimatedRTT} + (\delta\times\texttt{Difference})\]
+\[Deviation = Deviation + (\delta\times(|\texttt{Difference}| - \texttt{Deviation}))\]
+\[\texttt{TimeOut} = \mu\times\texttt{EstimatedRTT} + \phi\times\texttt{Deviation}\]
+
+Donde \(\delta\) es una valor valor entre 0 y 1. \(\mu = 1\) y \(\phi=4\).  De esta manera, si la varianza es pequeña, el \texttt{Timeout} es cercano al \texttt{EstimatedRTT}, y si la varianza es grande, entonces \texttt{Deviation} domina el calculo.
 
 \newpage
 
 % Traducir del ingles
-Looking first at the sending side, three pointers are maintained into the
-send buffer, each with an obvious meaning: LastByteAcked, LastByteSent,
-and LastByteWritten. Clearly
-
+account. Intuitively, if the varia
+tion
+among samples is small, then the EstimatedRTT can be better trusted
+and there is no reason for multiplying this estimate by 2 to compute the
+timeout. On the other hand, a large variance in the samples suggests that
+the timeout value should not be too tightly coupled to the EstimatedRT
 % Al español:
-Mirando primero el lado del envío, se mantienen tres punteros en el búfer de envío, cada uno con un significado obvio: LastByteAcked, LastByteSent y LastByteWritten. Claramente
+Intuitivamente, si la variación entre las muestras es pequeña, entonces el \texttt{EstimatedRTT} puede ser mejor confiable y no hay razón para multiplicar esta estimación por 2 para calcular el tiempo de espera. Por otro lado, una gran varianza en las muestras sugiere que el valor de tiempo de espera no debe estar demasiado acoplado al \texttt{EstimatedRTT}.
 
