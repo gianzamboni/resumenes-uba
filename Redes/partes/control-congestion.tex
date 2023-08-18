@@ -51,44 +51,94 @@ Suponiendo que justo implica igual y que todos los caminos tienen la misma longi
 
 El índice de equidad siempre da como resultado un número entre 0 y 1, siendo 1 la mayor equidad.
 
-\subsubsection{Politicas de cola}
+\subsection{Politicas de cola}
 Independientemente de lo simple o sofisticado que sea el mecanismo de asignación de recursos, cada enrutador debe implementar una política de encolamiento que indique cómo se almacenan en búfer los paquetes mientras esperan ser transmitidos.
 
-\subsubsection*{First In First Out (FIFO)}
+\subsubsection{First In First Out (FIFO)}
 El primer paquete que llega a un enrutador es el primer paquete en ser transmitido. Dado que la cantidad de espacio de búfer en cada enrutador es finita, si llega un paquete y la cola (espacio de búfer) está llena, el enrutador descarta ese paquete. Esto se hace sin tener en cuenta a qué flujo pertenece el paquete o qué tan importante es el paquete. A esto a veces se le llama \textbf{tail drop}, ya que los paquetes que llegan al final de la cola FIFO se descartan.
 
-Una variación simple es usar encolamiento de prioridad. En esta politica se marca cada paquete con una prioridad; la marca podría llevarse, por ejemplo, en el encabezado IP. Los router implementan múltiples colas FIFO, una para cada clase de prioridad y siempre transmite paquetes desde la cola de mayor prioridad si esa cola no está vacía antes de pasar a la siguiente. Dentro de cada prioridad, los paquetes aún se administran de manera FIFO. Esta idea es una pequeña desviación del modelo de entrega de mejor esfuerzo, pero no va tan lejos como para garantizar una clase de prioridad en particular. 
+Una variación simple es usar encolamiento de prioridad. En esta politica se marca cada paquete con una prioridad; la marca podría llevarse, por ejemplo, en el encabezado IP. Los router implementan múltiples colas FIFO, una para cada clase de prioridad y siempre transmite paquetes desde la cola de mayor prioridad si esa cola no está vacía antes de pasar a la siguiente. Dentro de cada prioridad, los paquetes aún se administran de manera FIFO. Esta idea es una pequeña desviación del modelo de entrega de mejor esfuerzo, pero no va tan lejos como para garantizar una clase de prioridad en particular y puede generar starvation si no se implementa correctamente.
 
-\subsubsection*{Fair Queueing}
+\subsubsection{Fair Queueing}
 Se mantiene una cola separada por cada flujo que esté pasando por el router. El router envía paquetes desde esta cola usand round-robin. Cuando un flujo manda paquetes demasiado rápido, Cuando un flujo envía paquetes demasiado rápido, entonces su cola se llena. Cuando una cola alcanza su máxima longitud, los paquetes adicionales que pertenecen a ese flujo se descartan. De esta manera, una fuente determinada no puede aumentar arbitrariamente su parte de la capacidad de la red a expensas de otros flujos.
 
 Sin embargo, los paquetes que se procesan en un enrutador no son necesariamente de la misma longitud. Para asignar verdaderamente el ancho de banda al enlace de salida de manera justa, es necesario tener en cuenta la longitud del paquete. Por esta razon, se usa un round robint bit a bit. Fair Queueing simula este comportamiento determinando primero cuándo terminaría de transmitirse un paquete determinado si se enviara utilizando este tipo de round robin y luego utilizando este tiempo de finalización para secuenciar los paquetes para su transmisión.
 
+Si hay \(n\) flujos activos en un router, entonces el router calcula cuanto ticks de reloj va a tardar en enviar el siguiente paquete de cada flujo y le asigna un timestamp. Al momento de transmitir, el router elige el paquete con menor timestamp.
 
-Sea \(P_i\) la longitud del paquete \(i\) de un flujo, sea \(S_i\) el tiempo en que el router comienza a transmitir el paquete \(i\) y sea \(F_i\) el tiempo en que el  termina de transmitirlo. Si \(P_i\) se expresa en términos de cuántos ticks de reloj se necesitan para transmitir ese paquete (teniendo en cuenta que el tiempo avanza 1 tick cada vez que este flujo obtiene 1 bit de servicio), entonces  \[F_i = S_i + P_i\]:
-\begin{itemize}
-  \item Si \(i\) llegó antes de que el router terminase de transmitir el paquete \(i-1\), entonces 
-\end{itemize}
+El enlace nunca queda inactivo si hay al menos un paquete en la cola. Cualquier esquema de encolamiento con esta característica se dice que conserva el trabajo. Si el enlace está completamente cargado y hay \(n\) flujos enviando datos, no puedo usar más de \(1/n\) th del ancho de banda del enlace. Si intento enviar más que eso, mis paquetes se asignarán cada vez más grandes marcas de tiempo, lo que hará que se sienten en la cola más tiempo esperando la transmisión.
 
+Es posible implementar una variación de FQ, llamada weighted fair queuing (WFQ), que permite asignar un peso a cada flujo (cola). Este peso especifica lógicamente cuántos bits transmitir cada vez que el enrutador atiende esa cola, lo que controla efectivamente el porcentaje del ancho de banda del enlace que ese flujo obtendrá.
 
+\subsection{Control de congestión en TCP}
+TCP asume que solo hay encolamiento FIFO en los routers de la red, pero también funciona con encolamiento justo.
 
+Los hosts que desean enviar información pueden determinar cuanta capacidad de la red pueden usar usando TCP. Esto les sirve para saber cuantos paquetes pueden tener en tránsito. Una vez que transmitió esta cantidad de paquetes, usa la llegada de un ACK como una señal de que uno de sus paquetes salió de la red y que es seguro insertar uno nuevo sin agregar al nivel de congestión. Se dice que TCP es auto-regulado.
 
-\newpage  
-%Traducir:
-Clearly, it is 
-not feasible to interleave the bits from different packets. The FQ mecha-
-nism therefore simulates this behavior by first determining when a given 
-packet would finish being transmitted if it were being sent using bit-by-bit 
-round-robin and then using this finishing time to sequence the packets 
-for transmission.
-% Al español:
-Claramente, no es factible intercalar los bits de diferentes paquetes. .
+TCP mantiene una nueva variable de estado para cada conexión, llamada \textbf{CongestionWindow}, que es usada por la fuente para limitar cuanta información puede tener en tránsito en un momento dado. Se modifica el protocolo de tal manera que el número máximo de bytes de datos no reconocidos permitidos es ahora el mínimo de la ventana de congestión y la ventana anunciada.
 
+\[\texttt{MaxWindow}= \min ( \texttt{CongestionWindow} , \texttt{AdvertisedWindow})\]
 
+El host emisor establece la ventana de congestión en función del nivel de congestión que percibe que existe en la red. Esto implica disminuir la ventana de congestión cuando el nivel de congestión aumenta y aumentarla cuando el nivel de congestión disminuye. En conjunto, para esto utiliza un politica de aumento aditivo / disminución multiplicativa (\textbf{Additive Increase / Multiplicative Decrease} - AIMD); Cada vez que recibe un timeout, disminuye la ventana de congestión a la mitad y cada vez que recibe tantos ACK como paquetes haya enviado, aumenta la ventana de congestión en 1 MSS (Maximum Segment Size).
 
+Este patrón de aumentar y disminuir continuamente la ventana de congestión continúa durante toda la vida útil de la conexión. De hecho, si traza el valor actual de CongestionWindow como una función del tiempo, obtiene un patrón de dientes de sierra.
 
-% Resumen:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth
+]{images/tcp-congestion.png}
+	\caption[TCP Window Size]{TCP Window Size}
+	\label{fig:tcp-congesiton}
+\end{figure}
 
-\red{
-  
-Introducción al problema de congestión. Curvas de Trafico Enviado vs entregado. Resultado con buffer infinit. Causas de congestión. Control de flujo vs Control de congestión. Taxonomia de Yang y Redan. Soluciones de lazo cerrado y abierto. Concepto de sistemas realimentados. Métricas a sensar para las realimentación. Realimentación implícita y explicita. Determinación de la performance.}
+\subsubsection{Slow Start}
+El mecanimos recién descripto se utiliza cuando el source host ya está haciendo uso de casi toda la capacidad disponible de la red. Cuando la conexión recién comienza, TCP setea la ventada de congestión en 1 MSS. Cada vez que recibe un ACK, aumenta la ventana de congestión en 1 MSS y transmite 2 paquetes. Cuando recibe todos los correspondientes a los paquetes en transmisión en ese momento, duplica la ventana de congestión. De esta forma, este valor aumenta exponencialmente hasta que se llega a perder el primer paquete. Aquí es donde se comienza a usa AIMD.
+
+Slow start también se vuelve a usar en el caso de que la conexión haya quedado idle por un tiempo. Es decir, si la ventana de transmisión se redujo a cero.
+
+\subsubsection*{Retransmisión y recuperación rápidas}
+Cada vez que un paquete de datos llega al lado receptor, el receptor responde con un ACK, incluso si este número de secuencia ya ha sido reconocido. 
+
+Cuando llega un paquete fuera de orden, TCP no puede reconocer los datos que contiene porque los datos anteriores aún no han llegado, entonces reenvía el mismo Ack que envió la última vez. Esta segunda transmisión se llama ACK duplicado. Cuando el lado emisor ve un ACK duplicado, sabe que el otro lado debe haber recibido un paquete fuera de orden, lo que sugiere que un paquete anterior podría haberse perdido. Dado que también es posible que el paquete anterior solo se haya retrasado en lugar de perdido, el remitente espera hasta que ve algunos ACK duplicados y luego retransmite el paquete faltante. En la práctica, TCP espera hasta que ha visto tres ACK duplicados antes de retransmitir el paquete.
+
+En general, esta técnica puede eliminar aproximadamente la mitad de los tiempos de espera en una conexión TCP típica, lo que resulta en una mejora de aproximadamente el 20\% en el rendimiento sobre lo que de otro modo se podría haber logrado. 
+
+Cuando el mecanismo de retransmisión rápida detecta la congestión, en lugar de reducir la ventana de congestión a un paquete y ejecutar el slow start, es posible utilizar los ACK que todavía están en transmición para sincronizar el envío de paquetes. Este mecanismo, que se llama recuperación rápida, elimina efectivamente la fase de inicio lento que ocurre entre cuando la retransmisión rápida detecta un paquete perdido y el aumento aditivo comienza.
+
+\subsubsection{Congestion Avoidance}
+TCP necesita crear pérdidas para encontrar el ancho de banda disponible de la conexión. Una alternativa atractiva, pero que aún no se ha adoptado ampliamente, es predecir cuándo está a punto de ocurrir la congestión y luego reducir la velocidad a la que los hosts envían datos justo antes de que comiencen a descartarse los paquetes.
+
+\subsubsection*{DECbit}
+Cada enrutador monitorea la carga que está experimentando y notifica explícitamente a los nodos finales cuando está a punto de ocurrir una congestión. Esta notificación se implementa estableciendo un bit de congestión binario en los paquetes que fluyen a través del router. El host de destino copia este bit de congestión en el ACK que envía de vuelta a la fuente.
+
+La fuente registra cuántos de sus paquetes resultaron en que algún enrutador estableciera el bit de congestión. En particular, la fuente mantiene una ventana de congestión, al igual que en TCP, y observa qué fracción de la última ventana de paquetes resultó en que se estableciera el bit. Si menos del 50\% de los paquetes de la ventana resultaron en que se estableciera el bit, la fuente aumenta su ventana de congestión en 1 MSS. Si más del 50\% de los paquetes de la ventana resultaron en que se estableciera el bit o hubo un timeout, la fuente reduce su ventana de congestión a la mitad.
+
+\subsubsection*{Random Early Detection (RED)}
+Cada router está programado para monitorear su propia longitud de cola y, cuando detecta que la congestión es inminente, notificar (de manera implicita) a la fuente para que ajuste su ventana de congestión.
+
+Esta notificación se implementa descartando paquetes antes de que la cola se llene. El router descarta paquetes de manera aleatoria, la probabilidad de descartar un paquete aumenta a medida que aumenta la longitud de la cola.
+
+La fuente se da cuenta de esto cuando se produce el timeout para el paquete descartado o cuando recibe un ACK duplicado. En cuyo caso, reduce su ventana de congestión.
+
+Para calcular la probabilidad con la que debe descartar un paquete, cada router calcula la longitud promedio ponderada de la cola:
+\[
+    \texttt{AvgLen} = (1 - \texttt{Weight}) \times \texttt{AvgLen} + \texttt{Weight} \times \texttt{SampleLen}
+\]
+
+donde \(0\leq \texttt{Weight} \leq 1\) y \(\texttt{SampleLen}\) es la longitud de la cola en el momento en que se realiza la medición. En la mayoría de los casos ,este momento es cuando se recibe un paquete.
+
+El promedio ponderado trata de detectar congestiones de larga duración. En el caso de que la cola del router se llene y vacie rapidamente sería erroneo notificar una congestión (esta situación es muy normal en el internet, dada la naturaleza de la transición que se realiza en ráfagas y no de manera uniforme a través del tiempo)
+
+El router tiene configurado dos cotas para la longitud de la cola: \texttt{MinThreshold} y \texttt{MaxThreshold}  Si \(\texttt{AvgLen} < \texttt{MihThreshold}\) entonces no se descarta ningún paquete. Si \(\texttt{AvgLen} > \texttt{MaxThreshold}\) entonces se descarta cada paquete. Si \(\texttt{MinThreshold} < \texttt{AvgLen} < \texttt{MaxThreshold}\) entonces se descarta cada paquete con probabilidad \(P\) donde:
+
+\[
+    \texttt{TempP} = \texttt{MaxP}\times\frac{\texttt{AvgLen} - \texttt{MinThreshold}}{\texttt{MaxThreshold} - \texttt{MinThreshold}}
+\]
+
+\[
+  P = \frac{\texttt{TempP}}{1 - \texttt{count}\times\texttt{TempP}}
+\]
+
+con \texttt{count} la cantidad de paquetes se encolaron y \(\texttt{MaxP} = 0.02\).
+
+La naturaleza aleatoria de RED confiere una propiedad interesante al algoritmo. La probabilidad de que se decida descartar los paquetes de un flujo en particular es aproximadamente proporcional a la parte del ancho de banda que ese flujo está recibiendo actualmente en ese router. Esto se debe a que un flujo que envía una cantidad relativamente grande de paquetes proporciona más candidatos para descartar al azar. Por lo tanto, hay cierto sentido de asignación justa de recursos incorporado en RED, aunque de ninguna manera es preciso.
