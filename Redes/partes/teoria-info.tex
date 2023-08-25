@@ -1,0 +1,104 @@
+\part{Nível Físico}
+\section{Teoría de la información}
+\subsection{Información}
+Sea \(E\) un suceso que puede presentarse con probabilidad \(P(E)\). Cuando \(E\) tiene lugar, decimos que hemos recibido \[I(E)=\log\frac
+{1}{P(E)}\] unidades de información.
+
+Si introducimos el logaritmo de base 2, la unidad se denomina \textit{bit}. Notemos, también, que si \(P(E) = \frac{1}{2}\), \(I(E) = 1\) bit. Es decir, un bit es la cantidad de información obtenida al especificar una de dos posbiles alternativas igualmente probables.
+
+\subsubsection{Fuentes de Memoria Nula}
+Son fuentes de información que emiten una secuencia de símbolos pertenecientes a un alfabeto finito y fijo \(S=\{s_1,\dots,s_n\}\) de manera estadísticamente independientes. Estas fuentes pueden describirse mediante el alfabeto \(S\) y las probabilidades con que los simbolos se presentan: \(P(s_1), \dots, P(s_n)\).
+
+La información que aporta cada símbolo de la fuente \[I(s_i) = \log_2\frac{1}{P(s_i)}\text{ bits}\]
+\subsubsection{Entropía}
+Dada una fuente de memoria nula \(S\) con alfabeto \({s_1,\dots,s_n}\), la entropía \(H(S)\) es la cantidad media de información por símbolo de la fuente, es decir:
+\[H(S) = \sum_{i=1}^n P(s_i)I(s_i) = \sum_{i=1}^n P(s_i)\log_2\frac{1}{P(s_i)} = -\sum_{i=1}^n P(s_i)\log_2 P(s_i)\text{ bits} \]
+
+Podemos interpretar la entropía como el \textbf{valor medio ponderado de la cantidad de información} del conjunto de mensajes posibles, como una medida de la \textbf{incertidumbre probmedio (grado de incerteza)}acerca de una variable aleatoria o la \textbf{cantidad de información} obtenida al observar la aparición de cada nuevo símbolo.
+
+\paragraph{Propiedades:}
+\begin{itemize}
+  \item La entropía es no negativa y se anula si y solo si la probabilidad de uno de sus símbolos es 1 y la del resto es 0.
+  \item La entropía máxima (\textbf{mayor incertidubme del mensaje}) se logra cuando todos los símbolos que puede ser emitidos por la fuente son equiprobables.
+    \item Si hay \(n\) símbolos equiprobables \(P(s)=\frac{1}{n}\) se cumple:
+    \[
+      H(S) = -\sum_s P(S)\log_2 P(S) = -n(\frac{1}{n}\log_2\frac{1}{n}) = -(\log_2 1 - log_2 n) = \log_2 n
+    \]
+\end{itemize}
+
+\subsubsection{Extensión de memoria nula}
+Si tenemos una fuente de memoria nula \(S\), con un alfabeto \(\{s_1,\dots,s_q\}\), podemos agrupar las salidas en paquetes de \(n\) símbolos. Tendremos, pues, \(qn\) secuencias de salidas distintas. 
+
+Formalmente, sea \(S\) una fuente de información de memoria nula con un alfabeto \(\{s_1,\dots,s_q\}\). Sea \(P_i\) la probabilidad correspondiente a \(s_i\). Entonces, la extensión de orden \(n\) de \(S\) \((S^n)\) es una fuente de memoria nula de \(qn\) símbolos \(\{\sigma_1,\dots,\sigma_{qn}\}\) donde cada \(\sigma_i\) corresponde a una secuencia de simbolos de \(S\) de longitud \(n\). La probabilidad de \(\sigma_i\), \(P_{\sigma_i}\) es la probabilidad de la secuencia correspondiente. Es decir, si \(\sigma = s_{i_1}\dots s_{i_k}\) entonces \(P(\sigma) = P_{i_1}\dots P_{i_k}\).
+
+Puesto que un símbolo de \(S^n\) corresponde a \(n\) símbolos de \(S\), es de suponer que la entropía por símbolo de \(S^n\) sea \(n\) veces mayor que la de \(S\), osea:
+\[H(S^n) = nH(S)\]
+
+\subsection{Codificación}
+Sea \(S = \{ s_1,\dots, s_q\} \) el conjunto de símbolos de un alfabeto dado. Se define un \textbf{código} como la correspondencia de todas las secuencias posibles de símbolos de \(S\) a secuencias de símbolos de algún otro alfabeto \(X =\{x_1,\dots x_r\}\). \(S\) recibe el nombre de \textbf{alfabeto fuente} y \(X\) el de \textbf{alfabeto código}.
+
+Cuando codificamos un alfabeto fuente, buscamos logra una representación eficiente de la información mediante la eliminación de la redundancia.
+
+\paragraph{Código bloque:} Es aquel que asigna cada uno de los símbolos del alfabeto fuente \(S\) a una secuencia fija de símbolos del alfabeto código \(X\). Esas secuencias fijas (secuencias de \(x_i\)) reciben el nombre de palabras
+código. Denominaremos \(X_i\), a la palabra código que corresponde al símbolo \(s_i\).
+
+\paragraph{Código no singular:} Es un código en el que todas sus palabras son distintas.
+
+\paragraph{Extensión de orden n:} La extensión \(C^n\) de orden \(n\) de un código bloque \(C:S\to X^*\), es el código bloque que hace corresponder las secuencias de símbolos de \(S\) con las secuencias de las palabras código formadas por \(C(s_i)\). Es decir: Si \(s_i\dots s_k\in S^*\), entonces \(C^n(s_i\dots s_k) = C(s_i)\dots C(s_k)\).
+
+\paragraph{Código univócamente decodificable:} Es aquel en el cual ninguna tira de símbolos del alfabeto código admite más de una única decodificación. Dicho de otra forma, un código bloque se dice univocamente decodificable si, y solamente si, su extensión de orden \(n\) es no singular para, cualquier valor finito de \(n\).
+
+\paragraph{Código instantaneo:} Un código unívocamente decodificable se denomina instantáneo cuando es posible decodificar las palabras de una secuencia sin precisar el conocimiento de los símbolos que las suceden.
+
+\paragraph{Préfijo de una palabra:} Sea \(X=x_1\dots x_m\) una palabra de un código. Se denomina prefijo de esta palabra a la secuencia de símbolos \(x_1\dots x_j\), donde \(j \leq m\).
+
+La condición necesaria y suficiente para que un código sea instantáneo es que ninguna palabra del código coincida con el prefijo de otra.
+
+\paragraph{Inecuación de Kraft:} Dado un alfabeto \(S = \{s_1,\dots,s_n\}\) y un alfabeto de código \(X=\{x_1,\dots,x_m\}\), es condición necesaria y suficiente, para exista un código instantáneo con palabras de longitud \(l_1,\dots,l_{n}\), que se cumpla la siguiente inecuación:
+\[\sum_{i=1}^n |X|^{-l_1}\leq 1\]
+
+\subsubsection{Codificación óptima}
+Buscamos codificar un alfabeto \(S\) de tal forma que máximizar la relación entre la entropía \(H(S)\) y la longitud media del código \(L\).  Sea \(l_i\) la longitud de la palabra que codifica al símbolo \(s_i\) de la fuente, \(p_i\) la probabilidad de aparicion de \(s_i\) y \(r\) la cantidad de símbolos diferentes en el alfabeto del código entonces:
+
+\begin{itemize}
+  \item \(L = \sum p_iL_i \) es la longitud medía del código.
+  \item \(\log r\) es la cantidad promedio máxima de información de un símbolo del código.
+  \item \(h = \frac{H(S)}{L\log r}\) es la eficencia del código.
+\end{itemize}
+
+La máxima eficencia se logra cuando \(h = 1\). En general, esto sucede cuando se asigna las palabras de código más cortas a los símbolos de fuente más probables. También se puede deducir: \[1 \geq h \geq \frac{H(S)}{L\log r}\Rightarrow L\log r \geq H(S)\]
+
+\paragraph{Primer teorema de Shannon (Teorema de la codificación sin ruido):} Sea \(S\) una fuente de memoria no nula, y \(S^n\) la extensión de orden \(n\) de \(S\).  Sea \(C:S^n\to X^n\) un código y \(L_n\) la longitud media de las palabras correspondientes a los símbolos de \(S^n\):
+\[
+    L_n = \sum_{\sigma\in S^n} C(\sigma)P(\sigma)
+\]
+Entones vale:
+\[
+    H(S) \leq \frac{L_n}{n} \leq H(S) + \frac{1}{n}
+\]
+
+Esto nos dice que el número medio de símbolos de \(C\) correspendientes a un símbolo de la fuente puede hacerse tan pequeño, pero no inferior, ala entropía de la fuente. El precio que se paga por la disminución de \(L_n\) es un aumento en la complejidad de la codificación debido al gran número de símbolos de la fuente que hay que manejar.
+
+En particular:
+\[
+  H(S) = \sum_{\sigma\in S^n} C(\sigma)P(\sigma)  
+\]
+
+\paragraph{Codificador óptimo:} Es un codificador que usa la menor cantidad posible de bits para codificar un mensaje, es decir: Un codificador se dice óptimo si no existe ningún código para la misma fuente con menor longitud media.
+
+Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
+
+\paragraph{Codificación de Huffman:} Es una forma de definir códigos óptimos asumiendo que se conoce la probabilidad de ocurrencia de los símbolos, que la codificación es símbolo por símbolo y la probabilidad de ocurrencia de cada símbolo es independiente.
+
+Dado un mensaje \(M\):
+\begin{enumerate}
+  \item Se extrae del mismo la frecuencia de cada símbolo.
+  \item Se ordenan los símbolos en arbol dependiendo de la frecuencia de cada uno.ientras más cerca de la raíz, más frecuente es el símbolo.
+  \item El código de un símbolo será entonces el caminio de la raíz al nodo donde está ubicado (utilizando
+  ceros cuando se toma la rama izquierda y 1 cuando se toma la rama derecha).
+\end{enumerate} 
+
+Así, los símbolos más frecuentes tendrán los códigos más cortos.
+
+
+
