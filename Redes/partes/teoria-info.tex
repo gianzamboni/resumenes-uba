@@ -55,10 +55,10 @@ código. Denominaremos \(X_i\), a la palabra código que corresponde al símbolo
 La condición necesaria y suficiente para que un código sea instantáneo es que ninguna palabra del código coincida con el prefijo de otra.
 
 \paragraph{Inecuación de Kraft:} Dado un alfabeto \(S = \{s_1,\dots,s_n\}\) y un alfabeto de código \(X=\{x_1,\dots,x_m\}\), es condición necesaria y suficiente, para exista un código instantáneo con palabras de longitud \(l_1,\dots,l_{n}\), que se cumpla la siguiente inecuación:
-\[\sum_{i=1}^n |X|^{-l_1}\leq 1\]
+\[\sum_{i=1}^n |X|^{-l_i}\leq 1\]
 
 \subsubsection{Codificación óptima}
-Buscamos codificar un alfabeto \(S\) de tal forma que máximizar la relación entre la entropía \(H(S)\) y la longitud media del código \(L\).  Sea \(l_i\) la longitud de la palabra que codifica al símbolo \(s_i\) de la fuente, \(p_i\) la probabilidad de aparicion de \(s_i\) y \(r\) la cantidad de símbolos diferentes en el alfabeto del código entonces:
+Buscamos codificar un alfabeto \(S\) de tal forma de máximizar la relación entre la entropía \(H(S)\) y la longitud media del código \(L\).  Sea \(l_i\) la longitud de la palabra que codifica al símbolo \(s_i\) de la fuente, \(p_i\) la probabilidad de aparicion de \(s_i\) y \(r\) la cantidad de símbolos diferentes en el alfabeto del código entonces:
 
 \begin{itemize}
   \item \(L = \sum p_iL_i \) es la longitud medía del código.
@@ -77,24 +77,24 @@ Entones vale:
     H(S) \leq \frac{L_n}{n} \leq H(S) + \frac{1}{n}
 \]
 
-Esto nos dice que el número medio de símbolos de \(C\) correspendientes a un símbolo de la fuente puede hacerse tan pequeño, pero no inferior, ala entropía de la fuente. El precio que se paga por la disminución de \(L_n\) es un aumento en la complejidad de la codificación debido al gran número de símbolos de la fuente que hay que manejar.
+Esto nos dice que el número medio de símbolos de \(C\) correspendientes a un símbolo de la fuente puede hacerse tan pequeño, pero no inferior, a la entropía de la fuente. El precio que se paga por la disminución de \(L_n\) es un aumento en la complejidad de la codificación debido al gran número de símbolos de la fuente que hay que manejar.
 
 En particular:
 \[
-  H(S) = \sum_{\sigma\in S^n} C(\sigma)P(\sigma)  
+  H(X) = \sum_{\sigma\in S^n} C(\sigma)P(\sigma)  
 \]
 
 \paragraph{Codificador óptimo:} Es un codificador que usa la menor cantidad posible de bits para codificar un mensaje, es decir: Un codificador se dice óptimo si no existe ningún código para la misma fuente con menor longitud media.
 
-Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
+Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\rceil\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
 
 \paragraph{Codificación de Huffman:} Es una forma de definir códigos óptimos asumiendo que se conoce la probabilidad de ocurrencia de los símbolos, que la codificación es símbolo por símbolo y la probabilidad de ocurrencia de cada símbolo es independiente.
 
 Dado un mensaje \(M\):
 \begin{enumerate}
   \item Se extrae del mismo la frecuencia de cada símbolo.
-  \item Se ordenan los símbolos en arbol dependiendo de la frecuencia de cada uno.ientras más cerca de la raíz, más frecuente es el símbolo.
-  \item El código de un símbolo será entonces el caminio de la raíz al nodo donde está ubicado (utilizando
+  \item Se ordenan los símbolos en arbol dependiendo de la frecuencia de cada uno. Mientras más cerca de la raíz, más frecuente es el símbolo.
+  \item El código de un símbolo será entonces el camino de la raíz al nodo donde está ubicado (utilizando
   ceros cuando se toma la rama izquierda y 1 cuando se toma la rama derecha).
 \end{enumerate} 
 
