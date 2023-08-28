@@ -186,20 +186,3 @@ En este protocolo, Alice nuevamente envía a Bob un mensaje firmado digitalmente
 El nonce en los primeros dos mensajes es para asegurarle a Alice que la respuesta del KDC es fresca. Los segundos y terceros mensajes incluyen la nueva clave de sesión y la identificación de Alice, encriptados juntos usando la clave maestra de Bob. Es una especie de versión de clave secreta de un certificado de clave pública; es, en efecto, una declaración firmada por el KDC (porque el KDC es la única entidad además de Bob que conoce la clave maestra de Bob) que la clave de sesión adjunta es propiedad de Alice y Bob.
 
 Notar que el KDC no autentica realmente el mensaje inicial de Alice y no se comunica con Bob en absoluto. En cambio, utiliza su conocimiento de las claves públicas de Alice y Bob para construir una respuesta que sería inútil para cualquier persona que no sea Alice (porque solo Alice puede descifrarla) y que contiene los ingredientes necesarios para que Alice y Bob realicen el resto del protocolo de autenticación ellos mismos.
-
-\newpage
-%Traducir:
-Note that the KDC does not actually authenticate Alice’s initial 
-message and does not communicate with Bob at all. Instead, the KDC 
-uses its knowledge of Alice’s and Bob’s master keys to construct a reply 
-that would be useless to anyone other than Alice (because only Alice can 
-decrypt it) and contains the necessary ingredients for Alice and Bob to 
-perform the rest of the authentication protocol themselves.
-% Al español:
-Tenga en cuenta que el KDC no autentica realmente el mensaje inicial de Alice y no se comunica con Bob en absoluto. En cambio, el KDC utiliza su conocimiento de las claves maestras de Alice y Bob para construir una respuesta que sería inútil para cualquier persona que no sea Alice (porque solo Alice puede descifrarla) y contiene los ingredientes necesarios para que Alice y Bob realicen el resto del protocolo de autenticación ellos mismos.
-
-\red{
-
-\section{Seguridad}
-Seguridad en Redes. Marco de Trabajo. Criptografía. Seguridad. Privacidad. Protocolos de Clave Pública y Privada. Algoritmos: DES, 3DES, AES, RSA, MD5 y SHA .Ventajas y desventajas de cada uno. Sus aplicaciones (Autorización, Firma, Confidencialidad e Integridad). Distribución de Claves Públicas. Firewalls. Tunneling. Conceptos de amenazas, ataques, intrusiones.
-}

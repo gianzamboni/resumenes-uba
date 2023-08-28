@@ -41,7 +41,7 @@ El ancho de banda es una propiedad física del medio de transmisión y por lo ge
 de la construcción, grosor y longitud de dicho medio. En algunos casos, se introduce un filtro en el
 circuito para limitar la cantidad de ancho de banda disponible para cada cliente.
 
-\subsection{Problemas de los medios de transmición reales}
+\subsection{Problemas de los medios de transmisión reales}
 Cuando enviamos un mensaje a una máquina en una red, debemos pasar ese mensajes por un \textbf{transmisor} que convertirá el mensaje en una serie de \textbf{señales} que pueden ser enviadas a través del \textbf{canal} que nos comunica con la máquina de \textbf{destino}. La máquina de destino debe tener un \textbf{recibidor} que le permita captar las señales del canal y transformarlas nuevamente en el mensaje original.
 
 Sin embargo, los canales de transmisión físicos no son perfectos y aportan \textbf{ruido} a las señales emitidas por nuestro transmisor pudiendo llegar a destino con errores.
@@ -103,7 +103,7 @@ En principio, si se aumentan el ancho de banda \(B\) y la potencia de señal \(S
 
 \paragraph{Límite de eficencia:} La eficiencia de ancho de banda es la máxima cantidad de bits por segundo que podemos inyectar por cada Hz sin perder información. Mientra más eficiente sea el canal, se pueden transmitir más bits por segundo. 
 
-\paragraph{Límie de confiabilidad:} \red{Es la cantidad máxima de bits por segundos que podemos utilizar para transportar una señal de manera confiable a través de un canal ruidoso}
+\paragraph{Límite de confiabilidad:} \red{Es la cantidad máxima de bits por segundos que podemos utilizar para transportar una señal de manera confiable a través de un canal ruidoso}
 
 \subsubsection{Delay}
 Por último, debemos analizar el tiempo que tarda en llegar un paquete completo desde una punta a otra de la conexión. Este tiempo se ve afectado por varias cosas:
@@ -119,7 +119,7 @@ Por último, debemos analizar el tiempo que tarda en llegar un paquete completo 
 
  \subsection{Medios de transmición}
  \subsubsection{Medios guiados}
- \subsubsection*{Par trenzado de cobre} Uno de los medios de transmisión más viejos, y todavía el más común. Éste consiste en dos alambres de cobre aislados, por lo regular de 1 mm de grueso. Los alambres se trenzan en forma helicoidal, igual que una molécula de DNA. Esto se hace porque dos alambres paralelos constituyen una antena simple. Cuando se trenzan los alambres, las ondas de diferentes vueltas se cancelan, por lo que la radiación del cable es menos efectiva.
+ \subsubsection*{Par trenzado de cobre} Uno de los medios de transmisión más viejos, y todavía el más común. Éste consiste en dos alambres de cobre aislados, por lo regular de 1 mm de grosor. Los alambres se trenzan en forma helicoidal, igual que una molécula de DNA. Esto se hace porque dos alambres paralelos constituyen una antena simple. Cuando se trenzan los alambres, las ondas de diferentes vueltas se cancelan, por lo que la radiación del cable es menos efectiva.
 
 La aplicación más común del cable de par trenzado es en el sistema telefónico. Casi todos los teléfonos están conectados a la compañía telefónica mediante un cable de par trenzado. La distancia que se puede recorrer con estos cables es de varios kilómetros sin necesidad de amplificar las señales, pero para distancias mayores se requieren repetidores.
     
@@ -162,7 +162,7 @@ Las fibras monomodo son más caras, pero se pueden utilizar en distancias más g
 
 Las porciones de radio, microondas, infrarrojo y luz visible del espectro pueden servir para transmitir información modulando la amplitud, frecuencia o fase de las ondas. La luz ultravioleta, los rayos X y los rayos gamma serían todavía mejores, debido a sus frecuencias más altas, pero son difíciles de producir y modular, no se propagan bien entre edificios y son peligrosos para los seres vivos. 
 
-La cantidad de información que puede transportar una onda electromagnética se relaciona con su ancho de banda. Con la tecnología actual, es posible codificar unos cuantos bits por hertz a frecuencias bajas, pero a frecuencias altas el número puede llegar hasta 8, de modo que un cable coaxial con un ancho de banda de 750 MHz puede transportar varios gigabits/seg.
+La cantidad de información que puede transportar una onda electromagnética se relaciona con su ancho de banda. Con la tecnología actual, es posible codificar unos cuantos bits por hertz a frecuencias bajas, pero a frecuencias altas el número puede llegar hasta 8 bits, de modo que un cable coaxial con un ancho de banda de 750 MHz puede transportar varios gigabits/seg.
 
 A las bandas más altas se les nombró como bandas VHF (frecuencia muy alta), UHF (frecuencia ultraalta), EHF (frecuencia extremadamente alta) y THF (frecuencia tremendamente alta).
 
@@ -171,33 +171,27 @@ Las ondas de radio son fáciles de generar, pueden viajar distancias largas y pe
 
 Las propiedades de las ondas de radio dependen de la frecuencia. A bajas frecuencias, esas ondas cruzan bien casi cualquier obstáculo, pero la potencia se reduce de manera drástica a medida que se aleja de la fuente.
 
-En las bandas VLF, LF y MF las ondas de radio siguen la curvatura de la Tierra. Estas ondas se pueden detectar quizá a 1000 km en las frecuencias más bajas, y a menos en frecuencias más altas.
+En las bandas VLF, LF y MF las ondas de radio siguen la curvatura de la Tierra. Estas ondas se pueden detectar hasta a 1000 km en las frecuencias más bajas, y a menos en frecuencias más altas.
 
-n las bandas HF y VHF, las ondas a nivel del suelo tienden a ser absorbidas por la tierra. Sin
-embargo, las ondas que alcanzan la ionosfera, una capa de partículas cargadas que rodea a la Tie-
-rra a una altura de 100 a 500 km, se refractan y se envían de regreso a nuestro planeta. En ciertas condiciones atmosféricas, las señales pueden rebotar va-
-rias veces. Los operadores de radio aficionados usan estas bandas para conversar a larga distancia.
+En las bandas HF y VHF, las ondas a nivel del suelo tienden a ser absorbidas por la tierra. Sin
+embargo, las ondas que alcanzan la ionosfera, una capa de partículas cargadas que rodea a la Tierra a una altura de 100 a 500 km, se refractan y se envían de regreso a nuestro planeta. En ciertas condiciones atmosféricas, las señales pueden rebotar varias veces. Los operadores de radio aficionados usan estas bandas para conversar a larga distancia.
 El ejército se comunica también en las bandas HF y VHF.
 
 \subsubsection*{Láser}
 La señalización óptica coherente con láseres es inherentemente unidireccional, de modo que cada edificio necesita su propio láser y su propio fotodetector. Este esquema ofrece un ancho de banda muy alto y un costo muy bajo. También es relativamente fácil de instalar.
 
-Una desventaja es que los rayos láser no pueden penetrar la lluvia ni la niebla densa, pero nor-
-malmente funcionan bien en días soleados. Sin embargo, el calor del sol causa corrientes de convección que se elevabn desde el techo de los edificio. Este aire turbulento desviaba el rayo y lo hacía danzar alrededor del detector.
+Una desventaja es que los rayos láser no pueden penetrar la lluvia ni la niebla densa, pero normalmente funcionan bien en días soleados. Sin embargo, el calor del sol causa corrientes de convección que se elevabn desde el techo de los edificio. Este aire turbulento desviaba el rayo y lo hacía danzar alrededor del detector.
 
 \subsubsection*{Satélites}
 Los satélites de comunicaciones tienen algunas propiedades interesantes que los hacen atrac-
 tivos para muchas aplicaciones. En su forma más simple, un satélite de comunicaciones se puede
-considerar como un enorme repetidor de microondas en el cielo. Contiene numerosos transpon-
-dedores, cada uno de los cuales se encarga de una parte del espectro, amplifica la señal entrante
+considerar como un enorme repetidor de microondas en el cielo. Contiene numerosos transponedores, cada uno de los cuales se encarga de una parte del espectro, amplifica la señal entrante
 y a continuación la retransmite en otra frecuencia para evitar interferencia con la señal entrante.
-Los haces pueden ser amplios y cubrir una fracción sustancial de la superficie de la Tierra, o es-
-trechos, y abarcar sólo algunos cientos de kilómetros de diámetro. Este modo de operación se
+Los haces pueden ser amplios y cubrir una fracción sustancial de la superficie de la Tierra, o estrechos, y abarcar sólo algunos cientos de kilómetros de diámetro. Este modo de operación se
 conoce como de tubo doblado.
 
 \subsection{Red télefonica}
-La \textbf{Red Telefónica Pública Conmuta-
-da} (PSTN), fue diseñadas hace muchos años, con el propósito de transmitir la voz humana en una forma más o menos reconocible.
+La \textbf{Red Telefónica Pública Conmutada} (PSTN), fue diseñadas hace muchos años, con el propósito de transmitir la voz humana en una forma más o menos reconocible.
 
 \begin{figure}[H]
 	\centering
@@ -220,8 +214,7 @@ enviarlas juntas por la misma fibra. Este tema se llama \textbf{multiplexión}.
 \subsubsection{Tipos de multiplexión}
 Las compañías telefónicas han desarrollado esquemas complejos para multiplexar muchas conversaciones en una sola troncal física. Estos esquemas de multiplexión se pueden dividir en dos categorías principales: FDM (Multiplexión por División de Frecuencia) y TDM (Multiplexión por División de Tiempo). En FDM el espectro de frecuencia se divide en bandas de frecuencia, y cada usuario posee exclusivamente alguna banda. En TDM los usuarios esperan su turno (en round-robin), y cada uno obtiene en forma periódica toda la banda durante un breve lapso de tiempo.
 
-\paragraph{Multiplexión por División de Frecuencia:} Los filtros limitan el ancho de banda utilizable a cerca de 3000 Hz por canal de calidad de voz. Cuando se multiplexan muchos canales juntos, se asignan 4000 Hz a cada canal para mantenerlos bien separados. Primero se eleva la frecuencia de los canales de voz, cada uno en una cantidad diferente, después de lo cual se pueden combinar, porque en ese momento no hay dos canales que ocupen la misma porción del espectro. Hay cierta superposición entre canales adyacentes porque los filtros no tienen bordes bien definidos. Esta superposición significa que un pico fuerte en el borde de un canal se detectará en el adyacente como ruido no térmico. Para los canales de fibra óptica se utiliza una variante de la multiplexión por división de fre-
-cuencia llamada \textbf{Multiplexión por División de Longitud de Onda} (WDM).
+\paragraph{Multiplexión por División de Frecuencia:} Los filtros limitan el ancho de banda utilizable a cerca de 3000 Hz por canal de calidad de voz. Cuando se multiplexan muchos canales juntos, se asignan 4000 Hz a cada canal para mantenerlos bien separados. Primero se eleva la frecuencia de los canales de voz, cada uno en una cantidad diferente, después de lo cual se pueden combinar, porque en ese momento no hay dos canales que ocupen la misma porción del espectro. Hay cierta superposición entre canales adyacentes porque los filtros no tienen bordes bien definidos. Esta superposición significa que un pico fuerte en el borde de un canal se detectará en el adyacente como ruido no térmico. Para los canales de fibra óptica se utiliza una variante de la multiplexión por división de frecuencia llamada \textbf{Multiplexión por División de Longitud de Onda} (WDM).
 
 \paragraph{Multiplexión por División de Tiempo:} Aunque FDM aún se utiliza sobre cables de cobre o canales de microondas, requiere circuitos analógicos y no es fácil hacerla con una computadora. En contraste, TDM puede manejarse por completo mediante dispositivos digitales y a ello se debe su popularidad en los últimos años. Desgraciadamente, sólo se puede utilizar para datos digitales. Puesto que los circuitos locales producen señales analógicas, se necesita una conversión de analógico a digital en la oficina central, en donde todos los circuitos locales individuales se juntan para combinarse en troncales.
 
@@ -241,7 +234,7 @@ La señal de entrada \(m(t)\) se denomina señal \textbf{moduladora} a la señal
 Hay distintos tipos de modulaciones:
 
 \begin{itemize}
-  \item \textbf{Desplazamiento de amplitud (ASK):} Los dos valores binarios se represnetan mediante dos amplitudes diferences de la portadora. Es usual que una de las amplitudes sea cero.
+  \item \textbf{Desplazamiento de amplitud (ASK):} Los dos valores binarios se represnetan mediante dos amplitudes diferentes de la portadora. Es usual que una de las amplitudes sea cero.
   \[
     S(t) = \begin{cases}
       A\cos(2\pi f_c t) & \text{1 binario} \\
@@ -261,7 +254,7 @@ Hay distintos tipos de modulaciones:
   donde \(f_1\) y \(f_2\) corresponden a desplazamientos de la frecuencia portadora \(f_c\), de igual magnitud pero en sentidos opuestos.
 
   FSK es menos sensible a errores que ASK.
-  \item  \textbf{Desplazamiento de fase (PSK):} La fase de la señal portadora se despaza para representar con ello a los datos digitales: En este sistema, un cero binario se representa mediante la transmición de una señal con la misma fase que la fase de la señal anteriormente enviada. Mientras que un uno se representa mediante la transmición de una señal cuya fase esté en opociión de fase respecto de la señal precente. Esta técnica se conoce como PSK diferencial, ya que el desplazamiento en fase es relativo a la fase correspondiente al último símbolo transmitido.
+  \item  \textbf{Desplazamiento de fase (PSK):} La fase de la señal portadora se desplaza para representar con ello a los datos digitales: En este sistema, un cero binario se representa mediante la transmición de una señal con la misma fase que la fase de la señal anteriormente enviada. Mientras que un uno se representa mediante la transmición de una señal cuya fase esté en opocisión de fase respecto de la señal precedente. Esta técnica se conoce como PSK diferencial, ya que el desplazamiento en fase es relativo a la fase correspondiente al último símbolo transmitido.
   
   \[
     S(t) = \begin{cases}
@@ -273,9 +266,9 @@ Hay distintos tipos de modulaciones:
 
 \paragraph{Velocidad de modulación:} El número de cambios de señal por unidad de tiempo. Se expresa en \textbf{baudios} (símbolos por segundo).
 
-\paragraph{Velocidad de transmición:} Equivale a la velocidad de modulación multiplicado por el número de bits \(N\) represenntados por cada símbolo. Se expresa en bits por segundo: \(V_t = V_m\cdot m\)
+\paragraph{Velocidad de transmición:} Equivale a la velocidad de modulación multiplicado por el número de bits \(N\) representados por cada símbolo. Se expresa en bits por segundo: \(V_t = V_m\cdot m\)
 
-Se puede conseguir una utilización más eficaz del ancho de banda si cada elemento de señalización representa más de un bit.  En el métood PSKQ  considera desplazamientos de fase correspondientes a \(\pi/2\) (\(90^\circ\)) por lo que cada señal representa dos bits en lugar de uno:
+Se puede conseguir una utilización más eficaz del ancho de banda si cada elemento de señalización representa más de un bit.  En el método PSKQ  se consideran desplazamientos de fase correspondientes a \(\pi/2\) (\(90^\circ\)) por lo que cada señal representa dos bits en lugar de uno:
 \[
   S(t) = \begin{cases}
     A\cos(2\pi f_c t + \frac{\pi}{4}) & \text{11} \\
@@ -288,12 +281,12 @@ Se puede conseguir una utilización más eficaz del ancho de banda si cada eleme
 \subsubsection{Codificación}
 Una vez modulada, la señal analógica viaja hasta un \textbf{codec}  en la oficina central  que se encarga de digitalizarla. El codec toma 8000 muestras por segundo porque el teorema de Nyquist dice que esto es suficiente para capturar toda la información del ancho de banda de 4 kHz del canal telefónico. A una velocidad de muestreo menor, la información se perdería; a una mayor, no se ganaría información extra. Esta técnica se llama \textbf{Modulación por Codificación de Impulsos} (PCM).   
 
-A veces, se usa un técnica conocida como \textbf{Modulación Delta}, en el que la entrada analógica se aproima mediante una función escalera que en cada intervalo de muestreo (\(T_S\)) sube o bajaa un nivel de cuantización \(\delta\). La característica principal de la función escalera es qeu su comportamiento es binario: En cada instante de muestreo, la función sube o baja una cantidad constante. Por tanto, la salida del modulador delta se puede representar mediante un único bit para cada muestra. Resumiendo: se obiente una cadena de bits que aproxima a la derivada de la señal analógica de entrada en cualquier lugar de la amplitud.
+A veces, se usa un técnica conocida como \textbf{Modulación Delta}, en el que la entrada analógica se aproxima mediante una función escalera que en cada intervalo de muestreo (\(T_S\)) sube o bajaa un nivel de cuantización \(\delta\). La característica principal de la función escalera es que su comportamiento es binario: En cada instante de muestreo, la función sube o baja una cantidad constante. Por tanto, la salida del modulador delta se puede representar mediante un único bit para cada muestra. Resumiendo: se obiente una cadena de bits que aproxima a la derivada de la señal analógica de entrada en cualquier lugar de la amplitud.
 
 \subsubsection*{No retorno a cero (NRZ)}
-La forma más frecuente y fácil de transmitir señales digitales es mediante la utilización de un nivel diferente de tensión para cada uno de los dos dígitos binatios. Los códigos que siguen esta estrategia comparten la propiedad de que el nivel de tensión se mantiene constante durante la duración del bit. Es habitual usar un nivel negativo para representar un valor binario y un tensión positiva para representar el otro.
+La forma más frecuente y fácil de transmitir señales digitales es mediante la utilización de un nivel diferente de tensión para cada uno de los dos dígitos binarios. Los códigos que siguen esta estrategia comparten la propiedad de que el nivel de tensión se mantiene constante durante la duración del bit. Es habitual usar un nivel negativo para representar un valor binario y un tensión positiva para representar el otro.
 
-Una variante de este código de nomina \textbf{No retono a Cero con Inversion de unos} (NZRI) en la que un 1 se codifica mediante la transición al principio del intervalo de señalización, mientras que un 0 se rpresenta por la ausencia de transición. Esta codificación es un ejemplo de codificación diferencial, en lugar de determinar el valor absoluto, la señal se codifica comparando la polaridad de los elementos de señal adyacentes.
+Una variante de este código se nomina \textbf{No retono a Cero con Inversion de unos} (NZRI) en la que un 1 se codifica mediante la transición al principio del intervalo de señalización, mientras que un 0 se representa por la ausencia de transición. Esta codificación es un ejemplo de codificación diferencial, en lugar de determinar el valor absoluto, la señal se codifica comparando la polaridad de los elementos de señal adyacentes.
 
 \subsubsection*{Codificación Manchester (Bifase)}
 El valor de un bit se códifica en una transición a la mitad del intervalo de duración del bit. Esta transición en la mitad del bit sirve como un procedimiento de sincronización a la vez que sirve para transmitir los datos: Una transción de bajo a alto representa un 1 y una transición de alto a bajo representa un cero.
