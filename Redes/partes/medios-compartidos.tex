@@ -1,15 +1,9 @@
 \part{Medios Compartidos}
 La idea es controlar el acceso a los medios compartidos de manera tal que haya la menor cantidad de intervención humana posible en el proceso. Es decir, se busca no tener la figura de un administrador que tenga que solucionar manualmente las cosas.
 
-Tanto TDM, FDM, WDM y CDMA (Code Division Multiple Access) comparten una característica: debe estar decidido a priori qué usuario está usando qué parte del tiempo, frecuencia, etc. en cada momento. Para eso es necesario saber de antemano cuántos usuarios tendrá el sistema. Esto requiere un administrador dedicado a una red con características estáticas, rígidas.
+Los procesos de multiplexión y división de banda vistos en la primer sección comparten una característica: debe estar decidido a priori qué usuario está usando qué parte del tiempo, frecuencia, etc. en cada momento. Si bien sirven para las redes troncales en donde la cantidad de nodos conectados cambia con poca frecuencia, no sirve en redes LAN o Wi-Fi donde los usuarios se conectan y desconectan constantemente a gusto. Esto es porque requieren un administrador dedicado a una red con características estáticas y rígidas y no escala de manera automática.
 
-Esto no escala de manera automática, por lo que no cumple la idea mencionada arriba. Esto no significa que estas técnicas no se usen: se utilizan frecuentemente en las redes
-troncales (backbones), que no tienen una cantidad constantemente cambiante de nodos como sí puede tener algo como una red LAN, o Wi-Fi. Una alternativa a esto, para redes donde la cantidad de nodos es desconocida y cambiante, es la \textbf{contención estadística}. Esto se refiere a sistemas en los cuales varios usuarios comparten un canal común, de modo tal que puede dar lugar a conflictos conocidos como sistemas de
-contención. Estos conflictos son aceptados y/o manejados.
-
-\paragraph{Problemas de acceso:} Si hay varios nodos que usan un medio físico compartido, la simultaneidad de transmisión no es posible (no pueden transmitir todos a la vez). Para esto aparecen los \textbf{MAC Protocols (Medium Access Control)}, protocolos que buscan maximizar, en promedio, el número de éxitos en los intentos de comunicación, y asegurar la igualdad de oportunidades (en promedio) entre todos los nodos competidores.
-
-En estos casos, el control es descentralizado, y surge la necesidad de un esquema de direccionamiento y de controlar el acceso.
+Los protoclos utilizados en estas redes dinámicas usan lo que se conoce \textbf{contención estadística}, en la que se intenta máximizar la cantidad de transmiciones exitosas asegurando la igualdad de opotrtunidades para cada usuario y, en caso de que haya algún conflicto, resolverlos de manera automática. A este tipo de protocolos lo llamamos \textbf{MAC Protocols (Medium Access Control Protocols)}. En estos casos, el control es descentralizado, y surge la necesidad de un esquema de direccionamiento y de controlar el acceso.
 
 Ejemplos: Aloha, Ethernet, Wi-Fi, Token Ring.
 
@@ -31,7 +25,7 @@ El formato utilizado para enviar mensajes en la red es el siguiente:
   
   Cuando el primer bit de la dirección de destino es un 0, significa que el paquete está dirigido a una máquina específica.  Si es un 1, entonces es un dirección grupal: Estas direcciones permiten que varias máquinas escuchen una única dirección y que todas las máquinas pertenecientes al grupo reciban los paquetes dirigidas a esa dirección. Este tipo de envío se llama \textbf{multicasting}. Además, la dirección especial que consiste en todos bits de valor 1 está reservada para hacer \textbf{Broadcasting} (enviar un mensaje a todos los dispositivos de la red).
   \item Los próximos 2 bytes identifican el tipo de protocolo que debe usarse para procesar el contenido del paquete.
-  \item Después viene la información per se que puede ocupar hasta 1500 bytes (un valor decidido de manera arbitraria).
+  \item Después viene la información per se, que puede ocupar hasta 1500 bytes (un valor decidido de manera arbitraria).
   \item Si la data enviada es menor a 46 bytes, se usa padding hasta completar los 46 bytes necesarios para cumplir con los requirimientos de longitud mínima del mensaje. Esta longitud mínima permite que la máquina de origen detecte colisiones durante la transmición, en el caso de haberlas (más adelante explicado).
   \item Los últimos 4 bytes del paquete son un checksum (CRC de 32 bits) que permite detectar si hubo algún error en el frame, si lo hubo, el frame se descarta.
 \end{itemize}
@@ -47,9 +41,9 @@ Una de las razones para tener una longitud mínima de un frame es para evitar qu
 	\label{fig:deteccion-colisiones}
 \end{figure}
 
-Supongamos que en un timpo 0, el host \(A\) comienza a transmitir el paquete. Sea   \(\tau\) el tiempo de propagación necesario para que el frame llegue al host \(B\). Supongamos que justo antes de que el frame llegue a destino, en el tiempo \(\tau-\epsilon\), \(B\) comienza a transmitir. Cuando \(B\) detecta que está recibiendo más energía que la que está emitiendo, se da cuenta que ocurre una colisión, aborta su propia transmisión y genera una rafaga de sonido ee 48 bits para alertar a las demás estaciones. 
+Supongamos que en un timpo 0, el host \(A\) comienza a transmitir el paquete. Sea   \(\tau\) el tiempo de propagación necesario para que el frame llegue al host \(B\). Supongamos que justo antes de que el frame llegue a destino, en el tiempo \(\tau-\epsilon\), \(B\) comienza a transmitir. Cuando \(B\) detecta que está recibiendo más energía que la que está emitiendo, se da cuenta que ocurre una colisión, aborta su propia transmisión y genera una rafaga de ruid de 48 bits para alertar a las demás estaciones. 
 
-En otras palabras, genera interferencia para asegurarse que el emisor (\(A\)) se de cuenta de que ocurrió la colisión. En el momento \(2\tau\), \(A\) ve el sonido y aborta su propia transmición. Luego espera un intervalo de tiempo random antes de intentar de nuevo.
+En otras palabras, genera interferencia para asegurarse que el emisor (\(A\)) se de cuenta de que ocurrió la colisión. En el momento \(2\tau\), \(A\) ve el ruido y aborta su propia transmición. Luego espera un intervalo de tiempo random antes de intentar de nuevo.
 
 Si \(A\) trata de enviar un frame muy corto, puede llegar a pasar que termine de trasmitir antes de que  perciba el ruido generado por \(B\) (en el momento \(2\tau\)). Entonces \(A\) concluiria que el frame se envió correctamente. Por esta razón, se utiliza el pading en el frame de Ethernet para completar la longitud mínima de 64 bytes.
 
@@ -95,9 +89,9 @@ Es la subcapa de la capa de enlace que se encarga de procesar el paquete recibid
 En las redes inalámbricas, los frames se mandan a través de ondas en una determinada frecuencia, que depende de la tecnología usada para transmitirlas. En este tipo de red, la intensidad de la señal disminuye con la distancia y tiene fuentes de ruidos más impredecibles que en medios guiados. Esto se traduce en una tasa de errores elevadas.
 
 \subsection{Spread Spectrum}
-Esto sumado a que cualquier dispositivo cercarno puede conectarse a ellas, impulsaron el diseño de técnicas para aprovechar al máximo el ancho de banda de tal forma de proteger a la red de intrusos. Est técnica es llamada \textbf{Spread Spectrum}.
+Esto sumado a que cualquier dispositivo cercano puede conectarse a ellas, impulsaron el diseño de técnicas para aprovechar al máximo el ancho de banda de tal forma de proteger a la red de intrusos.
 
-Esta técnica modula la señal usando una moduladora semi random compuesta de 1s y -1s conocida por los dispositivos de la red qur aplican a la señal que quieren enviar. Cuando la señal llega el receptor, este realiza el proceso inverso para conseguir la señal original.
+\textbf{Spread Spectrum} es una técnica qu modula la señal usando una moduladora semi random compuesta de unos (1) y menos unos (-1) conocida por los dispositivos de la red qur aplican a la señal que quieren enviar. Cuando la señal llega el receptor, este realiza el proceso inverso para conseguir la señal original.
 
 Otra forma de realizar esto, es enviar la información transmitida en un rango de frecuencias que es cambiado varías veces durante el proceso de transmición. En este método, la información original se divide en partes más pequeñas usando un patron conocido solamente por el transmisor y el receptor.
 
@@ -106,17 +100,16 @@ Otra forma de realizar esto, es enviar la información transmitida en un rango d
 Dado que las redes inalámbricas son un medio de broadcasting, los equipos de la red debe estar atentos a multiples transmiciones realizadas simultaneamente. 
 A diferencia de los medios guiados, implementar una comunicación full-duplex sobre radio frecuencias es costoso por lo que se intenta evitar las colisiones en vez de resolverlas.
 
-Para manejar esto, se utiliza el sistema CSMA descripto en la sección \ref{section::csma} pero adaptado a los problemas introducidosra minimizar la probabilidad de colisiones. Si durante este período, el medio se libera, el host puede transmitir una nueva trama. Si no, se vuelve a esperar un nuevo período de contentción. por el nuevo medio que es mucho más lento:
+Para manejar esto, se utiliza el sistema CSMA descripto en la sección \ref{section::csma} pero adaptado a los problemas introducidos por este tipo de red
 
 \subsubsection{Colission Avoidance}
-Antes de transmitir, una estación debe determinar el estado del medio. Si el canal no está ocupado, se realiza una espera adicional llamada \textbf{espaciado entre tramas} para asegurarnos de que no colisione.  Si durante esta espera, el medio no permanece libre, entonces se suspende la transmición hasta que se cumpla dicha condición.
+Antes de transmitir, una estación debe determinar el estado del medio. Si el canal no está ocupado, realiza una espera adicional llamada \textbf{espaciado entre tramas} para asegurarse de que no colisione.  Si durante esta espera, el medio no permanece libre, entonces suspende la transmición hasta que se cumpla dicha condición.
 
-Cuando la trama se transmitió, se espera recibir un ACK. Si esto no sucede, se asume que se perdió en una colisión y se retransmitirá la misma. 
+Una vez que transmite la trama, espera recibir un ACK. Si esto no sucede, asume que la misma se perdió en una colisión y la retransmitirá. 
 
-Una vez que un host transmite una trama exitosamente, espera un \textbf{período de contención} (cuantificado por un back-off) para minimizar la probabilidad de colisiones. Si durante este período, el medio se libera, el host puede transmitir una nueva trama. Si no, se vuelve a esperar un nuevo período de contención.
+Una vez que un host transmite una trama exitosamente, espera un \textbf{período de contención} (cuantificado por un back-off) para minimizar la probabilidad de colisiones. Si durante este período, el medio se libera, el host puede transmitir una nueva trama. Si no, vuelve a esperar un nuevo período de contención.
 
 Este método recién descripto es llamado \textbf{Distributed Coordination Function (DCF)} y es el método de acceso al medio más básico de 802.11.
-
 
 \begin{figure}[H]
 	\centering
@@ -148,4 +141,4 @@ Si \(C\) detecta el medio no escuchará a \(A\) porque está fuera de su alcance
 	\label{fig:estacion-expuesta}
 \end{figure}
 
-Supongamos ahora que \(A\) está transmitiendo una tramba a \(B\). Supongamos ahora que \(C\) quiere transmitir a \(D\), cuando detecta al medio, escuhará una transmición y concluirá que no puede realizar su envio. Sin embargo, esa transmición causaría una mala recepción solo en la zona entre \(B\) y \(C\), en la que no está localizado ninguno de los receptores pretendidos.
+Supongamos ahora que \(A\) está transmitiendo una tramba a \(B\). Supongamos ahora que \(C\) quiere transmitir a \(D\). Cuando detecta al medio, escuhará una transmición y concluirá que no puede realizar su envio. Sin embargo, esa transmición causaría una mala recepción solo en la zona entre \(B\) y \(C\), en la que no está localizado ninguno de los receptores pretendidos.

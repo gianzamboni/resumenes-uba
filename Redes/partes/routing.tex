@@ -3,14 +3,14 @@ El problema de ruteo es como los switches y routers adquieren la información en
 
 Si bien los términos \textbf{tabla de forwarding} y \textbf{tabla de ruteo} son a veces usados indistintamente, haremos una distinción entre ellos aquí. La \textbf{tabla de forwarding} es usada cuando un paquete está siendo reenviado y por lo tanto debe contener suficiente información para realizar la función de forwarding. Esto significa que una fila en la tabla de forwarding contiene el mapeo de un prefijo de red a una interfaz de salida y alguna información MAC, como la dirección Ethernet del siguiente salto. La \textbf{tabla de ruteo}, por otro lado, es la tabla construida por los algoritmos de ruteo como un precursor para construir la tabla de forwarding. Generalmente contiene mapeos de prefijos de red a siguientes saltos. También puede contener información sobre cómo se aprendió esta información, para que el enrutador pueda decidir cuándo debe descartarla.
 
-Los protocolos descritos en esta sección se conocen colectivamente como \text bf{protocolos de enrutamiento intradominio}, o Interior Gateway Protocols (IGP). Para comprender estos términos, debemos definir un dominio de enrutamiento. Una buena definición de trabajo es una internetwork en la que todos los enrutadores están bajo el mismo control administrativo.
+Los protocolos descritos en esta sección se conocen colectivamente como \textbf{protocolos de enrutamiento intradominio}, o Interior Gateway Protocols (IGP). Para comprender estos términos, debemos definir un dominio de enrutamiento: es una internet en la que todos los enrutadores están bajo el mismo control administrativo.
 
 \subsection{La red como un grafo}
-El ruteo es, en esencia, un problema de teoría de grafos. Los nodos del grafo pueden ser hosts, switches, routers o redes. Para nuestra discusión inicial, nos centraremos en el caso en que los nodos son enrutadores. Las aristas del grafo corresponden a los enlaces de red. Cada arista tiene un costo asociado, que da alguna indicación de la facilidad con la que se puedeenviar tráfico a través de ese enlace.
+El ruteo es, en esencia, un problema de teoría de grafos. Los nodos del grafo pueden ser hosts, switches, routers o redes. Para nuestra discusión inicial, nos centraremos en el caso en que los nodos son enrutadores. Las aristas del grafo corresponden a los enlaces de red. Cada arista tiene un costo asociado, que da alguna indicación de la facilidad con la que se puede enviar tráfico a través de ese enlace.
 
 Para resolver el problema de ruteo debemos encontrar el camino de menor costo entre dos nodos, donde el costo de un camino es igual a la suma de los costos de todas las aristas que componen el camino.
 
-Los protocolos de ruteo proporcionan una forma distribuida y dinámica de resolver este problema de en presencia de fallas de enlace y nodo y cambios en los costos de los enlaces.
+Los protocolos de ruteo proporcionan una forma distribuida y dinámica de resolver este problema en presencia de fallas de enlace y nodo y cambios en los costos de los enlaces.
 
 Asumiendo que ya sabemos los costos de cada enlace vamos a ver dos algoritmos distribuidos que nos permiten crear la tabla de ruteo: \textbf{Distance Vector} y \textbf{Link State}.
 
@@ -19,9 +19,9 @@ Cada nodo construye un vector que contiene las distancias (costos) a todos los o
 
 Inicialmente, cada nodo establece un costo de 1 a sus vecinos directamente conectados y \(\infty\) a todos los demás nodos.
 
-El siguiente paso es que cada nodo envía un mensaje a sus vecinos directamente conectados que contiene su lista personal de distancias.
+En el siguiente paso, cada nodo envía un mensaje a sus vecinos directamente conectados indicando su lista personal de distancias.
 
-Cuando un nodo recibe un vector de distancias, compara las distancias recibidas con las que tiene almacenadas en su tabla de ruteo. Si la distancia recivida es menor que la que tiene almacenada, la actualiza y envía su propio vector de distancias a sus vecinos.
+Cuando un nodo recibe un vector de distancias, compara las distancias recibidas con las que tiene almacenadas en su tabla de ruteo. Si la distancia recibida es menor que la que tiene almacenada, la actualiza y envía su propio vector de distancias a sus vecinos.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth

@@ -24,11 +24,11 @@ Puesto que es demasiado riesgoso depender de la temporización para marcar el in
 
 \begin{enumerate}
   \item \textbf{Largo fijo:} Todos los paquetes tienen la misma longitud.
-  \item \textbf{Conteo de caracteres}: Se vale de un campo en el encabezado para especificar el número de caracteres en la trama. Cuando la capa de enlace de datos del destino ve la cuenta de caracteres, sabe cuántos caracteres siguen y, por lo tanto, dónde está el fin de la trama. El problema con este algoritmo es que la cuenta puede alterarse por un error de transmisión. Si esto pasa, el destino perderá la sincronía y será incapaz de localizar el inicio de la siguiente trama. Incluso si el destino sabe que la trama está mal porque la suma de verificación es incorrecta, no tiene
-  forma de saber dónde comienza la siguiente trama. Regresar una trama a la fuente solicitando una retransmisión tampoco ayuda, ya que el destino no sabe cuántos caracteres tiene que saltar para llegar al inicio de la retransmisión.
-  \item \textbf{Flags con bit-stuffing}: El segundo método de entramado evita el problema de tener que sincronizar nuevamente después de un error, haciendo que cada trama inicie y termine con bytes especiales llamado \textbf{flags}. De esta manera, si el receptor pierde la sincronía simplemente puede buscar la bandera para encontrar el final e inicio de la trama actual. Dos banderas consecutivas señalan el final de una trama y el inicio de la siguiente. 
+  \item \textbf{Conteo de caracteres}: Se vale de un campo en el encabezado para especificar el número de caracteres en la trama. Cuando la capa de enlace de datos del destino ve la cuenta de caracteres, sabe cuántos caracteres siguen y, por lo tanto, dónde está el fin del paquete. El problema con este algoritmo es que la cuenta puede alterarse por un error de transmisión. Si esto pasa, el destino perderá la sincronía y será incapaz de localizar el inicio de la siguiente trama. Incluso si el destino sabe que la trama está mal porque la suma de verificación es incorrecta, no tiene
+  forma de saber dónde comienza la siguiente. Regresar una trama a la fuente solicitando una retransmisión tampoco ayuda, ya que el destino no sabe cuántos caracteres tiene que saltar para llegar al inicio de la retransmisión.
+  \item \textbf{Flags con bit-stuffing}: El segundo método de entramado evita el problema de tener que sincronizar nuevamente después de un error, haciendo que cada trama inicie y termine con bytes especiales llamado \textbf{flags}. De esta manera, si el receptor pierde la sincronía simplemente puede buscar el flag para encontrar el final e inicio de la trama actual. Dos flags consecutivos señalan el final de una trama y el inicio de la siguiente. 
   
-  Cuando se utiliza este método para transmitir datos binarios, como programas objeto o números de punto flotante, surge un problema serio. Se puede dar el caso con mucha facilidad de que el patrón de bits de la bandera aparezca en los datos (payload), lo que interferiría en el entramado. Una forma de resolver este problema es hacer que la capa de enlace de datos del emisor inserte un byte de \textbf{escape especial} (ESC) justo antes de cada bandera “accidental” en los datos. La capa de enlace de datos del lado receptor quita el byte de escape antes de entregar los datos a la capa de red. Esta técnica se llama \textbf{relleno de caracteres} o bit-stuffing. Por lo tanto, una bandera de entramado se puede distinguir de uno en los datos por la ausencia o presencia de un byte de escape que la antecede.
+  Cuando se utiliza este método para transmitir datos binarios, como programas objeto o números de punto flotante, surge un problema serio. Se puede dar el caso con mucha facilidad de que el patrón de bits del flag aparezca en los datos (payload), lo que interferiría en el entramado. Una forma de resolver este problema es hacer que la capa de enlace de datos del emisor inserte un byte de \textbf{escape especial} (ESC) justo antes de cada flag “accidental” en los datos. La capa de enlace de datos del lado receptor quita el byte de escape antes de entregar los datos a la capa de red. Esta técnica se llama \textbf{relleno de caracteres} o bit-stuffing. Por lo tanto, un flag de entramado se puede distinguir de uno en los datos por la ausencia o presencia de un byte de escape que le anteceda.
 \end{enumerate}
 
 \subsection{Detección y corrección de errores}
@@ -38,7 +38,7 @@ Los diseñadores de redes han desarrollado dos estrategias principales para mane
 \subsubsection{Detección de errores}
 \paragraph{Bit de paridad:} La forma más sencilla. Consiste en añadir un bit de paridad al final del bloque de datos. El valor de ese bit se determina de tal forma que el código resultante tenga un número impar de unos. El receptor examina el código recibido y, si el número total es impar, supondrá que no ha habido errores. 
 
-La utilización de bits de paridad no es infalibre, ya que los impulsos de ruido son a veces lo suficientemente largos como para destruir más de un bit.
+La utilización de bits de paridad no es infalible, ya que los impulsos de ruido son a veces lo suficientemente largos como para destruir más de un bit.
 
 \paragraph{Comprobación de redundancia cíclica (CRC):} Dado un bloque o mensaje de \(k\)-bits, el trasmisor genera una secuencia de \(n\)-bits denominada \textbf{secuencia de comprobación de la trama} de tal manera que la trama resultante con \(n+k\) bits, se divisible por algún número determinado. El receptor entonces divirá la trama recibida por ese número y, si no hay resto en la división, se supone que no ha habido errores.
 
@@ -85,7 +85,7 @@ El rendimiento de un protocolo \(\eta\) se define como:
 \[\eta_{proto} = \frac{T_{tx}(F)}{RTT(F)}\]
 
 \subsection{Ventana deslizante}\label{sec:ventana-deslizante}
-Aumentar la eficiencia \(eta\), implica disminuir al minimo la cantidad de tiempo que el origen se bloquea durante la espera de un ACK.
+Aumentar la eficiencia \(\eta\), implica disminuir al minimo la cantidad de tiempo que el origen se bloquea durante la espera de un ACK.
 
 Una estrategia posible para esto es enviar varios frames seguidos, sin esperar ACKs para cada uno.
 Aparece el concepto de \textbf{ventana de frames}: en una ventana se envía una cierta cantidad de frames. Esto resulta en una definición diferente para la eficiencia:

@@ -1,25 +1,25 @@
-\section{Aplicaciones}
+\part{Aplicaciones}
 En esta capa se encuentran las aplicaciones usadas por los usuarios de la red. 
 
 Los \textbf{procesos} (programas) que se ejecutan en un mismo host se pueden comunicar entre sí usando los sistemas de comunicación interproceso definidos por el sistema operativo sobre el que están corriendo.
 
 Cuando un proceso necesita comunicarse con procesos ejecutándose en otros hosts, debe hacerlo usando algún protocolo de la capa de aplicación. Esto protocolos definen mensajes, reglas, acciones y servicios que deben aceptar las aplicaciones en cada punta de la conexión para poder comunicarse y hace uso de la capa de transporte para lograrlo.
 
-\subsection{Modelo Cliente-Servidor}
+\section{Modelo Cliente-Servidor}
 En este modelo, un proceso cliente inicia la comunicación con un proceso servidor. El servidor espera a que lleguen conexiones de clientes y cuando llega una, la acepta y responde al cliente con los recursos solicitados.
 
 Para identificar un proceso en un host se utiliza un \textbf{socket} que es un número formado por la dirección IP de un host y un número \textbf{port} que identifica el proceso dentro del host. 
 
 Cuando el paquete que desea enviar la aplicación llega a la capa de transporte, se utiliza TCP o UDP (dependiendo del protocolo de aplicación elegido) para enviar el mensaje al destino. La elección del protocolo de transporte depende de la aplicación y de las características de la red. 
 
-\subsection{Domain Name System (DNS)}
+\section{Domain Name System (DNS)}
 Es un servicio de resolución de nombres jerárquico distribuido. Se utiliza para traducir nombres de hosts a direcciones IP. Está implementado como un sistema de bases de datos distribuido generalizado para almacenar una variedad de información relacionada con la elección de un nombre.
 
 Cuando un proceso necesita comunicarse con una llama a un procedimiento llamado \textbf{resolvedor} y le pasa como parámetro el nombre del host con el que desea comunicarse, por ejemplo: "www.google.com". El resolvedor envía un paquete UDP a un servidor DNS local que tiene configurado en el sistema. Este servidor devuelve la dirección IP correspondiente al servidor local y el último lo devuelve al host que originó el pedido.
 
 Una vez que el host conoce la dirección IP del servidor, puede iniciar la comunicación con él usando UDP o TCP.
 
-\subsubsection{Espacio de dominios}
+\subsection{Espacio de dominios}
 La Internet está dividida en más de 250 \textbf{dominio de nivel superior} (Top-Level Domain), donde cada dominio cubre muchos hosts. Cada dominio está particionado en subdominios, y estos son particionados aún más, y así sucesivamente. Todos estos dominios pueden ser representados por un arbol, donde cada nodo interno es un dominio o subdominio y cada hoja es un host.
 
 \begin{figure}[H]
@@ -34,7 +34,7 @@ Los dominios de nivel superior vienen en dos sabores: genéricos y países.  Los
 
 Obtener un dominio de segundo nivel, como nombre-de-empresa.com, es fácil. Los dominios de nivel superior son administrados por registradores designados por la \textbf{Internet Corporation for Assigned  names and Numbers} (ICANN). Obtener un nombre simplemente requiere ir a un registrador correspondiente (para com en este caso) para verificar si el nombre deseado está disponible y no es una marca registrada de otra persona. Si no hay problemas, el solicitante paga al registrador una pequeña tarifa anual y obtiene el nombre.
 
-\subsubsection{Registros DNS}
+\subsection{Registros DNS}
 Cada dominio, ya sea un único host o un dominio de nivel superior, puede tener un conjunto de registros de recursos asociados con él. Estos registros son la base de datos DNS. Para un único host, el registro de recursos más común es solo su dirección IP, pero también existen muchos otros tipos de registros de recursos. Cuando un resolvedor le da un nombre de dominio a DNS, lo que obtiene son los registros de recursos asociados con ese nombre. Por lo tanto, la función principal de DNS es asignar nombres de dominio a registros de recursos.
 
 Un registro de recursos es una tupla de cinco. Aunque están codificados en binario para la eficiencia, en la mayoría de las exposiciones los registros de recursos se presentan como texto ASCII, una línea por registro de recursos.
@@ -58,7 +58,7 @@ Un registro de recursos es una tupla de cinco. Aunque están codificados en bina
   \end{itemize}
 \end{itemize}
 
-\subsubsection{Resolución de nombres}
+\subsection{Resolución de nombres}
 En teoría, un solo servidor de nombres podría contener toda la base de datos de DNS y responder a todas las consultas sobre ella. En la práctica, este servidor estaría tan sobrecargado como para ser útil. Además, si alguna vez se cae, toda la Internet se vería afectada.
 
 Para evitar los problemas asociados con tener una sola fuente de información, el espacio de nombres de DNS se divide en zonas no superpuestas. Cada zona está asociada con uno o más servidores DNS que contienen la base de datos de la misma. Normalmente, una zona tendrá un DNS primario, que obtiene su información de un archivo en su disco, y uno o más DNS secundarios, que obtienen su información del DNS primario. 
@@ -86,16 +86,16 @@ contrast to cached records, which may be out of date
 %A español:
 Si el dominio que se busca está bajo la jurisdicción del servidor de nombres, como top.cs.vu.nl que cae bajo cs.vu.nl, devuelve los registros de recursos autoritativos. Un registro autoritativo es aquel que proviene de la autoridad que administra el registro y, por lo tanto, siempre es correcto. Los registros autoritativos están en contraste con los registros en caché, que pueden estar desactualizados.
 
-\subsection{Envío de correo electrónico (SMTP)}
-\subsubsection{Agente de usuarios:}
+\section{Envío de correo electrónico (SMTP)}
+\subsection{Agente de usuarios:}
 El agente de usuario es un programa que proporciona una interfaz gráfica, o a veces una interfaz basada en texto y comandos que permite a los usuarios interactuar con el sistema de correo electrónico. Incluye un medio para componer, responder, mostrar y organizar mensajes. El acto de enviar nuevos mensajes al sistema de correo para su entrega se llama envío de correo.
 
 Después de que se ha leído un mensaje, el usuario puede decidir qué hacer con él. Esto se llama disposición del mensaje. Las opciones incluyen eliminar el mensaje, enviar una respuesta, reenviar el mensaje a otro usuario y guardar el mensaje para referencia posterior. La mayoría de los agentes de usuario pueden administrar un buzón para correo entrante con varias carpetas para correo guardado. Las carpetas permiten al usuario guardar el mensaje según el remitente, el tema u otra categoría.
 
-\subsubsection{Servidor de correo}
+\subsection{Servidor de correo}
 Los agentes de transferencia de mensajes son procesos del sistema. Se ejecutan en segundo plano en las máquinas del servidor de correo y están destinados a estar siempre disponibles. Su trabajo es mover automáticamente el correo electrónico a través del sistema desde el remitente hasta el destinatario con SMTP (Protocolo simple de transferencia de correo). Este es el paso de transferencia de mensajes.
 
-\subsubsection{Formato de email}
+\subsection{Formato de email}
 El encabezado contiene toda la información necesaria para transportar el mensaje, como la dirección de destino, la prioridad y el nivel de seguridad, todos los cuales son distintos del mensaje en sí. Los agentes de transporte de mensajes utilizan esta información para el enrutamiento. Los campos más relevantes del encabezado son:
 \begin{center}
   \begin{tabularx}{0.8\textwidth}{l|p{0.6\textwidth}}
@@ -119,7 +119,7 @@ El encabezado contiene toda la información necesaria para transportar el mensaj
 \end{center}
 
 \newpage
-\subsubsection*{MIME - Multipurpose Internet Mail Extensions}
+\subsubsection{MIME - Multipurpose Internet Mail Extensions}
 MIME define cinco nuevos encabezados de mensajes:
 \begin{itemize}
   \item \textbf{MIME-Version}: Incidica al agente de usuario que recibe el mensaje que está tratando con un mensaje MIME y qué versión de MIME usa. Cualquier mensaje que no contenga un encabezado MIME-Version: se asume que es un mensaje de texto en inglés (o al menos uno que usa solo caracteres ASCII) y se procesa como tal.
@@ -148,14 +148,14 @@ MIME define cinco nuevos encabezados de mensajes:
   \end{center}
 \end{itemize}
 
-\subsubsection*{Transferencia de mensajes}
+\subsubsection{Transferencia de mensajes}
 El correo electrónico se entrega haciendo que la computadora de envío establezca una conexión TCP al puerto 25 de la computadora de recepción. Escuchando este puerto hay un servidor de correo que habla SMTP (Protocolo simple de transferencia de correo). Este servidor acepta conexiones entrantes, sujeto a algunas verificaciones de seguridad, y acepta mensajes para su entrega. Si un mensaje no se puede entregar, se devuelve un informe de error que contiene la primera parte del mensaje no entregable al remitente.
 
 Una vez que el servidor SMTP recibe un mensaje del agente de usuario, lo entregará al servidor SMTP que corresponde a la dirección del remitente del mail. Para identificar este servidor se utiliza una consulta DNS, se crea una conexión TCP entre ambos servidores parar transferir el mensaje usando SMTP y luego se cierra la conexión.
 
 Cuando el usuario remitente quiera leer su correo, el agente de usuario se conecta al servidor de correo de recepción usando POP3 (Protocolo de oficina de correos versión 3) o IMAP (Protocolo de acceso a mensajes de Internet).
 
-\subsubsection*{IMAP - Internet Message Access Protocol}
+\subsubsection{IMAP - Internet Message Access Protocol}
 Uno fde los protocolos más usados en para realizar el delivery final al remitente es IMAP:
 
 El cliente inicia un conexión seguro al servidor de mails y luego inicia sesión o se autentique de algun manera. Una vez iniciada la sesión, hay muchos comandos para enumerar carpetas y mensajes, recuperar mensajes o incluso partes de mensajes, marcar mensajes con banderas para su eliminación posterior y organizar mensajes en varias badnejas de entrada.
@@ -192,7 +192,7 @@ IAMP es un mejor de POP3, un protocolo más simple y menos seguro en el cual cad
   \end{tabularx}
 \end{center}
 
-\subsection{HTTP: Hypertext Transfer Protocol}
+\section{HTTP: Hypertext Transfer Protocol}
 Desde el punto de vista de los usuarios, la Web consiste en una vasta colección mundial de contenido en forma de páginas web. Cada página puede contener enlaces a otras en cualquier parte del mundo. Los usuarios pueden seguir un enlace haciendo clic en él, lo que los lleva a la página a la que apunta. La idea de tener una página que apunte a otra es llamada \textbf{hipertexto}. Un pedazo de texto, icono, imagen, etc. asociado con otra página se llama \textbf{hipervínculo}.
 
 Cada página se obtiene enviando una solicitud a uno o más servidores, que responden con el contenido de la página. El protocolo de solicitud-respuesta para obtener páginas es un protocolo de texto simple que se ejecuta sobre TCP, tal como era el caso de SMTP. Se llama \textbf{HTTP (Protocolo de transferencia de hipertexto)}. El contenido puede ser simplemente un documento que se lee de un disco, o el resultado de una consulta a una base de datos y la ejecución de un programa. La página es una \textbf{página estática} si es un documento que es el mismo cada vez que se muestra. En contraste, si se generó a pedido por un programa o contiene un programa, es una \textbf{página dinámica}.
@@ -210,7 +210,7 @@ Cuando un usuario hace clic en un hipervínculo, el navegador realiza una serie 
   \item En HTTP1.0 la conexión se cierra y el navegador debe volver a realizar todos los pasos anteriores para pedir un nuevo recuro. En HTTP 2.0, la conexión TCP se mantiene abierta mientras el navegador sigue pidiendo recursos y se cierra despues de un tiempo de que se deja usar.
 \end{enumerate}
 
-\subsubsection{Cookies}
+\subsection{Cookies}
 Navegar por la Web como lo hemos descrito hasta ahora implica una serie de recuperaciones de páginas independientes. No hay concepto de una sesión de inicio de sesión. El navegador envía una solicitud a un servidor y recibe un archivo. Luego, el servidor olvida que alguna vez ha visto a ese cliente en particular.
 
 Este problema se resuelve con un mecanismo a menudo criticado llamado cookies.
@@ -228,7 +228,7 @@ Una cookie puede contener hasta cinco campos:
   \item \textbf{Secure:} Indica si la cookie debe ser enviada solo a través de conexiones seguras.
 \end{itemize}
 
-\subsubsection{Mensajes HTTP}
+\subsection{Mensajes HTTP}
 
 Aunque HTTP fue diseñado para su uso en la Web, se hizo intencionalmente más general de lo necesario con miras a futuros usos orientados a objetos. Por esta razón, se admiten operaciones, llamadas métodos, que no solo solicitan una página web:
 
@@ -267,7 +267,7 @@ Todas las respuestas están formadas por un header y un body. El header contiene
   \item \textbf{Location:} Indica la URL a la que se debe redirigir el cliente.
 \end{itemize}
 
-\subsection{CDN: Content Distribution Network}
+\section{CDN: Content Distribution Network}
 La idea es distribuir geográficamente una colección de servidores que almacenan copias de páginas web. Cuando un usuario quiere acceder a una página, se le redirige al servidor más cercano a su ubicación. Esto reduce la latencia y la congestión de la red.
 
 Esto servidores se pueden ver como cachés. Si no tienen una página que haya sido solicitada por un cliente, le piden al servidor de back-end. En la práctica, sin embargo, los servidores de back-end replican proactivamente sus datos en los sustitutos en lugar de esperar a que los sustitutos lo soliciten bajo demanda. También es el caso de que solo las páginas estáticas, en oposición al contenido dinámico, se distribuyen en los sustitutos. Los clientes tienen que ir al servidor de back-end para cualquier contenido que cambie con frecuencia (por ejemplo, resultados deportivos y cotizaciones de acciones) o se produzca como resultado de algún cálculo (por ejemplo, una consulta de base de datos).
@@ -281,5 +281,5 @@ Esto servidores se pueden ver como cachés. Si no tienen una página que haya si
 \end{figure}
 Las CDN también necesitan proporcionar un conjunto de redireccionadores que reenvíen las solicitudes de los clientes al servidor más apropiado. El objetivo principal de los redireccionadores es seleccionar el servidor para cada solicitud que resulte en el mejor tiempo de respuesta para el cliente. Un objetivo secundario es que el sistema en su conjunto procese tantas solicitudes por segundo como el hardware subyacente (enlaces de red y servidores web) pueda admitir. El número promedio de solicitudes que se pueden satisfacer en un período de tiempo determinado, conocido como el rendimiento del sistema, es principalmente un problema cuando el sistema está bajo una carga pesada.
 
-\subsubsection{CDNs Comerciales}
+\subsection{CDNs Comerciales}
 Las CDN comerciales usan una combinación de reescritura de URL y redirección basada en DNS. Por razones de escalabilidad, el servidor DNS de alto nivel primero apunta a un servidor DNS de nivel regional, que responde con la dirección real del servidor. Para responder a los cambios rápidamente, los servidores DNS ajustan el TTL de los registros de recursos que devuelven a un período muy corto, como 20 segundos. Esto es necesario para que los clientes no almacenen en caché los resultados y, por lo tanto, no vuelvan al servidor DNS para obtener el último mapeo de URL a servidor.

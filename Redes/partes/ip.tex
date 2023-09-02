@@ -1,14 +1,14 @@
 \section{IP}
 Utilizamos el término \textbf{internetwork}, o a veces simplemente \textbf{internet} con una i minúscula, para referirnos a una colección arbitraria de redes interconectadas para proporcionar algún tipo de servicio de entrega de paquetes de host a host.
 
-Las internet conecta diversas redes através de routers. Es fácil confundirse con la distinción entre bridges, switches y routers. Hay una buena razón para tal confusión, ya que en algún nivel todos reenvían mensajes de un enlace a otro. Una distinción que la gente hace se basa en la estratificación: los bridges son nodos de nivel de enlace (reenvían frames de un enlace a otro para implementar una LAN extendida), los switches son nodos de nivel de red (reenvían paquetes de un enlace a otro para implementar una red conmutada por paquetes) y los routers son nodos de nivel de internet (reenvían datagramas de una red a otra para implementar un internet).
+Una internet conecta diversas redes através de routers. Es fácil confundirse con la distinción entre bridges, switches y routers. Hay una buena razón para tal confusión, ya que en algún nivel todos reenvían mensajes de un enlace a otro. Una distinción que la gente hace se basa en la estratificación: los bridges son nodos de nivel de enlace (reenvían frames de un enlace a otro para implementar una LAN extendida), los switches son nodos de nivel de red (reenvían paquetes de un enlace a otro para implementar una red conmutada por paquetes) y los routers son nodos de nivel de internet (reenvían datagramas de una red a otra para implementar un internet).
 
 El \textbf{Protocolo de Internet (Internet Protocol - IP)} es la herramienta clave utilizada hoy en día para construir internetworks escalables y heterogéneas.
 La filosofía utilizada en la definición del modelo de servicio IP fue hacerlo poco exigente para que casi cualquier tecnología de red que pueda aparecer en una internetwork pueda proporcionar el servicio necesario.
 
 El modelo de servicio IP puede pensarse en dos partes: un esquema de direccionamiento, que proporciona una forma de identificar todos los hosts en la internetwork, y un modelo de datagrama (sin conexión) de entrega de datos. Este modelo de servicio a veces se llama mejor esfuerzo (\textbf{best effort}) porque, aunque IP hace todo lo posible para entregar datagramas, no ofrece garantías.
 
-Cada datagrama lleva suficiente información para permitir que la red reenvíe el paquete a su destino correcto; no es necesario ningún mecanismo de configuración previa para decirle a la red qué hacer cuando llega el paquete. Simplemente lo envía y la red hace todo lo posible para llevarlo al destino deseado. La parte de "mejor esfuerzo" significa que si algo sale mal y el paquete se pierde, se corrompe, se entrega incorrectamente o de cualquier manera no llega a su destino previsto, la red no hace nada: hizo su mejor esfuerzo y eso es todo lo que tiene que hacer. No hace ningún intento de recuperarse del fallo. Esto a veces se llama un servicio no confiable.
+Cada datagrama lleva suficiente información para permitir que la red reenvíe el paquete a su destino correcto; no es necesario ningún mecanismo de configuración previa para decirle a la red qué hacer cuando llega el paquete. Simplemente lo envía y la red hace todo lo posible para llevarlo al destino deseado. La parte de ``mejor esfuerzo" significa que si algo sale mal y el paquete se pierde, se corrompe, se entrega incorrectamente o de cualquier manera no llega a su destino previsto, la red no hace nada: hizo su mejor esfuerzo y eso es todo lo que tiene que hacer. No hace ningún intento de recuperarse del fallo. Esto a veces se llama un servicio no confiable.
 
 La entrega de mejor esfuerzo no significa solo que los paquetes pueden perderse. A veces pueden entregarse fuera de orden, y a veces el mismo paquete puede entregarse más de una vez. Los protocolos de nivel superior o las aplicaciones que se ejecutan por encima de IP deben ser conscientes de todos estos posibles modos de falla.
 
@@ -41,7 +41,7 @@ El header del paquete consta de los siguientes campos:
   
   \item El campo \textbf{Checksum} es un campo de detección de errores de 16 bits que cubre tanto el encabezado como los datos. Sirve para detectar errores, no así para corregirlos. Por lo tanto, si el host detecta un error en el paquete, lo descarta.
   \item El campo \textbf{SourceAddr} es la dirección completa del host que envía el paquete. Es necesaria para permitir que los destinatarios decidan si desean aceptar el paquete y para permitirles responder.
-  \item El campo \textbf{DestinationAddr} es la dirección completa del host que debe recibir el paquete.  Es la clave para la entrega de datagramas: cada paquete contiene una dirección completa para su destino previsto para que se puedan tomar decisiones de reenvío en cada enrutador.
+  \item El campo \textbf{DestinationAddr} es la dirección completa del host que debe recibir el paquete.  Es la clave para la entrega de datagramas.
   \item Finalmente, puede haber una serie de opciones al final del encabezado. La presencia o ausencia de opciones se puede determinar examinando el campo HLen. Si bien las opciones se usan con bastante poca frecuencia, una implementación IP completa debe poder procesarlas todas.
 \end{itemize}
 
@@ -97,19 +97,6 @@ Si los resultados no son iguales, el paquete debe enviarse a un enrutador para q
 
 La tabla de forwarding de un enrutador también cambia ligeramente cuando introducimos el subnetting. Recordemos que anteriormente teníamos una tabla de forwarding que consistía en entradas de la forma \(<NetworkNum, NextHop>\). Para soportar el subnetting, la tabla ahora debe tener entradas de la forma \(<SubnetNumber, SubnetMask, NextHop>\). Para encontrar la entrada correcta en la tabla, el enrutador realiza un AND bit a bit entre la dirección de destino del paquete y la SubnetMask para cada entrada; si el resultado coincide con el SubnetNumber de la entrada, entonces esta es la entrada correcta para usar, y reenvía el paquete al enrutador indicado.
 
-% Traducir el siguiente texto:
-The forwarding table of a router also changes slightly when we intro-
-duce subnetting. Recall that we previously had a forwarding table that
-consisted of entries of the form hNetworkNum, NextHopi. To support sub-
-netting, the table must now hold entries of the form hSubnetNumber,
-SubnetMask, NextHopi. To find the right entry in the table, the router
-ANDs the packet’s destination address with the SubnetMask for each
-entry in turn; if the result matches the SubnetNumber of the entry, then
-this is the right entry to use, and it forwards the packet to the next hop
-router indicated.
-% A español:
-La tabla de forwarding de un enrutador también cambia ligeramente cuando introducimos el subnetting. Recordemos que anteriormente teníamos una tabla de forwarding que consistía en entradas de la forma \(<NetworkNum, NextHop>\). Para soportar el subnetting, la tabla ahora debe tener entradas de la forma \(<SubnetNumber, SubnetMask, NextHop>\). Para encontrar la entrada correcta en la tabla, el enrutador realiza un AND bit a bit entre la dirección de destino del paquete y la SubnetMask para cada entrada; si el resultado coincide con el SubnetNumber de la entrada, entonces esta es la entrada correcta para usar, y reenvía el paquete al siguiente enrutador indicado.
-
 \subsubsection{Direcciones sin clases}
 El subnetting tiene un contraparte, a veces llamado supernetting, pero más a menudo llamado \textbf{Classless Interdomain Routing} o \textbf{CIDR}, pronunciado "cider". CIDR lleva la idea de subnetting a su conclusión lógica al eliminar las clases de direcciones por completo. 
 
@@ -120,12 +107,10 @@ CIDR trata de equilibrar el deseo de minimizar el número de rutas que un enruta
 
 CIDR requiere un nuevo tipo de notación para representar los números de red, o prefijos como se los conoce, porque los prefijos pueden tener cualquier longitud. La convención es colocar un /X después del prefijo, donde X es la longitud del prefijo en bits.
 
-La capacidad de agregar rutas en los extremos de direcciones de la red como acabamos de ver es solo el primer paso
-
 Si asignamos prefijos a los clientes de tal manera que muchas redes de clientes diferentes conectadas a la red del proveedor compartan un prefijo de dirección común y más corto, entonces podemos obtener una mayor agregación de rutas.
 
 \subsubsection*{IP Forwarding y CIDR}
-CIDR significa que los prefijos pueden tener cualquier longitud, desde 2 hasta 32 bits. Además, a veces es posible tener prefijos en la tabla de forwarding que "se superponen", en el sentido de que algunas direcciones pueden coincidir con más de un prefijo.
+Usar CIDR significa que los prefijos pueden tener cualquier longitud, desde 2 hasta 32 bits. Además, a veces es posible tener prefijos en la tabla de forwarding que "se superponen", en el sentido de que algunas direcciones pueden coincidir con más de un prefijo.
 
 La regla en este caso se basa en el principio de "coincidencia más larga"; es decir, el paquete coincide con el prefijo más largo.
 
@@ -139,7 +124,7 @@ Esto se puede lograr utilizando el Protocolo de Resolución de Direcciones (ARP)
 
 ARP aprovecha el hecho de que muchas tecnologías de red de nivel de enlace, como Ethernet, admiten broadcasting. Si un host desea enviar un datagrama IP a otro host (o a un enrutador) que sabe que está en la misma red, primero verifica si hay un mapeo en la caché. Si no se encuentra ningún mapeo, debe invocar el Protocolo de resolución de direcciones en la red. Lo hace transmitiendo una consulta ARP en la red. Esta consulta contiene la dirección IP de destino. Cada host recibe la consulta y verifica si coincide con su dirección IP. Si coincide, el host envía un mensaje de respuesta que contiene su dirección de nivel de enlace de regreso al originador de la consulta. El originador agrega la información contenida en esta respuesta a su tabla ARP.
 
-La consulta también incluye la dirección IP y la dirección de nivel de enlace del host que envía. De esta manera, el host de destino puede aprender las direcciones de nivel de enlace y de IP del remitente y colocar esa información en su tabla ARP si es que ya no la tienen guardada.  Si el host ya tiene una entrada para ese host en su tabla, "actualiza" esta entrada para que dure más tiempo.
+La consulta también incluye la dirección IP y la dirección de nivel de enlace del host que envía. De esta manera, el host de destino puede aprender las direcciones de nivel de enlace y de IP del remitente y colocar esa información en su tabla ARP si es que ya no la tenía guardada.  Si el host ya tiene una entrada para ese host en su tabla, aumenta el time to live de esta entrada para que dure más tiempo.
 
 El formato del paquete ARP para mapeos de direcciones IP a Ethernet contiene:
 \begin{itemize}
@@ -166,7 +151,7 @@ El mensaje se envía realmente utilizando un protocolo llamado \textbf{Protocolo
 En el caso en que DHCP asigne dinámicamente direcciones IP a los hosts, no pueden mantener las direcciones indefinidamente, ya que esto eventualmente causaría que el servidor agote su pool de direcciones. Al mismo tiempo, no se puede depender de que un host devuelva su dirección, ya que podría haberse bloqueado, desconectado de la red o apagado. Por lo tanto, DHCP permite que las direcciones se asignen por un período de tiempo determinado. Una vez que la asignación expire, el servidor es libre de devolver esa dirección a su pool. Un host con una dirección asignada necesita renovar el arriendo periódicamente si todavía está conectado a la red y funciona correctamente.
 
 \subsection{Error Reporting (ICMP)}
-IP siempre se configura con un protocolo complementario, conocido como \textbf{Protocolo de mensajes de control de Internet (ICMP)}, que define una colección de mensajes de error que se envían al host de origen cada vez que un enrutador o host no puede procesar un datagrama IP correctamente.
+IP siempre se configura con un protocolo complementario conocido como \textbf{Protocolo de mensajes de control de Internet (ICMP)}. Este protocolo define una colección de mensajes de error que se envían al host de origen cada vez que un enrutador o host no puede procesar un datagrama IP correctamente.
 
 ICMP también define mensajes de control que un enrutador puede enviar de vuelta a un host de origen. Uno de los mensajes de control más útiles, llamado ICMP-Redirect, le dice al host de origen que hay una mejor ruta hacia el destino.
 
