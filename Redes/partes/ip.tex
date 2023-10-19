@@ -1,16 +1,16 @@
 \section{IP}
-Utilizamos el término \textbf{internetwork}, o a veces simplemente \textbf{internet} con una i minúscula, para referirnos a una colección arbitraria de redes interconectadas para proporcionar algún tipo de servicio de entrega de paquetes de host a host.
+Utilizamos el término \textbf{internet}, o a veces simplemente \textbf{internet} con una i minúscula, para referirnos a una colección arbitraria de redes interconectadas para proporcionar algún tipo de servicio de entrega de paquetes de host a host.
 
 Una internet conecta diversas redes através de routers. Es fácil confundirse con la distinción entre bridges, switches y routers. Hay una buena razón para tal confusión, ya que en algún nivel todos reenvían mensajes de un enlace a otro. Una distinción que la gente hace se basa en la estratificación: los bridges son nodos de nivel de enlace (reenvían frames de un enlace a otro para implementar una LAN extendida), los switches son nodos de nivel de red (reenvían paquetes de un enlace a otro para implementar una red conmutada por paquetes) y los routers son nodos de nivel de internet (reenvían datagramas de una red a otra para implementar un internet).
 
-El \textbf{Protocolo de Internet (Internet Protocol - IP)} es la herramienta clave utilizada hoy en día para construir internetworks escalables y heterogéneas.
-La filosofía utilizada en la definición del modelo de servicio IP fue hacerlo poco exigente para que casi cualquier tecnología de red que pueda aparecer en una internetwork pueda proporcionar el servicio necesario.
+El \textbf{Protocolo de Internet (Internet Protocol - IP)} es la herramienta clave utilizada hoy en día para construir internets escalables y heterogéneas.
+La filosofía utilizada en la definición del modelo de servicio IP fue hacerlo poco exigente para que casi cualquier tecnología de red que pueda aparecer en una internet pueda proporcionar el servicio necesario.
 
-El modelo de servicio IP puede pensarse en dos partes: un esquema de direccionamiento, que proporciona una forma de identificar todos los hosts en la internetwork, y un modelo de datagrama (sin conexión) de entrega de datos. Este modelo de servicio a veces se llama mejor esfuerzo (\textbf{best effort}) porque, aunque IP hace todo lo posible para entregar datagramas, no ofrece garantías.
+El modelo de servicio IP puede pensarse en dos partes: un esquema de direccionamiento, que proporciona una forma de identificar todos los hosts en la internet, y un modelo de datagrama (sin conexión) de entrega de datos. Este modelo de servicio a veces se llama mejor esfuerzo (\textbf{best effort}) porque, aunque IP hace todo lo posible para entregar datagramas, no ofrece garantías.
 
 Cada datagrama lleva suficiente información para permitir que la red reenvíe el paquete a su destino correcto; no es necesario ningún mecanismo de configuración previa para decirle a la red qué hacer cuando llega el paquete. Simplemente lo envía y la red hace todo lo posible para llevarlo al destino deseado. La parte de ``mejor esfuerzo" significa que si algo sale mal y el paquete se pierde, se corrompe, se entrega incorrectamente o de cualquier manera no llega a su destino previsto, la red no hace nada: hizo su mejor esfuerzo y eso es todo lo que tiene que hacer. No hace ningún intento de recuperarse del fallo. Esto a veces se llama un servicio no confiable.
 
-La entrega de mejor esfuerzo no significa solo que los paquetes pueden perderse. A veces pueden entregarse fuera de orden, y a veces el mismo paquete puede entregarse más de una vez. Los protocolos de nivel superior o las aplicaciones que se ejecutan por encima de IP deben ser conscientes de todos estos posibles modos de falla.
+La entrega de mejor esfuerzo no significa solo que los paquetes pueden perderse. A veces pueden entregarse fuera de orden, y a veces el mismo paquete puede entregarse más de una vez. Los protocolos de nivel superior o las aplicaciones que se ejecutan por encima de IP deben ser conscientes de todos estos posibles tipos de falla.
 
 \subsection{Formato del paquete}
 Una parte clave del modelo de servicio IP es el tipo de paquetes que se pueden transportar. El datagrama IP, como la mayoría de los paquetes, consiste en una cabecera seguida de un número de bytes de datos.
@@ -37,7 +37,7 @@ El header del paquete consta de los siguientes campos:
 
   Establecer este campo demasiado alto haría que los paquetes circulen bastante antes de ser descartados; Establecerlo demasiado bajo podría conllevar a que no lleguen a su destino. El valor 64 es el valor predeterminado actual.
 
-  \item El campo \textbf{protocolo} es simplemente una clave de demultiplexión que identifica el protocolo de nivel superior al que se debe pasar este paquete IP. Hay valores definidos para el protocolo TCP (Protocolo de control de transmisión - 6), UDP (Protocolo de datagramas de usuario - 17) y muchos otros protocolos que pueden estar por encima de IP en el gráfico de protocolos.
+  \item El campo \textbf{protocolo} es simplemente una clave de demultiplexión que identifica el protocolo de nivel superior al que se debe pasar este paquete IP. Hay valores definidos para TCP (Protocolo de control de transmisión - 6), UDP (Protocolo de datagramas de usuario - 17) y muchos otros protocolos.
   
   \item El campo \textbf{Checksum} es un campo de detección de errores de 16 bits que cubre tanto el encabezado como los datos. Sirve para detectar errores, no así para corregirlos. Por lo tanto, si el host detecta un error en el paquete, lo descarta.
   \item El campo \textbf{SourceAddr} es la dirección completa del host que envía el paquete. Es necesaria para permitir que los destinatarios decidan si desean aceptar el paquete y para permitirles responder.
@@ -46,22 +46,22 @@ El header del paquete consta de los siguientes campos:
 \end{itemize}
 
 \subsection{Fragmentación y reensambe}
-Cada tipo de red tiene una \textbf{unidad de transmisión máxima (MTU)}, que es el datagrama IP más grande que puede transportar en un frame.
+Cada tipo de red tiene una \textbf{unidad de transmisión máxima (Maximum Transmission Unit - MTU)}, que es el datagrama IP más grande que puede transportar en un frame.
 
-Cuando un host envía un datagrama IP, por lo tanto, puede elegir cualquier tamaño que desee. Una opción razonable es el MTU de la red a la que está directamente conectado. Entonces, la fragmentación solo será necesaria si la ruta hacia el destino incluye una red con un MTU más pequeño. Si el protocolo de transporte que se encuentra en la parte superior de IP le da un paquete más grande que el MTU local, entonces el host de origen debe fragmentarlo.
+Cuando un host envía un datagrama IP, puede elegir cualquier tamaño que desee. Una opción razonable es el MTU de la red a la que está directamente conectado. En este caso, la fragmentación solo será necesaria si la ruta hacia el destino incluye una red con un MTU más pequeño. Si el protocolo de transporte que se encuentra en la parte superior de IP le da un paquete más grande que el MTU local, entonces el host de origen debe fragmentarlo.
 
-Para permitir que estos fragmentos se vuelvan a ensamblar en el host de recepción, todos llevan el mismo identificador en el campo Ident. Este identificador es elegido por el host de envío y pretende ser único entre todos los datagramas que puedan llegar al destino desde esta fuente durante un período de tiempo razonable. Dado que todos los fragmentos del datagrama original contienen este identificador, el host de reensambe podrá reconocer aquellos fragmentos que van juntos. Si no llegan todos los fragmentos al host de recepción, el host abandona el proceso de reensamble y descarta los fragmentos que llegaron. IP no intenta recuperarse de fragmentos faltantes.
+Para permitir que estos fragmentos se vuelvan a ensamblar en el host de recepción, todos llevan el mismo identificador en el campo \texttt{Ident}. Este identificador es elegido por el host de envío y se elige de tal forma que sea único entre todos los datagramas que puedan llegar al destino desde esta fuente durante un período de tiempo razonable. Dado que todos los fragmentos del datagrama original contienen este identificador, el host de reensambe podrá reconocer aquellos fragmentos que van juntos. Si no llegan todos los fragmentos al host de recepción, el host abandona el proceso de reensamble y descarta los fragmentos que llegaron. IP no intenta recuperarse de fragmentos faltantes.
 
-Supongamos que hay que fragmentar un mensaje recibido, entonces se establece el bit M en el campo Flags, lo que significa que hay más fragmentos por seguir, y establece el Offset en 0, ya que este fragmento contiene la primera parte del datagrama original.
+Supongamos que hay que fragmentar un mensaje recibido, entonces se divide el datgrama en paquetes I más pequeños y en el primer paquete se establece el bit \texttt{M} en el campo \texttt{Flags}, lo que significa que hay más fragmentos por seguir, y establece el \texttt{Offset} en 0, ya que este fragmento contiene la primera parte del datagrama original.
 
-La fragmentación produce datagramas IP más pequeños y válidos que pueden reensamblarse fácilmente en el datagrama original al recibirlos, independientemente del orden de su llegada. El reensamblaje se realiza en el host receptor y no en cada enrutador.
+Cuando el host recibe todos los fragmentso, usa el offset de cada paquete para reordenarlos y luego los concatena para formar el datagrama completo. El reensamblaje se realiza en el host receptor y no en cada enrutador.
 
 \subsection{Direcciones globales}
-Las direcciones Ethernet son globalmente únicas, pero eso solo no es suficiente para un esquema de direccionamiento en una gran internetwork. Las direcciones Ethernet también son planas, lo que significa que no tienen estructura y proporcionan muy pocas pistas para los protocolos de enrutamiento.
+Las direcciones Ethernet son globalmente únicas pero eso solo no es suficiente para un esquema de direccionamiento en una gran internet. Las direcciones Ethernet también son planas, lo que significa que no tienen estructura y proporcionan muy pocas pistas para los protocolos de enrutamiento.
 
-En contraste, las direcciones IP son jerárquicas: Están compuestas de varias partes que corresponden a algún tipo de jerarquía en la internetwork. Específicamente, las direcciones IP consisten en dos partes, generalmente denominadas parte de red y parte de host. Esta es una estructura bastante lógica para una internetwork, que está compuesta por muchas redes interconectadas. La parte de red de una dirección IP identifica la red a la que está conectado el host; todos los hosts conectados a la misma red tienen la misma parte de red en su dirección IP. La parte del host identifica de forma única cada host en esa red en particular.
+En contraste, las direcciones IP son jerárquicas: Están compuestas de varias partes que corresponden a algún tipo de jerarquía en la internet. Específicamente, las direcciones IP consisten en dos partes denominadas parte de red y parte de host. La parte de red de una dirección IP identifica la red a la que está conectado el host;  todos los hosts conectados a la misma red tienen la misma parte de red en su dirección IP. La parte del host identifica de forma única cada host en esa red en particular.
 
-Los enrutadores que se conectan a dos o más redes necesitan tener una dirección en cada red, una para cada interfaz. Por lo tanto, teniendo en cuenta que un enrutador podría implementarse como un host con dos interfaces de red, es más preciso pensar en las direcciones IP como pertenecientes a interfaces que a hosts.
+Los router   que se conectan a dos o más redes necesitan tener una dirección en cada red, una para cada interfaz. Por lo tanto, teniendo en cuenta que un enrutador podría implementarse como un host con dos interfaces de red, es más preciso pensar en las direcciones IP como pertenecientes a interfaces que a hosts.
 
 La clase de una dirección IP se identifica en los bits más significativos. Si el primer bit es 0, es una dirección de clase A. Si el primer bit es 1 y el segundo es 0, es una dirección de clase B. Si los dos primeros bits son 1 y el tercero es 0, es una dirección de clase C. 
 
@@ -80,11 +80,9 @@ Un datagrama se envía desde un host de origen a un host de destino, posiblement
 
 Si hay alguna una coincidencia significa que el destino se encuentra en la misma red física que la interfaz y el paquete se puede entregar directamente a través de esa red.
 
-Si el nodo no está conectado a la misma red física que el nodo de destino, entonces debe enviar el datagrama a un router. En general, cada nodo tendrá varias opciones de routers, por lo que debe elegir el mejor, o al menos uno que tenga una posibilidad razonable de acercar el datagrama a su destino. El router que elige se conoce como \textbf{next hop}. El router encuentra el siguiente salto correcto consultando su tabla de reenvío. La tabla de forwarding es conceptualmente solo una lista de pares \(<NetworkNum, NextHop>\).
+Si el nodo no está conectado a la misma red física que el nodo de destino entonces debe elegir a quien debe pasar el datagrama para acercarlo a su destino. En general, cada nodo tendrá una \textbf{tabla de forwarding} que enumera los posibles routers a los que pueda reenviar el paquete por lo que debe elegir el mejor, o al menos uno que tenga una posibilidad razonable de realizar esta tareas. El router que termina eligiendo se conoce como \textbf{next hop}. Cada fila de la tabla es un par \(<NetworkNum, NextHop>\).
 
-Normalmente, también hay un enrutador predeterminado que se usa si ninguna de las entradas en la tabla coincide con el número de red de destino.
-
-El direccionamiento jerárquico ha mejorado la escalabilidad de una gran red dividiendo la dirección en partes de red y host. Los enrutadores ahora contienen tablas de reenvío que enumeran solo un conjunto de números de red en lugar de todos los nodos de la red.
+En caso de no encontrar una opción que considere viable, el paquete se envía a un router default almacenado en la tabla.
 
 \subsection{Subnetting}
 \textbf{Subnetting} proporciona un primer paso para reducir el número total de números de red que se asignan a una tabla de forwarding. La idea es tomar un solo número de red IP y asignar las direcciones IP con ese número de red a varias redes físicas, que ahora se denominan subredes. Varias cosas deben hacerse para que esto funcione. Primero, las subredes deben estar cerca unas de otras. Esto se debe a que en un punto distante de Internet, todas parecerán una sola red, teniendo solo un número de red entre ellas. Esto significa que un enrutador solo podrá seleccionar una ruta para llegar a cualquiera de las subredes, por lo que es mejor que todas estén en la misma dirección general.

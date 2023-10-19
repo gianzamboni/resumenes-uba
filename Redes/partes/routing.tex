@@ -82,21 +82,21 @@ El problema con estas técnicas que solo funcionan para loops que involucran dos
 \subsubsection*{Ruting Information Protocol (RIP)}
 Uno de los protocolos de enrutamiento más utilizados en las redes IP es el Protocolo de Información de Enrutamiento (RIP).
 
-En una internetwork, el objetivo de los enrutadores es aprender a reenviar paquetes a varias redes. Por lo tanto, en lugar de anunciar el costo de llegar a otros enrutadores, los enrutadores anuncian el costo de llegar a las redes.
+En una internet, el objetivo de los enrutadores es aprender a reenviar paquetes a varias redes. Por lo tanto, en lugar de anunciar el costo de llegar a otros enrutadores, los enrutadores anuncian el costo de llegar a las redes.
 
 RIP es una implementación bastante sencilla del algoritmo de Vector Distance Routing. Los enrutadores que ejecutan RIP envían sus anuncios cada 30 segundos.
 
 Un enrutador también envía un mensaje de actualización cada vez que una actualización de otro enrutador hace que cambie su tabla de enrutamiento. Un punto de interés es que admite múltiples familias de direcciones, no solo IP. RIP versión 2 (RIPv2) también introdujo las máscaras de subred mientras que RIP versión 1 funcionaba con las direcciones de clase antigua de IP.
 
 \subsection{Link State Routing}
-Link State Routing es la segunda clase principal de protocolo de enrutamiento intradominio. Los supuestos iniciales para este protocolo son bastante similares a los del enrutamiento por distance vector. Se supone que cada nodo es capaz de descubrir el estado del enlace a sus vecinos y el costo de cada enlace.
+Link State Routing es la segunda clase principal de protocolo de enrutamiento intradominio. Se supone que cada nodo es capaz de descubrir el estado del enlace a sus vecinos y el costo de cada enlace.
 
-Cada nodo sabe cómo llegar a sus vecinos directamente conectados, y si nos aseguramos de que la totalidad de este conocimiento se difunda a cada nodo, entonces cada nodo tendrá suficiente conocimiento de la red para construir un mapa completo. Esta es una condición suficiente (aunque no necesaria) para encontrar el camino más corto a cualquier punto de la red. Los protocolos de link state routing se basan en dos mecanismos: la difusión confiable de la información de estado de enlace y el cálculo de rutas a partir de la suma de todo el conocimiento acumulado por este algoritmo.
+Cada nodo sabe cómo llegar a sus vecinos directamente conectados, si nos aseguramos de que la totalidad de este conocimiento se difunda a cada nodo entonces cada nodo tendrá suficiente conocimiento de la red para construir un mapa completo. Esta es una condición suficiente (aunque no necesaria) para encontrar el camino más corto a cualquier punto de la red. Los protocolos de link state routing se basan en dos mecanismos: la difusión confiable de la información de estado de enlace y el cálculo de rutas a partir de la suma de todo el conocimiento acumulado por este algoritmo.
 
 \subsubsection{Reliable flooding}
-La inundación confiable (reliable flooding) es el proceso de asegurarse de que todos los nodos que participan en el protocolo de enrutamiento obtengan una copia de la información de estado de enlace de todos los demás nodos. Como sugiere el término inundación, la idea es que un nodo envíe su información de estado de enlace en todas sus conexiones directas; cada nodo que recibe esta información luego la reenvía en todas sus conexiones. Este proceso continúa hasta que la información ha llegado a todos los nodos de la red.
+La inundación confiable (reliable flooding) es el proceso de asegurarse de que todos los nodos que participan en el protocolo de enrutamiento obtengan una copia de la información de estado de enlace de todos los demás. Como sugiere el término inundación, la idea es que un nodo envíe su información de estado de enlace en todas sus conexiones directas; cada nodo que recibe esta información la reenvía en todas sus conexiones. Este proceso continúa hasta que la información ha llegado a todos los nodos de la red.
 
-Más precisamente, cada nodo crea un paquete de actualización, también llamado paquete de estado de enlace (Link State Packet, LSP), que contiene la siguiente información:
+El paquete paquete de actualización que envían los nodos, también llamado paquete de estado de enlace (Link State Packet, LSP), contiene la siguiente información:
 
 \begin{itemize}
   \item El ID del nodo que creó el LSP.
@@ -112,18 +112,18 @@ Veamos como el proceso de flooding:
   \item Supongamos que un nodo \(A\) crea un LSP y lo envía a todos sus vecinos.
   \item Un nodo \(B\) que recibe una copia de un LSP que se originó en \(A\).
   \item \(B\) compara el número de secuencia del LSP que acaba de recibir con el número de secuencia del LSP que ya tiene almacenado para \(A\). Si el nuevo LSP tiene un número de secuencia más grande, se asume que es el más reciente, y ese LSP se almacena, reemplazando al antiguo. Un número de secuencia más pequeño (o igual) implicaría un LSP más antiguo (o no más nuevo) que el almacenado, por lo que se descartaría y no sería necesario tomar más medidas.
-  \item Si el LSP recibido fue el más nuevo, X envía una copia de ese LSP a todos sus vecinos, excepto al vecino del que se acaba de recibir el LSP.
+  \item Si el LSP recibido fue el más nuevo, \(B\) envía una copia de ese LSP a todos sus vecinos, excepto al vecino del que acaba de recibir el LSP.
 \end{itemize}
 
-El hecho de que el LSP no se envíe de vuelta al nodo desde el que se recibió ayuda a poner fin a la inundación de un LSP. Dado que \(B\) pasa el LSP a todos sus vecinos, que luego hacen lo mismo, la copia más reciente del LSP eventualmente llega a todos los nodos.
+El hecho de que el LSP no se reenvíe de vuelta al nodo desde el que se recibió ayuda a poner fin a la inundación del mismo. Dado que \(B\) pasa el LSP a todos sus vecinos, que luego hacen lo mismo, la copia más reciente del LSP eventualmente llega a todos los nodos.
 
-Al igual que en RIP, cada nodo genera LSP bajo dos circunstancias:
+Al igual que en RIP, cada nodo genera LSPs bajo dos circunstancias:
 \begin{itemize}
   \item La expiración de un LSP, debido a que su TTL ha llegado a cero.
   \item Un cambio en la topología de la red. Sin embargo, la única razón basada en la topología para que un nodo genere un LSP es si uno de sus enlaces conectados directamente o vecinos inmediatos ha fallado.
 \end{itemize}
 
-La falla de un enlace puede detectarse en algunos casos por el protocolo de capa de enlace. La desaparición de un vecino o la pérdida de conectividad con ese vecino se puede detectar mediante paquetes periódicos "hello". Cada nodo envía estos a sus vecinos inmediatos a intervalos definidos. Si pasa suficiente tiempo sin recibir un "hello" de un vecino, el enlace a ese vecino se declarará inactivo y se generará un nuevo LSP para reflejar este hecho.
+La falla de un enlace puede detectarse en algunos casos por el protocolo de capa de enlace. La desaparición de un vecino o la pérdida de conectividad con ese vecino se puede detectar mediante paquetes periódicos ``hello". Cada nodo envía estos a sus vecinos inmediatos a intervalos definidos. Si pasa suficiente tiempo sin recibir un ``hello" de un vecino, el enlace a ese vecino se declarará inactivo y se generará un nuevo LSP para reflejar este hecho.
 
 \subsubsection{Consideraciones de diseño}
 Uno de los objetivos de diseño más importantes de la inundación en este protocolo es que la información más reciente debe inundarse a todos los nodos lo más rápido posible, mientras que la información antigua debe eliminarse de la red. Además, es deseable minimizar la cantidad total de tráfico de enrutamiento que se envía por la red; después de todo, esto es solo una sobrecarga desde la perspectiva de aquellos que realmente usan la red para sus aplicaciones. 
