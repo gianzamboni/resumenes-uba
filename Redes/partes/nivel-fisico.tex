@@ -3,7 +3,7 @@
 Las señales que se envían por el canal físico para comunicar dos extremos de un canal son \textbf{ondas electromagnéticas} que se propagan a través del canal a una cierta velocidad determinada por el tipo de canal que estemos usando.
 
 
-Podemos definir todas las señales con una función períodica \(f(t)\) llamada \textbf{frecuencia}. Esto significa que \(f(t) = f(t + T)\) para alguna constante \(T\). Al minimo valor positivo mayo que cero de \(T\) que cumple esto, lo llamamos \textbf{período fundamental}. \(f\) se mide en Hertz o ciclos por segundo y \(T\) en segundos. 
+Podemos definir todas las señales con una función períodica \(f(t)\) llamada \textbf{frecuencia}. Esto significa que \(f(t) = f(t + T)\) para alguna constante \(T\). Al minimo valor positivo mayor que cero de \(T\) que cumple esto, lo llamamos \textbf{período fundamental}. \(f\) se mide en Hertz o ciclos por segundo y \(T\) en segundos. 
 
 En base a a la frecuncia y el período de una onda definimos:
 
@@ -35,7 +35,7 @@ Todas las funciones períodicas pueden expresarse como una suma infinita de seno
 
 done \(\omega\) es la frecuencia angular y \(a_i\) es la amplitdud de la onda.
 
-Ninguna instalación transmisora puede transmitir señales sin perder cierta potencia en el proceso. Si todos los componentes de Fourier disminuyeran en la misma proporción, la señal resultante se reduciría en amplitud, pero no se distorsionaría. Desgraciadamente, todas las instalaciones de transmisión disminuyen los distintos componentes de Fourier en diferente grado, lo que provoca distorsión. Por lo general, las amplitudes se transmiten sin ninguna disminución desde 0 hasta cierta frecuencia \(f_c\) y todas las frecuencias que se encuentren por arriba de esta frecuencia de corte serán atenuadas. El rango de frecuencias que se transmiten sin atenuarse con fuerza se conoce como \textbf{ancho de banda}. En la práctica, el corte en realidad no es abrupto, por lo que con frecuencia el ancho de banda ofrecido va desde 0 hasta la frecuencia en la que el valor de la amplitud es atenuado a la mitad de su valor original.
+Ninguna instalación transmisora puede transmitir señales sin perder cierta potencia en el proceso. Si todos los componentes de Fourier disminuyeran en la misma proporción, la señal resultante se reduciría en amplitud, pero no se distorsionaría. Desgraciadamente, todas las instalaciones de transmisión disminuyen los distintos componentes de Fourier en diferente grado, lo que provoca distorsión. Por lo general, las amplitudes se transmiten sin ninguna disminución desde 0 hasta cierta frecuencia \(f_c\) y todas las frecuencias que se encuentren por arriba de esta frecuencia de corte serán atenuadas. El rango de frecuencias que se transmiten sin atenuarse se conoce como \textbf{ancho de banda}. En la práctica, el corte no es abrupto, por lo que, en general, el ancho de banda ofrecido va desde 0 hasta la frecuencia en la que el valor de la amplitud es atenuado a la mitad de su valor original.
 
 El ancho de banda es una propiedad física del medio de transmisión y por lo general depende
 de la construcción, grosor y longitud de dicho medio. En algunos casos, se introduce un filtro en el
@@ -77,7 +77,7 @@ Las perturbaciones mencionadas afectan la velocidad de transmición del canal po
 
 \begin{itemize}
   \item \(C\) es la capacidad del canal o tasa de datos, es decir a la cantidad de bits por segundo que podemos transmitir a través del mismo.
-  \item \(B\) es el ancho de banda por el cual vamos a transmitir nuestros datos, va estar medido en ciclos por segundo (Hertz) y va estar limitado por el transmiso y el medio.
+  \item \(B\) es el ancho de banda por el cual vamos a transmitir nuestros datos, va estar medido en ciclos por segundo (Hertz) y va estar limitado por el transmisor y el medio.
   \item \(N\) es el nivel medio o potencia del ruido del canal
   \item \(BER\) es la tasa de errores de bits por segundo (Bit Error Rate).
   \item \(S\) es la potencia o amplitud de la señal.
@@ -110,16 +110,16 @@ Por último, debemos analizar el tiempo que tarda en llegar un paquete completo 
   \begin{itemize}
     \item \textbf{Retardo de procesamiento:} Tiempo requerido en analizar el encabezado y decidir a dónde enviar el paquete. En un enrutador, dependerá del número de entradas en la tabla de rutas, la implementación (estructuras de datos), el hardware, etc. Puede incluir la verificación de errores.
     \item \textbf{Retardo de encolamiento:} Tiempo en que el paquete espera en un buffer hasta ser transmitido. El número de paquetes esperando en cola dependerá de la intensidad y la naturaleza del tráfico. Los algoritmos de colas en los enrutadores intentan adaptar estos retardos a ciertas preferencias, o imponer un uso equitativo.
-    \item \textbf{Retardo de transmición:} El tiempo requerido para “empujar” todos los bits de un paquete a través del medio de transmisión. Si \(R\) es la capidad del canal, \(L\) la longitud del paquete y \(D_T\) el delay o retardo de transmición:
+    \item \textbf{Retardo de transmisión:} El tiempo requerido para “empujar” todos los bits de un paquete a través del medio de transmisión. Si \(R\) es la capidad del canal, \(L\) la longitud del paquete y \(D_T\) el delay o retardo de transmición:
     \[D_T = \frac{L}{R}\]
     \item \textbf{Retardo de propagación:} Una vez que el bit es 'empujado' en el medio, el tiempo transcurrido en su propagación hasta
-    el final del trayecto físico. La velocidad de propagación del enlace depende más que nada de la distancia medio físico. Si \(d\) es la distancia a recorrer y \(s\) la velocidad de propagación:
+    el final del trayecto físico. La velocidad de propagación del enlace depende más que nada de la distancia del medio físico. Si \(d\) es la distancia a recorrer y \(s\) la velocidad de propagación:
     \[D_p = \frac{d}{s}\]
   \end{itemize}
 
  \subsection{Medios de transmición}
  \subsubsection{Medios guiados}
- \subsubsection*{Par trenzado de cobre} Uno de los medios de transmisión más viejos, y todavía el más común. Éste consiste en dos alambres de cobre aislados, por lo regular de 1 mm de grosor. Los alambres se trenzan en forma helicoidal, igual que una molécula de DNA. Esto se hace porque dos alambres paralelos constituyen una antena simple. Cuando se trenzan los alambres, las ondas de diferentes vueltas se cancelan, por lo que la radiación del cable es menos efectiva.
+ \subsubsection*{Par trenzado de cobre} Uno de los medios de transmisión más viejos, y todavía el más común. Éste consiste en dos alambres de cobre aislados, en general, de 1 mm de grosor. Los alambres se trenzan en forma helicoidal, igual que una molécula de DNA. Esto se hace porque dos alambres paralelos constituyen una antena simple. Cuando se trenzan los alambres, las ondas de diferentes vueltas se cancelan, por lo que la radiación del cable es menos efectiva.
 
 La aplicación más común del cable de par trenzado es en el sistema telefónico. Casi todos los teléfonos están conectados a la compañía telefónica mediante un cable de par trenzado. La distancia que se puede recorrer con estos cables es de varios kilómetros sin necesidad de amplificar las señales, pero para distancias mayores se requieren repetidores.
     
@@ -142,8 +142,7 @@ bra óptica y un detector en el otro, se tiene un sistema de transmisión de dat
 acepta una señal eléctrica, la convierte y transmite mediante pulsos de luz y, luego, reconvierte la
 salida a una señal eléctrica en el extremo receptor.
 
-Cuando un rayo de luz pasa por un medio a otro —por ejemplo, de sílice fundida al aire—, el rayo se refracta (se dobla) en la frontera de la sílice y el aire. Un rayo de luz que incide en la frontera con un ángulo \(\alpha_1\) y que emerge con un ángulo \(\beta_1\). El grado de refracción depende de las propiedades de los dos medios (en particular sus índices de refracción). Para ángulos con incidencias mayores de ciertos valores críticos, la luz se refracta nuevamente a la sílice; ninguna parte de él escapa al aire. Por lo tanto, un rayo de luz que incide en un ángulo mayor o igual que el crítico queda atrapado den-
-tro de la fibra.
+Cuando un rayo de luz pasa por un medio a otro —por ejemplo, de sílice fundida al aire—, el rayo se refracta (se dobla) en la frontera de la sílice y el aire. Un rayo de luz que incide en la frontera con un ángulo \(\alpha_1\) y que emerge con un ángulo \(\beta_1\). El grado de refracción depende de las propiedades de los dos medios (en particular sus índices de refracción). Para ángulos con incidencias mayores de ciertos valores críticos, la luz se refracta nuevamente a la sílice; ninguna parte de él escapa al aire. Por lo tanto, un rayo de luz que incide en un ángulo mayor o igual que el crítico queda atrapado dentro de la fibra.
 
 Puesto que cualquier rayo de luz que incida en la frontera con un ángulo mayor que el crítico se reflejará internamente, muchos rayos estarán rebotando con ángulos diferentes. Se dice que cada rayo tiene un
 modo diferente, por lo que una fibra que tiene esta propiedad se denomina \textbf{fibra multimodo}. Por otro lado, si el diámetro de la fibra se reduce a unas cuantas longitudes de onda de luz, la fibra actúa como una guía de ondas y la luz se puede propagar sólo en línea recta, sin rebotar, lo cual da como resultado una \textbf{fibra monomodo}. 
@@ -183,8 +182,7 @@ La señalización óptica coherente con láseres es inherentemente unidirecciona
 Una desventaja es que los rayos láser no pueden penetrar la lluvia ni la niebla densa, pero normalmente funcionan bien en días soleados. Sin embargo, el calor del sol causa corrientes de convección que se elevabn desde el techo de los edificio. Este aire turbulento desviaba el rayo y lo hacía danzar alrededor del detector.
 
 \subsubsection*{Satélites}
-Los satélites de comunicaciones tienen algunas propiedades interesantes que los hacen atrac-
-tivos para muchas aplicaciones. En su forma más simple, un satélite de comunicaciones se puede
+Los satélites de comunicaciones tienen algunas propiedades interesantes que los hacen atractivos para muchas aplicaciones. En su forma más simple, un satélite de comunicaciones se puede
 considerar como un enorme repetidor de microondas en el cielo. Contiene numerosos transponedores, cada uno de los cuales se encarga de una parte del espectro, amplifica la señal entrante
 y a continuación la retransmite en otra frecuencia para evitar interferencia con la señal entrante.
 Los haces pueden ser amplios y cubrir una fracción sustancial de la superficie de la Tierra, o estrechos, y abarcar sólo algunos cientos de kilómetros de diámetro. Este modo de operación se
@@ -227,14 +225,14 @@ Las compañías telefónicas han desarrollado esquemas complejos para multiplexa
 	\label{fig:conversion-analogico-digital}
 \end{figure}
 \subsection{Modulación}
-La transmición analógica se basa en una señal continua de frecuencia constante  denomidada \textbf{portadora}. La frecuencia de la portadora se elige de tal forma que sea compatible con las características del medio que se vaya a utilizar. Los datos se pueden transmitir modulando la señal portadora para asegurarnos de que llegue al próximo extremo sin perder información. Todas las técnicas de modulación implican la modificación de uno o más de los tres parámetros fundamentales de la frecuencia portadora: amplitud, frecuencia y fase.
+La transmisión analógica se realiza en una señal continua de frecuencia constante  denomidada \textbf{portadora}. La frecuencia de la portadora se elige de tal forma que sea compatible con las características del medio que se vaya a utilizar. Los datos se pueden transmitir modulando la señal portadora para asegurarnos de que llegue al próximo extremo sin perder información. Todas las técnicas de modulación implican la modificación de uno o más de los tres parámetros fundamentales de la frecuencia portadora: amplitud, frecuencia y fase.
 
 La señal de entrada \(m(t)\) se denomina señal \textbf{moduladora} a la señal resultante de la modulación de la señal portadora.
 
 Hay distintos tipos de modulaciones:
 
 \begin{itemize}
-  \item \textbf{Desplazamiento de amplitud (ASK):} Los dos valores binarios se represnetan mediante dos amplitudes diferentes de la portadora. Es usual que una de las amplitudes sea cero.
+  \item \textbf{Desplazamiento de amplitud (ASK):} Los dos valores binarios se representan mediante dos amplitudes diferentes de la portadora. Es usual que una de las amplitudes sea cero.
   \[
     S(t) = \begin{cases}
       A\cos(2\pi f_c t) & \text{1 binario} \\
@@ -242,7 +240,7 @@ Hay distintos tipos de modulaciones:
     \end{cases}
   \]
 
-  ASK es sensible a cmabios repentinos de la ganancia, además es una técnica de modulación bastante ineficaz. Se usa para la transmición de datos digitales en fibras ópticas
+  ASK es sensible a cambios repentinos de la ganancia, además es una técnica de modulación bastante ineficaz. Se usa para la transmición de datos digitales en fibras ópticas.
   \item  \textbf{Desplazamiento de frecuencia (FSK):} Los dos valores binarios se representan mediante dos frecuencias diferentes próximas a la frecuencia portadora. La señal resultante es
   \[
     S(t) = \begin{cases}
@@ -281,7 +279,7 @@ Se puede conseguir una utilización más eficaz del ancho de banda si cada eleme
 \subsubsection{Codificación}
 Una vez modulada, la señal analógica viaja hasta un \textbf{codec}  en la oficina central  que se encarga de digitalizarla. El codec toma 8000 muestras por segundo porque el teorema de Nyquist dice que esto es suficiente para capturar toda la información del ancho de banda de 4 kHz del canal telefónico. A una velocidad de muestreo menor, la información se perdería; a una mayor, no se ganaría información extra. Esta técnica se llama \textbf{Modulación por Codificación de Impulsos} (PCM).   
 
-A veces, se usa un técnica conocida como \textbf{Modulación Delta}, en el que la entrada analógica se aproxima mediante una función escalera que en cada intervalo de muestreo (\(T_S\)) sube o bajaa un nivel de cuantización \(\delta\). La característica principal de la función escalera es que su comportamiento es binario: En cada instante de muestreo, la función sube o baja una cantidad constante. Por tanto, la salida del modulador delta se puede representar mediante un único bit para cada muestra. Resumiendo: se obiente una cadena de bits que aproxima a la derivada de la señal analógica de entrada en cualquier lugar de la amplitud.
+A veces, se usa un técnica conocida como \textbf{Modulación Delta}, en el que la entrada analógica se aproxima mediante una función escalera que en cada intervalo de muestreo (\(T_S\)) sube o baja un nivel de cuantización \(\delta\). La característica principal de la función escalera es que su comportamiento es binario: En cada instante de muestreo, la función sube o baja una cantidad constante. Por tanto, la salida del modulador delta se puede representar mediante un único bit para cada muestra. Resumiendo: se obiente una cadena de bits que aproxima a la derivada de la señal analógica de entrada en cualquier lugar de la amplitud.
 
 \subsubsection*{No retorno a cero (NRZ)}
 La forma más frecuente y fácil de transmitir señales digitales es mediante la utilización de un nivel diferente de tensión para cada uno de los dos dígitos binarios. Los códigos que siguen esta estrategia comparten la propiedad de que el nivel de tensión se mantiene constante durante la duración del bit. Es habitual usar un nivel negativo para representar un valor binario y un tensión positiva para representar el otro.
@@ -291,9 +289,9 @@ Una variante de este código se nomina \textbf{No retono a Cero con Inversion de
 \subsubsection*{Codificación Manchester (Bifase)}
 El valor de un bit se códifica en una transición a la mitad del intervalo de duración del bit. Esta transición en la mitad del bit sirve como un procedimiento de sincronización a la vez que sirve para transmitir los datos: Una transción de bajo a alto representa un 1 y una transición de alto a bajo representa un cero.
 
-En Mancheste diferencial, la transición a mitad del intervalo se utiliza tan solo para proporcionar sincronización. La codificación de un cero se representa por la presencia de una trancisión al principio del intervalo. 
+En Manchester diferencial, la transición a mitad del intervalo se utiliza tan solo para proporcionar sincronización. La codificación de un cero se representa por la presencia de una trancisión al principio del intervalo. 
 
-Toda técnica bifase fuerzan al menos una transición por cada bit pudiendo tener hasta dos en ese mismo período. Por tanto, la velocidad de modulación máxia es el doble que en los NRZ y el ancho de banda necesario es mayor.
+Toda técnica bifase fuerza al menos una transición por cada bit pudiendo tener hasta dos en ese mismo período. Por tanto, la velocidad de modulación máxima es el doble que en los NRZ y el ancho de banda necesario es mayor.
 
 \subsection{Redes de conmutación}
 En la actualidad se utilizan dos técnicas de conmutación diferentes: conmutación de circuitos y conmutación de paquetes. A continuación presentaremos una breve introducción a cada una de ellas.
@@ -315,8 +313,7 @@ Con la conmutación de paquetes no
 hay trayectoria, por lo que diferentes paquetes pueden seguir trayectorias distintas, dependiendo
 de las condiciones de la red en el momento en el que se enviaron. Pueden llegar en desorden.
 
-La conmutación de paquetes es más tolerante a las fallas que la conmutación de circuitos. De  hecho, ésa es la razón por la cual se inventó. Si falla la conmutación, todos los circuitos que la están utilizando se cancelan y no se puede enviar nada más a través de ellos. Con la conmutación de pa-
-quetes, los paquetes pueden enrutarse evitando a los conmutadores averiados.
+La conmutación de paquetes es más tolerante a las fallas que la conmutación de circuitos. De  hecho, ésa es la razón por la cual se inventó. Si falla la conmutación, todos los circuitos que la están utilizando se cancelan y no se puede enviar nada más a través de ellos. Con la conmutación de paquetes, los paquetes pueden enrutarse evitando a los conmutadores averiados.
 
 La conmutación de paquetes utiliza transmisión de almacenamiento y reenvío. Un paquete se
 almacena en la memoria del enrutador y luego se reenvía al siguiente enrutador. Con la conmuta-

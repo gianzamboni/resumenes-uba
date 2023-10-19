@@ -37,7 +37,7 @@ Puesto que un símbolo de \(S^n\) corresponde a \(n\) símbolos de \(S\), es de 
 \subsection{Codificación}
 Sea \(S = \{ s_1,\dots, s_q\} \) el conjunto de símbolos de un alfabeto dado. Se define un \textbf{código} como la correspondencia de todas las secuencias posibles de símbolos de \(S\) a secuencias de símbolos de algún otro alfabeto \(X =\{x_1,\dots x_r\}\). \(S\) recibe el nombre de \textbf{alfabeto fuente} y \(X\) el de \textbf{alfabeto código}.
 
-Cuando codificamos un alfabeto fuente, buscamos logra una representación eficiente de la información mediante la eliminación de la redundancia.
+Cuando codificamos un alfabeto fuente, buscamos lograr una representación eficiente de la información mediante la eliminación de la redundancia.q
 
 \paragraph{Código bloque:} Es aquel que asigna cada uno de los símbolos del alfabeto fuente \(S\) a una secuencia fija de símbolos del alfabeto código \(X\). Esas secuencias fijas (secuencias de \(x_i\)) reciben el nombre de palabras
 código. Denominaremos \(X_i\), a la palabra código que corresponde al símbolo \(s_i\).
@@ -68,7 +68,7 @@ Buscamos codificar un alfabeto \(S\) de tal forma que máximizar la relación en
 
 La máxima eficencia se logra cuando \(h = 1\). En general, esto sucede cuando se asigna las palabras de código más cortas a los símbolos de fuente más probables. También se puede deducir: \[1 \geq h \geq \frac{H(S)}{L\log r}\Rightarrow L\log r \geq H(S)\]
 
-\paragraph{Primer teorema de Shannon (Teorema de la codificación sin ruido):} Sea \(S\) una fuente de memoria no nula, y \(S^n\) la extensión de orden \(n\) de \(S\).  Sea \(C:S^n\to X^n\) un código y \(L_n\) la longitud media de las palabras correspondientes a los símbolos de \(S^n\):
+\paragraph{Primer teorema de Shannon (Teorema de la codificación sin ruido):} Sea \(S\) una fuente de memoria no nula, y \(S^n\) la extensión de orden \(n\) de \(S\).  Sea \(C:S^n\to X^n\) un código y \(L_n\) la longitud media de los códigos correspondientes a los símbolos de \(S^n\):
 \[
     L_n = \sum_{\sigma\in S^n} C(\sigma)P(\sigma)
 \]
@@ -77,7 +77,7 @@ Entones vale:
     H(S) \leq \frac{L_n}{n} \leq H(S) + \frac{1}{n}
 \]
 
-Esto nos dice que el número medio de símbolos de \(C\) correspendientes a un símbolo de la fuente puede hacerse tan pequeño, pero no inferior, ala entropía de la fuente. El precio que se paga por la disminución de \(L_n\) es un aumento en la complejidad de la codificación debido al gran número de símbolos de la fuente que hay que manejar.
+Esto nos dice que el número medio de símbolos de \(C\) correspendientes a un símbolo de la fuente puede hacerse tan pequeño (pero no inferior) como la entropía de la fuente. El precio que se paga por la disminución de \(L_n\) es un aumento en la complejidad de la codificación debido al gran número de símbolos de la fuente que hay que manejar.
 
 En particular:
 \[
@@ -86,15 +86,15 @@ En particular:
 
 \paragraph{Codificador óptimo:} Es un codificador que usa la menor cantidad posible de bits para codificar un mensaje, es decir: Un codificador se dice óptimo si no existe ningún código para la misma fuente con menor longitud media.
 
-Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
+Sea \(s_i\in S\), entonces la cantidad de bits necestarios para representarlo en un codificador óptimo es \(\lceil\frac{1}{P(s)}\rceil\) y la entropía de \[H(X) = \sum_{s\in S} P(s)\log_2\left(\frac{1}{P(s)}\right)\]
 
 \paragraph{Codificación de Huffman:} Es una forma de definir códigos óptimos asumiendo que se conoce la probabilidad de ocurrencia de los símbolos, que la codificación es símbolo por símbolo y la probabilidad de ocurrencia de cada símbolo es independiente.
 
 Dado un mensaje \(M\):
 \begin{enumerate}
   \item Se extrae del mismo la frecuencia de cada símbolo.
-  \item Se ordenan los símbolos en arbol dependiendo de la frecuencia de cada uno.ientras más cerca de la raíz, más frecuente es el símbolo.
-  \item El código de un símbolo será entonces el caminio de la raíz al nodo donde está ubicado (utilizando
+  \item Se ordenan los símbolos en arbol dependiendo de la frecuencia de cada uno. Mientras más cerca de la raíz, más frecuente es el símbolo.
+  \item El código de un símbolo será entonces el camino de la raíz al nodo donde está ubicado (utilizando
   ceros cuando se toma la rama izquierda y 1 cuando se toma la rama derecha).
 \end{enumerate} 
 
