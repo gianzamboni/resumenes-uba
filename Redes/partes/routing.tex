@@ -1,7 +1,7 @@
 \section{Ruteo interno y externo}
 El problema de ruteo es como los switches y routers adquieren la información en sus tablas de forwarding.
 
-Si bien los términos \textbf{tabla de forwarding} y \textbf{tabla de ruteo} son a veces usados indistintamente, haremos una distinción entre ellos aquí. La \textbf{tabla de forwarding} es usada cuando un paquete está siendo reenviado y por lo tanto debe contener suficiente información para realizar la función de forwarding. Esto significa que una fila en la tabla de forwarding contiene el mapeo de un prefijo de red a una interfaz de salida y alguna información MAC, como la dirección Ethernet del siguiente salto. La \textbf{tabla de ruteo}, por otro lado, es la tabla construida por los algoritmos de ruteo como un precursor para construir la tabla de forwarding. Generalmente contiene mapeos de prefijos de red a siguientes saltos. También puede contener información sobre cómo se aprendió esta información, para que el enrutador pueda decidir cuándo debe descartarla.
+Si bien los términos \textbf{tabla de forwarding} y \textbf{tabla de ruteo} son a veces usados indistintamente, haremos una distinción entre ellos aquí. La \textbf{tabla de forwarding} es usada cuando un paquete está siendo reenviado y por lo tanto debe contener suficiente información para realizar la función de forwarding. Esto significa que una fila en la tabla de forwarding contiene el mapeo de un prefijo de red a una interfaz de salida y alguna información MAC, como la dirección Ethernet del siguiente salto. La \textbf{tabla de ruteo}, por otro lado, es la tabla construida por los algoritmos de ruteo como un precursor para construir la tabla de forwarding. Generalmente contiene mapeos de prefijos de red a siguientes saltos. También puede contener información sobre cómo se aprendió esta información para que el enrutador pueda decidir cuándo debe descartarla.
 
 Los protocolos descritos en esta sección se conocen colectivamente como \textbf{protocolos de enrutamiento intradominio}, o Interior Gateway Protocols (IGP). Para comprender estos términos, debemos definir un dominio de enrutamiento: es una internet en la que todos los enrutadores están bajo el mismo control administrativo.
 
@@ -15,9 +15,9 @@ Los protocolos de ruteo proporcionan una forma distribuida y dinámica de resolv
 Asumiendo que ya sabemos los costos de cada enlace vamos a ver dos algoritmos distribuidos que nos permiten crear la tabla de ruteo: \textbf{Distance Vector} y \textbf{Link State}.
 
 \subsection{Distance Vector}
-Cada nodo construye un vector que contiene las distancias (costos) a todos los otros nodos y distribuye ese vector a sus vecinos inmediatos. La suposición inicial para el ruteo vectorial de distancia es que cada nodo conoce el costo del enlace a cada uno de sus vecinos directamente conectados. Estos costos pueden ser provistos cuando el router es configurado por un administrador de red. Un enlace que está caído es asignado un costo infinito.
+Cada nodo construye un vector que contiene las distancias (costos) a todos los otros nodos y distribuye ese vector a sus vecinos inmediatos. Vamos a suponer que cada nodo conoce el costo del enlace a cada uno de sus vecinos directamente conectados. Estos costos pueden ser provistos cuando el router es configurado por un administrador de red. Un enlace que está caído es asignado un costo infinito.
 
-Inicialmente, cada nodo establece un costo de 1 a sus vecinos directamente conectados y \(\infty\) a todos los demás nodos.
+Inicialmente, cada nodo establece un costo de \(x\) a sus vecinos directamente conectados y \(\infty\) a todos los demás nodos.
 
 En el siguiente paso, cada nodo envía un mensaje a sus vecinos directamente conectados indicando su lista personal de distancias.
 
@@ -50,7 +50,7 @@ Dependiendo el protocolo, la detección de una falla se puede dar de dos formas:
 
 \subsubsection{Conteo hasta el infinito}
 
-Sucede cuando se cae un nodo o enlace y los nodos restantes no se dan cuenta de que el nodo o enlace ha fallado y hay nodos en la red que no alcanzan a enterarse de esto antes de que otro y deciden usarlos para crear el nuevo camino que los lleve al nodo caído. 
+Sucede cuando se cae un nodo o enlace y los nodos restantes y hay nodos en la red que no alcanzan a enterarse de esto antes de enviar su vector de distancia. Los nodos que reciben esta información deciden usarlos para crear el nuevo camino que los lleve al nodo caído. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth
@@ -62,7 +62,7 @@ Sucede cuando se cae un nodo o enlace y los nodos restantes no se dan cuenta de 
 Supongamos que se cae el enlace de \(A\) a \(E\) en la red mostrada arriba, supongamos se produce la ronda de periodic updates. Todos los nodos, envían su vector de distancias a sus vecinos. Puede suceder lo siguiente:
 \begin{enumerate}
   \item  \(A\) anuncia una distancia de \(\infty\) a \(E\).
-  \item \(B\) recibe de \(A\): \(\langle E,\infty\rangle\).
+  \item \(B\) recibe de \(A\): \(\langle E,\infty\rangle\) y de \(C\) la tupla \(\langle E, 2\rangle\).
   \item \(B\) decide que a partir de ahora puede llegar a \(E\) usando \(C\) con una distancia de \(3\) y reenvía su vector de distancias antes de recibir el vector de distancias modificado de \(C\).
   \item \(A\) recibe el mensaje de \(B\) y decide que puede llegar a \(E\) usando \(B\) con una distancia de \(4\) y reenvía su vector de distancias.
   \item Cuando \(C\) reciba este paquete, sabe que puede usar \(A\) para recibir paquetes de \(E\) con una distancia de \(5\).

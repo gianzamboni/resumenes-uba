@@ -4,7 +4,7 @@ La capa de enlace de datos tiene que desempeñar varias funciones específicas, 
 se incluyen:
 \begin{itemize}
   \item Proporcionar una interfaz de servicio bien definida con la capa de red.
-  \item Manejar los errores de transmición.
+  \item Manejar los errores de transmisión.
   \item Regular el flujo de datos para que receptores lentos no sean saturados por emisores rápidos.
 \end{itemize}
 Para cumplir con estas metas, la capa de enlace de datos toma de la capa de red los paquetes y los encapsula en \textbf{tramas} para transmitirlos. Cada trama contiene un \textbf{encabezado}, un campo de carga útil (\textbf{payload}) para almacenar el paquete y un \textbf{terminador} o final. El manejo de las tramas es la tarea primordial de la capa de enlace de datos.
@@ -40,7 +40,7 @@ Los diseñadores de redes han desarrollado dos estrategias principales para mane
 
 La utilización de bits de paridad no es infalible, ya que los impulsos de ruido son a veces lo suficientemente largos como para destruir más de un bit.
 
-\paragraph{Comprobación de redundancia cíclica (CRC):} Dado un bloque o mensaje de \(k\)-bits, el trasmisor genera una secuencia de \(n\)-bits denominada \textbf{secuencia de comprobación de la trama} de tal manera que la trama resultante con \(n+k\) bits, se divisible por algún número determinado. El receptor entonces divirá la trama recibida por ese número y, si no hay resto en la división, se supone que no ha habido errores.
+\paragraph{Comprobación de redundancia cíclica (CRC):} Dado un bloque o mensaje de \(k\)-bits, el trasmisor genera una secuencia de \(n\)-bits denominada \textbf{secuencia de comprobación de la trama} de tal manera que la trama resultante con \(n+k\) bits, es divisible por algún número determinado. El receptor entonces dividirá la trama recibida por ese número y, si no hay resto en la división, se supone que no ha habido errores.
 
 \subsubsection{Códigos de corrección de errores}
 Por lo general, una trama consiste en \(m\) bits de datos (es decir, de mensaje) y \(r\) bits redundantes o de verificación. Sea la longitud total \(n\) (es decir, \(n = m + r\)). A una unidad de \(n\) bits que contiene datos y bits de verificación se le conoce como palabra codificada de \(n\) bits.
@@ -67,9 +67,7 @@ El receptor detecta algún error, entonces descartará el frame y no manda el AC
 
 Por otro lado, si el frame llega correctamente y el receptor envía una ACK pero el ACK se pierde en el camino, tambien expira el temporizado y el origen vuelve a enviar el mismo frame. 
   
-El destino recibe por segunda vez el frame como si fuese un frame distinto.
-
-Para evitar este problema, los frames se etiquentan alternadamente con 0  1, y las confirmaciones positivas serán de la forma ACK0 y ACK1. Un ACK0 confirma la recepción de un frame numerada con 0 e indica que el receptor está esperando para aceptar un frame numerado con 0.
+El destino recibe por segunda vez el frame como si fuese un frame distinto. Para que el receptor pueda reconocerlo como duplicado, los frames se etiquentan alternadamente con 0  1 y las confirmaciones positivas serán de la forma ACK0 y ACK1. Un ACK0 confirma la recepción de un frame numerado con 0 e indica que el receptor está esperando para aceptar un frame numerado con 0.
 
 Ahora, cuando el receptor reciba dos frames con la misma numeración, podrá interpretar que está recibiendo un frame duplicado porque su ACK se perdió en el camino. En este caso, el receptor descartará el frame y volverá a mandar el ACK correspondiente.
 
@@ -77,7 +75,7 @@ Ahora, cuando el receptor reciba dos frames con la misma numeración, podrá int
 Vamos a definir:
 \begin{itemize}
   \item \(T_{tx}\) el tiempo de transmición de un frame (lo que tarda en ir desde el origen hasta el destino).
-  \item \(RTT(F)\) el tiempo de retorno del ACK, osea el tiempo que tarda en llegar el frame al receptar sumado al tiempo que tarda en llegar el ACK al emisor original. En genaral va a pasar que \(RTT(F) = Delay\times 2\) 
+  \item \(RTT(F)\) el tiempo de retorno del ACK, osea el tiempo que tarda en llegar el frame al receptor sumado al tiempo que tarda en llegar el ACK al emisor original. En genaral va a pasar que \(RTT(F) = Delay\times 2\) 
 \end{itemize}
 
 El rendimiento de un protocolo \(\eta\) se define como:
@@ -85,20 +83,20 @@ El rendimiento de un protocolo \(\eta\) se define como:
 \[\eta_{proto} = \frac{T_{tx}(F)}{RTT(F)}\]
 
 \subsection{Ventana deslizante}\label{sec:ventana-deslizante}
-Aumentar la eficiencia \(\eta\), implica disminuir al minimo la cantidad de tiempo que el origen se bloquea durante la espera de un ACK.
+Aumentar la eficiencia \(\eta\) implica disminuir al minimo la cantidad de tiempo que el origen se bloquea durante la espera de un ACK.
 
-Una estrategia posible para esto es enviar varios frames seguidos, sin esperar ACKs para cada uno.
+Una estrategia posible para esto es enviar varios frames seguidos sin esperar ACKs para cada uno.
 Aparece el concepto de \textbf{ventana de frames}: en una ventana se envía una cierta cantidad de frames. Esto resulta en una definición diferente para la eficiencia:
 
 \[\eta_{proto} = \frac{T_{tx}(V)}{RTT(F)}\]
 
 donde \(T_{tx}(V)\) es el tiempo de transmición de una ventana.
 
-Sea \(V_{tx}\) la velocidad de transmición, definimos la capacidad de volumen de un canal \(C_{vol} = V_{tx}\times Delay\) como la cantidad de bits que entran en un canal de manera simultáneas sin saturarlo. Con esto, podemos calcular el \textbf{Sliding Window Size (SWS)} de la siguiente manera:
+Sea \(V_{tx}\) la velocidad de transmición, definimos la capacidad de volumen de un canal \(C_{vol} = V_{tx}\times Delay\) como la cantidad de bits que entran en un canal de manera simultánea sin saturarlo. Con esto, podemos calcular el \textbf{Sliding Window Size (SWS)} de la siguiente manera:
 
 \[SWS = \frac{V_{tx}\times RTT(F)}{|Frames|} \text{ frames}\]
 
-Al comenzar la comunicación, la máquina origen manda \(SWS\) frames al máquina destino. Y espera a recibir el ACK del primer frame enviado. Cuando esto sucede, el origen manda el siguiente frame de la secuencia.
+Al comenzar la comunicación, la máquina origen manda \(SWS\) frames a la máquina destino. Y espera a recibir el ACK del primer frame enviado. Cuando esto sucede, el origen manda el siguiente frame de la secuencia.
 
 Por cada ACK recibido, el origen va mandando de a uno los frames restantes siempre y cuando el último frame enviado pertezca a una ventana que contenga al frame del último ACK recibido.
 

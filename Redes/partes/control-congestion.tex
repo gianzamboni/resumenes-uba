@@ -1,9 +1,17 @@
 \section{Congestión}
 \subsubsection*{Resource allocation} Es el proceso por el cual los elementos de la red tratan de satisfacer las demandas competitivas que las aplicaciones tienen para los recursos de la red, principalmente el ancho de banda del enlace y el espacio de buffer en los routers o switches.
 
-\subsubsection*{control de congestión} 
+\subsubsection*{Control de congestión} 
 Utilizamos el término control de congestión para describir los esfuerzos realizados por los nodos de la red para prevenir o responder a las condiciones de sobrecarga. Dado que la congestión es generalmente mala para todos, el primer orden de negocios es hacer que la congestión disminuya, o prevenirla en primer lugar. Esto podría lograrse simplemente persuadiendo a algunos hosts a dejar de enviar, mejorando así la situación para todos los demás. Sin embargo, es más común que los mecanismos de control de congestión tengan algún aspecto de equidad, es decir, tratan de compartir el dolor entre todos los usuarios, en lugar de causar un gran dolor a unos pocos. 
 
+En general, podemos encontrar dos tipos de mecanismos de control: \textbf{de lazo abierto} y \textbf{de lazo completo}:
+
+\begin{itemize}
+  \item Los sistemas de control de lazo abierto
+se caracterizan por el hecho de que las mediciones tomadas se basan en mediciones previas y no en el estado actual del sistema. Por ejemplo, un sistema de control de lazo abierto podría medir la cantidad de tráfico que se envió en el pasado y luego usar esta información para determinar cuánto tráfico enviar en el futuro sin tener en cuenta el estado actual de los enlaces que hay que usar.
+ 
+\item Los sistemas de control de lazo cerrado aparecen ante la necesidad de corregir las desviaciones de la salida frente a la referencia de manera automática. Esto se logra mediante la realimentación de la salida del sistema hacia la entrada, de manera que la salida se compara con la referencia y se corrige el error. En este caso, el sistema de control de lazo cerrado mide la salida del sistema y la compara con la referencia para determinar si el sistema está funcionando correctamente. Si no es así, el sistema de control de lazo cerrado ajusta la entrada para corregir el error.
+\end{itemize}
 \subsubsection*{Flujo} 
 Para esta sección vamos a asumir que la red es esencialmente sin conexión, con cualquier servicio orientado a la conexión implementado en el protocolo de transporte que se ejecuta en los hosts finales. Sin embargo, generalmente ocurre que una secuencia de datagramas entre un par de hosts particulares \textbf{fluye} a través de un conjunto particular de enrutadores,  La suposición de que todos los datagramas son completamente independientes en una red sin conexión es demasiado fuerte. Los datagramas ciertamente se conmutan independientemente, pero generalmente ocurre que una secuencia de datagramas entre un par de hosts particulares fluye a través de un conjunto particular de enrutadores. Esta idea de un flujo, una secuencia de paquetes enviados entre un par \(\langle origen , destino\rangle\) y siguiendo la misma ruta a través de la red, es una abstracción importante en el contexto de la asignación de recursos.
 
@@ -14,6 +22,7 @@ Un flujo puede definirse implícitamente o establecerse explícitamente. En el p
 
 \subsubsection*{Quality of Service (QoS)} 
 Con \textbf{best effort serivce}, todos los paquetes reciben el mismo tratamiento, sin que los hosts finales tengan la oportunidad de pedir a la red que algunos paquetes o flujos reciban ciertas garantías o un servicio preferencial. Hay modelos de servicios que proporciona múltiples calidades de servicio (QoS). 
+
 
 \subsection{Asiganción de recursos}
 \subsubsection{Caracteristicas de mecanismos de asignación de recursos}
