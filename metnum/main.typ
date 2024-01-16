@@ -8,36 +8,17 @@
   date: "October 8, 2023",
 )
 
-#outline(depth: 2, indent: 10pt)
+#outline(depth: 3, indent: 10pt)
 
-= Repaso de álgebra lineal
-== Definiciones y operaciones básicas
-=== Vectores
-Un *vector es un conjunto de números reales*, que se pueden representar como una lista de números. Por ejemplo, el vector $v in R^n$ se puede representar como $v = (1, 2, 3)$.
-
-==== Suma
-Para *sumar dos vectores*, se suman las componentes correspondientes:
-
-$ w = v + u " con " w_i = v_i + u_i " para " i = 1, 2, 3, ..., n $ 
-
-La suma de vectores es *conmutativa* y *asociativa*.
-
-==== Multiplicación por escalares
-Los vectores se pueden *multiplicar por escalares*: Sea $alpha in R$ y $v in R^n$, entonces $alpha dot v = (alpha dot v_1, alpha dot v_2, ..., alpha dot v_n)$ para 
-
-==== Producto interno
-El *producto interno* de dos vectores $v, u in R^n$ se define como:
-
-  $ v dot u = sum_(i=1)^n v_i u_i = ||v|| ||u|| cos theta " donde " theta " es el angulo entre " v " y " u$
-
-Graficamente, el producto interno se puede interpretar como la *proyección de un vector sobre otro*.
-
+#include "sections/01-algebra-lineal.typ"
+#include "sections/02-sistemas-ecuaciones.typ"
+#include "sections/03-factorizacion-LU.typ"
 
 //= Aritmética de la computadora
 // Representación de números. Error de redondeo y truncamiento. Error relativo y absoluto. Operaciones aritméticas. Algoritmos. Estabilidad y convergencia.
-
 // = Elementos de álgebra lineal
-// Se repasan nociones de espacios vectoriales y subespacios. Sistemas de generadores. Independenia lineal, bases y dimensión. Matrices, definición y propiedades, matrices elementales, inversibilidad, rango de una matriz, determinantes. Transformaciones lineales, definiciones, ejemplos, propiedades básicas, núcleo e imagen. Ortogonalidad. Introducción a la norma vectorial, desigualdad de CBS. Introducción a la diagonalización y autovalores. En todos los casos se pretende profundizar lo suficiente y necesario para el curso. De ninguna manera es una materia específica de álgebra lineal.
+// Se repasan nociones de espacios vectoriales y subespacios. Sistemas de generadores. In
+// Transformaciones lineales, definiciones, ejemplos, propiedades básicas, núcleo e imagen. Ortogonalidad. Introducción a la norma vectorial, desigualdad de CBS. Introducción a la diagonalización y autovalores.
 
 // = Algoritmos para resolver ecuaciones no lineales en una variable
 // Método de la bisección, iteraciones de punto fijo, método de Newton, método de la secante y regula falsi. Comparación, análisis de convergencia e implementación.
