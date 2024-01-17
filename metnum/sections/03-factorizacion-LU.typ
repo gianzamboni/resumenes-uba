@@ -103,7 +103,6 @@ Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que
   *La factorización LU no siempre existe*. Si en algún paso de la eliminación gaussiana, nos encontramos con que $a_(i i) = 0$ para algún $i in {1, 2, ..., n}$, entonces la factorización LU no existe.
 ]
 
-#pagebreak()
 #propiedad[
  Si $A in RR^(n times n)$ es *no singular* y tiene *factorización LU*, entonces esa *factorización es única*.
  
@@ -130,7 +129,6 @@ Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que
   Luego, $U_1 U_2^(-1) = I$ y $U_1 = U_2$. Entonces $L_1 = L_2$. $qed$
 ]
 
-#pagebreak()
 #propiedad[
   Sea $A in RR^(n times n)$ no singular.  
 *$
@@ -159,13 +157,154 @@ $*
         f^t_(n+1 1), a_(n+1 n+1);
       )
    $
-    donde $A^(\(n\)) in RR^(n times n)$, $c_(n+1) in RR^n$, $f_(n+1 1) in RR^n$ y $a_(n+1 n+1) in R$.
+    donde $A^(\(n\)) in RR^(n times n)$, $c_(n+1) in RR^n$, $f_(n+1 1) in RR^n$ y $a_(n+1 n+1) in RR$.
+
+    Como todas las submatrices principales de $A$ son no singulares, entonces $A^(\(n\))$ y todas sus submatrices principales son no singulares. Entonces, por hipótesis inductiva, $A^(\(n\))$ tiene factorización LU. Sea $A^(\(n\)) = L^(\(n\)) U^(\(n\))$.
+
+    Propongamos una factorización LU para $A$, se resaltan los valores que necesitamos calcular:
+    $
+      A = mat(
+        A^(\(n\)), c_(n+1);
+        f^t_(n+1), a_(n+1,n+1);
+      ) = mat(
+        #blue[$L^(\(n\))$], 0;
+        #blue[$l^t_(n+1 1)$], 1;
+      ) mat(
+        #blue[$U^(\(n\))$], #blue[$u_(n+1)$] ;
+        0,  #blue[$u_(n+1, n+1)$] ;
+      )
+    $
+
+    Realizando el producto en bloques, tenemos que verificar que:
+
+    + $A^(\(n\)) = #blue[$L^(\(n\)) U^(\(n\))$]$
+
+      Se pueden calcular usando eliminación gaussiana ya que es la factorización LU de $A^(\(n\))$.
+
+    + $c_(n+1) = L^(\(n\)) #blue[$u_(n+1)$]$
+
+      Como $L^(\(n\))$ es no signular, entonces este sistema tiene solución y es única, por lo que es posible determinar $u_(n+1)$.
+      
+    + $f^t_(n+1) = #blue[$l^t_(n+1)$] U^(\(n\))$
+
+      La matriz $U^(\(n\))$ es no singular ya que $A^(\(n\))$ es no singular, por lo tanto el tercer sistema tambien tiene solución y es única, por lo que es posible determinar $l^t_(n+1)$.
+
+    + $a_(n+1 n+1) = l^t_(n+1 1) u_(n+1) + #blue[$u_(n+1, n+1)$]$
+
+      Como $l^t_(n+1 1)$ y $u_(n+1)$ son conocidos, entonces es posible determinar unívocamente $u_(n+1, n+1)$.
+
+    
+    Concluimos entonces que $A$ tiene factorización LU, ya que todos los sistemas propuestos tienen solución y es única. $qed$
 ]
 
 #propiedad[
   Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces $A$ tiene factorización LU.
-]
+
+  #demoLine()
+  Vamos a demostrar que $A$ es no singular y que todas sus submatrices principales son no singulares. De esta manera, estamos en condiciones de aplicar la propiedad anterior y concluir que $A$ tiene factorización LU.
+
+  - *$A$ es no singular*: Supongamos que $A$ es singular, entonces existe $x in RR^n$, $x != 0$ tal que $A x = 0$. 
+
+    Como $x != 0$, entonces tiene una coordenada con máximo valor absoluto, o dicho de otra manera existe $k_0 in {1, 2, ..., n}$ tal que $ abs(x_(k_0)) = max_(j = 1 dots n) abs(x_j) $ con $abs(x_(k_0)) != 0$.
+
+    Consideremos la ecuación $k_0$ del sistema $A x = 0$:
+    $
+      sum_(j = 1)^(n) a_(k_0 j) x_j = 0
+    $
+    Separamos el término $k_0$:
+    $
+      sum_(j = 1\ j != k_0)^(n) a_(k_0 j) x_j + #blue[$a_(k_0 k_0) x_(k_0)$] = 0
+    $
+    Pasamos restando:
+    $
+      sum_(j = 1\ j != k_0)^(n) a_(k_0 j) x_j = #blue[$- a_(k_0 k_0) x_(k_0)$]
+    $
+    Tomamos valor absoluto, como $abs(- a_(k_0 k_0) x_(k_0)) = abs(a_(k_0 k_0)) abs(x_(k_0))$ :
+    $
+      abs(sum_(j = 1\ j != k_0)^(n) a_(k_0 j) x_j) = abs(a_(k_0 k_0))abs(x_(k_0))
+    $
+
+    Aplicamos desigualdad triangular al lado izquierdo de la equación:
+    $
+      #blue[$sum_(j = 1\ j != k_0)^(n) abs(a_(k_0 j) x_j) >=$] abs(sum_(j = 1\ j != k_0)^(n) a_(k_0 j) x_j) = abs(a_(k_0 k_0)) abs(x_(k_0))
+    $
+    Entonces:
+    $
+      sum_(j = 1\ j != k_0)^(n) abs(a_(k_0 j) x_j) #blue[$>=$] abs(a_(k_0 k_0))abs(x_(k_0))
+    $
+    Pasamos $abs(x_(k_0))$ dividiendo:
+    $
+      sum_(j = 1\ j != k_0)^(n) (abs(a_(k_0 j))abs(x_j)) / (#blue[$abs(x_(k_0))$]) >= abs(a_(k_0 k_0))
+    $
+
+    Pero $abs(x_j) <= abs(x_(k_0))$ para todo $j in {1, 2, ..., n}$, entonces $abs(x_(j)) / abs(x_(k_0)) <= 1$:
+
+    $
+      #blue[$sum_(j = 1\ j != k_0)^(n) abs(a_(k_0 j))abs(x_j) >=$] sum_(j = 1\ j != k_0)^(n) (|a_(k_0 j)| |x_j|) / abs(x_(k_0)) >= abs(a_(k_0 k_0))
+    $
+
+  Entonces:
+  $
+    sum_(j = 1\ j != k_0)^(n) abs(a_(k_0 j))abs(x_j) #blue[$>=$] abs(a_(k_0 k_0))
+  $
+
+  Pero $A$ es estrictamente diagonal dominante, entonces $abs(a_(k_0 k_0)) > sum_(j = 1\ j != k_0)^(n) abs(a_(k_0 j))$ por lo que llegamos a una contradicción. Entonces $A$ es no singular. $qed$
+
+
+  #demoLine(title: "alternativa")
+
+  Vamos a desmostrar que es posible realizar el primer paso de la eliminación Gaussiana y que la matriz conformada por las filas $2$ a $n$ y columnas $2$ a $n$ es estrictamente diagonal dominante. De esta manera, podremos afirmar que la eliminación Gaussiana se puede aplicar sin inconvenientes y por lo tanto existe la factorización LU.
+
+  - *Primer paso de la eliminación Gaussiana*: Como $A$ es estrictamente diagonal dominante, entonces podemos afirmar que $a_(11) != 0$. Entonces, el primer paso de la eliminación Gaussiana es:
+
+  $ tilde(F)_i = F_i - a_(i 1) / a_(11) F_1 -> tilde(a)_(i j) = a_(i j) - a_(i 1) / a_(11) a_(1 j) $
+
+  - *La parte de la matriz que queda por triangular es estrictamente diagonal dominante*: Tenemos que ver que $ tilde(a)_(i i ) >= sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) " para todo "i in {2, 3, ..., n} $.
+
+    Analicemos el término de la sumatoria:
+      $ sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) = sum_(j = 2\ j != i)^(n) abs(a_(i j) - a_(i 1) / a_(11) a_(1 j)) $
+
+      Aplicando la desigualdad triangular, tenemos:
+      $ 
+      sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) = sum_(j = 2\ j != i)^(n) abs(a_(i j) - a_(i 1) / a_(11) a_(1 j)) #blue[$<= sum_(j = 2\ j != i)^(n) (abs(a_(i j)) + abs(a_(i 1) / a_(11) a_(1 j)))$] 
+      $
+      $
+      sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) #blue[$<=$] sum_(j = 2\ j != i)^(n) (abs(a_(i j)) + abs(a_(i 1) / a_(11) a_(1 j)))
+      $
+      $
+       sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) <= sum_(j = 2\ j != i)^(n) (abs(a_(i j)) + abs(a_(i 1) / a_(11) a_(1 j))) #blue[$= sum_(j = 2\ j != i)^(n) abs(a_(i j)) + abs(a_(i 1) / a_(11)) sum_(j = 2\ j != i)^(n) abs(a_(1 j))$]
+      $
+      $
+        sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) #blue[$<=$] sum_(j = 2\ j != i)^(n) abs(a_(i j)) + abs(a_(i 1) / a_(11)) sum_(j = 2\ j != i)^(n) a_(1 j) 
+      $
+
+      Como $A$ es estrictamente diagonal dominante, entonces $ abs(a_(i i)) > sum_(j = 1\ j != i)^(n) abs(a_(i j)) => abs(a_(i i )) #blue[$- abs(a_(i 1))$] > sum_(#blue[$j = 2$]\ j != i)^(n) abs(a_(1 j)) $
+
+      Entonces, remplazamos en la desigualdad anterior:
+
+      $
+        sum_(j = 2\ j != i)^(n) abs(a_(i j)) + abs(a_(i 1) / a_(11)) sum_(j = 2\ j != i)^(n) a_(1 j) < #blue[$abs(a_(i i)) - abs(a_(i 1))$] + abs(a_(i 1) / a_(11)) (#blue[$abs(a_(1 1)) - abs(a_(1 i))$])
+      $
+      $
+        sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) #blue[$<$]  abs(a_(i i)) - abs(a_(i 1)) + abs(a_(i 1) / a_(11)) (abs(a_(1 1)) - abs(a_(1 i)) )
+      $
+      $
+        sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) < abs(a_(i i)) - abs(a_(i 1)) + #blue[$abs(a_(i 1) / a_(11)) abs(a_(1 1)) - abs(a_(i 1) / a_(11))abs(a_(1 i))$]
+      $
+      $
+        sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) < abs(a_(i i)) - abs(a_(i 1)) + #blue($abs(a_(i 1))$) - abs(a_(i 1) / a_(11))abs(a_(1 i))
+      $
+      $
+       sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) <  abs(a_(i i))  - abs(a_(i 1) / a_(11))abs(a_(1 i))
+      $
+      $
+       sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) <= #blue[$abs(a_(i i) - a_(i 1) / a_(11) a_(1 i)) = |tilde(a)_(i i)|$]
+      $
+
+      Concluimos entonces que la matriz conformada por las filas $2$ a $n$ y columnas $2$ a $n$ que resulta del primer paso de eliminación Gaussiana es estrictamente diagonal dominante por lo que exist efactorización LU. $qed$
 
 === Factorización PLU
 En caso de que la factorización LU no exista, podemos usar *pivoteo parcial* para obtener una factorización PLU que es una factorización LU la *matriz original con sus filas permutadas*.
+
+
 

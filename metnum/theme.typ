@@ -102,8 +102,8 @@ locate(loc => {
   body
 }
 
-#let demoLine() = {
-  pad(bottom: -0.75em)[#text(color.blue)[Demostración]]
+#let demoLine(title: "") = {
+  pad(top: 1em, bottom: -0.75em)[*Demostración #title*]
   line(
     length: 100%,
     stroke: 1pt + color.blue,
@@ -114,11 +114,7 @@ locate(loc => {
     title = defaultTitle
   }
   outlinebox(title: title, color: color, radius: 2pt)[
-  #set align(horizon + center)
-  #box(inset: 1em)[
-    #set align(left)
-    #body
-  ]
+  #pad(1em)[#body]
   #v(0.5em)
 ]
 }
