@@ -123,6 +123,11 @@ locate(loc => {
   coloredBox(title: title, defaultTitle: "Propiedad", color: "blue", body)
 }
 
+#let corolario(title: "", body) = {
+  coloredBox(title: title, defaultTitle: "Corolario", color: "green", body)
+}
+
+
 #let alert(title: "", body) = {
   coloredBox(title: title, defaultTitle: "¡Cuidado!", color: "red", body)
 }

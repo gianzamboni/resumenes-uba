@@ -1,7 +1,7 @@
 #import "../theme.typ": *
 
-= Factorización de Matrices
-== Factorización LU
+= Factorización LU
+== Objetivo
 Resolver varios sistemas de ecuaciones lineales con Eliminación Gaussiana tiene complejidad $cal(O)(n^3)$ por cada uno. Existen técnicas de factorización de matrices que nos permiten mejorar esta complejidad.
 
 La *factorización LU* de una matriz $A in RR^(n times n)$ es una factorización de la forma $A = L U$, donde $L$ es una *matriz triangular inferior* y $U$ es una *matriz triangular superior*.
@@ -14,7 +14,7 @@ Podemos usar esta factorización para resolver el sistema $A x = b$ de la siguie
 
 Osea que resolvemos dos sistemas triangulares, lo cual tiene *complejidad $cal(O)(n^2)$ por cada uno*. Hay que ver cuanto nos cuesta factorizar $A$.
 
-=== Método
+== Método
 Sea $A in RR^(n times n)$, supongamos que aplicamos eliminación gaussiana y se verifica que $a_(i i) != 0$ para todo $i in {1, 2, ..., n}$.
 
 Sea $E$ la matriz elemental (tipo 2) que representa la *primer operación de la eliminación gaussiana*:
@@ -69,7 +69,6 @@ $ U = M^n M^(n-1) ... M^2 M^1 A $
   *$ M^i = I - m_i^t e_i $* 
 ]
 
-#pagebreak()
 #propiedad[
  $M^i$ es una matriz *triangular inferior* con $1$ en la diagonal. 
 ] 
@@ -103,7 +102,7 @@ Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que
   *La factorización LU no siempre existe*. Si en algún paso de la eliminación gaussiana, nos encontramos con que $a_(i i) = 0$ para algún $i in {1, 2, ..., n}$, entonces la factorización LU no existe.
 ]
 
-#pagebreak()
+== Propiedades
 #propiedad[
  Si $A in RR^(n times n)$ es *no singular* y tiene *factorización LU*, entonces esa *factorización es única*.
  
@@ -304,7 +303,7 @@ $*
 
       Concluimos entonces que la matriz conformada por las filas $2$ a $n$ y columnas $2$ a $n$ que resulta del primer paso de eliminación Gaussiana es estrictamente diagonal dominante por lo que exist efactorización LU. $qed$
 ]
-=== Factorización PLU
+== Factorización PLU
 En caso de que la factorización LU no exista, podemos usar *pivoteo parcial* para obtener una factorización PLU que es una factorización LU la *matriz original con sus filas permutadas*:
 
 $ P A = L U $

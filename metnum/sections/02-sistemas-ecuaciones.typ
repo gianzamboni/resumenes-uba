@@ -1,6 +1,7 @@
 #import "../theme.typ": *
 
 = Sistema de ecuaciones lineales
+== Definición
 Un sistema de ecuaciones lineales es un *conjunto de ecuaciones lineales que se deben cumplir simultáneamente*.
 
 $ 
@@ -42,7 +43,8 @@ Si $b in I m(A)$ entonces:
 ==== Sistemas equivalentes
 Sean $A, B in RR^(n times n)$, y $b, d in RR^n$, entonces $A x = b$ y $B x = d$ son *sistemas equivalentes* si tienen el mismo conjunto de soluciones.
 
-== Sistemas de ecuaciones diagonales
+== Resolución
+=== Sistemas de ecuaciones diagonales
 Sea $A in RR^(n times n)$ una matriz diagonal y $b in RR^n$, entonces $A x = b$ es un *sistema de ecuaciones diagonales* y se puede resolver despejando cada incógnita por separado:
 
 $ 
@@ -59,9 +61,9 @@ $
   - Si $b_i = 0$ entonces el sistema *tiene infinitas soluciones*.
   - Si $b_i != 0$ entonces el sistema *no tiene solución*.
 
-== Sistemas de ecuaciones triangulares
+=== Sistemas de ecuaciones triangulares
 
-=== Backward Substituion
+==== Backward Substituion
 Sea $A in RR^(n times n)$ una *matriz triangular superior* y $b in RR^n$, entonces $A x = b$ es un sistema de ecuaciones triangulares de la forma:
 
 $ 
@@ -94,7 +96,7 @@ Esté método tiene *complejidad $cal(O)(n^2)$*.
     - Si $b_i$ es el valor que obtenemos, entonces el sistema *tiene infinitas soluciones*.
     - Si no lo es, entonces el sistema *no tiene solución*.
 
-=== Forward Substituion
+==== Forward Substituion
 Sea $A in RR^(n times n)$ una *matriz triangular inferior* y $b in RR^n$, entonces $A x = b$ es un sistema de ecuaciones triangulares que se resuelve de forma similar al los sistemas triangulares superiores, la única diferencia es que se resuelve de arriba hacía abajo:
 
 $ 
