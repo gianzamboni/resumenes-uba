@@ -103,6 +103,7 @@ Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que
   *La factorización LU no siempre existe*. Si en algún paso de la eliminación gaussiana, nos encontramos con que $a_(i i) = 0$ para algún $i in {1, 2, ..., n}$, entonces la factorización LU no existe.
 ]
 
+#pagebreak()
 #propiedad[
  Si $A in RR^(n times n)$ es *no singular* y tiene *factorización LU*, entonces esa *factorización es única*.
  
@@ -198,7 +199,7 @@ $*
 ]
 
 #propiedad[
-  Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces $A$ tiene factorización LU.
+  Si $A in RR^(n times n)$ es *estrictamente diagonal dominante*, entonces $A$ *tiene factorización LU*.
 
   #demoLine()
   Vamos a demostrar que $A$ es no singular y que todas sus submatrices principales son no singulares. De esta manera, estamos en condiciones de aplicar la propiedad anterior y concluir que $A$ tiene factorización LU.
@@ -259,7 +260,7 @@ $*
 
   $ tilde(F)_i = F_i - a_(i 1) / a_(11) F_1 -> tilde(a)_(i j) = a_(i j) - a_(i 1) / a_(11) a_(1 j) $
 
-  - *La parte de la matriz que queda por triangular es estrictamente diagonal dominante*: Tenemos que ver que $ tilde(a)_(i i ) >= sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) " para todo "i in {2, 3, ..., n} $.
+  - *La parte de la matriz que queda por triangular es estrictamente diagonal dominante*: Tenemos que ver que $ tilde(a)_(i i ) >= sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) " para todo " i in {2, 3, ..., n} $.
 
     Analicemos el término de la sumatoria:
       $ sum_(j = 2\ j != i)^(n) abs(tilde(a)_(i j)) = sum_(j = 2\ j != i)^(n) abs(a_(i j) - a_(i 1) / a_(11) a_(1 j)) $
@@ -302,9 +303,63 @@ $*
       $
 
       Concluimos entonces que la matriz conformada por las filas $2$ a $n$ y columnas $2$ a $n$ que resulta del primer paso de eliminación Gaussiana es estrictamente diagonal dominante por lo que exist efactorización LU. $qed$
-
+]
 === Factorización PLU
-En caso de que la factorización LU no exista, podemos usar *pivoteo parcial* para obtener una factorización PLU que es una factorización LU la *matriz original con sus filas permutadas*.
+En caso de que la factorización LU no exista, podemos usar *pivoteo parcial* para obtener una factorización PLU que es una factorización LU la *matriz original con sus filas permutadas*:
 
+$ P A = L U $
+
+#propiedad[
+  Toda matriz *$A in RR^(n times n)$ tiene factorización PLU*.
+
+  #demoLine()
+  Si aplicamos eliminación Gaussiana con pivoteo parcial, aplicando permutaciones cuando sea necesario por la presencia de elementos nulos en la diagonal durante el proceso, se obtiene el siguiente producto de matrices:
+
+  $ M^(n-1)P^(n-1)M^(n-2)P^(n-2) dots M^i P^i dots M^2 P^2 M^1 P^1 A = U $
+
+  donde $M^i = I - m_i^t e_i$ y $P^i$ es una matriz de permutación que indican los intercambios realziados entre las filas.
+
+  Tenemos que encontrar una forma de llegar desde esta ecuación hasta una ecuación de la forma $P A = L U$
+
+  Como cada $P^i$ es una matriz de permutación entre filas, entonces $P^i$ es no singular y su inversa es ella misma. Osea que $P^i P^i = I$. Podemos agregar  entonces los siguientes terminos a la ecuación, sin modificar su resultado:
+
+  $ 
+  M^(n-1)P^(n-1)M^(n-2)#blue[$P^(n-1)P^(n-1)$]P^(n-2) ... #blue[$P^(i+2) dots P^(n-1)P^(n-1) dots P^(i+1)$] P^i \ dots M^2 #blue[$P^3 dots P^(n-1)P^(n-1) dots P^3$] P^2 M^1 #blue[$P^2 dots P^(n-1)P^(n-1) dots P^2$] P^1 A = U
+  $
+
+  Notemos ahora $tilde(M)^i = (P^(n-1) dots P^(i+2)P^(i+1)M^i(P^(i+1) dots P^(n-1))$, entonces tenemos que:
+
+  $
+  M^(n-1)tilde(M)^(n-2) dots tilde(M)^i dots tilde(M)^2 tilde(M)^1 (P^(n-1) dots P^2P^1) A = U
+  $
+
+  Veamos que estructura tiene $tilde(M)^i$:
+  $
+    tilde(M)^i &= (P^(n-1) dots P^(i+2)P^(i+1))(I - m_i^t e_i)(P^(i+1) dots P^(n-1)) \
+    &= (P^(n-1) dots P^(i+2)P^(i+1))I(P^(i+1) dots P^(n-1)) \
+    & #h(1em) - (P^(n-1) dots P^(i+2)P^(i+1))(m_i^t e_i)(P^(i+1) dots P^(n-1)) \
+    &= I - (P^(n-1) dots P^(i+2)P^(i+1))(m_i^t e_i)(P^(i+1) dots P^(n-1)) \
+  $
+
+  Como $P^(i+1) dots P^(n-1)$ son matrices de permutación que realizan intercambiamos entre las filas $i + 1$  a $n$, entonces $e_i (P^(i+1) dots P^(n-1)) = e_i$.
+
+  Además nombremos $tilde(m)_i = (P^(n-1) dots P^(i+2)P^(i+1)) m_i^t$ al entonces tenemos que:
+
+  $
+    tilde(M)^i = I - tilde(m)^t_i e_i
+  $
+
+  Entonces, vemos que $tilde(M)^i$ son matrices triangules inferiores con $1$ en la diagonal. Además, como $P^(n-1) dots P^(i+2)P^(i+1)$ son matrices de permutación, entonces $tilde(M)^i$ son no singulares. Por lo que, podemos escribir:
+
+  $
+    (P^(n-1) dots P^2P^1) A = (tilde(M)^1)^(-1) (tilde(M)^2)^(-1) dots (tilde(M)^i)^(-1) U
+  $
+
+  Definimos $L = (tilde(M)^1)^(-1) (tilde(M)^2)^(-1) dots (tilde(M)^i)^(-1)$ y $P = P^(n-1) dots P^2P^1$, entonces:
+
+  $
+    P A = L U qed
+  $
+]
 
 

@@ -75,7 +75,7 @@ locate(loc => {
 
   show heading: headFormatter
   show link: underline
-  show math.equation: set text(size: 1.25*docFontSize)
+  show math.equation: set text(size: 1.125*docFontSize, weight: "bold")
   show strong: set text(blue)
   // Title row.
   align(center + horizon )[
@@ -102,7 +102,7 @@ locate(loc => {
   body
 }
 
-#let demoLine(title: "") = {
+  #let demoLine(title: "") = {
   pad(top: 1em, bottom: -0.75em)[*Demostración #title*]
   line(
     length: 100%,

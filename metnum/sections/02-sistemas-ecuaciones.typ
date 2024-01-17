@@ -1,7 +1,7 @@
 #import "../theme.typ": *
 
 = Sistema de ecuaciones lineales
-Un *sistema de ecuaciones lineales* es un conjunto de ecuaciones lineales que se deben cumplir simultáneamente.
+Un sistema de ecuaciones lineales es un *conjunto de ecuaciones lineales que se deben cumplir simultáneamente*.
 
 $ 
   a_(11) x_1 + a_(12) x_2 + ... + a_(1n) x_n = b_1 \
