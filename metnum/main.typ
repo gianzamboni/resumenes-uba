@@ -15,6 +15,7 @@
 #include "sections/03-factorizacion-LU.typ"
 #include "sections/04-normas.typ"
 #include "sections/05-matrices-sdp.typ"
+#include "sections/06-factorizacion-qr.typ"
 
 //= Aritmética de la computadora
 // Representación de números. Error de redondeo y truncamiento. Error relativo y absoluto. Operaciones aritméticas. Algoritmos. Estabilidad y convergencia.

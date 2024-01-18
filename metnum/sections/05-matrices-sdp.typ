@@ -1,4 +1,5 @@
 #import "../theme.typ": *
+
 = Factorización de Cholesky
 
 == Matrices Simétricas Definidas Positivas
