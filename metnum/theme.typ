@@ -53,7 +53,6 @@ locate(loc => {
     } else {
       inlineTitle(it, loc, 1)}
   })
-
 }
 
 #let project(title: "", authors: (), date: none, body) = {

@@ -138,11 +138,10 @@ Sea $e_i$ el $i-$ésimo vector canónico. Entonces $e_i^T A e_i = a_(i i) > 0$ p
 ]
 
 
-== Factorización de Cholesky
+== Método
 Sea *$A in R^{n times n}$ una matriz SDP*. Entonces existe una única *matriz triangular inferior $L$ tal que $A = L L^T$*.    
 
-=== Demostración
-Sea $A in R^{n times n}$ una matriz SDP. Entonces $A$ tiene factorización LU 
+Como $A$ tiene factorización LU 
 $ A = L U => A^t = (L U)^t = U^t L^t $
 
 Además como es SDP, $A^t = A => U^t L^t = L U$
