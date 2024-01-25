@@ -250,7 +250,7 @@ Dada $A in CC^(n times n)$, $A$ es *diagonizable por semejanza* si es semejante 
 ]
 
 #pagebreak()
-=== Propiedades de autovalores
+=== Propiedades de autovalores<secc:propiedades-autovalores>
 Sea $A in RR^(n times n)$:
 
 #propiedad[
@@ -459,3 +459,102 @@ $
 
 Como $A$ y $H^t A H$ tienen los mismos autovalores, *los otros autovalores de $A$ son los autovalores de $B$*.
 
+== Descomposición en valores singulares (SVD)
+
+=== Método
+Sea *$A in RR^(m times n)$*, $r = rang(A)$, existen matrices *$U in RR^(m times m)$*, *$V in RR^(n times n)$* ortogonales y *$Sigma in RR^(m times n)$ diagonal* tal que:
+
+$
+  A = U Sigma V^t
+$
+
+Además, $Sigma$ tiene la forma:
+$
+Sigma = mat(
+  sigma_1, 0, ..., 0, 0, dots.c, 0;
+  0, sigma_2, ..., 0, 0, dots.c, 0;
+  dots.v, dots.v, dots.down, dots.v, dots.v, dots.down, dots.v;
+  0, 0, ..., sigma_r, 0, dots.c, 0;
+  0, 0, ..., 0, 0, dots.c, 0;
+  dots.v, dots.v, dots.down, dots.v, dots.v, dots.down, dots.v;
+  0, 0, ..., 0, 0, dots.c, 0;
+)
+$
+
+con *$sigma_1 >= sigma_2 >= ... >= sigma_r > 0$*. Llamamos a los $sigma_i$ *valores singulares* de $A$.
+
+Proponemos la siguientes condiciones para las matrices de esta descomposición:
+
+- *$U$ tiene como columnas los autovectores de $A A^t$*
+- *$V$ tiene como columnas los autovectores de $A^t A$*
+- *$sigma_i = sqrt(lambda_i)$* donde $lambda_i$ es el $i-$ésimo  autovalor de $A^t A$ si los tomamos ordenados de mayor a menor: $lambda_1 >= lambda_2 >= ... >= lambda_r$.
+
+=== Demostración
+Sea *$u_1, u_2, ..., u_m$ a las columnas de $U$* y *$v_1, v_2, ..., v_n$ a las columnas de $V$*. Si la descomposición SVD existe, entonces $A = U Sigma V^t$ y $A^t = V Sigma^t U^t$. Entonces:
+$ A V = U Sigma underbrace(V^t V,"ortogonales") = U Sigma => A v_i =  cases(sigma_i u_i "si" i <= r, 0 "sino"  ) $
+
+$ A^t U = V Sigma^t underbrace(U^t U, "ortogonales") = V Sigma^t => A^t u_i =  cases(sigma_i v_i "si" i <= r, 0 "sino"  ) $
+
+==== Columnas de $V$
+Supongamos $i <= r$ multiplicamos la primera relación por $A^t$ obtenemos:
+$
+  A^t A v_i = sigma_i A^t u_i  = sigma_i^2 v_i
+$
+
+Entonces *$v_i$ es autovector de $A^t A$*, además *$sigma_i^2$ deben ser sus autovalores*.
+
+*$A^t A$ es una matriz simétrica definida positiva* (ver @secc:SDP) y su rango es $r$. Por la condición de símetria sabemos que *existe una base ortonormal de autovectores* (ver @secc:propiedades-autovalores). Además por ser semidefinida positiva, *todos sus autovalores son reales y positivos*. 
+
+Sabemos que $r$ de esos autovalores son no nulos y el $0$ es autovalor con multiplicidad $n-r$.  Sean $lambda_1, dots, lambda_r$ los autovalores no nulos de $A^t A$ y $v_1, dots, v_r$ los autovectores asociados y $v_(r+1), dots, v_n$ los autovectores asociados al $0$, entonces *$v_1, dots, v_r, v_(r+1), dots, v_n$ es una base ortonormal de autovectores de $A^t A$*.
+
+Estos vectores son los candidatos a conformar las columnas de $V$ y definimos *$sigma_i = sqrt(lambda_i) > 0$*.
+
+==== Columnas de $U$
+De la relación $A v_i = sigma_i u_i$ *podemos despejar $u_i$* para $i <= r$:
+$
+  u_i = 1/sigma_i A v_i
+$
+
+Para que esta relación sea correcta, *debemos ver que $u_1, dots, u_r$ son otornomales*:
+
+$
+u_i^t u_j &= (1/sigma_i A v_i)^t (1/sigma_j A v_j)
+           = #blue[$1/sigma_i$] (A v_i)^t #blue[$1/sigma_j$] A v_j 
+           = #blue[$1/sigma_i 1/sigma_j$]  (A v_i)^t A v_j
+           \ &= 1/sigma_i 1/sigma_j #blue[$v_i^t A^t$] A v_j
+        = 1/sigma_i 1/sigma_j  v_i^t #blue[$lambda_j v_j$] #h(2em) (v_j "autovector de" A^t A) 
+        \ &= 1/sigma_i 1/sigma_j #blue[$lambda_j$] v_i^t v_j = #blue[$0$] #h(2em) (v_i " y " v_j "son ortonormales")
+$
+
+Luego *$u_1, dots, u_r$ son ortogonales*. Falta ver que *$|| u_i ||_2 = 1$*:
+$
+  u_i^t u_i &= (1/sigma_i A v_i)^t (1/sigma_i A v_i)
+             = #blue[$1/sigma_i$] (A v_i)^t #blue[$1/sigma_i$] A v_i 
+             = #blue[$1/sigma_i^2$]  (A v_i)^t A v_i \
+            &= 1/sigma_i^2 #blue[$v_i^t A^t$] A v_i 
+             = 1/sigma_i^2 #blue[$lambda_i v_i^t$] #h(2em) (v_i "autovector de" A^t A) \
+        &= 1/sigma_i^2 #blue[$lambda_i$] v_i^t v_i = 1/sigma_i^2 #blue[$lambda_i$]  #h(2em) (v_i^t v_i = 1) \
+        &= 1/(#blue[$sqrt(lambda_i)$])^2 lambda_1 #h(2em) ("por definición de" sigma_i) \ &= 1/#blue[$lambda_i$] lambda_i = 1
+$
+
+Entonces *$u_1, dots, u_r$ son ortonormales*. Falta definir los $u_i$ con $i > r$ 
+
+
+=== Propiedades
+#propiedad[
+  $
+  ||A||_2 = sigma_1
+  $
+]
+
+#propiedad[
+  $
+  kappa(A) = sigma_1 / sigma_r
+  $
+]
+
+#propiedad[
+  $
+  ||A||_F = sqrt(sum_(i = 1)^r sigma_i^2)
+  $
+]

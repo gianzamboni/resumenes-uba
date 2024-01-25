@@ -2,7 +2,7 @@
 
 = Factorización de Cholesky
 
-== Matrices Simétricas Definidas Positivas
+== Matrices Simétricas Definidas Positivas<secc:SDP>
 
 Sea $A in R^{n times n}$ una matriz cuadrada, se dice que es *simétrica definida positiva (SDP)*  si:
 
@@ -135,6 +135,18 @@ Sea $e_i$ el $i-$ésimo vector canónico. Entonces $e_i^T A e_i = a_(i i) > 0$ p
 
 #corolario[
   Si $A$ es SDP, entonces se puede aplicar el *método de eliminación gaussiana sin pivoteo*.
+]
+
+
+#propiedad[
+  
+  Sea $A in RR^(n times m)$, entonces $A^t A$ es una matriz semidefinida positiva.
+
+  #demoLine()
+  Sea $x in RR^m$, entonces:
+  $
+    x^t A^t A x = (A x)^t A x = ||A x||^2 >= 0
+  $
 ]
 
 

@@ -36,7 +36,8 @@
 #let inlineTitle(it, loc, multiplier) = {
   set text(size: multiplier*docFontSize)
   v(1em)
-  it.body + ":" 
+  it.body
+  linebreak()
 }
 
 #let headFormatter(it) = {
