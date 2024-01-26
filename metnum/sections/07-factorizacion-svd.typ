@@ -537,8 +537,9 @@ $
         &= 1/(#blue[$sqrt(lambda_i)$])^2 lambda_1 #h(2em) ("por definición de" sigma_i) \ &= 1/#blue[$lambda_i$] lambda_i = 1
 $
 
-Entonces *$u_1, dots, u_r$ son ortonormales*. Falta definir los $u_i$ con $i > r$ 
+Entonces *$u_1, dots, u_r$ son ortonormales*. Falta definir los $u_i$ con $i > r$: Como $dim(I m(A)) = r$ y los $u_i$ definidos forman partes de la $I m(A)$ conforman una base ortonormal de la misma.
 
+Sabemos que $I m(A) xor.big Nu(A^t) = RR^m$
 
 === Propiedades
 #propiedad[

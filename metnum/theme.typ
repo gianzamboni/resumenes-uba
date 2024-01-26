@@ -71,7 +71,7 @@ locate(loc => {
   )
   set math.mat(delim: "[")
   set page(numbering: "1", number-align: end)
-  set text(font: "Arial", lang: "es", size: docFontSize)
+  set text(font: "Lato", lang: "es", size: docFontSize)
 
   show heading: headFormatter
   show link: underline
