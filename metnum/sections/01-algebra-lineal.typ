@@ -119,7 +119,6 @@ $
 
 Los vectores $b in I m(A)$ son *combinaciones lineales de las columnas de $A$*.
 
-#pagebreak()
 === Espacio nulo
 El *espacio nulo* de una matriz $A in RR^(m times n)$ es el conjunto de todos los vectores $x in RR^n$  tales que $A x = 0$
 
@@ -158,6 +157,7 @@ Cuando $A$ es inversible, decimos que $A$ es una *matriz no singular*
 === Matriz traspuesta 
 La *matriz traspuesta* de una matriz $A in RR^(m times n)$ es la matriz $A^T in RR^(n times m)$ tal que $ A^T_(i j) = A_(j i) $.
 
+#pagebreak()
 #propiedad[
   $ (A^T)^T = A $
   $ (A + B)^T = A^T + B^T $
@@ -192,7 +192,6 @@ $ A^(\(2\)) = mat(
   )   
 $
 
-#pagebreak()
 === Matrices especiales
 ==== Matriz Identidad
 La *matriz identidad* $I in RR^(n times n)$ es la matriz cuadrada que tiene $1$ en la diagonal y $0$ en el resto de las posiciones:
@@ -242,7 +241,6 @@ $
   )
 $
 
-#pagebreak()
 #propiedad[
   El *producto de dos matrices triangulares superiores* es una matriz *triangular superior*. 
   

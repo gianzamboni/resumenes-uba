@@ -88,6 +88,7 @@ Sea $e_i$ el $i-$ésimo vector canónico. Entonces $e_i^T A e_i = a_(i i) > 0$ p
   Luego $B^T A B$ es SDP $qed$
 ]
 
+#pagebreak()
 #propiedad[
   Si $A$ es SDP, entonces la submatriz conformada por las filas $2$ a $n$ y las columnas $2$ a $n$ despues del primer paso de la eliminación gaussiana es SDP.
 
@@ -128,7 +129,6 @@ Sea $e_i$ el $i-$ésimo vector canónico. Entonces $e_i^T A e_i = a_(i i) > 0$ p
   Por la propiedad anterior, podemos afirmar que $M_1 A M^T_1$ es SDP. Entonces $tilde(A)$ es SDP
 ]
 
-#pagebreak()
 #corolario[
   Si $A$ es SDP, entonces *tiene factorización LU*.
 ]
@@ -137,7 +137,7 @@ Sea $e_i$ el $i-$ésimo vector canónico. Entonces $e_i^T A e_i = a_(i i) > 0$ p
   Si $A$ es SDP, entonces se puede aplicar el *método de eliminación gaussiana sin pivoteo*.
 ]
 
-
+#pagebreak()
 #propiedad[
   
   Sea $A in RR^(n times m)$, entonces $A^t A$ es una matriz semidefinida positiva.

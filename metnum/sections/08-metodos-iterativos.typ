@@ -1,3 +1,5 @@
+#import "../theme.typ": *
+
 = Métodos iterativos para sistemas de ecuaciones lineales
 
 == Introducción
@@ -96,3 +98,68 @@ Luego, la iteración de Gauss-Seidel se puede escribir como:
 *$
 x^(k+1) = (D - L)^(-1) U x^k + (D - L)^(-1) b
 $*
+
+== Análisis de convergencia
+  Dado un vector inicial *$x^0 in RR^(n times n)$* y *$T in RR^(n times n)$* y *$c in RR^n$*, 
+
+$
+x^(k+1) = T x^k + c
+$
+
+En Jacobi, $T = D^(-1)(L + U)$ y $c = D^(-1) b$. En Gauss-Seidel, $T = (D - L)^(-1) U$ y $c = (D - L)^(-1) b$.
+
+Si *$x^*$ es la solución del sistema*, vamos a ver condiciones necesarias para que la secuencia ${x^(k)}$ converja a *$x^*$*.
+
+=== Matriz convergente
+Sea $A in RR^(n times n)$, decimos que $A$ es convergente si 
+$
+lim_(k -> oo) A^k = 0
+$
+
+#propiedad[
+  $ 
+  A "es convergente" &<=> rho(A) < 1 \ &<=> lim_(k -> oo) ||A_k || = 0 " para toda norma inducida" \ &<=> lim_(k -> oo) A^k x = 0 " para todo " x in RR^n
+  $
+]
+
+#propiedad[
+  Si $rho(A) < 1 => I - A$ es no singular y $
+    sum_(k=0)^(oo) A^k = (I - A)^(-1)
+  $
+]
+
+=== Teorema de convergencia
+La sucesión ${x^(k)}$ definida por $x^(k+1) = T x^k + c$ converge a $x^*$ para cualquier $x^0$ inicial a la solución del sistema $x = T x + c$ si y solo si $rho(T) < 1$.
+
+#pagebreak()
+#propiedad[
+  Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces el método de Jacobi converge.
+]
+
+#propiedad[
+  Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces el método de Gauss-Seidel converge.
+]
+
+#propiedad[
+  Si $A in RR^(n times n)$ es simétrica definida positiva, entonces el método de Gauss-Seidel converge.
+]
+
+#propiedad[
+  Sea $A in RR^(n times n)$ tal que $a_(i j) <= 0 " " forall i != j$ y $a_(i i) > 0 " " forall i$. Se satisface una sola de las siguientes propiedades:
+  - $rho(T_(G S)) < rho(T_(J)) < 1$
+  - $1 < rho(T_(J)) < rho(T_(G S))$
+  - $rho(T_(G S)) = rho(T_(J)) = 0$
+  - $rho(T_(G S)) = rho(T_(J)) = 1$
+]
+
+#propiedad[
+  Sea $A in RR^(n times n)$ tal que $a_(i j) <= 0 " " forall i != j$ y $a_(i i) > 0 " " forall i$. Entonces, ambos métodos divergen o ambos convergen. En el segundo caso, el método de Gauss-Seidel converge más rápido.
+]
+
+#pagebreak()
+=== Cota del error
+Sea $T in RR^(n times n)$ tal que $||T|| < 1$ para una norma inducida. Entonces:
+
+- $ x^(k+1) = T x^k + c$ converge independientemente del $x^0$ inicial.
+- $||x - x^k|| <= ||T||^k ||x^0 - x||$
+- $||x - x^k|| <= ||T||^k / (1 - ||T||) ||x^1 - x^0||$

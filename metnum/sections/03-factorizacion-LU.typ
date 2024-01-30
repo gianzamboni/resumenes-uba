@@ -97,7 +97,7 @@ $ A = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1) U $
 
 Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que $A = L U$ obtenemos la factorización LU de $A$ asociada a la eliminación gaussiana.
 
-#v(1em)
+#pagebreak()
 #alert[
   *La factorización LU no siempre existe*. Si en algún paso de la eliminación gaussiana, nos encontramos con que $a_(i i) = 0$ para algún $i in {1, 2, ..., n}$, entonces la factorización LU no existe.
 ]

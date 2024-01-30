@@ -57,6 +57,7 @@ $ kappa\(A\) = ||A|| ||A^(-1)|| $
   Si $||.||$ es una norma submultiplicativa, entonces $kappa\(A\) >= 1$ 
 ]
 
+#pagebreak()
 === Cota del error
 Si $A in RR^(n times n)$ matriz no singular y $||.||$ una norma matricial inducida. Sea $tilde(x)$ una solución aproximada de $A x = b$ con $b != 0$ y sea $A tilde(x) = tilde(b)$ entonces:
 

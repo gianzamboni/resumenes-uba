@@ -75,7 +75,7 @@ locate(loc => {
 
   show heading: headFormatter
   show link: underline
-  show math.equation: set text(size: 1.125*docFontSize, weight: "bold")
+  show math.equation: set text(weight: "bold")
   show strong: set text(blue)
   // Title row.
   align(center + horizon )[

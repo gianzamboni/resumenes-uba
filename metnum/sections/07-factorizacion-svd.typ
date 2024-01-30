@@ -70,6 +70,7 @@ $
   Por ser $Q$ ortogonal, sabeemos que $||A v||_2 = ||v||_2$. Supongamos que $v$ es autovector asociado a $lambda$ entonces $A v = lambda v$ y $||A v||_2 = ||lambda v||_2 = |lambda| ||v||_2$. Entonces $|lambda| = 1 #h(1em) qed$ 
 ]
 
+#pagebreak()
 #propiedad[
   Si *$lambda_1, lambda_2, ..., lambda^n$ son los autovalores distintos* con autovalores asociados *$v^1, v^2, ..., v^n$ son linealmente independientes*.
 
@@ -574,6 +575,7 @@ Veamos que cumplen la relaciones definidas para $u_i$ con $i > r$:
   Luego, concluimos que $||A||_2 = sigma_1$ $qed$
 ]
 
+#pagebreak()
 #propiedad[
   Si $A$ es inversible entonces:
   $
