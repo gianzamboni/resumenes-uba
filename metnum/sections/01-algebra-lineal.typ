@@ -133,9 +133,6 @@ $
 
 #propiedad[
   $ I m(A) xor.big N u(A) = RR^m $
-
-  #demoLine()
-  $  $
 ]
 === Matriz inversa
 Sea $A in RR^(n times n)$, entonces $A$ es *inversible* si existe una matriz $A^(-1) in RR^(n times n)$ tal que $ A A^(-1) = A^(-1) A = I $.

@@ -537,20 +537,53 @@ $
         &= 1/(#blue[$sqrt(lambda_i)$])^2 lambda_1 #h(2em) ("por definición de" sigma_i) \ &= 1/#blue[$lambda_i$] lambda_i = 1
 $
 
-Entonces *$u_1, dots, u_r$ son ortonormales*. Falta definir los $u_i$ con $i > r$: Como $dim(I m(A)) = r$ y los $u_i$ definidos forman partes de la $I m(A)$ conforman una base ortonormal de la misma.
+Entonces *$u_1, dots, u_r$ son ortonormales*. Falta definir los $u_i$ con $i > r$:
 
-Sabemos que $I m(A) xor.big Nu(A^t) = RR^m$
+Como $dim(I m(A)) = r$ y los $u_i in I m(A)$, entonces estos vectores conforman una base otornomal de $I m(A)$. Además $N u(A^t) = I m(A)^bot$. Entonces toda base ortonormal de $I m(A)$ se puede extender a una base ortonormal de $RR^m$ con vectores que pertenecen a $N u(A^t)$. Sean $u_(r + 1), dots, u_m$ dicha extensión, entonces *$u_1, dots, u_m$ es una base ortonormal de $RR^m$*.
+
+Veamos que cumplen la relaciones definidas para $u_i$ con $i > r$:
+- $A v_i = sigma_i u_i$ para $i = 1, dots, r$ se cumple por definición de $u_i$.
+- $A v_i = 0$ para $i = r + 1, dots, n$. Como $v_i$ es autovector de $A^t A$ del autovalor $0$, entonces $A^t A v_i = 0 => v_i^t A^t A v_i = 0 => ||A v_i||_2 = 0 => A^t v_i = 0$.
+- $A^t u = sigma_i v$ para $i = 1, dots, r$, se cumple por definición de $u_i$.
+- $A^t u = 0$ para $i = r + 1, dots, n$. Como $u_i in N u(A^t)$, entonces $A^t u_i = 0$.
+
 
 === Propiedades
 #propiedad[
   $
   ||A||_2 = sigma_1
   $
+
+  #demoLine()
+  $ 
+  ||A||_2 &= max_(||x||_2 = 1) ||A x||_2 \
+          &= max_(||x||_2 = 1) ||U Sigma V^t x||_2 \
+          &= max_(||x||_2 = 1) ||Sigma V^t x||_2  "(porque" U "es ortogonal)"\
+          &= max_(||x||_2 = 1) ||Sigma x||_2 "(porque" V "es ortogonal)"\ 
+          &= max_(||x||_2 = 1) ||Sigma x||_2 \ 
+          &= max_(||x||_2 = 1) sqrt(sum_(i = 1)^r sigma_i^2 x_i^2) \
+          &<= max_(||x||_2 = 1) sigma_1 sqrt(sum_(i = 1)^r x_i^2) \
+          & <= sigma_1
+  $
+
+  Además, 
+  $
+    ||A||_2 = max_(||x||_2 = 1) ||A x||_2 >= ||A v_1|| = sqrt(v_1^t A v_1) = sqrt(v_1^t sigma_1 v_1) = sigma_1
+  $
+
+  Luego, concluimos que $||A||_2 = sigma_1$ $qed$
 ]
 
 #propiedad[
+  Si $A$ es inversible entonces:
   $
   kappa(A) = sigma_1 / sigma_r
+  $
+
+  #demoLine()
+  Como $A$ es inversible, $r = n$ y tiene $n$ valores singulares no nulos. Además, los valores singulares de $A^(-1)$ son $1/sigma_n, dots, 1/sigma_1$ de los valores singulares de $A$. Por definición de $kappa$:
+  $
+    kappa(A) = ||A||_2 ||A^(-1)||_2 = sigma_1 1 / sigma_n  = sigma_1 / sigma_n
   $
 ]
 
