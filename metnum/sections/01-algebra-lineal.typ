@@ -123,18 +123,19 @@ Los vectores $b in I m(A)$ son *combinaciones lineales de las columnas de $A$*.
 El *espacio nulo* de una matriz $A in RR^(m times n)$ es el conjunto de todos los vectores $x in RR^n$  tales que $A x = 0$
 
 $
-  N u(A) = { x in RR^n " tal que " A x = 0 }
+  "Nu"(A) = { x in RR^n " tal que " A x = 0 }
 $
 
+#pagebreak()
 #propiedad[
-  $ N u(A) != {0} <=> "las columnas de A son linealmente dependientes" $
+  $ "Nu"(A) != {0} <=> "las columnas de A son linealmente dependientes" $
 ]
 
 #propiedad[
   $ I m(A) xor.big N u(A) = RR^m $
 ]
 === Matriz inversa
-Sea $A in RR^(n times n)$, entonces $A$ es *inversible* si existe una matriz $A^(-1) in RR^(n times n)$ tal que $ A A^(-1) = A^(-1) A = I $.
+Sea $A in RR^(n times n)$, entonces $A$ es *inversible* si existe una matriz $A^(-1) in RR^(n times n)$ tal que $ A A^(-1) = A^(-1) A = I $
 
 #propiedad[
  $ 
@@ -154,10 +155,10 @@ Cuando $A$ es inversible, decimos que $A$ es una *matriz no singular*
   Analogamente, la inversa de un* matriz triangular inferior* (si existe), es una* matriz triangular inferior*. 
 ]
 
+#pagebreak()
 === Matriz traspuesta 
 La *matriz traspuesta* de una matriz $A in RR^(m times n)$ es la matriz $A^T in RR^(n times m)$ tal que $ A^T_(i j) = A_(j i) $.
 
-#pagebreak()
 #propiedad[
   $ (A^T)^T = A $
   $ (A + B)^T = A^T + B^T $

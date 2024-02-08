@@ -71,7 +71,7 @@ locate(loc => {
   )
   set math.mat(delim: "[")
   set page(numbering: "1", number-align: end)
-  set text(font: "Lato", lang: "es", size: docFontSize)
+  set text(font: "Poppins", lang: "es", size: docFontSize)
 
   show heading: headFormatter
   show link: underline
@@ -113,10 +113,33 @@ locate(loc => {
   if(title == "") {
     title = defaultTitle
   }
-  outlinebox(title: title, color: color, radius: 2pt)[
-  #pad(1em)[#body]
-  #v(0.5em)
-]
+  
+  let strokeColor = rgb(29,144,208)
+  let radius = 2pt
+
+  block(
+    stroke: 2pt + strokeColor,
+    radius: radius,
+    width: 100%,
+    above: 26pt,
+  )[
+    #place(top + start, dy: -12pt, dx:20pt)[
+      #box(
+        fill: strokeColor,
+        inset: 8pt,
+        radius: radius,
+      )[
+        #text(fill: white, weight: "bold")[#title]
+      ]
+    ]
+
+    #block(
+      width: 100%,
+      inset: (y:30pt, x: 20pt)
+    )[
+      #body
+    ]
+  ]
 }
 
 #let propiedad(title: "", body) = {
