@@ -187,6 +187,7 @@ Este último límite es igual a 0, ya que la sucesión converge a $x^*$. Por lo 
   Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces el método de Jacobi converge.
 ]
 
+#pagebreak()
 #propiedad[
   Si $A in RR^(n times n)$ es estrictamente diagonal dominante, entonces el método de Gauss-Seidel converge.
 ]
@@ -207,7 +208,6 @@ Este último límite es igual a 0, ya que la sucesión converge a $x^*$. Por lo 
   - $rho(T_(G S)) = rho(T_(J)) = 1$
 ]
 
-#pagebreak()
 #propiedad[
   Sea $A in RR^(n times n)$ tal que $a_(i j) <= 0 " " forall i != j$ y $a_(i i) > 0 " " forall i$. Entonces, ambos métodos divergen o ambos convergen. En el segundo caso, el método de Gauss-Seidel converge más rápido.
 ]

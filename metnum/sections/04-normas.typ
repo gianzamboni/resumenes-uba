@@ -45,9 +45,11 @@ $
 $
 
 ==== Número de condición
-Sea $A in RR^(n times n)$ una matriz no singular y $||.||$ una norma matricial. Se define el *número de condición* de $A$ como:
+Cuando representamos una matriz $A in RR^(n times n)$ en una computadora, usamos aritmética de punto flotante finita. Esto quiere decir que los coeficientes que usamos y los cálculos que hacemos no son exactos. El *número de condición* de una matriz nos da una idea de cuánto puede variar la solución de un sistema de ecuaciones lineales si se dan errores de redondeo: 
 
 $ kappa\(A\) = ||A|| ||A^(-1)|| $
+
+Mientras más chico sea este número, mejor condicionada estará la matriz para que la podamos usar en un algoritmo que resuelve sistemas de ecuaciones. 
 
 #propiedad[
   Si $||.||$ es una norma matricial inducida, entonces $kappa\(I\) = 1$.
