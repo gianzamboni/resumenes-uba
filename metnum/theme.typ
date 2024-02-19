@@ -101,19 +101,25 @@ locate(loc => {
   body
 }
 
-  #let demoLine(title: "") = {
-  pad(top: 1em, bottom: -0.75em)[*Demostración #title*]
+  #let demoLine(title: "", withTitle: true) = {
+    if title == "" {
+      title = "Demostración"
+    }
+
+    if(withTitle) {
+      pad(top: 0em, bottom: -0.75em)[*#title*]
+    }
+
   line(
     length: 100%,
     stroke: 1pt + color.blue,
   )
 }
-#let coloredBox(title: "", defaultTitle: "", color: "", body) = {
+#let coloredBox(title: "", defaultTitle: "", strokeColor: rgb(29,144,208), body) = {
   if(title == "") {
     title = defaultTitle
   }
   
-  let strokeColor = rgb(29,144,208)
   let radius = 2pt
 
   block(
@@ -142,16 +148,16 @@ locate(loc => {
 }
 
 #let propiedad(title: "", body) = {
-  coloredBox(title: title, defaultTitle: "Propiedad", color: "blue", body)
+  coloredBox(title: title, defaultTitle: "Propiedad", strokeColor: rgb(29,144,208), body)
 }
 
 #let corolario(title: "", body) = {
-  coloredBox(title: title, defaultTitle: "Corolario", color: "green", body)
+  coloredBox(title: title, defaultTitle: "Corolario", strokeColor: rgb(71, 133, 74), body)
 }
 
 
 #let alert(title: "", body) = {
-  coloredBox(title: title, defaultTitle: "¡Cuidado!", color: "red", body)
+  coloredBox(title: title, defaultTitle: "¡Cuidado!", strokeColor: rgb(240, 74, 74), body)
 }
 
 #let rang = math.op("rang")
@@ -159,6 +165,8 @@ locate(loc => {
 #let col = math.op("col")
 
 #let blue(body) = text(color.blue, weight: "bold", body)
+
+#let red(body) = text(color.red, weight: "bold", body)
 
 #let pseudo(title: "", parameters: (), body) = {
   show strong: set text(black)

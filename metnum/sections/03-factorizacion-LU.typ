@@ -62,8 +62,8 @@ Luego, podemos pensar al proceso de eliminación gaussiana como una *secuencia d
 
 $ U = M^n M^(n-1) ... M^2 M^1 A $
 
+#pagebreak()
 #propiedad[
-    #set pad(top: 2em)
   Sea $I in RR^(n times n)$ la matriz identidad, $e_i$ el vector que tiene $1$ en la posición $i$ y $0$ en el resto, y $m_i = [ 0, dots, m_(i+1 i), dots, m_(n i) ]$, entonces:
 
   *$ M^i = I - m_i^t e_i $* 
@@ -97,7 +97,6 @@ $ A = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1) U $
 
 Entonces, si definimos *$L = (M^1)^(-1) (M^2)^(-1) ... (M^n)^(-1)$*, tenemos que $A = L U$ obtenemos la factorización LU de $A$ asociada a la eliminación gaussiana.
 
-#pagebreak()
 #alert[
   *La factorización LU no siempre existe*. Si en algún paso de la eliminación gaussiana, nos encontramos con que $a_(i i) = 0$ para algún $i in {1, 2, ..., n}$, entonces la factorización LU no existe.
 ]

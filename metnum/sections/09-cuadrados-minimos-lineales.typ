@@ -116,74 +116,90 @@ $
 A = mat(1, 1; epsilon, 0; 0, epsilon)  => A^t A = mat(1 + epsilon^2, 1; 1, 1 + epsilon^2)
 $
 
-En este caso, la matriz original $A$ tiene dos columnas iguales, pero problemas de representación numérica, las columnas guardadas en la computadora no lo son y la representación de $A$ termina teniendo dos columnas linealmente independientes. Por lo tanto 
+En este caso, la matriz original $A$ tiene dos columnas iguales, pero problemas de representación numérica, las columnas guardadas en la computadora no lo son y la representación de $A$ termina teniendo dos columnas linealmente independientes. Osea que *este sistema aproximado tiene una única solución pero el sistema original tiene infinitas soluciones*. 
 
+Por otro lado, es posible que $A^t A$ esté mal condicionada, veamos su número de condición relativo a la norma 1:
+
+$
+(A^t A)^(-1) = mat( (1 + epsilon^2)/(epsilon^2(2 + epsilon^2)), (-1)/(epsilon^2(2 + epsilon^2)); -1/(epsilon^2(2 + epsilon^2)), 1/(epsilon^2(2 + epsilon^2))) \
+
+||A^t A||_1 = max_(j=1, dots, n) sum_(i=1)^n |(A^t A)_(i,j)| = 2 + epsilon^2 \
+
+||(A^t A)^(-1)||_1 = max_(j=1, dots, n) sum_(i=1)^n |(A^t A)^(-1)_(i,j)| = (2 + epsilon^2)/(epsilon^2) \
+
+kappa(A^t A) = ||A^t A||_1 ||(A^t A)^(-1)||_1 = (2 + epsilon^2)^2/(epsilon^2)
+$
+
+Entonces, para valores de $epsilon$ muy pequeños, el número de condición de $A^t A$ es muy grande. 
+
+#pagebreak()
 #propiedad[
   Sea $A in RR^(m times n)$ con $rang(A) = n$. Entonces $A^t A$ es inversible y la solución de CML es $
    macron(x) = (A^t A)^(-1) A^t b
   $
 ]
 
+== Resolución usando la factorización QR
+Sea $A in RR^(m times n)$, $rang(A) = n$, $Q' in RR^(m times m)$ matriz ortogonal y $R' in RR^(m times n)$ triangular superior tal que $A P= Q R$. Además, $rang(A) = rang(R)$
 
-Definimos $chi(A) = ||A||_2 ||(A^t A)^(-1) A^t||_2$.
-
-#propiedad[
-  Sea $A in RR^(m times n)$ con $rang(A) = n$. Sean $b, macron(b) in RR^m$ y $b^1, macron(b)^1$ las proyecciones en $"Im"(A)$. Si $b^1 != 0$ entonces:
+Sea $P in RR^(n times n)$ matriz de permutación tal que $A P = Q R$ tal que $R$ es $R'$ reorganizada de la siguiente manera:
 $
-  (||(A^t A)^(-1) A^t b - (A^t A)^(-1) A^t macron(b)||_2)/(||(A^t A)^(-1) A^t b||_2) <= chi(A) (||b^1 - macron(b)^1||_2)/(||b^1||_2)
+R = mat(
+  r_(11), r_(12), dots, r_(1p), r_(1p+1), dots, r_(1n);
+  0, r_(22), dots, r_(2p), r_(2p+1), dots, r_(2n);
+  dots.v, dots.v, dots.down, dots.v, dots.v, dots.down, dots.v;
+  0, 0, dots, r_(p p), r_(p p+1), dots, r_(p n);
+  0, 0, dots, 0, 0, dots, 0;
+  dots.v, dots.v, dots.down, dots.v, dots.v, dots.down, dots.v;
+  0, 0, dots, 0, 0, dots, 0
+) = mat(R_1; 0^(n-p))
 $
-]
 
-#propiedad[
-  $ chi(A)^2 = chi(A^t A) $
-]
+donde $R_1 in (p times n)$ es la submatriz que toma desde la fila $1$ hasta la fila $p$ y desde la columna 1 hasta $n$ de $R'$
 
-== Resolucion usando la factorización QR
-=== Matriz de rango completo
-Sea $A in RR^(m times n)$, $rang(A) = n$, $Q in RR^(m times m)$ matriz ortogonal y $R_1 in RR^(n times n)$ triangular superior con $rang(R_1) = n$ tal que: 
 $
-A = Q mat(R_1; 0)
+A P = Q mat(R_1; 0^(n-p))
 $
 
 Entonces el problema de Minimos Cuadrados Lineales (MCL) nos queda:
 $
-min_(x in RR^n) ||A x - b||_2^2 = min_(x in RR^n) norm(#blue[$Q^t$]A x - #blue[$Q^t$]b)_2^2 = min_(x in RR^n)1 norm(#blue[$mat(R_1; 0)$] x - Q^t b)_2^2 
+min_(x in RR^n) norm(A x - b)_2^2 &= min_(x in RR^n) norm(#blue[$Q^t$] (A x - b))_2^2  
+ \ &= min_(x in RR^n) norm(#blue[$Q^t$]A x - #blue[$Q^t$]b)_2^2 
+ \ &= min_(x in RR^n) norm(Q^t A #blue[$P P^(-1)$] x - Q^t b)_2^2
+ \ &= min_(x in RR^n) norm(#blue[$R$] P^(-1) x - Q^t b)_2^2 
 $
 
-Si definimos $c = Q^t b$, entonces queda:
+Simplifiquemos un poco más el problema, definamos $y = P^(-1) x$ y $c = mat(c^(p); c^(m-p)) = Q^t b$ entonces:
+
+- Si $A$ tiene columnas linealmente independientes, entonces $rang(A) = n = p$ y $P = I$:
+  
+  $
+    min_(x in RR^n) norm(A x - b)_2^2 &= min_(x in RR^n) norm(R x - Q^t b)_2^2 \
+      &= min_(x in RR^n) norm(#blue[$R_1$]x - mat(c_(1..n); c_(n+1...m)))_2^2 \
+      &= min_(x in RR^n) norm( R_1 x - c)_2^2 + norm(c^(m-n))_2^2
+  $
+
+  El segundo término es una constante, por lo que podemos eliminarlo:
+  
+  $
+    min_(x in RR^n) norm(A x - b)_2^2 = min_(x in RR^n) norm( R_1 x - c)_2^2 >= 0
+  $
+
+  Como $R_1$ es triangular superior con elementos no nulos en ladiagonal, entonces podemos afirmar que existe $x$ tal que $R_1 x - c = 0$ y este $x$ es solución del problema de MCL.
+
+- Ahora si $A$ tiene columnas linealmente dependientes, entonces $rang(A) = p < n$ y
 $
-min_(x in RR^n) norm(mat(R_1; 0) mat(x; 0) - mat(c_(1..n); c_(n+1...m)))_2^2 = min_(x in RR^n) norm( R_1 x - c_(1..n))_2^2 + norm(c_(n+1...m))_2^2
+  min_(x in RR^n) norm(A x - b)_2^2 &= min_(x in RR^n) norm(#blue[$R$] P^(-1) x - Q^t b)_2^2  
+  \ &= min_(#blue[$y in RR^n$]) norm(R #blue[$y$] - Q^t b)_2^2
+  \ &= min_(y in RR^n) norm(#blue[$mat(R_1; 0^(n-p))mat(y^p; y^(n-p))$] - #blue[$mat(c^(p); c^(m-p))$])_2^2
+  \ &= min_(y in RR^n) norm(#blue[$R_1 y^p - c^(p)$])_2^2 + norm(c^(m-p))_2^2
+  \ &= min_(y in RR^n) norm(R_1 y^p - c^(p))_2^2
 $
 
-Luego la solución $x^*$ a CML es:
-$
-x^* = R_1^(-1) c_(1..n)
-$
-
-=== Matriz de rango no completo
-Sea $A in RR^(m times n)$, $rang(A) = r < n$, $Q in RR^(m times m)$ matriz ortogonal y $R_1 in RR^(r times r)$ matriz triangular inferior con $rang(R_1) = r$ , $R_2 in RR^(r times (n-r))$ tal que:
-
-$
-A P = Q mat(R_1; R_2)
-$
-
-con $P$ matriz de permutación. Analicemos el problema de MCL:
-$
-min_(x in RR^n) norm(A x - b)_2^2 = min_(x in RR^n) norm(A P x - b)_2^2 = min_(x in RR^n) norm(Q^t A P x - Q^t b)_2^2 
-$
-
-Si $P x = macron(x)$ y $c = Q^t b$, entonces:
-$
-min_(macron(x) in RR^n) norm(mat(R_1; R_2) macron(x) - Q^t b)_2^2 = min_(macron(x) in RR^n) norm(R_1 macron(x)_(1 dots r) + R_2 macron(x)_(r+1 dots n) - c_(1 dots r))_2^2 + norm(c_(r+1 dots m))_2^2
-$
-
-La soluciónes $macron(x)^*$ de este sistema entonces son:
-$
-R_1 macron(x)^*_(1 dots r) + R_2 macron(x)^*_(r+1 dots n) = c_(1 dots r) \
-$
+Luego el problema se reduce a encontrar $y^p$ tal que $R_1 y^p - c^(p) = 0$ y asignar valores arbitrarios al resto de las coordenadas de $y$. De esta manera, una vez obtenido $y$, se puede resolver el sistema $y = P^(-1) x$
 
 == Resolucion usando la factorización SVD
-Sea $A in RR^(m times n)$, $rang(A) = r$, $U in RR^(m times m)$ y $V in RR^(n times n)$ matrices ortogonales y $Sigma in RR^(m times n)$ matriz diagonal con $Sigma_(i,i) > 0$ tal que:
+Sea $A in RR^(m times n)$, $rang(A) = r$, por la descomposición SVD sabemos que existen $U in RR^(m times m)$ y $V in RR^(n times n)$ matrices ortogonales y $Sigma in RR^(m times n)$ matriz diagonal:
 $
 Sigma = mat(sigma_1, 0, dots.c, 0, dots.c, 0;
             0, sigma_2, dots.c, 0, dots.c, 0;
@@ -194,23 +210,85 @@ Sigma = mat(sigma_1, 0, dots.c, 0, dots.c, 0;
             0, 0, dots, 0, 0, 0)
 $
 
-y $sigma_1 >= sigma_2 >= dots >= sigma_r > 0$ tal que $A = U Sigma V^t$. Analicemos el problema de MCL:
+y $sigma_1 >= sigma_2 >= dots >= sigma_r > 0$ tal que $A = U Sigma V^t$. Analicemos el problema de Cuadrados Mínimos Lineales:
 
 $
-min_(x in RR^n) norm(A x - b)_2^2 = min_(x in RR^n) norm(U^t A x - U^t b)_2^2 = min_(x in RR^n) norm(Sigma V^t x - U^t b)_2^2
+min_(x in RR^n) norm(A x - b)_2^2 &= min_(x in RR^n) norm(#blue[$U^t$] (A x - b))_2^2 
+\ &= min_(x in RR^n) norm(#blue[$U^t$] A x - #blue[$U^t$] b)_2^2 
+\ &= min_(x in RR^n) norm(#blue[$Sigma V^t$] x - U^t b)_2^2
 $
 
-Definiendo $y = V^t x$:
-$
-min_(y in RR^n) norm(Sigma V^t x - U^t b)_2^2 = min_(y in RR^n) norm(Sigma y - U^t b)_2^2 = min_(y in RR^n) sum_(i=1)^r (sigma_i y_i - (U^t b)_i)^2 + sum_(i=r+1)^m (U^t b)_i^2
-$
+Definiendo $y = V^t x$ y $c = mat(c ^(r); c^(m-r)) = U^t b$ entonces:
 
-Definimos $y^*$ tal que $
-y^*_i = (U^t b)_i/sigma_i " para " i = 1, dots, r$
-
-Luego las soluciónes $x^*$ para el problema de MCL son:
 $
-x^* = V y^*   
+min_(x in RR^n) norm(Sigma V^t x - U^t b)_2^2 = min_(#blue[$y in RR^n$]) norm(Sigma #blue[$y$] - #blue[$c$])_2^2 
 $
 
+- Si A tiene todas sus columnas linealmente independientes entonces $r = n$ y:
+  $
+   min_(y in RR^n) norm(Sigma y - c)_2^2 = min_(y in RR^n) norm(Sigma y - c^(n))_2^2 + norm(c^(m-n))_2^2
+  $
 
+  El segundo término es una constante y lo mínimo que puede valer el primer término es cero. Como $Sigma$ tiene $n$ elementos no nulos, entonces podemos afirmar que existe único $y$ tal que $Sigma y - c^(n) = 0$. Basta tomar $
+   y = c_i^n / sigma_i " para " i=1, dots, n
+  $
+  y luego resolver el sistema $y = V^t x$ para obtener $x$.
+
+- Si A tiene columnas linealmente dependientes entonces $r < n$: sea $Sigma^p$ la submatriz de $Sigma$ con las primeras $r$ filas y $r$ columnas e $y^p$ el vector formado por las primeras $r$ coordenadas de $y$ e $y^(n-p)$ el vector que contiene al resto.
+
+  $
+   min_(y in RR^n) norm(Sigma y - c)_2^2 = min_(y in RR^n) norm(Sigma^p y^p - c^(p))_2^2 + norm(c^(m-r))_2^2
+  $
+
+  El segundo término es una constante y lo mínimo que puede valer el primer término es cero. Como $Sigma^p$ tiene $r$ elementos no nulos, entonces podemos afirmar que existe único $y^p$ tal que $Sigma^p y^p - c^(p) = 0$. Basta tomar $
+   y^p = c_i^p / sigma_i " para " i=1, dots, r
+  $
+  
+  El resto de las coordenadas de $y$ no influyen en el mínimo y pueden tomar valores arbitarios. De esta manera se pueden obtener las infinitas soluciones $x$ del problema resolviendo el sistema $y = V^t x$.
+
+== Estimación del error
+Vamos a proponer una *generalización del número de condición* que funcion para matrices no cuadradas:
+
+$
+chi(A) = ||A||_2 ||(A^t A)^(-1) A^t||_2
+$
+
+Este número lo podremos utilizar para medir la  relación entre pequeños cambios del vector $b$ con los cambios en la solución del problema de Cuadrados Mínimos Lineales.
+
+#propiedad[
+  Sea $A in RR^(m times n)$ con $rang(A) = n$. Sean $b, macron(b) in RR^m$ tales que $b = b_1 + b_2$, $macron(b) = macron(b)_1 + macron(b)_2$ con $b_1, macron(b)_1 in "Im"(A)$ y $b_2, macron(b)_2 in "Nu"(A^t)$. Si $b^1 != 0$ entonces:
+$
+  norm(x - macron(x))/norm(macron(x)) = (||(A^t A)^(-1) A^t b - (A^t A)^(-1) A^t macron(b)||_2)/(||(A^t A)^(-1) A^t b||_2) <= chi(A) (||b^1 - macron(b)^1||_2)/(||b^1||_2)
+$
+
+#demoLine()
+Como $rang(A) = n$, la solución del problema de Cuadrados Mínimos Lineales es única y sabemos que verifica:
+$
+  x = (A^t A)^(-1) A^t b \
+  macron(x) = (A^t A)^(-1) A^t macron(b)
+$
+
+Entonces:
+$
+  norm(x - macron(x))_2 &= norm(#blue[$(A^t A)^(-1) A^t b$] - #blue[$(A^t A)^(-1) A^t macron(b)$])_2
+  \ &= norm((A^t A)^(-1) A^t #blue[$(b^1 + b^2)$] - (A^t A)^(-1) A^t #blue[$(macron(b)^1 + macron(b)^2)$])_2
+  \ &= norm((A^t A)^(-1) A^t b^1 - (A^t A)^(-1) A^t macron(b)^1)_2 " porque " b^2, macron(b)^2 in "Nu"(A^t)
+  \ &= norm((A^t A)^(-1) A^t (b^1 - macron(b)^1))_2
+  \ &<= norm((A^t A)^(-1) A^t)_2 norm(b^1 - macron(b)^1)_2 " por def de norma"
+$
+
+Por otro lado, $A x = b^1$ entonces $||b_1||_2 = ||A x||_2 <= ||A||_2 ||x||_2$:
+$
+  1/norm(x)_2 <= norm(A)_2 / norm(b^1)_2
+$
+
+Multiplicando los dos términos del mismo lado de las desigualdades tenemos:
+$
+  norm((A^t A)^(-1) A^t b - (A^t A)^(-1) A^t macron(b))_2 / norm(x)_2 <= (norm(A)_2 norm((A^t A)^(-1) A^t)_2 norm(b^1 - macron(b)^1)_2) / norm(b^1)_2 qed
+$
+]
+
+#pagebreak()
+#propiedad[
+  $ chi(A)^2 = chi(A^t A) $
+]
